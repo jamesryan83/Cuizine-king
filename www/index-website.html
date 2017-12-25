@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'">
+
+        <link rel="icon" href="/res/favicon.ico">
+
+        <!-- css -->
+        <link rel="stylesheet" href="/lib/normalize.css" />
+
+        
+            <title><%- title %></title>
+            <link rel="stylesheet" href="/generated/<%- style %>.css" />
+        
+    </head>
+
+
+    <body>
+
+        <!-- Page container -->
+        <div id="page-container"></div>
+
+
+        <!-- Dialogs -->
+        <div id="dialog-container" style="display: none;"></div>
+
+
+        <!-- Toasts -->
+        <div id="toasts" style="display: none;"></div>
+
+
+        <!-- Loading screen -->
+        <div id="loading-screen" style="display: none;">
+            <div id="loading-icon" class="center">
+                <label>Loading</label>
+            </div>
+        </div>
+
+
+        <!-- js -->
+        <script src="/lib/jquery-3.0.js"></script>
+        <script src="/lib/moment.min.js"></script>
+        <script src="/lib/validate.min.js"></script>
+        <script src="/lib/jquery.loadTemplate.min.js"></script>
+
+        
+            <script src="/generated/<%- script %>.js"></script>
+        
+
+        <input id="is-cordova" type="hidden" value="false" />
+    </body>
+</html>
+
+

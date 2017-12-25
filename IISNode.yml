@@ -1,0 +1,14 @@
+# https://docs.microsoft.com/en-us/azure/app-service-web/app-service-web-nodejs-best-practices-and-troubleshoot-guide#iisnode-configuration
+
+node_env: "production"
+
+# turns on regular azure logging of stdout/stderr
+# performance is impacted by the amount of logging done
+loggingEnabled: true
+
+devErrorsEnabled: true
+
+nodeProcessCountPerApplication: 0
+
+# this one is for node-inspector (turn off for production)
+debuggingEnabled: false

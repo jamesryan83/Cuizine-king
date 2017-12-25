@@ -1,0 +1,9 @@
+{
+    "ignore": [
+		"app/*",        
+        "tests/*",
+		"CODE.md",
+		"README.md",
+		"gulpfile.js"
+    ]
+}

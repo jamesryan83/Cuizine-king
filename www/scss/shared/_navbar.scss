@@ -1,0 +1,138 @@
+
+// Navbar on logged out pages
+.navbar {
+    white-space: nowrap;
+    width: 100%;
+    padding: 30px 50px 10px 50px;
+    z-index: $zIndexNavbar;
+
+
+    // Navbar icon
+    .navbar-heading {
+        display: inline-block;
+
+        .navbar-icon {
+            vertical-align: top;
+            margin-left: -20px;
+        }
+    }
+
+
+    a {
+        color: $colorGray0;
+        margin: 0 10px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: bold;
+
+        &.active {
+            &:after {
+                content: "";
+                width: 100%;
+                height: 3px;
+                background-color: $colorBlue2;
+                display: block;
+            }
+        }
+    }
+
+
+    // Navbar links
+    .navbar-links {
+        float: right;
+        overflow: hidden;
+        height: 30px;
+    }
+
+
+    // Popup links
+    .navbar-links-popup {
+        position: fixed;
+        top: 0;
+        right: -200px;
+        width: 200px;
+        height: 100%;
+        margin-bottom: 10px;
+        background-color: $colorGray13;
+        z-index: 100;
+        text-align: right;
+
+        .navbar-links-popup-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+
+            @include svgicon($navbarPopupIconSize, $navbarPopupIconSize, 20px, 20px,
+                url(/res/svg/icon-close.svg), url(/res/svg/icon-close-hover.svg));
+        }
+
+        a {
+            display: block;
+            background-color: $colorGray13;
+            padding: 0 20px;
+            height: 48px;
+            line-height: 48px;
+
+            &.active {
+                &:after {
+                    margin-top: -5px;
+                }
+            }
+
+            &:active {
+                background-color: $colorGray11;
+            }
+
+            &:hover {
+                background-color: $colorGray12;
+            }
+        }
+
+        a:first-of-type {
+            margin-top: 70px;
+        }
+    }
+
+
+    // Popup menu button for mobile
+    .navbar-links-popup-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        height: $navbarPopupIconSize;
+        width: $navbarPopupIconSize;
+        background-color: $colorGray13;
+        overflow: hidden;
+        cursor: pointer;
+
+        @include svgicon($navbarPopupIconSize, $navbarPopupIconSize, 20px, 20px,
+                url(/res/svg/icon-navbar.svg), url(/res/svg/icon-navbar-active.svg));
+
+        display: none;
+
+        &:active {
+            background-color: $colorGray11;
+        }
+
+        &:hover {
+            background-color: $colorGray11;
+        }
+    }
+
+
+    // mobile
+    @media (max-width: $mediaMobileWidth1) {
+        height: auto;
+        text-align: left;
+        position: relative;
+
+        .navbar-links {
+            display: none;
+        }
+
+        .navbar-links-popup-button {
+            display: block;
+        }
+    }
+
+}

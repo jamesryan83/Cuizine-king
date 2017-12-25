@@ -1,0 +1,95 @@
+$storeItemWidth: 300px;
+
+// single store item
+.store-list-item {
+    width: $storeItemWidth;
+    display: inline-block;
+    margin-right: 30px;
+    vertical-align: top;
+    border: 1px solid transparent;
+    cursor: pointer;
+
+    &:hover {
+        border: 1px solid $colorBlue2;
+    }
+
+    // image
+    .store-list-item-image {
+        position: relative;
+        height: 180px;
+        width: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin-bottom: 15px;
+
+        // store title
+        .store-list-item-title {
+            display: inline-block;
+            max-width: $storeItemWidth;
+            width: auto;
+            overflow: hidden;
+            white-space: nowrap;
+            background-color: rgba(0, 0, 0, 0.9);
+            height: 34px;
+
+            label {
+                max-width: calc(#{$storeItemWidth} - 2px);
+                color: white;
+                font-size: 17px;
+                display: inline-block;
+                padding: 3px 15px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                pointer-events: none;
+            }
+        }
+    }
+
+    // text below image
+    .store-list-item-text {
+        padding: 0 10px;
+        height: 22px;
+
+        &.title {
+            height: 26px;
+        }
+
+        label {
+            height: 22px;
+            line-height: 22px;
+            font-size: 14px;
+            display: inline-block;
+            vertical-align: top;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        label:last-of-type {
+            float: right;
+        }
+
+        .store-list-item-text-open, .store-list-item-text-suburb {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .store-list-item-text-open {
+            &.active {
+                color: $colorBlue2;
+            }
+        }
+    }
+
+    > p {
+        white-space: normal;
+        word-wrap: normal;
+        word-break: keep-all;
+        width: 100%;
+        padding: 0px 10px 0 10px;
+        pointer-events: none;
+        letter-spacing: 1px;
+        font-style: oblique;
+    }
+
+}

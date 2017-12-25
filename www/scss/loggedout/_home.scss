@@ -1,0 +1,43 @@
+
+$mediaWidthHome0: 1130px;
+$mediaWidthHome1: 930px;
+$mediaWidthHome2: 700px;
+
+
+// Home page
+#page-home {
+    text-align: center;
+    position: relative;
+
+    @media (max-width: $mediaWidthHome2) {
+        padding-top: 0;
+    }
+
+    #page-home-content {
+        display: block;
+        text-align: center;
+
+        #home-suburb-search {
+            margin-top: 60px;
+            text-align: left;
+            width: 380px;
+
+            @media (max-width: $mediaMobileWidth1) {
+                width: 290px;
+
+                input {
+                    width: 210px;
+                }
+            }
+        }
+    }
+
+
+    #debug-location {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 50px;
+    }
+
+}

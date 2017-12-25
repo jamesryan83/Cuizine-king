@@ -1,0 +1,79 @@
+
+// Typeahead control
+// Input and label with a ul dropdown thing
+
+.typeahead {
+    display: inline-block;
+    position: relative;
+
+    label {
+        width: 80px;
+        display: inline-block;
+        line-height: 25px;
+        height: 25px;
+    }
+
+    input {
+        width: 300px;
+    }
+
+    .typeahead-list {
+        display: none;
+        position: absolute;
+        width: 300px;
+        list-style: none;
+        right: 0;
+        top: 35px;
+        border-left: 1px solid $colorGray2;
+        border-right: 1px solid $colorGray2;
+        border-bottom: 1px solid $colorGray2;
+        background-color: $colorGray12;
+        z-index: $zIndexTypeahead;
+
+        .typeahead-item {
+            height: 40px;
+            line-height: 40px;
+            padding-left: 20px;
+            cursor: pointer;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &.active {
+                background-color: $colorGray14;
+            }
+
+            &:hover {
+                background-color: $colorGray14;
+            }
+
+            label, span {
+                height: 40px;
+                line-height: 40px;
+                pointer-events: none;
+                vertical-align: top;
+            }
+
+            label:first-of-type {
+                width: 34px;
+            }
+
+            span{
+                padding: 0 7px;
+            }
+        }
+    }
+
+    @media (max-width: $mediaMobileWidth1) {
+        .typeahead-list {
+            width: 210px;
+            top: auto;
+
+            .typeahead-item {
+                font-size: 13px;
+                padding-left: 12px;
+            }
+        }
+    }
+}
+

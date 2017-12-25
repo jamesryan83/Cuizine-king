@@ -1,0 +1,55 @@
+// Custom checkbox
+// http://www.csscheckbox.com/checkbox/29271/dark-teal-on-gray-rounded-css-checkbox/
+
+
+// checkbox on left
+.checkbox-1 {
+    > input {
+        display: none;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+        cursor: pointer;
+
+        &:checked {
+            &+ label {
+                background-position: 0 -20px;
+            }
+        }
+    }
+
+    > label {
+        display: inline-block;
+        padding-left: 30px;
+        height: 20px;
+        line-height: 20px;
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        cursor: pointer;
+        background-image: url(/res/images/checkbox1.png);
+        user-select: none;
+        white-space: nowrap;
+    }
+}
+
+// checkbox on right
+.checkbox-2 {
+    @extend .checkbox-1;
+
+    display: inline-block;
+
+    > input {
+        &:checked {
+            &+ label {
+                background-position: 195px -20px;
+            }
+        }
+    }
+
+    > label {
+        font-size: 24px;
+        padding-left: 0;
+        padding-right: 50px;
+        background-position: 195px 0;
+    }
+}

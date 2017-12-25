@@ -1,0 +1,13 @@
+{
+    "mitchellsimoens.file-tree-exclude.excludeList": [
+		".git",		
+        "node_modules",
+        ".brackets.json",
+        ".gitignore",
+        "drawing.svg",
+		"IISNode.yml",
+        "nodemon.json",
+        "web.config",
+		"app"
+    ]
+}

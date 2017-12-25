@@ -1,0 +1,533 @@
+// Color for input placeholder attribute
+// http://stackoverflow.com/a/27377850
+@mixin placeholder($color, $size:"") {
+    &::-webkit-input-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+        &:-moz-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+    &::-moz-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+    &:-ms-input-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+}
+
+
+// SVG Icon
+@mixin svgicon($width, $height, $sizeX, $sizeY, $normalSvg, $hoverSvg: none) {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: $sizeX $sizeY;
+    height: $height;
+    width: $width;
+    background-image: $normalSvg;
+    display: inline-block;
+
+    &:hover {
+        @if $hoverSvg != none {
+            cursor: pointer;
+            background-image: $hoverSvg;
+        }
+    }
+}
+
+
+
+
+// ----------- Variables -----------
+
+
+
+$colorGray0: #fafafa;
+$colorGray1: #f4f4f4;
+$colorGray2: #e3e3e3;
+$colorGray3: #d9d9d9;
+$colorGray4: #b9b9b9;
+$colorGray5: #9d9d9d;
+$colorGray6: #777777;
+$colorGray7: #626262;
+$colorGray8: #5f5f5f;
+$colorGray9: #585858;
+$colorGray10: #444444;
+$colorGray11: #333333;
+$colorGray12: #222222;
+$colorGray13: #111111;
+$colorGray14: #060606;
+
+$colorBlue1: #1f58c6;
+$colorBlue2: #5595d8;
+$colorBlue3: #373748;
+
+$elementHeight: 35px;
+
+$navbarHeight: 160px;
+$navbarPopupIconSize: 40px;
+
+$loggedInNavbarHeight: 70px;
+$loggedInHeaderHeight: 50px;
+
+$zIndexTypeahead: 500;
+$zIndexNavbar: 1000;
+$zIndexTooltip: 5000;
+$zIndexDialogContainer: 7500;
+$zIndexToast: 10000;
+$zIndexLoadingScreen: 15000;
+
+$mediaWidth1: 770px;
+
+$mediaMobileWidth1: 490px;
+
+
+
+
+
+
+
+// ----------- Fonts -----------
+
+
+@font-face {
+    font-family: "Catamaran";
+    src: url(../res/fonts/Catamaran/Catamaran-Light.ttf);
+}
+
+@font-face {
+    font-family: "Catamaran";
+    font-weight: bold;
+    src: url(../res/fonts/Catamaran/Catamaran-Bold.ttf);
+}
+
+
+
+// ----------- Overrides -----------
+
+
+*, *:before, *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Catamaran, wingdings;
+}
+
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+
+p, label, h1, h2, h3, h4, h5, h6, li, span {
+    color: $colorGray1;
+    margin: 0;
+    padding: 0;
+    cursor: default;
+    letter-spacing: 1px;
+}
+
+
+// TODO : 2 of these are overridden in .button-1
+a, button {
+    color: $colorGray6;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+
+p, label, li, span {
+    font-size: 14px;
+}
+
+
+select {
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+
+// remove yellow on chrome inputs
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+
+// removes clear button on IE 10+
+input::-ms-clear {
+    display: none;
+}
+
+
+
+
+
+// ----------- Custom classes -----------
+
+
+.noselect {
+    user-select: none;
+}
+
+
+.clearfix {
+    &:after {
+        content: "";
+        display: block;
+        height: 0 !important;
+        width: 100% !important;
+        clear: both;
+    }
+}
+
+
+.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.p-heading {
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+
+.hr-1 {
+    height: 1px;
+    background-color: $colorGray2;
+    border: none;
+}
+
+
+.input-1, .select-1, .textarea-1 {
+    background-color: transparent;
+    border: none;
+    border: 1px solid $colorGray1;
+    height: $elementHeight;
+    width: 300px;
+    outline: none;
+    padding: 0 10px;
+    color: $colorGray3;
+    resize: vertical;
+
+    &:hover {
+        border: 1px solid $colorGray2;
+    }
+
+    &:focus {
+        border: 1px solid $colorGray3;
+    }
+
+    @include placeholder($colorGray3);
+}
+
+
+.textarea-1 {
+    height: 80px;
+    padding: 10px;
+}
+
+
+// regular button
+.button-1 {
+    height: $elementHeight;
+    padding: 0 10px;
+    border: none;
+    outline: none;
+    background-color: $colorGray2;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid transparent;
+    color: $colorGray10;
+
+    &:hover {
+        background-color: $colorGray3;
+        border: 1px solid $colorBlue2;
+    }
+
+    &:active {
+        transform: scale(0.95);
+        background-color: $colorGray4;
+    }
+}
+
+
+// transparent background button
+.button-2 {
+    @extend .button-1;
+    background-color: transparent;
+    color: $colorGray1;
+    font-size: 14px;
+
+    &:hover {
+        color: $colorBlue2;
+        background-color: transparent;
+    }
+}
+
+
+// Link that looks like a button
+.link-button {
+    @extend .noselect;
+    text-decoration: none;
+    color: $colorGray5;
+    display: inline-block;
+    height: 30px;
+    min-width: 40px;
+    padding: 0 10px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+
+
+    &:hover {
+        background-color: $colorGray1;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+
+// div with label left input right
+.label-input {
+    width: 450px;
+    text-align: left;
+    padding: 10px 0;
+    clear: both;
+
+    > label {
+        width: 140px;
+        display: inline-block;
+        line-height: $elementHeight;
+    }
+
+    input, select {
+        float: right;
+    }
+}
+
+
+// as above with textarea
+.label-textarea {
+    width: 450px;
+    text-align: right;
+    padding: 10px 0;
+    vertical-align: middle;
+
+    > label {
+        width: 140px;
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: middle;
+        height: 100%;
+        line-height: 100%;
+    }
+
+    textarea {
+        width: 300px;
+        text-align: left;
+        vertical-align: middle;
+    }
+}
+
+
+// TODO : search icon ?
+// Input with a button next to it
+.input-button {
+    display: inline-block;
+    white-space: nowrap;
+
+    input {
+        display: inline-block;
+        height: 30px;
+        width: 200px;
+        margin: 0;
+        border: none;
+        background-color: transparent;
+        vertical-align: top;
+        @include placeholder($colorGray4);
+    }
+
+    button {
+        display: inline-block;
+        @include svgicon(30px, 30px, 15px, 15px, url(svg/icon-search.svg));
+    }
+}
+
+
+// Form layout for giving left column of labels a consistent width
+.form-layout-1 {
+    > div {
+        height: 50px;
+
+        label {
+            height: 50px;
+            line-height: 50px;
+        }
+
+        input {
+            margin-top: 5px;
+        }
+
+        label, input {
+            display: inline-block;
+        }
+
+        label:first-child {
+            width: 120px;
+        }
+
+        &:last-of-type {
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100px;
+        }
+    }
+}
+
+
+.form-layout-2 {
+    @extend .form-layout-1;
+
+    > div {
+        label:first-child {
+            width: 170px;
+        }
+    }
+}
+
+
+.form-layout-3 {
+    @extend .form-layout-1;
+
+    > div {
+        label:first-child {
+            width: 200px;
+        }
+    }
+}
+
+
+.table-1 {
+    width: 100%;
+    background-color: blue;
+
+    .table-head {
+        background-color: yellow;
+
+        > div {
+            float: left;
+            height: 30px;
+            line-height: 30px;
+        }
+    }
+
+    .table-body {
+        background-color: purple;
+    }
+}
+
+
+
+
+
+// ------------- Other common stuff -------------
+
+
+#page-container {
+    min-height: 100%;
+    background: #000115;
+//    background: linear-gradient(to bottom, rgb(0, 1, 4) 0%, rgb(0, 1, 10) 33%, rgb(0, 1, 15) 66%, rgb(0, 0, 13) 100%);
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    width: 100%;
+    background-image: url(/res/images/bg.png);
+//    display: inline-block;
+}
+
+
+.page {
+    min-height: 100%;
+    width: 100%;
+}
+
+
+
+// 5 star review thing
+.review-stars {
+    background-color: rgba(0, 0, 0, 0.9);
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 25px;
+    padding: 0 5px;
+
+    > div {
+        display: inline-block;
+        vertical-align: top;
+
+        @include svgicon(15px, 25px, 12px, 12px,
+            url(../res/svg/icon-star.svg));
+
+        &.active {
+            @include svgicon(15px, 25px, 12px, 12px,
+                url(../res/svg/icon-star-active.svg));
+        }
+    }
+
+    > label {
+        padding: 0 5px;
+        font-size: 16px;
+        height: 25px;
+        line-height: 25px;
+        pointer-events: none;
+    }
+}
+
+
+
+// Loading screen
+#loading-screen {
+    display: none;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    pointer-events: all;
+    z-index: $zIndexLoadingScreen;
+
+    label {
+        position: relative;
+        color: white;
+    }
+}
+
+
+
+

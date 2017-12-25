@@ -1,0 +1,303 @@
+
+$mediaWidthLocation0: 1130px;
+$mediaWidthLocation1: 930px;
+$mediaWidthLocation2: 700px;
+
+
+// location page
+#page-location {
+    text-align: center;
+    position: relative;
+
+    @media (max-width: $mediaWidthLocation2) {
+        padding-top: 0;
+    }
+
+    br {
+        height: 0;
+    }
+
+
+    // Header
+    #location-header {
+        text-align: left;
+        white-space: nowrap;
+        width: 100%;
+        padding: 20px 100px;
+
+        #location-header-heading {
+            display: inline-block;
+            width: calc(100% - 390px);
+            overflow: hidden;
+
+            h2 {
+                display: inline-block;
+                font-weight: 400;
+                font-size: 35px;
+                height: 50px;
+                line-height: 50px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                vertical-align: top;
+
+                @media (max-width: $mediaWidthLocation0) {
+                    font-size: 30px;
+                }
+
+                @media (max-width: $mediaWidthLocation1) {
+                    font-size: 26px;
+                }
+            }
+        }
+
+        #location-header-location {
+            margin-left: 10px;
+            color: $colorBlue2;
+            padding-right: 10px;
+        }
+
+        #location-suburb-search {
+            white-space: nowrap;
+            float: right;
+            margin-top: 8px;
+            width: 380px;
+
+            > input {
+                color: white;
+            }
+        }
+
+        // added in js
+        &.suburb-next-line {
+            text-align: center;
+            display: inline-block;
+            width: auto;
+            padding: 20px 0;
+
+            #location-header-heading {
+                display: block;
+                width: auto;
+
+                #location-header-location {
+                    height: 50px;
+                    line-height: 50px;
+
+                    @media (max-width: $mediaWidthLocation1) {
+                        white-space: normal;
+                        word-break: keep-all;
+                        line-height: auto;
+                        height: auto;
+                    }
+                }
+            }
+
+            #location-suburb-search {
+                margin-top: 15px;
+                float: none;
+                text-align: left;
+            }
+        }
+
+        // added in js
+        &.heading-next-line {
+            padding-top: 0;
+
+            #location-header-heading {
+                h2 {
+                    display: block;
+                }
+            }
+        }
+    }
+
+
+
+    // Filters
+    #location-store-filter {
+        text-align: left;
+        white-space: nowrap;
+        width: 100%;
+        padding: 20px 250px;
+
+        > div {
+            width: 33%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+
+        // pickup checkbox
+        #pickup-locations {
+            padding-left: 0;
+        }
+
+
+        // delivery checkbox
+        #delivery-locations {
+            > input {
+                &:checked {
+                    &+ label {
+                        background-position: 210px -20px;
+                    }
+                }
+            }
+
+            label {
+                background-position: 210px 0;
+            }
+        }
+
+
+        // select
+        div:last-of-type {
+            display: inline-block;
+
+            label {
+                padding-right: 20px;
+                font-size: 24px;
+            }
+
+            select {
+                width: 120px;
+                color: white;
+                margin-top: -2px;
+
+                option {
+                    color: black;
+                }
+            }
+        }
+
+        @media (max-width: 1330px) {
+            padding: 20px 150px;
+        }
+
+        @media (max-width: $mediaWidthLocation0) {
+            padding: 20px 50px;
+        }
+
+        @media (max-width: $mediaWidthLocation1) {
+            display: inline-block;
+            width: auto;
+
+            > div {
+                display: block;
+                width: auto;
+                text-align: left;
+            }
+
+            > div:not(:first-of-type) {
+                margin-top: 20px;
+            }
+
+            div:last-of-type {
+                margin-top: 15px;
+            }
+
+            #pickup-locations {
+                > input {
+                    &:checked {
+                        &+ label {
+                            background-position: 210px -20px;
+                        }
+                    }
+                }
+
+                > label {
+                    background-position: 210px 0;
+                }
+            }
+        }
+    }
+
+
+
+
+    // store list
+    #location-store-list {
+        max-width: 80%;
+        width: 100%;
+        display: inline-block;
+        text-align: left;
+
+
+        // row heading
+        .row-heading-container {
+            margin-top: 40px;
+            position: relative;
+
+            h3 {
+                font-weight: 400;
+                padding-left: 10px;
+                height: 26px;
+                font-size: 26px;
+                line-height: 26px;
+            }
+
+            .row-heading-label {
+                position: absolute;
+                bottom: 0;
+                right: 10px;
+                height: 15px;
+                font-size: 15px;
+                line-height: 15px;
+            }
+        }
+
+
+        hr {
+            border: none;
+            height: 2px;
+            background-color: $colorBlue3;
+            margin: 5px -15px 10px -15px;
+        }
+
+
+
+        // stores row
+        .category-stores-row {
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: left;
+            position: relative;
+            padding-bottom: 15px;
+            height: 345px;
+
+            .category-stores-row-inner {
+                overflow-x: scroll;
+                height: 375px;
+            }
+
+            // list items are in another file
+        }
+
+
+        @media (max-width: $mediaWidthLocation1) {
+            max-width: 90%;
+        }
+
+        @media (max-width: $mediaWidthLocation2) {
+            max-width: 95%;
+        }
+    }
+
+
+    // mobile
+    @media (max-width: $mediaMobileWidth1) {
+        #location-header {
+            #location-suburb-search {
+                float: none;
+                width: 290px;
+                margin-top: 0;
+
+                input {
+                    width: 210px;
+                }
+            }
+        }
+
+        #location-store-filter {
+            padding: 20px 0;
+        }
+    }
+}

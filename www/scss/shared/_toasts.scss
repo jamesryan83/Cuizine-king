@@ -1,0 +1,20 @@
+// Toast message
+#toasts {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    display: none;
+    z-index: $zIndexToast;
+
+    p {
+        border-radius: 2px;
+        background-color: $colorGray9;
+        min-width: 100px;
+        padding: 10px 20px;
+        color: $colorGray2;
+        margin-bottom: 10px;
+        white-space: nowrap;
+    }
+}
