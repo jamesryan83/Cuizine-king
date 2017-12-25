@@ -343,7 +343,8 @@ input::-ms-clear {
   white-space: nowrap;
   width: 100%;
   padding: 30px 50px 10px 50px;
-  z-index: 1000; }
+  z-index: 1000;
+  position: relative; }
   .navbar .navbar-heading {
     display: inline-block; }
     .navbar .navbar-heading .navbar-icon {
@@ -374,7 +375,10 @@ input::-ms-clear {
     margin-bottom: 10px;
     background-color: #111111;
     z-index: 100;
-    text-align: right; }
+    text-align: right;
+    border-left: 1px solid #373748;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden; }
     .navbar .navbar-links-popup .navbar-links-popup-close {
       position: absolute;
       top: 20px;
@@ -412,6 +416,8 @@ input::-ms-clear {
     background-color: #111111;
     overflow: hidden;
     cursor: pointer;
+    border-radius: 10% 25%;
+    border: 1px solid #373748;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 20px 20px;
