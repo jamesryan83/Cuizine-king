@@ -1,8 +1,10 @@
 "use strict";
 
-// Users api
+// People api
 
+var mail = require("../other/mail");
 var dbApp = require("../database/procedures/_App");
+var passportAuth = require("../other/passport-auth");
 
 
 exports = module.exports = {
@@ -25,9 +27,27 @@ exports = module.exports = {
 
         b.id_user_doing_update = 1; // system user
 
+        // hash password and create verification token
+        passportAuth.createRegistrationTokens(b.password, function (err, tokens) {
+            if (err) return self.router.sendJson(res, null, err.message);
 
-        dbApp.people_create(b, function (err, user) {
-            return self.router.sendJson(res, null, err);
+            b.verification_token = tokens.verification;
+            b.password = tokens.password;
+
+            // create person in db
+            dbApp.people_create(b, function (err, user) {
+
+                if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                // send user verification email
+                mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
+                    if (err) return self.router.sendJson(res, null, err.message);
+
+                    return self.router.sendJson(res);
+                });
+
+                return self.router.sendJson(res, null, err);
+            });
         });
     },
 

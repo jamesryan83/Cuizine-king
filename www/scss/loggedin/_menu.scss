@@ -11,15 +11,66 @@
 
 
     #main-menu-list {
-        height: calc(100% - #{$loggedInHeaderHeight});
+        height: calc(100% - #{$loggedInNavbarHeight} - #{$loggedInHeaderHeight});
     }
 
 
-    #dialog-menu-item {
+    // Common popup
+    .popup {
+        padding: 10px;
+        overflow-y: scroll;
         position: absolute;
-        right: 0;
+        right: -360px;
         top: 0;
+        z-index: 10000;
+        width: 360px;
         height: 100%;
+        background-color: $colorGray13;
+        transition: right 0.2s;
+        border-left: 1px solid $colorBlue3;
+
+        &.active {
+            right: 0;
+        }
+
+        // header
+        .popup-header {
+            height: 30px;
+
+            h3 {
+                display: inline-block;
+                color: $colorBlue2;
+            }
+
+            > div {
+                float: right;
+            }
+        }
+
+        // content
+        .popup-content {
+            .label-input {
+                width: 100%;
+
+                label {
+                    display: block;
+                    width: auto;
+                }
+            }
+
+            .popup-content-checkboxes {
+                display: inline-block;
+                padding-left: 20px;
+
+                > div {
+                    float: left;
+                    width: 50%;
+                }
+            }
+        }
     }
+
+
+
 
 }

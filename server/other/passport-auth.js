@@ -71,7 +71,7 @@ exports = module.exports = {
     // called from #login in auth api
     authenticate: function (req, res, next) {
         var self = this;
-        if (req.isAuthenticated()) return next();
+        if (req.isAuthenticated()) return next(); // continue if already authenticated
 
         passport.authenticate("local", function (err, user) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
@@ -122,7 +122,7 @@ exports = module.exports = {
             allowPendingUsers = false;
         }
 
-        appDB.get({ email: email }, function (err, user) {
+        appDB.people_get({ email: email }, function (err, user) {
             if (err) return callback(err);
 
             // user must be in actual table to login

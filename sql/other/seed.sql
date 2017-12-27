@@ -27,34 +27,7 @@ BEGIN TRANSACTION
     INSERT INTO App.order_types (name) VALUES ("Dine In")
     INSERT INTO App.order_types (name) VALUES ("Take Away")
 
-
-    -- create address types
-    --INSERT INTO address_types (name) VALUES ('user')
-    --INSERT INTO address_types (name) VALUES ('store')
-    --INSERT INTO address_types (name) VALUES ('store')
-
-
-	-- create pending users
-	--EXEC users_pending_add 'test1', 'mctest', 'test@mctest.com', @password, 0, @verificationToken
-
-
-	-- create actual users
-	--INSERT INTO Auth.users (first_name, last_name, email, password, type, image) VALUES ('atest', 'mcatest', 'test@mcatest.com', @password, 0, @image)
-
-
-	-- add special logins
-	--INSERT INTO Auth.users (first_name, last_name, email, password, type, image)
-		--VALUES ('James', 'Adminaut', 'james4165@hotmail.com', @password, 0, @image)
-
-
-	---- Create companies
-	--INSERT INTO Store.companies (name) VALUES ('store1')
-	--INSERT INTO Auth.users_companies (id_user, id_store, is_owner) VALUES (1, 1, 1)
-
-
-	---- add special companies
-	--INSERT INTO Store.companies (name) VALUES ('store1')
-	--INSERT INTO Auth.users_companies (id_user, id_store, is_owner) VALUES (1, 1, 1)
+    -- TODO : users, user stores
 
 COMMIT
 

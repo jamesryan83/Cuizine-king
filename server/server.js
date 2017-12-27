@@ -1,6 +1,6 @@
 "use strict";
 
-Error.stackTraceLimit = 10; // node.js stacktrace line count
+Error.stackTraceLimit = 20; // node.js stacktrace line count
 
 global.serverInstance = undefined;
 global.isShuttingDown = false;
@@ -55,9 +55,7 @@ var server = express();
 
 
 // After the database has connected
-// Be careful with the order of server.use() calls
 function onDatabaseConnected() {
-
 
     // security settings
     // https://helmetjs.github.io/docs/
@@ -94,12 +92,12 @@ function onDatabaseConnected() {
         if (req.url == "/") {
             return router.renderPage(req, res);
         }
-
         next();
     });
     server.use("/", express.static(path.join(__dirname, "../", "www"), {
         maxAge: global.devMode ? 30 : 300000
     }));
+    server.use(express.static(path.join(__dirname, "../", "fakedata")));
 
 
     // Passport, mail, router
@@ -178,5 +176,6 @@ sessionStore.once("error", shutdown);
 process.once("uncaughtException", shutdown);
 process.once("SIGTERM", shutdown);
 process.once("SIGINT", shutdown);
+
 
 exports = module.exports = server;

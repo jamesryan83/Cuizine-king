@@ -170,11 +170,9 @@ app.util = {
                 return callback(null, result);
             },
             error: function (err) {
-                console.log(err);
-
                 if (err) {
                     if (err.responseJSON && err.responseJSON.err) {
-                        self.showToast(err.responseJSON.err.message, 4000);
+                        self.showToast(err.responseJSON.err, 4000);
                     } else {
                         self.showToast("Server Error", 4000);
                     }

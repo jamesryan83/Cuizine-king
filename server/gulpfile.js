@@ -21,9 +21,9 @@ gulp.task("default", function () {
     gulp.watch(path.join(__dirname, "../", "www", "html", "**", "*.html"), ["html"]);
     gulp.watch(scssInputsPath, ["scss"]);
     gulp.watch(path.join(__dirname, "../", "www", "js", "**", "*.js"), ["js"]);
-    gulp.watch(path.join(__dirname, "sql", "other", "**", "*.sql"), ["sql", "sqljs"]);
-    gulp.watch(path.join(__dirname, "sql", "procedures", "**", "*.sql"), ["sql", "sqljs"]);
-    gulp.watch(path.join(__dirname, "sql", "tables", "**", "*.sql"), ["sql", "sqljs"]);
+    gulp.watch(path.join(__dirname, "../", "sql", "other", "**", "*.sql"), ["sql", "sqljs"]);
+    gulp.watch(path.join(__dirname, "../", "sql", "procedures", "**", "*.sql"), ["sql", "sqljs"]);
+    gulp.watch(path.join(__dirname, "../", "sql", "tables", "**", "*.sql"), ["sql", "sqljs"]);
 });
 
 

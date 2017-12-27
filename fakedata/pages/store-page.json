@@ -1,0 +1,112 @@
+{
+    "id_store": 1,
+    "name": "ChopChop",
+    "description": "Chop Chop Chinese Home Delivery is one of the oldest and most respected home delivery businesses in Brisbane specialising in delivering freshly cooked Chinese, Noodles and Sushi meals.  ChopChop boasts one of the best equipped kitchens in town and can cater to every occasion",
+    "address": "123 Fake st Balmoral 4171",
+    "phone_number": "3854 2912",
+    "email": "james4165@hotmail.com",
+    "logo": "/res/20.jpg",
+    "disclaimer": "*10% Surcharge applies on Sundays. 15% surcharge applies on Public Holidays. 5% surcharge applies after 10pm in Brisbane andsurrounding suburbs. $2 surcharge applies for each additional topping & half ‘n’ half pizzas. $2.95 surcharge applies for \"Cheesy Crust\", \"The Edge\", \"Gluten Free\" Pizzas. No half ‘n’ half or substitute toppings allowed on the Value Range. Premium Pizzas $2.95 more than Traditional Range. **Pepperoni is made from pork and beef blend. Minimum order amount for delivery $22. Prices for delivery higher than pick-up and varies by store. Drivers only carry $20 in change. All offers not valid with any other coupon or offer. Only available at selected stores. Prices include GST. DOMINO’S, the Tile Device, the slogan PEOPLE, POWERED, PIZZA are trademarks or registered trademarks of Domino’s IP Holder LLC in Australia. kJ information based on Pizza made on Classic Crust. The average adult daily energy intake is 8700kJ",
+    "reviews": {
+        "rating": 4.5,
+        "review_count": 120
+    },
+    "hours": {
+        "dinein": {
+            "mon": "8am to 8pm",
+            "tue": "8am to 10pm",
+            "wed": "8am to 10pm",
+            "thu": "8am to 10pm",
+            "fri": "8am to 10pm",
+            "sat": "10am to 6pm",
+            "sun": "Closed"
+        },
+        "delivery": {
+            "mon": "8am to 10pm",
+            "tue": "8am to 12am",
+            "wed": "8am to 12am",
+            "thu": "8am to 12am",
+            "fri": "8am to 12am",
+            "sat": "10am to 6pm",
+            "sun": "Closed"
+        }
+    },
+    "products": {
+        "categories": [{
+            "name": "Pizza",
+            "items": [{
+                "title": "Ham and Cheese",
+                "description": "Ham, cheese and tomato sauce",
+                "delivery": true,
+                "gluten_free": false,
+                "vegetarian": false
+            },{
+                "title": "Pepperoni",
+                "description": "Ham, onion, capsicum and pepperoni",
+                "delivery": true,
+                "gluten_free": false,
+                "vegetarian": false
+            },{
+                "title": "Supreme",
+                "description": "Ham, onion, pepperoni, capsicum, bacon, olives, mushroom and anchovies",
+                "delivery": false,
+                "gluten_free": true,
+                "vegetarian": false
+            },{
+                "title": "Vegetarian",
+                "description": "Onion, capsicum, olives, pineapple and mushroom",
+                "delivery": true,
+                "gluten_free": true,
+                "vegetarian": true
+            }]
+        },{
+            "name": "Burgers",
+            "items": [{
+                "title": "Cheese Burger",
+                "description": "Char grilled beef patties, tasty cheese, tomato ketchup and spanish onions",
+                "delivery": true,
+                "gluten_free": false,
+                "vegetarian": false
+            },{
+                "title": "Beef BLT Burger",
+                "description": "Char grilled beef patties, crispy bacon, fresh lettuce, ripe tomato and house made tomato relish",
+                "delivery": true,
+                "gluten_free": true,
+                "vegetarian": false
+            },{
+                "title": "Our Classic Burger",
+                "description": "Char grilled beef patties, spanish onions, beetroot, lettuce, our own herb mayo, tasty cheese",
+                "delivery": false,
+                "gluten_free": true,
+                "vegetarian": false
+            }]
+        },{
+            "name": "Pasta",
+            "items": [{
+                "title": "Chicken Pesto",
+                "description": "Creamy pesto sauce, chicken breast medallions, semi dried tomatos, and pine nuts with tagliatelle",
+                "delivery": true,
+                "gluten_free": false,
+                "vegetarian": false
+            },{
+                "title": "Carbonara Fettuccine",
+                "description": "Double smoked bacon and onion, cooked in a creamy garlic and parmesan sauce topped with crispy pancetta",
+                "delivery": true,
+                "gluten_free": true,
+                "vegetarian": false
+            },{
+                "title": "Napoli",
+                "description": "Garlic, onions, capers and black olices, in a herby tomato sauce",
+                "delivery": true,
+                "gluten_free": true,
+                "vegetarian": true
+            },{
+                "title": "Portobello Mushroom and Sage",
+                "description": "In a creamy sauce with fettuccine",
+                "delivery": false,
+                "gluten_free": true,
+                "vegetarian": true
+            }]
+        }]
+    }
+}

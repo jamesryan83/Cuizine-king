@@ -1,5 +1,16 @@
 "use strict";
 
+/*
+    This takes in the zomato api restaurant data and creates a file
+    with all the restaruant data as a csv (with pipes as the delimiter, so a psv i guess)
+
+    input files
+    - files in fakedata/stores/data folder.  These are restaurant data from the zomato api
+
+    output files
+    - addresses.txt
+*/
+
 var fs = require("fs");
 
 var output = [];

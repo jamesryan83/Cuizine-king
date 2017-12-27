@@ -1,11 +1,25 @@
 "use strict";
 
+/*
+    the code takes several locations (mainLocations) and finds all the postcodes
+    within a given radius (locationsWithinKm)
+
+    input files
+    - all_postcodes.csv - all the postcodes, this is the input, found it on a website and cleaned it up a bit
+
+    output files
+    - _postcodes.csv - all postcodes filterd by mainLocations, also used in fakedata/stores
+    - _postcodes.json - _postcodes.csv as json for the location api
+    - _seed-postcodes.sql - for inserting into the database, same data as all_postcodes.csv.  Output into the sql folder
+*/
+
 var fs = require("fs");
 var os = require("os");
 var config = require("../../server/config");
 
 
 var locationsWithinKm = 15;
+
 
 // George said do these locations first
 var mainLocations = [{
@@ -36,8 +50,8 @@ var mainLocations = [{
 }];
 
 
-var postcodes = fs.readFileSync("./all_postcodes.csv", "utf-8");
-postcodes = postcodes.split(os.EOL);
+var allPostcodes = fs.readFileSync("./all_postcodes.csv", "utf-8");
+allPostcodes = allPostcodes.split(os.EOL);
 
 
 
@@ -57,12 +71,12 @@ var outputLocations = [];
 
 // get list of outputLocations
 for (var i = 0; i < mainLocations.length; i++) {
-    for (var j = 1; j < postcodes.length; j++) {
-        var pc = postcodes[j].split(",");
+    for (var j = 1; j < allPostcodes.length; j++) {
+        var pc = allPostcodes[j].split(",");
 
         if (isLocationWithinDistance({ lat: Number(pc[3]), long: Number(pc[4]) }, mainLocations[i])) {
-            if (outputLocations.indexOf(postcodes[j]) === -1) {
-                outputLocations.push(postcodes[j]);
+            if (outputLocations.indexOf(allPostcodes[j]) === -1) {
+                outputLocations.push(allPostcodes[j]);
             }
         }
     }

@@ -22,68 +22,68 @@ exports = module.exports = {
     },
 
 
-    // Register
-    register: function (req, res) {
-        var self = this;
-        var b = req.body;
-        var isRegisterStore = false;
-
-        if (req.url.indexOf("/register-store") !== -1) {
-            isRegisterStore = true;
-
-            if (this.router.validateInputs(req, res, b, global.validationRules.registerStore))
-                return;
-        } else {
-            if (this.router.validateInputs(req, res, b, global.validationRules.register))
-                return;
-        }
-
-
-        // create tokens
-        this.createRegistrationTokens(b.password, function (err, tokens) {
-            if (err) return self.router.sendJson(res, null, err.message);
-
-            if (isRegisterStore) {
-                // save store to db
-                appDB.pending_add({
-                    first_name: b.first_name,
-                    last_name: b.last_name,
-                    email: b.email,
-                    password: tokens.password,
-                    type: 0, // TODO : type
-                    verification_token: tokens.verification
-                }, function (err) {
-                    if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-                    // send user validation email
-                    mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
-                        if (err) return self.router.sendJson(res, null, err.message);
-
-                        return self.router.sendJson(res);
-                    });
-                });
-            } else {
-                // save user to db
-                appDB.pending_add({
-                    first_name: b.first_name,
-                    last_name: b.last_name,
-                    email: b.email,
-                    password: tokens.password,
-                    type: 0, // TODO : type
-                    verification_token: tokens.verification
-                }, function (err) {
-                    if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-                    // send user validation email
-                    mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
-                        if (err) return self.router.sendJson(res, null, err.message);
-
-                        return self.router.sendJson(res);
-                    });
-                });
-            }
-        });
-    },
+//    // Register
+//    register: function (req, res) {
+//        var self = this;
+//        var b = req.body;
+//        var isRegisterStore = false;
+//
+//        if (req.url.indexOf("/register-store") !== -1) {
+//            isRegisterStore = true;
+//
+//            if (this.router.validateInputs(req, res, b, global.validationRules.registerStore))
+//                return;
+//        } else {
+//            if (this.router.validateInputs(req, res, b, global.validationRules.register))
+//                return;
+//        }
+//
+//
+//        // create tokens
+//        this.createRegistrationTokens(b.password, function (err, tokens) {
+//            if (err) return self.router.sendJson(res, null, err.message);
+//
+//            if (isRegisterStore) {
+//                // save store to db
+//                appDB.pending_add({
+//                    first_name: b.first_name,
+//                    last_name: b.last_name,
+//                    email: b.email,
+//                    password: tokens.password,
+//                    type: 0, // TODO : type
+//                    verification_token: tokens.verification
+//                }, function (err) {
+//                    if (err) return self.router.sendJson(res, null, err.message, err.status);
+//
+//                    // send user validation email
+//                    mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
+//                        if (err) return self.router.sendJson(res, null, err.message);
+//
+//                        return self.router.sendJson(res);
+//                    });
+//                });
+//            } else {
+//                // save user to db
+//                appDB.pending_add({
+//                    first_name: b.first_name,
+//                    last_name: b.last_name,
+//                    email: b.email,
+//                    password: tokens.password,
+//                    type: 0, // TODO : type
+//                    verification_token: tokens.verification
+//                }, function (err) {
+//                    if (err) return self.router.sendJson(res, null, err.message, err.status);
+//
+//                    // send user validation email
+//                    mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
+//                        if (err) return self.router.sendJson(res, null, err.message);
+//
+//                        return self.router.sendJson(res);
+//                    });
+//                });
+//            }
+//        });
+//    },
 
 
 
@@ -105,7 +105,6 @@ exports = module.exports = {
             });
         });
     },
-
 
 
     // Login and verify a user (move them to actual users table from pending)

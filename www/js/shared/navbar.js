@@ -35,7 +35,7 @@ app.navbar = {
         });
 
 
-        // Debug
+        // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
                 window.location.href = "/sysadmin";

@@ -10,9 +10,9 @@ var Mocha = require('mocha');
 var mocha = new Mocha({ bail: true });
 
 
-//mocha.addFile(path.join(__dirname, "database", "database.js"));
-//mocha.addFile(path.join(__dirname, "database", "procedures", "people.js"));
-//mocha.addFile(path.join(__dirname, "database", "procedures", "stores.js"));
+mocha.addFile(path.join(__dirname, "database", "database.js"));
+mocha.addFile(path.join(__dirname, "database", "procedures", "people.js"));
+mocha.addFile(path.join(__dirname, "database", "procedures", "stores.js"));
 
 //mocha.addFile(path.join(__dirname, "routes", "router.js"));
 //mocha.addFile(path.join(__dirname, "routes", "pages.js"));

@@ -6,6 +6,8 @@ CREATE TABLE Product.products
 	description NVARCHAR(256),
     store_notes NVARCHAR(256),
     delivery_available BIT NOT NULL DEFAULT 1,
+    gluten_free BIT NOT NULL DEFAULT 0,
+    vegetarian BIT NOT NULL DEFAULT 0,
     in_stock BIT NOT NULL DEFAULT 1,
     active BIT NOT NULL DEFAULT 1,
     position_id_previous INT,

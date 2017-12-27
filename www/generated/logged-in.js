@@ -95,22 +95,22 @@ app.main.business = {
         });
 
 
-        // Get account data
-        app.util.ajaxRequest("GET", "api/v1/me", { auth: true }, function (err, result) {
-            if (err) return;
-
-            // add data to ui
-            for (var propName in result) {
-                var el = $("[name='" + propName + "']");
-                if (el.prop("nodeName") === "INPUT") {
-                    $(el).val(result[propName]);
-                } else if (el.prop("nodeName") === "IMG") {
-                    $(el).attr("src", result[propName]);
-                } else {
-                    $(el).text(result[propName]);
-                }
-            }
-        });
+//        // Get account data
+//        app.util.ajaxRequest("GET", "api/v1/me", { auth: true }, function (err, result) {
+//            if (err) return;
+//
+//            // add data to ui
+//            for (var propName in result) {
+//                var el = $("[name='" + propName + "']");
+//                if (el.prop("nodeName") === "INPUT") {
+//                    $(el).val(result[propName]);
+//                } else if (el.prop("nodeName") === "IMG") {
+//                    $(el).attr("src", result[propName]);
+//                } else {
+//                    $(el).text(result[propName]);
+//                }
+//            }
+//        });
     },
 
 }
@@ -148,8 +148,24 @@ app.main = app.main || {};
 // Menu page
 app.main.menu = {
 
+
+
     init: function () {
         var self = this;
+
+        var editMenuPopup = $("#popup-edit-menu-item");
+
+        $("#main-menu-edit").on("click", function () {
+            editMenuPopup.addClass("active")
+        });
+
+        $("#main-menu-edit-cancel").on("click", function () {
+            editMenuPopup.removeClass("active");
+        });
+
+        $("#main-menu-edit-save").on("click", function () {
+            editMenuPopup.removeClass("active");
+        });
     },
 
 }
@@ -650,7 +666,7 @@ app.navbar = {
         });
 
 
-        // Debug
+        // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
                 window.location.href = "/sysadmin";
@@ -685,6 +701,107 @@ app.navbar = {
         }
     }
 
+
+}
+
+
+
+app.RatingControl = function () {
+
+//    // Returns the current rating value from a rating control
+//    getRatingControlValue: function (formEl) {
+//        return $(formEl + " .rating-control-star.active").length;
+//    },
+//
+//
+//
+//    // update current user rating controls
+//    updateRatingControls: function (ratings) {
+//        for (var i = 0; i < ratings.length; i++) {
+//            if (ratings[i].id_review) {
+//                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
+//
+//                for (var j = 0; j < ratings[i].rating; j++) {
+//                    ratingControl.children().eq(j).addClass("active");
+//                }
+//            }
+//        }
+//    },
+//
+//
+//    // Adds click events to all the rating controls
+//    // bit easier to do it this way when there's not many reviews
+//    recreateRatingControlEvents: function () {
+//        var self = this;
+//        $(".rating-control-star").off();
+//        $(".rating-control-star").unbind();
+//
+//
+//        // has the user used this star control before
+//        var isUnused = false;
+//
+//
+//        // Rating control star clicked
+//        $(".rating-control-star").on("click", function () {
+//            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
+//                isUnused = true;
+//            }
+//
+//            $(this).removeClass("active");
+//            $(this).siblings().removeClass("active");
+//            $(this).addClass("active");
+//            $(this).prevAll().addClass("active");
+//        });
+//
+//
+//        // User rating control
+//        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
+//            this.allowUserStarUpdate = false;
+//
+//            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
+//                isUnused = true;
+//            }
+//
+//            var star = this;
+//
+//            // let other click event finish first
+//            setTimeout(function () {
+//                var parent = $(star).closest(".review-item");
+//                var title = parent.find(".review-item-title").first().text();
+//                var id_review = parent.data("id");
+//                var rating = ($(star).hasClass("active") ? 1 : 0) +
+//                    $(star).siblings(".active").length;
+//
+//                // send rating to server
+//                app.network.updateUserRating(id_review, rating, function (avg_rating) {
+//                    self.allowUserStarUpdate = true;
+//
+//                    if (avg_rating) {
+//
+//                        // update the OTHERS label if this is the first time the user has voted
+//                        if (isUnused) {
+//                            isUnused = false;
+//                            var votesEl = parent.find(".review-item-votes-others");
+//                            var currentVotes = votesEl.data("id");
+//                            votesEl.data("id", currentVotes + 1);
+//                            votesEl.text("OTHERS: (" + (currentVotes + 1) + ")");
+//                        }
+//
+//                        // update the others stars
+//                        var reviewRatingControl = parent.find(".rating-control-stars.inactive").first();
+//                        reviewRatingControl.children().removeClass("active");
+//                        for (var j = 0; j < avg_rating; j++) {
+//                            reviewRatingControl.children().eq(j).addClass("active");
+//                        }
+//
+//                        app.util.showToast("Updated rating for " + title, true);
+//                    }
+//                });
+//            }, 100);
+//
+//        });
+//
+//    },
 
 }
 
@@ -1055,11 +1172,9 @@ app.util = {
                 return callback(null, result);
             },
             error: function (err) {
-                console.log(err);
-
                 if (err) {
                     if (err.responseJSON && err.responseJSON.err) {
-                        self.showToast(err.responseJSON.err.message, 4000);
+                        self.showToast(err.responseJSON.err, 4000);
                     } else {
                         self.showToast("Server Error", 4000);
                     }

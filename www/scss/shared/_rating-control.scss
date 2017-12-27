@@ -1,0 +1,65 @@
+
+
+// 5 stars rating control
+.rating-control {
+    display: inline-block;
+    list-style: none;
+    vertical-align: middle;
+    cursor: pointer;
+    height: 25px;
+
+
+    // genering stars control
+    li {
+        display: inline-block;
+        cursor: pointer;
+
+        @include svgicon(20px, 20px, 15px, 15px,
+            url(../../res/svg/icon-star-inactive.svg),
+            url(../../res/svg/icon-star-hover.svg));
+
+        &.small {
+            @include svgicon(15px, 15px, 12px, 12px,
+                url(../../res/svg/icon-star-inactive.svg),
+                url(../../res/svg/icon-star-hover.svg));
+        }
+
+        &.active {
+            background-image: url(../../res/svg/icon-star-active.svg);
+
+            &:hover {
+                background-image: url(../../res/svg/icon-star-hover.svg);
+            }
+        }
+    }
+
+    // review average vote stars
+    &.inactive {
+        cursor: default;
+
+        li {
+            pointer-events: none;
+
+            &.active {
+                cursor: default;
+            }
+        }
+    }
+
+    // user voting stars
+    &.user {
+        li {
+             @include svgicon(15px, 15px, 12px, 12px,
+                url(../../res/svg/icon-star-inactive.svg),
+                url(../../res/svg/icon-star-2-hover.svg));
+
+            &.active {
+                background-image: url(../../res/svg/icon-star-2-active.svg);
+
+                &:hover {
+                    background-image: url(../../res/svg/icon-star-2-hover.svg);
+                }
+            }
+        }
+    }
+}

@@ -108,7 +108,7 @@ exports = module.exports = {
         router.post("/api/v1/login", authApi.login.bind(authApi));
         router.get("/api/v1/logout", authApi.logout.bind(authApi));
         router.post("/api/v1/register", peopleApi.create.bind(peopleApi));
-        router.post("/api/v1/register-store", authApi.register.bind(authApi));
+        router.post("/api/v1/register-store", storesApi.create.bind(storesApi));
         router.post("/api/v1/token", authApi.createJwt.bind(authApi)); // returns a new jwt from a user email
         router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi));
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
@@ -170,7 +170,6 @@ exports = module.exports = {
 
         // TODO : these should be handled elsewhere
         if (route.indexOf("\/store\/") !== -1) {
-            console.log("hehheh")
             if (!req.params || !req.params.id) {
                 return this.redirectToErrorPage(
                     req, res, 400, "Store id missing", route);

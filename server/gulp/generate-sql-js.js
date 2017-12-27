@@ -14,7 +14,7 @@ exports = module.exports = {
         var regexProcedure = /(\s*)CREATE PROCEDURE(\s*)(.*)/mi;
         var regexProcedureInput = /(\s*)@(\w*)(\s*)(\w*)\(?(\w*)\)?/mi;
 
-        var sqlPath = path.join(__dirname, "../", "sql");
+        var sqlPath = path.join(__dirname, "../", "../", "sql");
         var sqlProceduresOutputPath = path.join(__dirname, "../", "database", "procedures");
 
 

@@ -1,4 +1,4 @@
-USE menuthingTest
+USE menuthing
 
 SET NOCOUNT ON
 SET XACT_ABORT ON

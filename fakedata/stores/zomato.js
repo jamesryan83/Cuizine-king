@@ -1,14 +1,26 @@
 "use strict";
 
+/*
+    This takes in the filtered postcodes file and requests the restaurant data
+    for each location using the zomato api
+
+    Run the fakedata/postcodes/postcodes.js file first if needed
+    The latest bunch of locations are in the zip file in the data folder
+
+
+    input files
+    - _postcodes.json - the filtered postcodes list (TODO : change to postcodes.csv, json one is temporary for the suburb typeahead)
+
+    output files
+    - the files in the fakedata/stores/data folder - this is all the zomato api data.  it's zipped when it's not in use
+*/
+
+
 var fs = require("fs");
 
 var request = require("request");
 var postcodes = require("../postcodes/_postcodes.json");
 
-
-// NOTES
-// The latest bunch of locations are in the zip file in the data folder
-// Run the /data/postcodes/postcodes.js file first if needed
 
 
 // find unique latitude/longitudes in postcodes array

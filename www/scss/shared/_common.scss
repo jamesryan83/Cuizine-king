@@ -459,6 +459,7 @@ input::-ms-clear {
 #page-container {
     min-height: 100%;
     background: #000115;
+    // Too much gradient banding
 //    background: linear-gradient(to bottom, rgb(0, 1, 4) 0%, rgb(0, 1, 10) 33%, rgb(0, 1, 15) 66%, rgb(0, 0, 13) 100%);
 
     background-repeat: no-repeat;

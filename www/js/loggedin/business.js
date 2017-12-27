@@ -41,22 +41,22 @@ app.main.business = {
         });
 
 
-        // Get account data
-        app.util.ajaxRequest("GET", "api/v1/me", { auth: true }, function (err, result) {
-            if (err) return;
-
-            // add data to ui
-            for (var propName in result) {
-                var el = $("[name='" + propName + "']");
-                if (el.prop("nodeName") === "INPUT") {
-                    $(el).val(result[propName]);
-                } else if (el.prop("nodeName") === "IMG") {
-                    $(el).attr("src", result[propName]);
-                } else {
-                    $(el).text(result[propName]);
-                }
-            }
-        });
+//        // Get account data
+//        app.util.ajaxRequest("GET", "api/v1/me", { auth: true }, function (err, result) {
+//            if (err) return;
+//
+//            // add data to ui
+//            for (var propName in result) {
+//                var el = $("[name='" + propName + "']");
+//                if (el.prop("nodeName") === "INPUT") {
+//                    $(el).val(result[propName]);
+//                } else if (el.prop("nodeName") === "IMG") {
+//                    $(el).attr("src", result[propName]);
+//                } else {
+//                    $(el).text(result[propName]);
+//                }
+//            }
+//        });
     },
 
 }

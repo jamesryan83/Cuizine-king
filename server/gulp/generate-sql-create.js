@@ -17,7 +17,7 @@ exports = module.exports = {
 
 
         // output filepaths
-        var sqlPath = path.join(__dirname, "../", "sql");
+        var sqlPath = path.join(__dirname, "../", "../", "sql");
         var sqlPathTests = path.join(__dirname, "../", "../", "tests", "sql");
 
 
