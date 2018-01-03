@@ -1,0 +1,44 @@
+// Business hours popup
+#dialog-store-hours.dialog {
+    height: 340px;
+    width: auto;
+
+    h3 {
+        margin-bottom: 10px;
+        padding-top: 3px;
+    }
+
+    div:not(#dialog-store-hours-close) {
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    label {
+        width: 180px;
+        text-align: center;
+        font-weight: bold;
+        height: 20px;
+        line-height: 20px;
+        display: inline-block;
+    }
+
+    #dialog-store-hours-left, #dialog-store-hours-right {
+        float: left;
+        width: 180px;
+        list-style: none;
+        padding: 5px 14px;
+        display: inline-block;
+
+        li {
+            padding: 5px;
+
+            span {
+                width: 40px;
+                font-weight: bold;
+                display: inline-block;
+            }
+        }
+    }
+
+
+}

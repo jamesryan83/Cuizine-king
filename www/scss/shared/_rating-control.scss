@@ -15,12 +15,12 @@
         cursor: pointer;
 
         @include svgicon(20px, 20px, 15px, 15px,
-            url(../../res/svg/icon-star-inactive.svg),
+            url(../../res/svg/icon-star.svg),
             url(../../res/svg/icon-star-hover.svg));
 
         &.small {
             @include svgicon(15px, 15px, 12px, 12px,
-                url(../../res/svg/icon-star-inactive.svg),
+                url(../../res/svg/icon-star.svg),
                 url(../../res/svg/icon-star-hover.svg));
         }
 
@@ -50,16 +50,49 @@
     &.user {
         li {
              @include svgicon(15px, 15px, 12px, 12px,
-                url(../../res/svg/icon-star-inactive.svg),
-                url(../../res/svg/icon-star-2-hover.svg));
+                url(../../res/svg/icon-star.svg),
+                url(../../res/svg/icon-star-hover.svg));
 
             &.active {
-                background-image: url(../../res/svg/icon-star-2-active.svg);
+                background-image: url(../../res/svg/icon-star-active.svg);
 
                 &:hover {
-                    background-image: url(../../res/svg/icon-star-2-hover.svg);
+                    background-image: url(../../res/svg/icon-star-hover.svg);
                 }
             }
         }
+    }
+}
+
+
+// TODO : merge with above
+// 5 star review thing
+.rating-control-static {
+    background-color: rgba(0, 0, 0, 0.9);
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 25px;
+    padding: 0 5px;
+
+    > div {
+        display: inline-block;
+        vertical-align: top;
+
+        @include svgicon(15px, 25px, 12px, 12px,
+            url(../res/svg/icon-star.svg));
+
+        &.active {
+            @include svgicon(15px, 25px, 12px, 12px,
+                url(../res/svg/icon-star-active.svg));
+        }
+    }
+
+    > label {
+        padding: 0 5px;
+        font-size: 16px;
+        height: 25px;
+        line-height: 25px;
+        pointer-events: none;
     }
 }

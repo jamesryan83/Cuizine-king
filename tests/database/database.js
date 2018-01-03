@@ -8,6 +8,33 @@ var database = require("../../server/database/database");
 var resultHandler = require("../../server/database/result-handler");
 
 
+var mssqlTestError = {
+    "code": "EREQUEST",
+    "number": 201,
+    "lineNumber": 0,
+    "state": 4,
+    "class": 16,
+    "serverName": "JAMES-LAPTOP\\SQLEXPRESS",
+    "procName": "users_pending_add",
+    "originalError": {
+        "info": {
+            "number": 201,
+            "state": 4,
+            "class": 16,
+            "message": "Test error",
+            "serverName": "JAMES-LAPTOP\\SQLEXPRESS",
+            "procName": "users_pending_add",
+            "lineNumber": 0,
+            "name": "ERROR",
+            "event": "errorMessage"
+        }
+    },
+    "name": "RequestError",
+    "precedingErrors": []
+};
+
+
+
 
 describe("DATABASE", function () {
 
@@ -123,14 +150,67 @@ describe("DATABASE", function () {
     });
 
 
-    it.skip("#getErrorMessage returns error message", function (done) {
-
+    // result handler
+    it("#handle handles null err and result", function (done) {
+        resultHandler.handle("test2", null, null, function (err) {
+            if (err) return done(new Error(err));
+            done();
+        });
     });
 
 
-    // result handler
-    it.skip("#handle handles an sql result", function (done) {
+    it("#handle handles empty record set result error", function (done) {
+        var result = { recordset: [] };
 
+        resultHandler.handle("test", null, result, function (err, output) {
+            assert.ok(err.message.length > 0 && err.status > 0);
+            done();
+        });
+    });
+
+
+    it("#handle handles empty record set result", function (done) {
+        var result = { recordset: [] };
+
+        resultHandler.handle("test2", null, result, function (err, output) {
+            if (err) return done(new Error(err));
+
+            assert.ok(output == undefined);
+            done();
+        });
+    });
+
+
+    it("#handle handles record set result", function (done) {
+        var result = { recordset: [{ data: "test" }] };
+
+        resultHandler.handle("test", null, result, function (err, output) {
+            if (err) return done(new Error(err));
+
+            assert.equal(output.data, "test");
+            done();
+        });
+    });
+
+
+    it("#handle handles error withotut originalError", function (done) {
+        var error = {}
+
+        resultHandler.handle(null, error, null, function (err) {
+            assert.equal(err.message, "Server Error");
+            assert.equal(err.status, 500);
+            done();
+        });
+    });
+
+
+    it("#handle handles error", function (done) {
+        var error = JSON.parse(JSON.stringify(mssqlTestError));
+
+        resultHandler.handle(null, error, null, function (err) {
+            assert.equal(err.message, "Test error");
+            done();
+        });
     });
 
 

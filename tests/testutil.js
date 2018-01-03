@@ -10,7 +10,7 @@ var config = require("../server/config");
 var database = require("../server/database/database");
 
 var sqlCwd = path.join(__dirname, "sql");
-var sqlOtherCwd = path.join(__dirname, "../", "server", "sql", "other");
+var sqlOtherCwd = path.join(__dirname, "../", "sql", "other");
 
 var regexValidHtml = /(\s*)<!DOCTYPE html>(\s*)<html>(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi;
 
@@ -90,8 +90,8 @@ exports = module.exports = {
             withSeedData = false;
         }
 
-        database.runSqlScriptSync(sqlCwd + "\\_recreate.sql", sqlCwd);
-//        if (withSeedData) database.runSqlScriptSync(sqlOtherCwd + "\\seed.sql", sqlOtherCwd);
+        database.runSqlScriptSync(sqlCwd + "\\_recreate.sql");
+//        if (withSeedData) database.runSqlScriptSync(sqlOtherCwd + "\\seed.sql");
 
         if (database.isConnected) {
             return callback();

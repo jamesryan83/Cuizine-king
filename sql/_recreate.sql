@@ -142,6 +142,7 @@ DROP PROCEDURE IF EXISTS people_create
 DROP PROCEDURE IF EXISTS people_get
 DROP PROCEDURE IF EXISTS stores_create
 DROP PROCEDURE IF EXISTS stores_delete
+DROP PROCEDURE IF EXISTS stores_get
 GO
 
 
@@ -691,4 +692,26 @@ CREATE PROCEDURE stores_delete
 
     UPDATE Store.stores SET is_deleted = 1, updated_by = @id_user_doing_update
         WHERE id_store = @id_store
+GO
+
+
+-- Get a store
+CREATE PROCEDURE stores_get
+    @id_store INT AS
+
+	SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    DECLARE @id_postcode INT
+    DECLARE @newAddressId INT
+    DECLARE @newPersonId INT
+    DECLARE @newStoreId INT
+
+
+    BEGIN TRANSACTION
+
+        SELECT * FROM Store.stores WHERE id_store = @id_store
+
+    COMMIT
+
 GO

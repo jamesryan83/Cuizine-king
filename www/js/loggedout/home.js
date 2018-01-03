@@ -17,11 +17,6 @@ app.home = {
         });
 
 
-        $("#navbar-icon").on("click", function () {
-            window.location.href = "/location/Balmoral-4171";
-        });
-
-
         // TODO: get users lat long
 //        // Get users location
 //        app.util.getUserLatLong(function (result) {
@@ -29,6 +24,9 @@ app.home = {
 //                console.log(result)
 //            }
 //        });
+
+
+
     },
 
 }

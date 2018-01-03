@@ -1,0 +1,19 @@
+
+// Store description dialog
+#dialog-store-description.dialog {
+    height: auto;
+
+    h3:first-of-type {
+        color: $colorGray1;
+    }
+
+    > div:last-of-type {
+        padding: 10px;
+        color: $colorGray1;
+
+        p {
+            text-align: justify;
+        }
+    }
+
+}

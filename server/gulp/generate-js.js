@@ -16,9 +16,11 @@ exports = module.exports = {
         var jsFiles1 = recursiveReadSync(path.join(jsInputsPath, "loggedin"));
         var jsFiles2 = recursiveReadSync(path.join(jsInputsPath, "loggedout"));
         var jsFiles3 = recursiveReadSync(path.join(jsInputsPath, "shared"));
+        var jsFiles4 = recursiveReadSync(path.join(jsInputsPath, "dialogs"));
 
-        var jsLoggedInFiles = jsFiles1.concat(jsFiles3);
-        var jsLoggedOutFiles = jsFiles2.concat(jsFiles3);
+        var jsLoggedInFiles = jsFiles1.concat(jsFiles3).concat(jsFiles4);
+        var jsLoggedOutFiles = jsFiles2.concat(jsFiles3).concat(jsFiles4);
+
 
         // add logged-in/out filepaths to the start
         jsLoggedInFiles.unshift(path.join(jsInputsPath, "logged-in.js"));

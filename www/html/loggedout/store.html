@@ -8,9 +8,10 @@
     <div id="store-header">
         <h1 id="store-header-h1">Welcome to <span id="store-header-name"></span></h1>
 
-        <div class="label-input">
-            <label>Suburb</label>
-            <input class="input-1" id="store-suburb-search" placeholder="enter a suburb..." />
+        <div id="store-suburb-search" class="typeahead">
+            <label>SUBURB</label>
+            <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
+            <ul id="suburb-search-list" class="typeahead-list" style="display: none;"></ul>
         </div>
     </div>
 
@@ -24,33 +25,32 @@
             <div id="store-info-details">
                 <div id="store-info-description-container">
                     <p id="store-info-description"></p>
-                    <a id="store-info-description-more">more...</a>
+                    <label id="store-info-button-description" class="label-link">more...</label>
                 </div>
 
                 <div>
                     <label>Location</label>
                     <label id="store-info-address"></label>
-                    <a href="javascript:void(0)">show on map</a>
                 </div>
 
                 <div>
                     <label>Hours</label>
                     <label id="store-info-hours-is-open">Open Now</label>
                     <label id="store-info-hours-opens-at">Closes at 2am</label>
-                    <a href="javascript:void(0)">show all hours</a>
+                    <label id="store-info-button-hours" class="label-link">show all hours</label>
                 </div>
 
                 <div>
                     <label>Reviews</label>
-                    <ul class="rating-control">
-                        <li class="rating-control-star active"></li>
-                        <li class="rating-control-star active"></li>
-                        <li class="rating-control-star active"></li>
-                        <li class="rating-control-star active"></li>
-                        <li class="rating-control-star active"></li>
+                    <ul id="store-info-rating-control" class="rating-control inactive">
+                        <li class="rating-control-star"></li>
+                        <li class="rating-control-star"></li>
+                        <li class="rating-control-star"></li>
+                        <li class="rating-control-star"></li>
+                        <li class="rating-control-star"></li>
                     </ul>
-                    <label>(120)</label>
-                    <a href="javascript:void(0)">show all reviews</a>
+                    <label id="store-info-review-count"></label>
+                    <label id="store-info-button-reviews" class="label-link">show all reviews</label>
                 </div>
 
                 <div>
@@ -67,86 +67,11 @@
 
     <!-- Menu -->
     <div id="store-menu" class="clearfix">
-        <div id="store-menu-list">
-
-            <div class="store-menu-list-item heading">
-                <h4 class="store-menu-list-item-group-heading">Pizza</h4>
-                <hr class="hr-1" />
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Ham and Cheese</label>
-                    <p>Ham, cheese and tomato sauce</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Pepperoni</label>
-                    <p>Ham, onion, capsicum and pepperoni</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Supreme</label>
-                    <p>Ham, onion, pepperoni, capsicum, bacon, olives, mushroom and anchovies</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Vegetarian</label>
-                    <p>Onion, capsicum, olives, pineapple and mushroom</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-
-
-            <div class="store-menu-list-item heading">
-                <h4 class="store-menu-list-item-group-heading">Burgers</h4>
-                <hr class="hr-1" />
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Cheese Burger</label>
-                    <p>Char grilled beef patties, tasty cheese, tomato ketchup and spanish onions</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Beef BLT Burger</label>
-                    <p>Char grilled beef patties, crispy bacon, fresh lettuce, ripe tomato and house made tomato relish</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-            <div class="store-menu-list-item clearfix">
-                <div>
-                    <label>Our Classic Burger</label>
-                    <p>Char grilled beef patties, spanish onions, beetroot, lettuce, our own herb mayo, tasty cheese</p>
-                </div>
-                <label>Add to order</label>
-            </div>
-
-        </div>
+        <div id="store-menu-list"></div>
 
         <div id="store-menu-nav">
-            <ul>
-                <li>Pizza</li>
-                <li>Burgers</li>
-                <li>Pasta</li>
-                <li>Noodles</li>
-                <li>Drinks</li>
-                <li>Desserts</li>
+            <ul id="store-menu-nav-list">
+
             </ul>
         </div>
     </div>
@@ -173,5 +98,6 @@
             <a href="javascript:void(0)">PRIVACY</a>
         </div>
     </div>
+
 </div>
 

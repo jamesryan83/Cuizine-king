@@ -14,6 +14,11 @@ app.loggedOut = {
 
     init: function () {
         this.initialized = true;
+
+        app.util.preloadImages("/res/svg/", [
+            "icon-navbar-active.svg", "icon-close-hover.svg"]);
+
+        // TODO : click dialog container to close
     },
 
 
@@ -104,11 +109,6 @@ app.home = {
         });
 
 
-        $("#navbar-icon").on("click", function () {
-            window.location.href = "/location/Balmoral-4171";
-        });
-
-
         // TODO: get users lat long
 //        // Get users location
 //        app.util.getUserLatLong(function (result) {
@@ -116,6 +116,9 @@ app.home = {
 //                console.log(result)
 //            }
 //        });
+
+
+
     },
 
 }
@@ -272,7 +275,7 @@ app.location = {
 
                 // add review stars
                 var starsRounded = Math.round(this.storeData[i].stores[j].avgReview);
-                var stars = $(item).find(".review-stars > div");
+                var stars = $(item).find(".rating-control-static > div");
                 for (var k = 0; k < starsRounded; k++) {
                     $(stars[k]).addClass("active");
                 }
@@ -623,26 +626,149 @@ app.store = {
     init: function (routeData) {
         var self = this;
 
-        $("#store-info-description").dotdotdot({ height: 92 });
+        this.descriptionEl = $("#store-info-description");
+        this.storeMenuNavEl = $("#store-menu-nav");
 
+
+        // suburb typeahead
+        new app.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
+            app.clientRouter.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode);
+        });
+
+
+        // TODO : replace with ajax
         $.getJSON("/pages/store-page.json", function (data) {
             self.addDataToPage(data)
+            self.resizeDescription();
+        });
+
+
+        // Other events
+        $(window).on("resize", function () {
+            self.resizeDescription();
+        });
+
+
+        $(window).on("scroll", function (e) {
+            // position of menu category navigation thing
+            var rect = document.getElementById("store-menu").getBoundingClientRect();
+            if (rect.top < 0) {
+                self.storeMenuNavEl.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
+            } else {
+                self.storeMenuNavEl.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
+            }
+        });
+
+
+        $("#store-info-button-description").on("click", function () {
+            app.dialogs.description.show();
+        });
+
+        $("#store-info-button-hours").on("click", function () {
+            app.dialogs.businessHours.show();
+        });
+
+        $("#store-info-button-reviews").on("click", function () {
+            app.dialogs.reviews.show();
         });
     },
 
 
+    // Show hide more button when description text changes height
+    resizeDescription: function () {
+        if (this.descriptionEl[0].scrollHeight > this.descriptionEl.innerHeight()) {
+            $("#store-info-button-description").show();
+        } else {
+            $("#store-info-button-description").hide();
+        }
+    },
+
+
+    // add data to the page
     addDataToPage: function (data) {
 
         $("#store-header-name").text(data.name);
+        $("#store-info-image").attr("src", data.logo);
         $("#store-info-description").text(data.description);
         $("#store-info-address").text(data.address);
         $("#store-info-phone-number").text(data.phone_number);
         $("#store-info-email").text(data.email);
         $("#store-disclaimer").text(data.disclaimer);
-        $("#store-info-image").attr("src", data.logo);
+        $("#store-info-review-count").text("( " + data.review_count + " )");
+
+        app.ratingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+        // products
+        var item = null;
+        var itemProperties = "";
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < data.products.length; i++) {
+
+            // product category heading
+            frag.append(
+                $("<div class='store-menu-list-item heading'>" +
+                    "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
+                    "<hr class='hr-1' />" +
+                "</div>")[0]);
+
+            // product items
+            for (var j = 0; j < data.products[i].items.length; j++) {
+                item = data.products[i].items[j];
+
+                itemProperties = "";
+                if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
+                if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
+                if (!item.delivery) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
+
+                if (!itemProperties) itemProperties = "<br />";
+
+                frag.append(
+                    $("<div class='store-menu-list-item clearfix'>" +
+                        "<div>" +
+                            "<h4>" + item.title + "</h4>" +
+                            "<p>" + item.description + "</p>" +
+                            itemProperties +
+                        "</div>" +
+                        "<label>Add to order</label>" +
+                    "</div>")[0]);
+            }
+        }
+
+        $("#store-menu-list").append(frag);
+
+
+        // Category nav
+        frag = document.createDocumentFragment();
+        for (var i = 0; i < data.products.length; i++) {
+            frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
+        }
+        $("#store-menu-nav-list").append(frag);
+
+        $(".store-menu-nav-list-item").on("click", function (e) {
+            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+            $("html").animate({ scrollTop: el[0].offsetTop }, 500);
+        });
+
+
+        // Checkout
+
+
+
+
+        // Setup dialogs
+        app.dialogs.description.init(data.name, data.description);
+        app.dialogs.businessHours.init(data.hours);
+        app.dialogs.reviews.init(data);
+
+        $("#store-info-button-hours").show();
+        $("#store-info-button-reviews").show();
+
+        this.resizeDescription();
     },
 
 }
+
 
 
 
@@ -657,23 +783,7 @@ app.sysadmin = {
         });
 
 
-        $("#form-create-store").on("submit", function () {
-            var data = validate.collectFormValues($("#form-create-store")[0], { trim: true });
 
-//            if (!app.util.validateInputs(data, app.validationRules.login))
-//                return false;
-
-
-            console.log(data)
-
-//            app.util.ajaxRequest("POST", "/api/v1/create-store", data, function (err, result) {
-//                if (err) return false;
-//
-//
-//            });
-
-            return false;
-        });
 
     },
 
@@ -1154,9 +1264,6 @@ app.navbar = {
 
     init: function (routeData) {
 
-        app.util.preloadImages("/res/svg/", [
-            "icon-navbar-active.svg", "icon-close-hover.svg"]);
-
 
         // Item clicked
         $(".navbar a").on("click", function () {
@@ -1184,6 +1291,8 @@ app.navbar = {
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
                 window.location.href = "/sysadmin";
+            } else {
+                window.location.href = "/location/Balmoral-4171";
             }
         });
 
@@ -1220,54 +1329,65 @@ app.navbar = {
 
 
 
-app.RatingControl = function () {
+app.ratingControls = {
 
-//    // Returns the current rating value from a rating control
-//    getRatingControlValue: function (formEl) {
-//        return $(formEl + " .rating-control-star.active").length;
-//    },
-//
-//
-//
-//    // update current user rating controls
-//    updateRatingControls: function (ratings) {
-//        for (var i = 0; i < ratings.length; i++) {
-//            if (ratings[i].id_review) {
-//                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
-//
-//                for (var j = 0; j < ratings[i].rating; j++) {
-//                    ratingControl.children().eq(j).addClass("active");
-//                }
-//            }
-//        }
-//    },
-//
-//
-//    // Adds click events to all the rating controls
-//    // bit easier to do it this way when there's not many reviews
-//    recreateRatingControlEvents: function () {
-//        var self = this;
-//        $(".rating-control-star").off();
-//        $(".rating-control-star").unbind();
-//
-//
-//        // has the user used this star control before
-//        var isUnused = false;
-//
-//
-//        // Rating control star clicked
-//        $(".rating-control-star").on("click", function () {
-//            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
-//                isUnused = true;
-//            }
-//
-//            $(this).removeClass("active");
-//            $(this).siblings().removeClass("active");
-//            $(this).addClass("active");
-//            $(this).prevAll().addClass("active");
-//        });
-//
-//
+
+    // Sets the value of a rating control
+    setValue: function (controlEl, rating) {
+        var el = $(controlEl);
+
+        for (var j = 0; j < rating; j++) {
+            el.children().eq(j).addClass("active");
+        }
+    },
+
+
+    // Returns the current rating value from a rating control
+    getValue: function (formEl) {
+        return $(formEl + " .rating-control-star.active").length;
+    },
+
+
+
+    // update current user rating controls
+    updateRatingControls: function (ratings) {
+        for (var i = 0; i < ratings.length; i++) {
+            if (ratings[i].id_review) {
+                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
+
+                for (var j = 0; j < ratings[i].rating; j++) {
+                    ratingControl.children().eq(j).addClass("active");
+                }
+            }
+        }
+    },
+
+
+    // Adds click events to all the rating controls
+    // bit easier to do it this way when there's not many reviews
+    recreateRatingControlEvents: function () {
+        var self = this;
+        $(".rating-control-star").off();
+        $(".rating-control-star").unbind();
+
+
+        // has the user used this star control before
+        var isUnused = false;
+
+
+        // Rating control star clicked
+        $(".rating-control-star").on("click", function () {
+            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
+                isUnused = true;
+            }
+
+            $(this).removeClass("active");
+            $(this).siblings().removeClass("active");
+            $(this).addClass("active");
+            $(this).prevAll().addClass("active");
+        });
+
+
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
 //            this.allowUserStarUpdate = false;
@@ -1314,8 +1434,8 @@ app.RatingControl = function () {
 //            }, 100);
 //
 //        });
-//
-//    },
+
+    },
 
 }
 
@@ -1883,3 +2003,199 @@ vr.apiMeDelete = { email: vr._email }
 
 
 
+
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Add to order dialog
+app.dialogs.addToOrder = {
+
+    dialogEl: "#dialog-store-add-to-order",
+    dialogCloseEl: "#dialog-store-add-to-order-close",
+
+    init: function (text) {
+        var self = this;
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Business hours dialog
+app.dialogs.businessHours = {
+
+    dialogEl: "#dialog-store-hours",
+    hoursLeftEl: "#dialog-store-hours-left",
+    hoursRightEl: "#dialog-store-hours-right",
+    dialogCloseEl: "#dialog-store-hours-close",
+
+    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+
+    init: function (storeHours) {
+        var self = this;
+
+        this.addHoursToList(storeHours.dineIn, this.hoursLeftEl);
+        this.addHoursToList(storeHours.delivery, this.hoursRightEl);
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    addHoursToList: function (hours, hoursEl) {
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < 7; i++) {
+            frag.append($("<li><span>" + this.days[i] + "</span> " + hours[i] + "</li>")[0]);
+        }
+        $(hoursEl).empty().append(frag);
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Checkout dialog
+app.dialogs.checkout = {
+
+    // Init
+    init: function () {
+
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Description dialog
+app.dialogs.description = {
+
+    dialogEl: "#dialog-store-description",
+    dialogHeading: "#dialog-store-description-heading",
+    dialogText: "#dialog-store-description-text",
+    dialogCloseEl: "#dialog-store-description-close",
+
+    init: function (name, description) {
+        var self = this;
+
+        $(this.dialogHeading).text(name);
+        $(this.dialogText).text(description);
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Reviews dialog
+app.dialogs.reviews = {
+
+    dialogEl: "#dialog-store-reviews",
+    dialogCloseEl: "#dialog-store-reviews-close",
+    reviewCountEl: "#dialog-store-reviews-count",
+
+    init: function (data) {
+        var self = this;
+
+        $(this.reviewCountEl).text("( " + data.review_count + " )");
+        app.ratingControls.setValue("#dialog-store-reviews-rating-control", Math.round(data.rating));
+
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < data.reviews.length; i++) {
+
+            var ratingStars =
+                "<li class='rating-control-star " + (data.reviews[i].rating > 0.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 1.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 2.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 3.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 4.5 ? "active" : "") + "'></li>";
+
+            frag.append($(
+                "<div class='store-reviews-list-item'>" +
+                    "<div class='store-reviews-list-item-header'>" +
+                        "<ul class='rating-control inactive'>" +
+                            ratingStars +
+                        "</ul>" +
+                        "<label>" + data.reviews[i].title + "</label>" +
+                    "</div>" +
+                    "<p>" + data.reviews[i].review + "</p>" +
+                "</div>")[0]);
+        }
+        $("#dialog-store-reviews-list").append(frag);
+
+
+        $("#dialog-store-reviews-add-review").on("click", function () {
+            app.util.showToast("not working yet")
+        });
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}

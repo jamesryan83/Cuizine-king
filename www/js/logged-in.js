@@ -12,6 +12,9 @@ app.loggedIn = {
 
     init: function () {
         this.initialized = true;
+
+        app.util.preloadImages("/res/svg/", [
+            "icon-navbar-active.svg", "icon-close-hover.svg"]);
     },
 
 

@@ -14,6 +14,9 @@ app.loggedIn = {
 
     init: function () {
         this.initialized = true;
+
+        app.util.preloadImages("/res/svg/", [
+            "icon-navbar-active.svg", "icon-close-hover.svg"]);
     },
 
 
@@ -640,9 +643,6 @@ app.navbar = {
 
     init: function (routeData) {
 
-        app.util.preloadImages("/res/svg/", [
-            "icon-navbar-active.svg", "icon-close-hover.svg"]);
-
 
         // Item clicked
         $(".navbar a").on("click", function () {
@@ -670,6 +670,8 @@ app.navbar = {
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
                 window.location.href = "/sysadmin";
+            } else {
+                window.location.href = "/location/Balmoral-4171";
             }
         });
 
@@ -706,54 +708,65 @@ app.navbar = {
 
 
 
-app.RatingControl = function () {
+app.ratingControls = {
 
-//    // Returns the current rating value from a rating control
-//    getRatingControlValue: function (formEl) {
-//        return $(formEl + " .rating-control-star.active").length;
-//    },
-//
-//
-//
-//    // update current user rating controls
-//    updateRatingControls: function (ratings) {
-//        for (var i = 0; i < ratings.length; i++) {
-//            if (ratings[i].id_review) {
-//                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
-//
-//                for (var j = 0; j < ratings[i].rating; j++) {
-//                    ratingControl.children().eq(j).addClass("active");
-//                }
-//            }
-//        }
-//    },
-//
-//
-//    // Adds click events to all the rating controls
-//    // bit easier to do it this way when there's not many reviews
-//    recreateRatingControlEvents: function () {
-//        var self = this;
-//        $(".rating-control-star").off();
-//        $(".rating-control-star").unbind();
-//
-//
-//        // has the user used this star control before
-//        var isUnused = false;
-//
-//
-//        // Rating control star clicked
-//        $(".rating-control-star").on("click", function () {
-//            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
-//                isUnused = true;
-//            }
-//
-//            $(this).removeClass("active");
-//            $(this).siblings().removeClass("active");
-//            $(this).addClass("active");
-//            $(this).prevAll().addClass("active");
-//        });
-//
-//
+
+    // Sets the value of a rating control
+    setValue: function (controlEl, rating) {
+        var el = $(controlEl);
+
+        for (var j = 0; j < rating; j++) {
+            el.children().eq(j).addClass("active");
+        }
+    },
+
+
+    // Returns the current rating value from a rating control
+    getValue: function (formEl) {
+        return $(formEl + " .rating-control-star.active").length;
+    },
+
+
+
+    // update current user rating controls
+    updateRatingControls: function (ratings) {
+        for (var i = 0; i < ratings.length; i++) {
+            if (ratings[i].id_review) {
+                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
+
+                for (var j = 0; j < ratings[i].rating; j++) {
+                    ratingControl.children().eq(j).addClass("active");
+                }
+            }
+        }
+    },
+
+
+    // Adds click events to all the rating controls
+    // bit easier to do it this way when there's not many reviews
+    recreateRatingControlEvents: function () {
+        var self = this;
+        $(".rating-control-star").off();
+        $(".rating-control-star").unbind();
+
+
+        // has the user used this star control before
+        var isUnused = false;
+
+
+        // Rating control star clicked
+        $(".rating-control-star").on("click", function () {
+            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
+                isUnused = true;
+            }
+
+            $(this).removeClass("active");
+            $(this).siblings().removeClass("active");
+            $(this).addClass("active");
+            $(this).prevAll().addClass("active");
+        });
+
+
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
 //            this.allowUserStarUpdate = false;
@@ -800,8 +813,8 @@ app.RatingControl = function () {
 //            }, 100);
 //
 //        });
-//
-//    },
+
+    },
 
 }
 
@@ -1369,3 +1382,199 @@ vr.apiMeDelete = { email: vr._email }
 
 
 
+
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Add to order dialog
+app.dialogs.addToOrder = {
+
+    dialogEl: "#dialog-store-add-to-order",
+    dialogCloseEl: "#dialog-store-add-to-order-close",
+
+    init: function (text) {
+        var self = this;
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Business hours dialog
+app.dialogs.businessHours = {
+
+    dialogEl: "#dialog-store-hours",
+    hoursLeftEl: "#dialog-store-hours-left",
+    hoursRightEl: "#dialog-store-hours-right",
+    dialogCloseEl: "#dialog-store-hours-close",
+
+    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+
+    init: function (storeHours) {
+        var self = this;
+
+        this.addHoursToList(storeHours.dineIn, this.hoursLeftEl);
+        this.addHoursToList(storeHours.delivery, this.hoursRightEl);
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    addHoursToList: function (hours, hoursEl) {
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < 7; i++) {
+            frag.append($("<li><span>" + this.days[i] + "</span> " + hours[i] + "</li>")[0]);
+        }
+        $(hoursEl).empty().append(frag);
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Checkout dialog
+app.dialogs.checkout = {
+
+    // Init
+    init: function () {
+
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Description dialog
+app.dialogs.description = {
+
+    dialogEl: "#dialog-store-description",
+    dialogHeading: "#dialog-store-description-heading",
+    dialogText: "#dialog-store-description-text",
+    dialogCloseEl: "#dialog-store-description-close",
+
+    init: function (name, description) {
+        var self = this;
+
+        $(this.dialogHeading).text(name);
+        $(this.dialogText).text(description);
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+
+app.dialogs = app.dialogs || {};
+
+
+// Reviews dialog
+app.dialogs.reviews = {
+
+    dialogEl: "#dialog-store-reviews",
+    dialogCloseEl: "#dialog-store-reviews-close",
+    reviewCountEl: "#dialog-store-reviews-count",
+
+    init: function (data) {
+        var self = this;
+
+        $(this.reviewCountEl).text("( " + data.review_count + " )");
+        app.ratingControls.setValue("#dialog-store-reviews-rating-control", Math.round(data.rating));
+
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < data.reviews.length; i++) {
+
+            var ratingStars =
+                "<li class='rating-control-star " + (data.reviews[i].rating > 0.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 1.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 2.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 3.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 4.5 ? "active" : "") + "'></li>";
+
+            frag.append($(
+                "<div class='store-reviews-list-item'>" +
+                    "<div class='store-reviews-list-item-header'>" +
+                        "<ul class='rating-control inactive'>" +
+                            ratingStars +
+                        "</ul>" +
+                        "<label>" + data.reviews[i].title + "</label>" +
+                    "</div>" +
+                    "<p>" + data.reviews[i].review + "</p>" +
+                "</div>")[0]);
+        }
+        $("#dialog-store-reviews-list").append(frag);
+
+
+        $("#dialog-store-reviews-add-review").on("click", function () {
+            app.util.showToast("not working yet")
+        });
+
+        $(this.dialogCloseEl).off().on("click", function () {
+            self.hide();
+        });
+    },
+
+    show: function () {
+        $("#dialog-container").show();
+        $(this.dialogEl).show();
+    },
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}

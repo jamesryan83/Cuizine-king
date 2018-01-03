@@ -72,6 +72,9 @@ $colorGray14: #060606;
 $colorBlue1: #1f58c6;
 $colorBlue2: #5595d8;
 $colorBlue3: #373748;
+$colorRed1: #ff7373;
+$colorOrange1: #e8a443;
+$colorGreen1: #3bcd3b;
 
 $elementHeight: 35px;
 
@@ -93,9 +96,25 @@ $mediaWidth1: 770px;
 $mediaMobileWidth1: 490px;
 
 
+.label-takeaway, .label-gluten-free, .label-vegetarian {
+    font-size: 12px;
+    height: 15px;
+    line-height: 15px;
+    font-weight: bold;
+    margin-right: 10px;
+}
 
+.label-takeaway {
+    color: $colorRed1;
+}
 
+.label-gluten-free {
+    color: $colorOrange1;
+}
 
+.label-vegetarian {
+    color: $colorGreen1;
+}
 
 
 // ----------- Fonts -----------
@@ -125,11 +144,17 @@ $mediaMobileWidth1: 490px;
 }
 
 
-html, body {
+html {
     width: 100%;
     height: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+    background: #000115;
 }
 
 
@@ -375,6 +400,20 @@ input::-ms-clear {
 }
 
 
+// Label that looks like a link
+.label-link {
+    margin-left: 20px;
+    text-decoration: underline;
+    cursor: pointer;
+    color: $colorGray4;
+    font-size: 12px;
+
+    &:hover {
+        color: $colorBlue2;
+    }
+}
+
+
 // Form layout for giving left column of labels a consistent width
 .form-layout-1 {
     > div {
@@ -457,56 +496,17 @@ input::-ms-clear {
 
 
 #page-container {
-    min-height: 100%;
-    background: #000115;
-    // Too much gradient banding
-//    background: linear-gradient(to bottom, rgb(0, 1, 4) 0%, rgb(0, 1, 10) 33%, rgb(0, 1, 15) 66%, rgb(0, 0, 13) 100%);
-
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% 100%;
+    min-height: 100vh;
     width: 100%;
-    background-image: url(/res/images/bg.png);
-//    display: inline-block;
+
+    background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
+    background-repeat: no-repeat;
 }
 
 
 .page {
     min-height: 100%;
     width: 100%;
-}
-
-
-
-// 5 star review thing
-.review-stars {
-    background-color: rgba(0, 0, 0, 0.9);
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    height: 25px;
-    padding: 0 5px;
-
-    > div {
-        display: inline-block;
-        vertical-align: top;
-
-        @include svgicon(15px, 25px, 12px, 12px,
-            url(../res/svg/icon-star.svg));
-
-        &.active {
-            @include svgicon(15px, 25px, 12px, 12px,
-                url(../res/svg/icon-star-active.svg));
-        }
-    }
-
-    > label {
-        padding: 0 5px;
-        font-size: 16px;
-        height: 25px;
-        line-height: 25px;
-        pointer-events: none;
-    }
 }
 
 
@@ -531,4 +531,43 @@ input::-ms-clear {
 
 
 
+// Main dialog container
+#dialog-container {
+    display: none;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: $zIndexDialogContainer;
+    pointer-events: all;
+
+
+    // Generic popup dialog
+    .dialog {
+        background-color: $colorGray14;
+        width: 360px;
+        padding: 10px;
+        border: 1px solid $colorBlue3;
+        display: none;
+
+        h3 {
+            display: inline-block;
+            color: $colorBlue2;
+            font-size: 20px;
+            height: 40px;
+            line-height: 40px;
+            padding-left: 10px;
+        }
+
+        .dialog-close-icon {
+            float: right;
+
+            @include svgicon($navbarPopupIconSize, $navbarPopupIconSize, 20px, 20px,
+                url(/res/svg/icon-close.svg), url(/res/svg/icon-close-hover.svg));
+        }
+    }
+
+}
 

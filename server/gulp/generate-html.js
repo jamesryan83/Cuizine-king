@@ -9,7 +9,7 @@ var recursiveReadSync = require("recursive-readdir-sync");
 var config = require("../config");
 
 var wwwFolder = path.join(__dirname, "../", "../", "www");
-
+var htmlFolder = path.join(__dirname, "../", "../", "www", "html");
 
 exports = module.exports = {
 
@@ -35,14 +35,12 @@ exports = module.exports = {
         fs.writeFileSync(path.join(outputsPath, "logged-out.json"), JSON.stringify(htmlOutputLoggedOut));
         fs.writeFileSync(path.join(outputsPath, "logged-in.json"), JSON.stringify(htmlOutputLoggedIn));
 
-
-        // create cordova and website index pages
-        var indexHtml = fs.readFileSync(path.join(wwwFolder, "html", "index.html"), "utf-8");
-
+        // index files
         fs.writeFileSync(path.join(wwwFolder, "index-cordova.html"),
-            ejs.compile(indexHtml, { delimiter: "?" })({ isCordova: true }));
+            this.compileHtml(path.join(htmlFolder, "index.html"), { isCordova: true }));
+
         fs.writeFileSync(path.join(wwwFolder, "index-website.html"),
-            ejs.compile(indexHtml, { delimiter: "?" })({ isCordova: false }));
+            this.compileHtml(path.join(htmlFolder, "index.html"), { isCordova: false }));
     },
 
 

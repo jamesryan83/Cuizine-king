@@ -3,6 +3,7 @@
 // Store page
 #page-store {
     padding: 20px 50px;
+    position: relative;
 
     // Header
     #store-header {
@@ -11,6 +12,8 @@
             display: inline-block;
             font-weight: 400;
             font-size: 30px;
+            height: 30px;
+            line-height: 30px;
 
             span {
                 font-size: 30px;
@@ -21,7 +24,7 @@
         > div {
             width: auto;
             float: right;
-            padding: 7px 0;
+//            padding: 7px 0;
 //            display: inline-block;
 
             label {
@@ -32,7 +35,6 @@
     }
 
 
-
     // Info
     #store-info {
         padding: 40px 20px;
@@ -40,13 +42,15 @@
         #store-info-inner {
             height: 240px;
 
-
+            // Image
             #store-info-image {
                 height: 240px;
                 width: 340px;
                 float: left;
             }
 
+
+            // Details
             #store-info-details {
                 float: right;
                 width: calc(100% - 340px);
@@ -58,34 +62,25 @@
                 }
 
                 > div {
-                    label:first-of-type {
+                    label:first-of-type:not(.label-link) {
                         font-weight: bold;
                         width: 90px;
                     }
-
-                    a {
-                        margin-left: 20px;
-                        text-decoration: underline;
-                        cursor: pointer;
-
-                        &:hover {
-                            color: $colorBlue2;
-                        }
-                    }
                 }
 
+                // description
                 #store-info-description-container {
                     min-height: 120px;
 
                     #store-info-description {
-                        max-height: 92px;
                         overflow: hidden;
-                        text-overflow: ellipsis;
+                        text-align: justify;
+                        max-height: 92px;
                     }
-                }
 
-                #store-info-description-more {
-                    margin-left: 0;
+                    #store-info-button-description {
+                        margin-left: 5px;
+                    }
                 }
 
                 #store-info-address {
@@ -93,14 +88,21 @@
                 }
 
                 #store-info-hours-is-open {
-
+                    color: $colorBlue2;
+                    margin-right: 10px;
+                    font-weight: bold;
+                    font-size: 20px;
+                    height: 20px;
+                    line-height: 20px;
+                    vertical-align: middle;
                 }
 
                 #store-info-hours-opens-at {
-
+                    color: $colorRed1;
                 }
 
                 .rating-control {
+                    padding: 2px;
                     margin-right: 10px;
                 }
 
@@ -113,10 +115,10 @@
                     margin-left: 10px;
                     color: $colorBlue2;
                 }
+
             }
         }
     }
-
 
 
     // Menu
@@ -127,17 +129,16 @@
             float: left;
             height: 100%;
             width: calc(100% - 200px);
-            padding-top: 20px;
 
 
             // heading item
             .store-menu-list-item.heading {
-                margin-top: 20px;
+                margin: 20px 0;
 
                 h4 {
-                    font-size: 28px;
-                    line-height: 28px;
-                    height: 28px;
+                    font-size: 30px;
+                    line-height: 30px;
+                    height: 30px;
                     color: $colorBlue2;
                 }
 
@@ -147,22 +148,19 @@
                 }
             }
 
+            .store-menu-list-item.heading:not(:first-of-type) {
+                margin: 20px 0;
+            }
+
 
             // normal menu item
             .store-menu-list-item {
-                margin-top: 15px;
 
                 > div {
                     float: left;
                     width: calc(100% - 100px);
                     padding: 5px 20px;
 
-                    > label {
-                        font-weight: bold;
-                        font-size: 20px;
-                        height: 30px;
-                        line-height: 30px;
-                    }
                     > p {
                         max-height: 46px;
                         overflow: hidden;
@@ -209,8 +207,8 @@
                 }
             }
         }
-    }
 
+    }
 
 
     // Footer
@@ -220,7 +218,6 @@
             font-size: 10px;
         }
     }
-
 
 
     // Footer links

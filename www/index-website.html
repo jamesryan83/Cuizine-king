@@ -26,7 +26,68 @@
 
 
         <!-- Dialogs -->
-        <div id="dialog-container" style="display: none;"></div>
+        <div id="dialog-container" style="display: none;">
+            <!-- hours popup -->
+<div id="dialog-store-hours" class="center dialog" style="display: none">
+    <div>
+        <h3>BUSINESS HOURS</h3>
+        <div id="dialog-store-hours-close" class="dialog-close-icon"></div>
+    </div>
+    <div>
+        <div>
+            <label>TAKEAWAY HOURS</label>
+            <label>DELIVERY HOURS</label>
+        </div>
+        <div class="clearfix">
+            <ul id="dialog-store-hours-left">
+
+            </ul>
+            <ul id="dialog-store-hours-right">
+
+            </ul>
+        </div>
+    </div>
+</div>
+            <!-- Store checkout dialog -->
+<div id="dialog-store-checkout" class="center dialog" style="display: none;">
+
+</div>
+            <!-- description popup -->
+<div id="dialog-store-description" class="dialog center" style="display: none;">
+    <div>
+        <h3>About</h3>
+        <h3 id="dialog-store-description-heading"></h3>
+        <div id="dialog-store-description-close" class="dialog-close-icon"></div>
+    </div>
+    <div>
+        <p id="dialog-store-description-text"></p>
+    </div>
+</div>
+            <!-- Store reviews dialog -->
+<div id="dialog-store-reviews" class="center dialog" style="display: none;">
+    <div id="dialog-store-reviews-header">
+        <div>
+            <h3>REVIEWS</h3>
+            <ul id="dialog-store-reviews-rating-control" class="rating-control inactive">
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+            </ul>
+            <label id="dialog-store-reviews-count"></label>
+        </div>
+        <div>
+            <label id="dialog-store-reviews-add-review" class="label-link">Add a Review</label>
+            <div id="dialog-store-reviews-close"></div>
+        </div>
+    </div>
+
+    <hr class="hr-1" />
+
+    <div id="dialog-store-reviews-list"></div>
+</div>
+        </div>
 
 
         <!-- Toasts -->
@@ -43,10 +104,8 @@
 
         <!-- js -->
         <script src="/lib/jquery-3.0.js"></script>
-<!--        <script src="/lib/moment.min.js"></script>-->
         <script src="/lib/validate.min.js"></script>
         <script src="/lib/jquery.loadTemplate.min.js"></script>
-        <script src="/lib/jquery.dotdotdot.min.js"></script>
 
         
             <script src="/generated/<%- script %>.js"></script>

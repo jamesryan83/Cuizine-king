@@ -10,7 +10,7 @@ var database = require("../../server/database/database");
 describe("LOAD - DATABASE", function () {
 
     before(function (done) {
-        testutil.recreateAndStartDatabase(function () {
+        testutil.startDatabase(function () {
             done();
         });
     });

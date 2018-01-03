@@ -1,11 +1,14 @@
 @import "shared/common";
 @import "shared/checkbox";
-@import "shared/dialogs";
 @import "shared/navbar";
 @import "shared/rating-control";
 @import "shared/tabcontrol";
 @import "shared/toasts";
 @import "shared/typeahead";
+@import "dialogs/business-hours";
+@import "dialogs/checkout";
+@import "dialogs/description";
+@import "dialogs/reviews";
 @import "loggedout/about";
 @import "loggedout/help";
 @import "loggedout/home";

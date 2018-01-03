@@ -2,54 +2,65 @@
 
 var app = app || {};
 
-app.RatingControl = function () {
+app.ratingControls = {
 
-//    // Returns the current rating value from a rating control
-//    getRatingControlValue: function (formEl) {
-//        return $(formEl + " .rating-control-star.active").length;
-//    },
-//
-//
-//
-//    // update current user rating controls
-//    updateRatingControls: function (ratings) {
-//        for (var i = 0; i < ratings.length; i++) {
-//            if (ratings[i].id_review) {
-//                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
-//
-//                for (var j = 0; j < ratings[i].rating; j++) {
-//                    ratingControl.children().eq(j).addClass("active");
-//                }
-//            }
-//        }
-//    },
-//
-//
-//    // Adds click events to all the rating controls
-//    // bit easier to do it this way when there's not many reviews
-//    recreateRatingControlEvents: function () {
-//        var self = this;
-//        $(".rating-control-star").off();
-//        $(".rating-control-star").unbind();
-//
-//
-//        // has the user used this star control before
-//        var isUnused = false;
-//
-//
-//        // Rating control star clicked
-//        $(".rating-control-star").on("click", function () {
-//            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
-//                isUnused = true;
-//            }
-//
-//            $(this).removeClass("active");
-//            $(this).siblings().removeClass("active");
-//            $(this).addClass("active");
-//            $(this).prevAll().addClass("active");
-//        });
-//
-//
+
+    // Sets the value of a rating control
+    setValue: function (controlEl, rating) {
+        var el = $(controlEl);
+
+        for (var j = 0; j < rating; j++) {
+            el.children().eq(j).addClass("active");
+        }
+    },
+
+
+    // Returns the current rating value from a rating control
+    getValue: function (formEl) {
+        return $(formEl + " .rating-control-star.active").length;
+    },
+
+
+
+    // update current user rating controls
+    updateRatingControls: function (ratings) {
+        for (var i = 0; i < ratings.length; i++) {
+            if (ratings[i].id_review) {
+                var ratingControl = $(".rating-control-stars.user[data-id='" + ratings[i].id_review + "']");
+
+                for (var j = 0; j < ratings[i].rating; j++) {
+                    ratingControl.children().eq(j).addClass("active");
+                }
+            }
+        }
+    },
+
+
+    // Adds click events to all the rating controls
+    // bit easier to do it this way when there's not many reviews
+    recreateRatingControlEvents: function () {
+        var self = this;
+        $(".rating-control-star").off();
+        $(".rating-control-star").unbind();
+
+
+        // has the user used this star control before
+        var isUnused = false;
+
+
+        // Rating control star clicked
+        $(".rating-control-star").on("click", function () {
+            if (!$(this).hasClass("active") && !$(this).siblings().hasClass("active")) {
+                isUnused = true;
+            }
+
+            $(this).removeClass("active");
+            $(this).siblings().removeClass("active");
+            $(this).addClass("active");
+            $(this).prevAll().addClass("active");
+        });
+
+
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
 //            this.allowUserStarUpdate = false;
@@ -96,7 +107,7 @@ app.RatingControl = function () {
 //            }, 100);
 //
 //        });
-//
-//    },
+
+    },
 
 }

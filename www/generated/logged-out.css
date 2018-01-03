@@ -1,3 +1,19 @@
+.label-takeaway, .label-gluten-free, .label-vegetarian {
+  font-size: 12px;
+  height: 15px;
+  line-height: 15px;
+  font-weight: bold;
+  margin-right: 10px; }
+
+.label-takeaway {
+  color: #ff7373; }
+
+.label-gluten-free {
+  color: #e8a443; }
+
+.label-vegetarian {
+  color: #3bcd3b; }
+
 @font-face {
   font-family: "Catamaran";
   src: url(../res/fonts/Catamaran/Catamaran-Light.ttf); }
@@ -13,11 +29,16 @@
   box-sizing: border-box;
   font-family: Catamaran, wingdings; }
 
-html, body {
+html {
   width: 100%;
-  height: 100%;
+  height: 100%; }
+
+body {
+  width: 100%;
+  min-height: 100%;
   overflow-x: hidden;
-  overflow-y: auto; }
+  overflow-y: auto;
+  background: #000115; }
 
 p, label, h1, h2, h3, h4, h5, h6, li, span {
   color: #f4f4f4;
@@ -199,6 +220,15 @@ input::-ms-clear {
     background-image: url(svg/icon-search.svg);
     display: inline-block; }
 
+.label-link {
+  margin-left: 20px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: #b9b9b9;
+  font-size: 12px; }
+  .label-link:hover {
+    color: #5595d8; }
+
 .form-layout-1 > div, .form-layout-2 > div, .form-layout-3 > div {
   height: 50px; }
   .form-layout-1 > div label, .form-layout-2 > div label, .form-layout-3 > div label {
@@ -234,49 +264,14 @@ input::-ms-clear {
     background-color: purple; }
 
 #page-container {
-  min-height: 100%;
-  background: #000115;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
+  min-height: 100vh;
   width: 100%;
-  background-image: url(/res/images/bg.png); }
+  background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
+  background-repeat: no-repeat; }
 
 .page {
   min-height: 100%;
   width: 100%; }
-
-.review-stars {
-  background-color: rgba(0, 0, 0, 0.9);
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  height: 25px;
-  padding: 0 5px; }
-  .review-stars > div {
-    display: inline-block;
-    vertical-align: top;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 12px 12px;
-    height: 25px;
-    width: 15px;
-    background-image: url(../res/svg/icon-star.svg);
-    display: inline-block; }
-    .review-stars > div.active {
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 12px 12px;
-      height: 25px;
-      width: 15px;
-      background-image: url(../res/svg/icon-star-active.svg);
-      display: inline-block; }
-  .review-stars > label {
-    padding: 0 5px;
-    font-size: 16px;
-    height: 25px;
-    line-height: 25px;
-    pointer-events: none; }
 
 #loading-screen {
   display: none;
@@ -291,6 +286,42 @@ input::-ms-clear {
   #loading-screen label {
     position: relative;
     color: white; }
+
+#dialog-container {
+  display: none;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 7500;
+  pointer-events: all; }
+  #dialog-container .dialog {
+    background-color: #060606;
+    width: 360px;
+    padding: 10px;
+    border: 1px solid #373748;
+    display: none; }
+    #dialog-container .dialog h3 {
+      display: inline-block;
+      color: #5595d8;
+      font-size: 20px;
+      height: 40px;
+      line-height: 40px;
+      padding-left: 10px; }
+    #dialog-container .dialog .dialog-close-icon {
+      float: right;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 20px 20px;
+      height: 40px;
+      width: 40px;
+      background-image: url(/res/svg/icon-close.svg);
+      display: inline-block; }
+      #dialog-container .dialog .dialog-close-icon:hover {
+        cursor: pointer;
+        background-image: url(/res/svg/icon-close-hover.svg); }
 
 .checkbox-1 > input, .checkbox-2 > input {
   display: none;
@@ -323,21 +354,6 @@ input::-ms-clear {
     padding-left: 0;
     padding-right: 50px;
     background-position: 195px 0; }
-
-#dialog-container {
-  display: none;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 7500;
-  pointer-events: all; }
-  #dialog-container .dialog {
-    display: none;
-    height: 200px;
-    width: 400px; }
 
 .navbar {
   white-space: nowrap;
@@ -457,7 +473,7 @@ input::-ms-clear {
     background-size: 15px 15px;
     height: 20px;
     width: 20px;
-    background-image: url(../../res/svg/icon-star-inactive.svg);
+    background-image: url(../../res/svg/icon-star.svg);
     display: inline-block; }
     .rating-control li:hover {
       cursor: pointer;
@@ -468,7 +484,7 @@ input::-ms-clear {
       background-size: 12px 12px;
       height: 15px;
       width: 15px;
-      background-image: url(../../res/svg/icon-star-inactive.svg);
+      background-image: url(../../res/svg/icon-star.svg);
       display: inline-block; }
       .rating-control li.small:hover {
         cursor: pointer;
@@ -489,15 +505,47 @@ input::-ms-clear {
     background-size: 12px 12px;
     height: 15px;
     width: 15px;
-    background-image: url(../../res/svg/icon-star-inactive.svg);
+    background-image: url(../../res/svg/icon-star.svg);
     display: inline-block; }
     .rating-control.user li:hover {
       cursor: pointer;
-      background-image: url(../../res/svg/icon-star-2-hover.svg); }
+      background-image: url(../../res/svg/icon-star-hover.svg); }
     .rating-control.user li.active {
-      background-image: url(../../res/svg/icon-star-2-active.svg); }
+      background-image: url(../../res/svg/icon-star-active.svg); }
       .rating-control.user li.active:hover {
-        background-image: url(../../res/svg/icon-star-2-hover.svg); }
+        background-image: url(../../res/svg/icon-star-hover.svg); }
+
+.rating-control-static {
+  background-color: rgba(0, 0, 0, 0.9);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 25px;
+  padding: 0 5px; }
+  .rating-control-static > div {
+    display: inline-block;
+    vertical-align: top;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px 12px;
+    height: 25px;
+    width: 15px;
+    background-image: url(../res/svg/icon-star.svg);
+    display: inline-block; }
+    .rating-control-static > div.active {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 12px 12px;
+      height: 25px;
+      width: 15px;
+      background-image: url(../res/svg/icon-star-active.svg);
+      display: inline-block; }
+  .rating-control-static > label {
+    padding: 0 5px;
+    font-size: 16px;
+    height: 25px;
+    line-height: 25px;
+    pointer-events: none; }
 
 .tabcontrol {
   width: 100%; }
@@ -590,6 +638,116 @@ input::-ms-clear {
       .typeahead .typeahead-list .typeahead-item {
         font-size: 13px;
         padding-left: 12px; } }
+
+#dialog-store-hours.dialog {
+  height: 340px;
+  width: auto; }
+  #dialog-store-hours.dialog h3 {
+    margin-bottom: 10px;
+    padding-top: 3px; }
+  #dialog-store-hours.dialog div:not(#dialog-store-hours-close) {
+    width: 100%;
+    white-space: nowrap; }
+  #dialog-store-hours.dialog label {
+    width: 180px;
+    text-align: center;
+    font-weight: bold;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block; }
+  #dialog-store-hours.dialog #dialog-store-hours-left, #dialog-store-hours.dialog #dialog-store-hours-right {
+    float: left;
+    width: 180px;
+    list-style: none;
+    padding: 5px 14px;
+    display: inline-block; }
+    #dialog-store-hours.dialog #dialog-store-hours-left li, #dialog-store-hours.dialog #dialog-store-hours-right li {
+      padding: 5px; }
+      #dialog-store-hours.dialog #dialog-store-hours-left li span, #dialog-store-hours.dialog #dialog-store-hours-right li span {
+        width: 40px;
+        font-weight: bold;
+        display: inline-block; }
+
+#dialog-store-checkout {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background-color: #060606; }
+
+#dialog-store-description.dialog {
+  height: auto; }
+  #dialog-store-description.dialog h3:first-of-type {
+    color: #f4f4f4; }
+  #dialog-store-description.dialog > div:last-of-type {
+    padding: 10px;
+    color: #f4f4f4; }
+    #dialog-store-description.dialog > div:last-of-type p {
+      text-align: justify; }
+
+#dialog-store-reviews.dialog {
+  width: auto;
+  height: 500px;
+  max-height: 70%;
+  overflow: hidden; }
+  #dialog-store-reviews.dialog #dialog-store-reviews-header {
+    height: 40px; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type {
+      height: 40px;
+      display: inline-block; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type h3 {
+        display: inline-block;
+        margin-right: 20px;
+        color: #5595d8; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type .rating-control {
+        height: 26px; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type label {
+        margin-left: 10px;
+        height: 40px;
+        line-height: 40px;
+        display: inline-block;
+        vertical-align: middle; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-header > div:last-of-type {
+      height: 40px;
+      float: right;
+      vertical-align: top; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:last-of-type > label {
+        height: 40px;
+        line-height: 40px;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 16px;
+        color: #5595d8;
+        margin-right: 20px; }
+        #dialog-store-reviews.dialog #dialog-store-reviews-header > div:last-of-type > label:hover {
+          color: #1f58c6; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-header #dialog-store-reviews-close {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 20px 20px;
+      height: 40px;
+      width: 40px;
+      background-image: url(/res/svg/icon-close.svg);
+      display: inline-block; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header #dialog-store-reviews-close:hover {
+        cursor: pointer;
+        background-image: url(/res/svg/icon-close-hover.svg); }
+  #dialog-store-reviews.dialog .hr-1 {
+    background-color: #373748;
+    padding: 0 20px; }
+  #dialog-store-reviews.dialog #dialog-store-reviews-list {
+    height: calc(100% - 50px);
+    overflow-y: scroll;
+    width: 600px;
+    margin-top: 10px; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item {
+      padding: 10px 20px;
+      width: 100%; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item .store-reviews-list-item-header .rating-control {
+        margin-right: 20px; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item .store-reviews-list-item-header label {
+        font-weight: bold; }
 
 #page-home {
   text-align: center;
@@ -992,18 +1150,20 @@ input::-ms-clear {
           white-space: normal; } }
 
 #page-store {
-  padding: 20px 50px; }
+  padding: 20px 50px;
+  position: relative; }
   #page-store #store-header #store-header-h1 {
     display: inline-block;
     font-weight: 400;
-    font-size: 30px; }
+    font-size: 30px;
+    height: 30px;
+    line-height: 30px; }
     #page-store #store-header #store-header-h1 span {
       font-size: 30px;
       color: #5595d8; }
   #page-store #store-header > div {
     width: auto;
-    float: right;
-    padding: 7px 0; }
+    float: right; }
     #page-store #store-header > div label {
       width: auto;
       margin-right: 10px; }
@@ -1022,24 +1182,29 @@ input::-ms-clear {
         min-width: 500px; }
         #page-store #store-info #store-info-inner #store-info-details label {
           display: inline-block; }
-        #page-store #store-info #store-info-inner #store-info-details > div label:first-of-type {
+        #page-store #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
           font-weight: bold;
           width: 90px; }
-        #page-store #store-info #store-info-inner #store-info-details > div a {
-          margin-left: 20px;
-          text-decoration: underline;
-          cursor: pointer; }
-          #page-store #store-info #store-info-inner #store-info-details > div a:hover {
-            color: #5595d8; }
         #page-store #store-info #store-info-inner #store-info-details #store-info-description-container {
           min-height: 120px; }
           #page-store #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
-            max-height: 92px;
             overflow: hidden;
-            text-overflow: ellipsis; }
-        #page-store #store-info #store-info-inner #store-info-details #store-info-description-more {
-          margin-left: 0; }
+            text-align: justify;
+            max-height: 92px; }
+          #page-store #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
+            margin-left: 5px; }
+        #page-store #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
+          color: #5595d8;
+          margin-right: 10px;
+          font-weight: bold;
+          font-size: 20px;
+          height: 20px;
+          line-height: 20px;
+          vertical-align: middle; }
+        #page-store #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
+          color: #ff7373; }
         #page-store #store-info #store-info-inner #store-info-details .rating-control {
+          padding: 2px;
           margin-right: 10px; }
         #page-store #store-info #store-info-inner #store-info-details #store-info-phone-number {
           margin: 0 10px;
@@ -1050,44 +1215,38 @@ input::-ms-clear {
   #page-store #store-menu #store-menu-list {
     float: left;
     height: 100%;
-    width: calc(100% - 200px);
-    padding-top: 20px; }
+    width: calc(100% - 200px); }
     #page-store #store-menu #store-menu-list .store-menu-list-item.heading {
-      margin-top: 20px; }
+      margin: 20px 0; }
       #page-store #store-menu #store-menu-list .store-menu-list-item.heading h4 {
-        font-size: 28px;
-        line-height: 28px;
-        height: 28px;
+        font-size: 30px;
+        line-height: 30px;
+        height: 30px;
         color: #5595d8; }
       #page-store #store-menu #store-menu-list .store-menu-list-item.heading > hr {
         margin-bottom: 10px;
         background-color: #373748; }
-    #page-store #store-menu #store-menu-list .store-menu-list-item {
-      margin-top: 15px; }
-      #page-store #store-menu #store-menu-list .store-menu-list-item > div {
-        float: left;
-        width: calc(100% - 100px);
-        padding: 5px 20px; }
-        #page-store #store-menu #store-menu-list .store-menu-list-item > div > label {
-          font-weight: bold;
-          font-size: 20px;
-          height: 30px;
-          line-height: 30px; }
-        #page-store #store-menu #store-menu-list .store-menu-list-item > div > p {
-          max-height: 46px;
-          overflow: hidden; }
-      #page-store #store-menu #store-menu-list .store-menu-list-item > label {
-        float: right;
-        height: 100%;
-        width: 100px;
-        color: #5595d8;
-        font-size: 14px;
-        display: block;
-        margin-top: 20px;
-        text-decoration: underline;
-        cursor: pointer; }
-        #page-store #store-menu #store-menu-list .store-menu-list-item > label:hover {
-          color: #1f58c6; }
+    #page-store #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
+      margin: 20px 0; }
+    #page-store #store-menu #store-menu-list .store-menu-list-item > div {
+      float: left;
+      width: calc(100% - 100px);
+      padding: 5px 20px; }
+      #page-store #store-menu #store-menu-list .store-menu-list-item > div > p {
+        max-height: 46px;
+        overflow: hidden; }
+    #page-store #store-menu #store-menu-list .store-menu-list-item > label {
+      float: right;
+      height: 100%;
+      width: 100px;
+      color: #5595d8;
+      font-size: 14px;
+      display: block;
+      margin-top: 20px;
+      text-decoration: underline;
+      cursor: pointer; }
+      #page-store #store-menu #store-menu-list .store-menu-list-item > label:hover {
+        color: #1f58c6; }
   #page-store #store-menu #store-menu-nav {
     float: left;
     width: 200px; }

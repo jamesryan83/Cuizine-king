@@ -57,4 +57,14 @@ exports = module.exports = {
 	},
 
 
+	// Store.stores_get
+	stores_get: function (inputs, callback) {
+		database.pool.request()
+			.input("id_store", sql.Int, inputs.id_store)
+			.execute(dbName + "stores_get", function (err, result) {
+				return resultHandler.handle("stores_get", err, result, callback, inputs);
+		});
+	},
+
+
 }

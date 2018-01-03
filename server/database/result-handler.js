@@ -24,6 +24,7 @@ exports = module.exports = {
 
         switch (procedure) {
             case "people_get":
+            case "test":
                 if (result.recordset && result.recordset.length > 0) {
                     return callback(null, result.recordset[0]);
                 } else {
@@ -32,7 +33,6 @@ exports = module.exports = {
                 break;
 
             default:
-                console.log(result)
                 return callback(null);
         }
 

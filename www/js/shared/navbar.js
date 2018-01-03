@@ -9,9 +9,6 @@ app.navbar = {
 
     init: function (routeData) {
 
-        app.util.preloadImages("/res/svg/", [
-            "icon-navbar-active.svg", "icon-close-hover.svg"]);
-
 
         // Item clicked
         $(".navbar a").on("click", function () {
@@ -39,6 +36,8 @@ app.navbar = {
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
                 window.location.href = "/sysadmin";
+            } else {
+                window.location.href = "/location/Balmoral-4171";
             }
         });
 

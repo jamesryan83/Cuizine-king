@@ -42,7 +42,11 @@ exports = module.exports = {
                 "DROP DATABASE " + config.mssql.database + "\n" +
             "END\n" +
             "CREATE DATABASE " + config.mssql.database + "\n\n" +
+            "GO\n";
 
+        var outputSqlTests =
+            "-- GENERATED FILE\n\n" +
+            "USE master\n\n" +
             "IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'" + testDBName + "')\n" +
             "BEGIN\n" +
                 "ALTER DATABASE " + testDBName + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE\n" +
@@ -52,7 +56,7 @@ exports = module.exports = {
             "GO\n";
 
         fs.writeFileSync(path.join(sqlPath, "_recreate-db.sql"), outputSql);
-
+        fs.writeFileSync(path.join(sqlPathTests, "_recreate-db.sql"), outputSqlTests);
 
 
 
@@ -224,6 +228,11 @@ exports = module.exports = {
 
         fs.writeFileSync(path.join(sqlPathTests, "_recreate.sql"), outputSql);
 
+
+        // copy postcodes file to tests folder
+//        var postcodesData = fs.readFileSync(path.join(sqlPath, "seed", "_seed-postcodes.sql"), "utf-8");
+//        postcodesData = postcodesData.replace("USE " + config.mssql.database, "USE " + testDBName);
+//        fs.writeFileSync(path.join(sqlPathTests, "_seed-postcodes.sql"), postcodesData);
 
 
 

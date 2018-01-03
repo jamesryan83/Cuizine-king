@@ -152,7 +152,7 @@ app.location = {
 
                 // add review stars
                 var starsRounded = Math.round(this.storeData[i].stores[j].avgReview);
-                var stars = $(item).find(".review-stars > div");
+                var stars = $(item).find(".rating-control-static > div");
                 for (var k = 0; k < starsRounded; k++) {
                     $(stars[k]).addClass("active");
                 }

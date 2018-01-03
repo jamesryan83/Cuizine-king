@@ -1,0 +1,94 @@
+// Reviews dialogs
+#dialog-store-reviews.dialog {
+    width: auto;
+    height: 500px;
+    max-height: 70%;
+    overflow: hidden;
+
+    // header
+    #dialog-store-reviews-header {
+        height: 40px;
+
+        // left
+        > div:first-of-type {
+            height: 40px;
+            display: inline-block;
+
+            h3 {
+                display: inline-block;
+                margin-right: 20px;
+                color: $colorBlue2;
+            }
+
+            .rating-control {
+                height: 26px;
+            }
+
+            label {
+                margin-left: 10px;
+                height: 40px;
+                line-height: 40px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+
+        // right
+        > div:last-of-type {
+            height: 40px;
+            float: right;
+            vertical-align: top;
+
+            > label {
+                height: 40px;
+                line-height: 40px;
+                display: inline-block;
+                vertical-align: top;
+                font-size: 16px;
+                color: $colorBlue2;
+                margin-right: 20px;
+
+                &:hover {
+                    color: $colorBlue1;
+                }
+            }
+        }
+
+        #dialog-store-reviews-close {
+            @include svgicon($navbarPopupIconSize, $navbarPopupIconSize, 20px, 20px,
+                url(/res/svg/icon-close.svg), url(/res/svg/icon-close-hover.svg));
+        }
+    }
+
+
+    .hr-1 {
+        background-color: $colorBlue3;
+        padding: 0 20px;
+    }
+
+
+    // review list
+    #dialog-store-reviews-list {
+        height: calc(100% - 50px);
+        overflow-y: scroll;
+        width: 600px;
+        margin-top: 10px;
+
+        // a single list item
+        .store-reviews-list-item {
+            padding: 10px 20px;
+            width: 100%;
+
+            .store-reviews-list-item-header {
+                .rating-control {
+                    margin-right: 20px;
+                }
+
+                label {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+}

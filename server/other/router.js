@@ -16,6 +16,7 @@ var authApi = require("../api/auth");
 var peopleApi = require("../api/people");
 var storesApi = require("../api/stores");
 var locationApi = require("../api/location");
+var sysadminApi = require("../api/sysadmin");
 
 
 var config = require("../config");
@@ -50,6 +51,7 @@ exports = module.exports = {
         locationApi.init(this);
         peopleApi.init(this);
         storesApi.init(this);
+        sysadminApi.init(this);
 
 
         this.websiteIndexFilePath = path.join(__dirname, "../", "../", "www", "index-website.html");
@@ -97,12 +99,10 @@ exports = module.exports = {
         router.get(   "/api/v1/people", authenticateApi, peopleApi.get.bind(peopleApi));
         router.put(   "/api/v1/people", authenticateApi, peopleApi.update.bind(peopleApi));
         router.delete("/api/v1/people", authenticateApi, peopleApi.delete.bind(peopleApi));
-        router.post(  "/api/v1/stores", authenticateApi, storesApi.create.bind(storesApi));
         router.get(   "/api/v1/stores", authenticateApi, storesApi.get.bind(storesApi));
-        router.put(   "/api/v1/stores", authenticateApi, storesApi.update.bind(storesApi));
-
 
         router.get("/api/v1/location", locationApi.get.bind(locationApi));
+
 
         // auth api
         router.post("/api/v1/login", authApi.login.bind(authApi));
@@ -114,6 +114,12 @@ exports = module.exports = {
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
         router.post("/api/v1/verify-account", authApi.verifyAccountAndLogin.bind(authApi));
         router.post("/api/v1/registration-email", authApi.sendRegistrationEmail.bind(authApi));
+
+
+        // sysadmin TODO : ip authentication or something
+        router.post("/api/sysadmin/stores", storesApi.create.bind(storesApi));
+        router.put( "/api/sysadmin/stores", storesApi.update.bind(storesApi));
+        router.get( "/api/sysadmin/recreate-database", sysadminApi.recreateDatabase.bind(sysadminApi));
 
 
         router.use(this.catchAll.bind(this));
