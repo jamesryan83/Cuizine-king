@@ -206,7 +206,7 @@ app.site.login = {
             if (routeData.route == "/store-login") self.showForm("#form-store-login");
             if (routeData.route == "/register") self.showForm("#form-register");
             if (routeData.route == "/store-application") self.showForm("#form-store-application");
-        }, 300);
+        }, 500);
 
     },
 
