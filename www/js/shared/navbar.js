@@ -1,14 +1,11 @@
-"use strict";
-
-// Logged out navbar
-
-var app = app || {};
 
 
 app.navbar = {
 
-    init: function (routeData) {
 
+    // Init
+    init: function (routeData) {
+        var self = this;
 
         // Item clicked
         $(".navbar a").on("click", function () {
@@ -16,7 +13,8 @@ app.navbar = {
                 return false;
 
             var route = this.href.replace(window.location.origin, "");
-            app.clientRouter.loadPageForRoute(route);
+
+            var routeData = app.routerBase.loadPageForRoute(route, "site");
 
             return false;
         });
@@ -51,16 +49,15 @@ app.navbar = {
 
         $(".navbar-links a").removeClass("active");
 
-        if (r.indexOf("/location") === 0 || r == "/register" ||
+        if (r.indexOf("/location/") === 0 || r == "/register" ||
             r == "/register-store" || r == "/store-login") {
             // ignore
         } else {
-            console.log(routeData.file)
             $(".navbar-link-" + (routeData.file)).addClass("active");
         }
 
         // if logged in
-        if (app.util.isLoggedIn()) {
+        if (app.routerBase.isUserLoggedIn()) {
             $(".navbar-link-dashboard").show();
             $(".navbar-link-logout").show();
             $(".navbar-link-login").hide();

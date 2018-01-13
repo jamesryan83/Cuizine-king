@@ -1,0 +1,66 @@
+
+<!-- Settings page -->
+<div id="page-main-settings" class="page">
+
+    <?- include("navbar-cms") ?>
+
+    <div class="page-main-header">
+        <h2 class="main-page-heading">Settings</h2>
+
+        <div class="page-settings-controls">
+        </div>
+    </div>
+
+    <form id="form-main-settings" action="#" class="form-layout-1">
+
+        <div>
+            <img name="image" />
+            <a href="javascript:void(0)">Change Picture</a>
+        </div>
+
+
+        <div>
+            <label>First Name</label>
+            <input class="input-1" name="first_name" />
+        </div>
+
+
+        <div>
+            <label>Last Name</label>
+            <input class="input-1" name="last_name" />
+        </div>
+
+
+        <div id="page-main-settings-email-container">
+            <label>Email</label>
+            <label name="email"></label>
+            <a href="javascript:void(0)">Change Email</a>
+        </div>
+
+
+        <div>
+            <label>Account Type</label>
+            <label name="type"></label>
+        </div>
+
+
+        <div>
+            <label>Created</label>
+            <label name="created"></label>
+        </div>
+
+
+        <div>
+            <label>Last Update</label>
+            <label name="updated"></label>
+        </div>
+
+
+        <div>
+            <button type="submit" id="main-settings-save" class="button-1">SAVE CHANGES</button>
+            <button type="button" id="main-settings-change-password" class="button-1">CHANGE PASSWORD</button>
+            <button type="button" id="main-settings-delete-account" class="button-1">DELETE ACCOUNT</button>
+        </div>
+    </form>
+
+</div>

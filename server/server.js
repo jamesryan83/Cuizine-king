@@ -87,11 +87,20 @@ function onDatabaseConnected() {
     server.use(hpp()); // more security, stops duplicated querystring values
 
 
+    // CORS - TODO : restrict to admin site and allow specific api calls only
+    server.use(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
+
+
     // override serve-static to stop it sending index.html
     server.use(function (req, res, next) {
         if (req.url == "/") {
-            return router.renderPage(req, res);
+            return router.renderPage(req, res, "site");
         }
+
         next();
     });
     server.use("/", express.static(path.join(__dirname, "../", "www"), {

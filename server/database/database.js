@@ -91,6 +91,10 @@ exports = module.exports = {
     },
 
 
-
+    // Runs a batch file
+    runBatchFileSync: function (batchFileName, cwd) {
+        var result = execSync(batchFileName, { cwd: cwd, encoding: "utf-8" });
+        console.log(result);
+    }
 
 }

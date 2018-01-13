@@ -12,7 +12,7 @@ var ExtractJwt = require("passport-jwt").ExtractJwt;
 var LocalStrategy = require("passport-local").Strategy;
 
 var config = require("../config");
-var appDB = require("../database/procedures/_App");
+var appDB = require("../procedures/_App");
 
 
 exports = module.exports = {
@@ -51,7 +51,7 @@ exports = module.exports = {
 
         // Serialize User
         passport.serializeUser(function(user, done) {
-            return done(null, user.id_user || user.id_pending_user);
+            return done(null, user.id_person);
         });
 
 
@@ -116,20 +116,17 @@ exports = module.exports = {
 
     // Check the users password
     // this is called in verifyAccountAndLogin and from new LocalStrategy above
-    checkUsersPassword: function (email, password, allowPendingUsers, callback) {
-        if (!callback) {
-            callback = allowPendingUsers;
-            allowPendingUsers = false;
-        }
+    checkUsersPassword: function (email, password, callback) {
 
         appDB.people_get({ email: email }, function (err, user) {
             if (err) return callback(err);
 
             // user must be in actual table to login
-            if (!allowPendingUsers && !user.id_user) {
+            if (!user.id_person) {
                 return callback({ status: 401, message: "Please verify your account" });
             }
-
+console.log(password)
+            console.log(user.password)
             // check if the password is correct
             bcrypt.compare(password, user.password, function (err, res) {
                 if (err) console.log(err)
@@ -158,6 +155,7 @@ exports = module.exports = {
             return res.redirect("/login");
         });
     },
+
 
 }
 

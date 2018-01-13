@@ -22,8 +22,8 @@ Azure
 
 
 Git
-    un: james4165
-    pw: budza123
+    un: Menuthing
+    pw: Menuthing
 
 
 

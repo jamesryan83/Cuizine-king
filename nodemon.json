@@ -2,6 +2,7 @@
     "ignore": [
 		"app/*",        
         "tests/*",
+		"www/generated/*",
 		"CODE.md",
 		"README.md",
 		"gulpfile.js"

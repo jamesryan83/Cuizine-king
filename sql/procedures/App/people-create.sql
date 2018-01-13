@@ -22,12 +22,12 @@ CREATE PROCEDURE people_create
 
     @id_user_doing_update INT AS
 
-    SET NOCOUNT ON
-    SET XACT_ABORT ON
-
     DECLARE @id_postcode INT
     DECLARE @newAddressId INT
     DECLARE @newPersonId INT
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
 
     BEGIN TRANSACTION
 

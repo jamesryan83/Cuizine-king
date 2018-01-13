@@ -6,10 +6,9 @@ var fs = require("fs");
 var ejs = require("ejs");
 var url = require("url");
 var path = require("path");
+var multer  = require("multer");
 var validate = require("validate.js");
 var router = require("express").Router();
-
-var routerData = require("./router-data");
 
 var meApi = require("../api/me");
 var authApi = require("../api/auth");
@@ -20,10 +19,15 @@ var sysadminApi = require("../api/sysadmin");
 
 
 var config = require("../config");
+var routerCms = require("../../www/js/cms");
 var passportAuth = require("./passport-auth");
-var clientRouter = require("../../www/js/shared/client-router");
+var routerSite = require("../../www/js/site");
+var routerSysadmin = require("../../www/js/sysadmin");
 
 
+var upload = multer();
+
+var wwwFolder = path.join(__dirname, "../", "../", "www");
 
 // TODO : csrf tokens
 
@@ -32,10 +36,7 @@ exports = module.exports = {
 
     server: undefined,
 
-    websiteIndexFile: "",
-    websiteIndexFilePath: "",
-    websiteErrorFile: "",
-    websiteErrorFilePath: "",
+    dayStrings: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
 
 
     // Setup router
@@ -43,7 +44,6 @@ exports = module.exports = {
 		var self = this;
         this.server = expressServer;
 
-        routerData.init(this);
         passportAuth.init(this);
 
         meApi.init(this);
@@ -54,41 +54,29 @@ exports = module.exports = {
         sysadminApi.init(this);
 
 
-        this.websiteIndexFilePath = path.join(__dirname, "../", "../", "www", "index-website.html");
-        this.websiteErrorFilePath = path.join(__dirname, "../", "../", "www", "html", "error.html");
+        // index html files
+        this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
+        this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
+        this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
+        this.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
 
 
-        // cache index-website.html and error.html
-        if (!global.devMode) {
-            this.websiteIndexFile = fs.readFileSync(this.websiteIndexFilePath, "utf8");
-            this.websiteErrorFile = fs.readFileSync(this.websiteErrorFilePath, "utf8");
-        }
+        // log the requested route & headers
+        router.use(function (req, res, next) {
+            if (config.logRequestRoute) console.log("requested url: " + req.url);
+            if (config.logRequestHeaders) console.log(req.headers);
+            next();
+        });
 
 
-        // log the requested route
-        if (config.logRequestRoute) {
-            router.use(function (req, res, next) {
-                console.log("requested url: " + req.url);
-                next();
-            });
-        }
+        // site, cms and sysadmin pages
+        router.get(routerSite.routesList, function (req, res) { self.renderPage(req, res, "site"); });
+        router.get(routerCms.routesList, function (req, res) { self.renderPage(req, res, "cms"); }); // auth.authenticate,
+        router.get(routerSysadmin.routesList, function (req, res) { self.renderPage(req, res, "sysadmin"); });
 
 
-        // log the request headers
-        if (config.logRequestHeaders)  {
-            router.use(function (req, res, next) {
-                console.log(req.headers);
-                next();
-            });
-        }
-
-
-        // logged in pages // passportAuth.authenticate
-        router.get(clientRouter.loggedInRoutesList, this.renderPage.bind(this));
-
-
-        // logged out pages
-        router.get(clientRouter.loggedOutRoutesList, this.renderPage.bind(this));
+        // logout
+        router.get("/logout", function (req, res) { return auth.logout(req, res, self); });
 
 
         // api
@@ -99,21 +87,22 @@ exports = module.exports = {
         router.get(   "/api/v1/people", authenticateApi, peopleApi.get.bind(peopleApi));
         router.put(   "/api/v1/people", authenticateApi, peopleApi.update.bind(peopleApi));
         router.delete("/api/v1/people", authenticateApi, peopleApi.delete.bind(peopleApi));
-        router.get(   "/api/v1/stores", authenticateApi, storesApi.get.bind(storesApi));
-
-        router.get("/api/v1/location", locationApi.get.bind(locationApi));
+        router.get(   "/api/v1/store",    storesApi.get.bind(storesApi));
+        router.get(   "/api/v1/location", locationApi.get.bind(locationApi));
 
 
         // auth api
         router.post("/api/v1/login", authApi.login.bind(authApi));
-        router.get("/api/v1/logout", authApi.logout.bind(authApi));
-        router.post("/api/v1/register", peopleApi.create.bind(peopleApi));
-        router.post("/api/v1/register-store", storesApi.create.bind(storesApi));
+        router.get( "/api/v1/logout", authApi.logout.bind(authApi));
         router.post("/api/v1/token", authApi.createJwt.bind(authApi)); // returns a new jwt from a user email
         router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi));
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
-        router.post("/api/v1/verify-account", authApi.verifyAccountAndLogin.bind(authApi));
         router.post("/api/v1/registration-email", authApi.sendRegistrationEmail.bind(authApi));
+
+        router.post("/api/v1/register", peopleApi.create.bind(peopleApi));
+        router.post("/api/v1/verify-account", peopleApi.verifyEmail.bind(peopleApi));
+
+        router.post("/api/v1/store-application", storesApi.create.bind(storesApi));
 
 
         // sysadmin TODO : ip authentication or something
@@ -122,25 +111,17 @@ exports = module.exports = {
         router.get( "/api/sysadmin/recreate-database", sysadminApi.recreateDatabase.bind(sysadminApi));
 
 
+        router.post("/api/v1/upload-image", upload.single("files[]"), function (req, res, next) {
+            console.log(req.files);
+
+            res.sendStatus(200);
+        });
+
+
         router.use(this.catchAll.bind(this));
 
         this.server.use("/", router);
     },
-
-
-
-    // Catch all
-    // Returns an error page or json
-    catchAll: function (req, res, next) {
-        var errorMessage = "Unknown Route";
-
-        if (this.isRequestAjax(req)) {
-            return this.sendJson(res, null, errorMessage, 404);
-        }
-
-        return this.redirectToErrorPage(req, res, 404, errorMessage, req.url);
-    },
-
 
 
     // Validate route inputs.  send error if there's an error
@@ -152,79 +133,46 @@ exports = module.exports = {
                 return this.sendJson(res, null, err[0], 400);
             }
 
-            return this.renderErrorPage(req, res, { status: 400, message: err[0] });
+            return this.renderErrorPage(req, res, err, 400);
         }
 
         return null; // inputs ok
     },
 
 
-
-    // Render a page
-    renderPage: function (req, res) {
+    // Render page
+    renderPage: function (req, res, section) {
         var route = url.parse(req.url).pathname;
 
-        if (route == "/logout") {
-            return passportAuth.logout(req, res, this);
-        }
-
-        if (route == "/error") {
-            return this.renderErrorPage(req, res, {});
-        }
-
-
-
-        // TODO : these should be handled elsewhere
-        if (route.indexOf("\/store\/") !== -1) {
-            if (!req.params || !req.params.id) {
-                return this.redirectToErrorPage(
-                    req, res, 400, "Store id missing", route);
-            }
-
-            route = "/store/:id"; // restore route for client-router
-        }
-
-        if (route.indexOf("/location/") !== -1) {
-            if (!req.params || !req.params.suburb) {
-                return this.redirectToErrorPage(
-                    req, res, 400, "Suburb missing", route);
-            }
-
-            route = "/location/:suburb"; // restore route for client-router
-        }
-
-
-
         if (global.devMode) { // no cache
-            this.websiteIndexFile = fs.readFileSync(path.join(__dirname, "../", "../", "www", "index-website.html"), "utf8");
+            this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
+            this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
+            this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
         }
 
-        var pageData = routerData.getPageData(req, res, route);
-        return res.send(ejs.render(this.websiteIndexFile, pageData));
+        var currentPage = null;
+        if (section === "cms") currentPage = this.indexCms;
+        if (section === "site") currentPage = this.indexSite;
+        if (section === "sysadmin") currentPage = this.indexSysadmin;
+
+        var pageData = {};
+        if (route == "/verify-account") {
+            pageData.verification_token = !req.query ? null : req.query.t;
+        }
+
+        if (route == "/reset-password") {
+            pageData.reset_password_token = !req.query ? null : req.query.t;
+        }
+
+        if (route == "/sysadmin") {
+            pageData.dayStrings = this.dayStrings;
+        }
+
+        return res.send(ejs.render(currentPage, pageData));
     },
 
 
-
-    // Render the error page
-    renderErrorPage: function (req, res, errorData) {
-        var pageData = routerData.getErrorPageData(req, errorData);
-
-        if (global.devMode) { // no cache
-            this.websiteIndexFile = fs.readFileSync(this.websiteIndexFilePath, "utf8");
-            this.websiteErrorFile = fs.readFileSync(this.websiteErrorFilePath, "utf8");
-        }
-
-        var partial = ejs.render(this.websiteErrorFile, pageData);
-
-        var tempIndex = this.websiteIndexFile.slice(0); // copy string
-        tempIndex = tempIndex.replace('id="page-container">', 'id="page-container">' + partial);
-
-        return res.status(pageData.status).send(ejs.render(tempIndex, pageData));
-    },
-
-
-
-    // Send a json response
+    // send Json response
     sendJson: function (res, data, err, status) {
         if (err) {
             return res.status(status || 500)
@@ -233,7 +181,6 @@ exports = module.exports = {
 
         return res.json({ data: data });
     },
-
 
 
     // Returns true if the request is an ajax request
@@ -246,17 +193,32 @@ exports = module.exports = {
     },
 
 
+    // Catch all
+    // Returns an error page or json
+    catchAll: function (req, res, next) {
+        var errorMessage = "Unknown Route";
 
-    // Redirect to error page
-    redirectToErrorPage: function (req, res, status, message, route) {
-        req.session.errorStatus = status;
-        req.session.errorMessage = message;
-        req.session.requestedRoute = route;
+        if (this.isRequestAjax(req)) {
+            return this.sendJson(res, null, errorMessage, 404);
+        }
 
-        return res.redirect("/error");
+        return this.renderErrorPage(req, res, errorMessage, 404);
     },
 
 
+    // Render the error page
+    renderErrorPage: function (req, res, err, status) {
+        var pageData = {
+            status: status || 500,
+            message: err || "There was an error :`(",
+            route: req.url
+        }
+
+        if (global.devMode) { // no cache
+            this.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
+        }
+
+        return res.status(pageData.status).send(ejs.render(this.indexError, pageData));
+    },
 
 }
-

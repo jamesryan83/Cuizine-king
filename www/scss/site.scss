@@ -1,0 +1,63 @@
+@import "shared/common";
+@import "shared/checkbox";
+@import "shared/navbar";
+@import "shared/rating-control";
+@import "shared/tabcontrol";
+@import "shared/toasts";
+@import "shared/typeahead";
+@import "dialogs/business-hours";
+@import "dialogs/checkout";
+@import "dialogs/description";
+@import "dialogs/reviews";
+@import "site/about";
+@import "site/help";
+@import "site/home";
+@import "site/home-store-list-item";
+@import "site/location";
+@import "site/login";
+@import "site/store";
+
+
+
+// Navbar on logged out pages
+#navbar-site {
+    height: $navbarHeight;
+
+    // Navbar icon
+    .navbar-heading {
+        .navbar-icon {
+            @include svgicon(240px, 120px, 240px, 120px,
+                url(/res/images/ck-logo.png));
+        }
+    }
+
+    // bit bigger than mobile, like tablet size
+    @media (max-width: $mediaWidth1) {
+        text-align: center;
+
+        .navbar-heading {
+            .navbar-icon {
+                @include svgicon(180px, 90px, 180px, 90px,
+                    url(/res/images/ck-logo.png));
+            }
+        }
+
+        .navbar-links {
+            float: none;
+            margin-top: 10px;
+            height: 30px;
+        }
+    }
+
+
+    // mobile
+    @media (max-width: $mediaMobileWidth1) {
+        .navbar-heading {
+            .navbar-icon {
+                @include svgicon(180px, 90px, 180px, 90px,
+                    url(/res/images/ck-logo.png));
+            }
+        }
+    }
+
+}

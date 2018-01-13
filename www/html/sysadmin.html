@@ -1,45 +1,82 @@
+<!DOCTYPE html>
+<html>
 
-<!-- Login and register page -->
-<div id="page-sysadmin" class="page">
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:">
 
-    <h1>System Admin Page</h1>
-    <a href="/">Home</a>
+        <link rel="icon" href="/res/favicon.ico">
 
+        <title>menuthing</title>
 
-    <div id="page-sysadmin-tabcontrol" class="tabcontrol">
-
-        <ul class="tabs">
-            <li class="active">CREATE STORE</li>
-            <li>EDIT STORE</li>
-            <li>DATABASE</li>
-        </ul>
-
-
-        <hr class="hr-1"></hr>
+        <link rel="stylesheet" href="/lib/normalize.css" />
+        <link rel="stylesheet" href="/generated/_sysadmin.css" />
+    </head>
 
 
-        <div class="tab-content">
+    <body>
+
+        <!-- Login and register page -->
+        <div id="page-sysadmin" class="page">
+
+            <h1>System Admin Page</h1>
+            <a href="/">Home</a>
 
 
-            <!-- create store tab -->
-            <div id="sysadmin-tab-create-store" class="tab-item active">
-                <?- include("create-store-form") ?>
+            <!-- tab control -->
+            <div id="page-sysadmin-tabcontrol" class="tabcontrol">
+
+                <ul class="tabs">
+                    <li class="active">CREATE STORE</li>
+                    <li>EDIT STORE</li>
+                    <li>DATABASE</li>
+                </ul>
+
+
+                <hr class="hr-1"></hr>
+
+
+                <div class="tab-content">
+
+                    <!-- create store tab -->
+                    <div id="sysadmin-tab-create-store" class="tab-item active">
+                        <?- include("create-store") ?>
+                    </div>
+
+
+                    <!-- edit store tab -->
+                    <div id="sysadmin-tab-edit-store" class="tab-item">
+                        database stuff
+                    </div>
+
+
+                    <!-- database tab -->
+                    <div id="sysadmin-tab-database" class="tab-item">
+                        <button>Recreate database</button>
+                        <button>Recreate test database</button>
+                        <button>Empty test database</button>
+                    </div>
+
+                </div>
             </div>
-
-
-            <!-- edit store tab -->
-            <div id="sysadmin-tab-edit-store" class="tab-item">
-                database stuff
-            </div>
-
-
-            <!-- database tab -->
-            <div id="sysadmin-tab-database" class="tab-item">
-                database stuff
-            </div>
-
 
         </div>
-    </div>
 
-</div>
+
+        <!-- Toasts -->
+        <div id="toasts" style="display: none;"></div>
+
+
+        <script src="/lib/jquery-3.0.js"></script>
+        <script src="/lib/jquery-file-upload/jquery.ui.widget.js"></script>
+        <script src="/lib/jquery-file-upload/canvas-to-blob.js"></script>
+        <script src="/lib/jquery-file-upload/jquery.iframe-transport.js"></script>
+        <script src="/lib/jquery-file-upload/jquery.fileupload.js"></script>
+        <script src="/lib/jquery-file-upload/jquery.fileupload-process.js"></script>
+        <script src="/lib/jquery-file-upload/jquery.fileupload-validate.js"></script>
+        <script src="/generated/_sysadmin.js"></script>
+    </body>
+
+</html>

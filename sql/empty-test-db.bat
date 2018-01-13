@@ -1,0 +1,1 @@
+Sqlcmd -S localhost -d menuthingTest -i ./generated/_recreate-keep-postcodes.sql

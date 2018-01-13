@@ -2,7 +2,7 @@
 
 var assert = require("assert");
 
-var testutil = require("../testutil");
+var testutil = require("../test-util");
 var config = require("../../server/config");
 var database = require("../../server/database/database");
 

@@ -3,11 +3,11 @@
 var assert = require("assert");
 var supertest = require("supertest");
 
-var testutil = require("../testutil");
+var testutil = require("../test-util");
 var config = require("../../server/config");
 var userApi = require("../../server/api/users");
 var database = require("../../server/database/database");
-var users = require("../../server/database/procedures/_users");
+var users = require("../../server/procedures/_users");
 
 
 

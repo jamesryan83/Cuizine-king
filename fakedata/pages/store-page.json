@@ -19,35 +19,40 @@
             "8am to 12am", "8am to 12am", "10am to 6pm", "Closed"
         ]
     },
-    "products": [{
+    "product_headings": [{
         "name": "Pizza",
-        "items": [{
-            "title": "Ham and Cheese",
-            "description": "Ham, cheese and tomato sauce",
-            "delivery": true,
-            "gluten_free": false,
-            "vegetarian": false
-        },{
-            "title": "Pepperoni",
-            "description": "Ham, onion, capsicum and pepperoni",
-            "delivery": true,
-            "gluten_free": false,
-            "vegetarian": false
-        },{
-            "title": "Supreme",
-            "description": "Ham, onion, pepperoni, capsicum, bacon, olives, mushroom and anchovies",
-            "delivery": false,
-            "gluten_free": true,
-            "vegetarian": false
-        },{
-            "title": "Vegetarian",
-            "description": "Onion, capsicum, olives, pineapple and mushroom",
-            "delivery": true,
-            "gluten_free": true,
-            "vegetarian": true
-        }]
+        "position_id_previous": 1,
+        "position_id_previous": 2,
     },{
         "name": "Burgers",
+    }],
+    "products": [{
+        "title": "Ham and Cheese",
+        "description": "Ham, cheese and tomato sauce",
+        "delivery": true,
+        "gluten_free": false,
+        "vegetarian": false,
+    },{
+        "title": "Pepperoni",
+        "description": "Ham, onion, capsicum and pepperoni",
+        "delivery": true,
+        "gluten_free": false,
+        "vegetarian": false
+    },{
+        "title": "Supreme",
+        "description": "Ham, onion, pepperoni, capsicum, bacon, olives, mushroom and anchovies",
+        "delivery": false,
+        "gluten_free": true,
+        "vegetarian": false
+    },{
+        "title": "Vegetarian",
+        "description": "Onion, capsicum, olives, pineapple and mushroom",
+        "delivery": true,
+        "gluten_free": true,
+        "vegetarian": true
+    }]
+    },{
+
         "items": [{
             "title": "Cheese Burger",
             "description": "Char grilled beef patties, tasty cheese, tomato ketchup and spanish onions",

@@ -1,0 +1,196 @@
+<div id="form-create-store">
+    <p>Use this to register a new store using the clients store application info</p>
+
+
+
+
+    <!-- Postcode -->
+
+    <h3>Postcode</h3>
+    <div class="label-input">
+        <label>Postcode</label>
+        <input class="input-1" name="postcode" value="4171" />
+    </div>
+
+    <div class="label-input">
+        <label>Suburb</label>
+        <input class="input-1" name="suburb" value="Balmoral" />
+    </div>
+
+
+
+
+    <!-- Address -->
+
+    <h3>Address</h3>
+    <p>Just the address, not the suburb, state or postcode</p>
+    <div class="label-input">
+        <label>Address Line 1</label>
+        <input class="input-1" name="line1" value="18 Bilyana St" />
+    </div>
+
+    <div class="label-input">
+        <label>Address Line 2</label>
+        <input class="input-1" name="line1" value="" />
+    </div>
+
+
+
+
+    <!-- Store details -->
+
+    <h3>User</h3>
+    <div class="label-input">
+        <label>First Name</label>
+        <input class="input-1" name="first_name" value="james" />
+    </div>
+
+    <div class="label-input">
+        <label>Last Name</label>
+        <input class="input-1" name="last_name" value="ryan" />
+    </div>
+
+    <div class="label-input">
+        <label>Email</label>
+        <input class="input-1" name="email_user" value="james4165@hotmail.com" />
+    </div>
+
+    <div class="label-input">
+        <label>Phone Number</label>
+        <input class="input-1" name="phone_number_user" value="0430 710 408" />
+    </div>
+
+    <div class="label-input">
+        <label>Generated Password</label>
+        <input class="input-1" name="password" value="password" readonly />
+    </div>
+
+    <div class="label-textarea">
+        <label>Internal Notes</label>
+        <textarea class="textarea-1" name="internal_notes_store"></textarea>
+    </div>
+
+
+
+    <!-- Store details -->
+
+    <h3>Store</h3>
+
+    <div id="store-logo-container">
+        <div id="store-logo"></div>
+        <div id="store-logo-loading"><label>LOADING...</label></div>
+
+        <div id="upload-container">
+            <div class="upload">
+                <label>Add Logo</label>
+                <input id="fileupload" class="fileupload" type="file" name="files[]">
+            </div>
+
+            <p>Logo should be 340W x 240H</p>
+        </div>
+    </div>
+
+    <div class="label-input">
+        <label>Name</label>
+        <input class="input-1" name="name" value="blah" />
+    </div>
+
+    <div class="label-input">
+        <label>Description</label>
+        <input class="input-1" name="description" value="blah blah" />
+    </div>
+
+    <div class="label-input">
+        <label>Email</label>
+        <input class="input-1" name="email_store" value="james4165@hotmail.com" />
+    </div>
+
+    <div class="label-input">
+        <label>Phone Number</label>
+        <input class="input-1" name="phone_number_store" value="0430 710 408" />
+    </div>
+
+    <div class="label-input">
+        <label>Website</label>
+        <input class="input-1" name="website" value="https://reddit.com" />
+    </div>
+
+    <div class="label-input">
+        <label>Facebook</label>
+        <input class="input-1" name="facebook" value="" />
+    </div>
+
+    <div class="label-input">
+        <label>Twitter</label>
+        <input class="input-1" name="twitter" value="" />
+    </div>
+
+    <div class="label-input">
+        <label>ABN</label>
+        <input class="input-1" name="abn" value="123 123 123" />
+    </div>
+
+    <div class="label-textarea">
+        <label>Internal Notes</label>
+        <textarea class="textarea-1" name="internal_notes_store"></textarea>
+    </div>
+
+
+    <!-- Business hours -->
+    <div>
+        <h3>Business Hours</h3>
+
+        <div id="business-hours-container" class="clearfix">
+            <div>
+                <p>DineIn/Takeaway Hours</p>
+                <% for (var i = 0; i < 7; i++) { %>
+                    <div class="hours-row">
+                        <label><%- dayStrings[i] %></label>
+                        <label>Opens</label>
+                        <input id="hours-dinein-start-<%- i %>" value="10:00" />
+                        <label>Closes</label>
+                        <input id="hours-dinein-end-<%- i %>" value="21:00" />
+                    </div>
+                <% } %>
+            </div>
+            <div>
+                <p>Delivery Hours</p>
+                <% for (var i = 0; i < 7; i++) { %>
+                    <div class="hours-row">
+                        <label><%- dayStrings[i] %></label>
+                        <label>Opens</label>
+                        <input id="hours-delivery-start-<%- i %>" value="10:00" />
+                        <label>Closes</label>
+                        <input id="hours-delivery-end-<%- i %>" value="21:00" />
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Bank details -->
+
+    <h3>Bank Details</h3>
+
+    <div class="label-input">
+        <label>Account Name</label>
+        <input class="input-1" name="bank_account_name" value="MR J RYAN" />
+    </div>
+
+    <div class="label-input">
+        <label>Account Number</label>
+        <input class="input-1" name="bank_account_number" value="123123123123" />
+    </div>
+
+    <div class="label-input">
+        <label>BSB Number</label>
+        <input class="input-1" name="bank_account_bsb" value="123 123" />
+    </div>
+
+
+
+    <button id="create-store-button" type="submit" class="button-1">SUBMIT</button>
+</div>

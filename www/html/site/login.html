@@ -1,0 +1,182 @@
+<!-- Login and register page -->
+<div id="page-login" class="page page-auth">
+
+    <?- include("navbar-site") ?>
+
+    <div id="page-login-form-container">
+
+        <!-- login form -->
+        <div id="form-login-container" class="form-container-outer hidden">
+            <div class="form-container-inner"></div>
+            <div class="form-container-inner"></div>
+            <form method="POST" id="form-login">
+                <h2>Login</h2>
+
+                <div class="label-input">
+                    <label>Email</label>
+                    <input class="input-1" name="email" value="james4165@hotmail.com" />
+                </div>
+
+                <div class="label-input">
+                    <label>Password</label>
+                    <input class="input-1" name="password" value="password" />
+                </div>
+
+                <button type="submit" class="button-3">SUBMIT</button>
+
+                <label class="form-label-or">OR</label>
+
+                <button id="login-goto-register" type="button" class="button-2" title="Click here to Register">Register Here</button>
+                <button id="login-goto-store-login" type="button" class="button-2" title="Click here to Login to your Store">Store Owner Login Here</button>
+                <button id="login-goto-store-application" type="button" class="button-2" title="Click here to Register a Store">Register Store Here</button>
+                <button id="login-forgot-password" type="button" class="button-2" title="Forgot your password?">Forgot your password?</button>
+            </form>
+        </div>
+
+        <!-- store login form -->
+        <div id="form-store-login-container" class="form-container-outer hidden">
+            <div class="form-container-inner"></div>
+            <div class="form-container-inner"></div>
+            <form method="POST" id="form-store-login">
+                <h2>Store Owner Login</h2>
+
+                <div class="label-input">
+                    <label>Email</label>
+                    <input class="input-1" name="email" value="james4165@hotmail.com" />
+                </div>
+
+                <div class="label-input">
+                    <label>Password</label>
+                    <input class="input-1" name="password" value="password" />
+                </div>
+
+                <button type="submit" class="button-3">SUBMIT</button>
+
+                <label class="form-label-or">OR</label>
+
+                <button id="store-login-goto-login" type="button" class="button-2" title="Click here to return to Login">Return to User Login</button>
+            </form>
+        </div>
+
+        <!-- register form -->
+        <div id="form-register-container" class="form-container-outer hidden">
+            <div class="form-container-inner"></div>
+            <div class="form-container-inner"></div>
+            <form method="POST" id="form-register">
+                <h2>Register</h2>
+
+                <div class="label-input">
+                    <label>First Name</label>
+                    <input class="input-1" name="first_name" value="james" />
+                </div>
+
+                <div class="label-input">
+                    <label>Last Name</label>
+                    <input class="input-1" name="last_name" value="ryan" />
+                </div>
+
+                <div class="label-input">
+                    <label>Email</label>
+                    <input class="input-1" name="email" value="james4165@hotmail.com" />
+                </div>
+
+                <div class="label-input">
+                    <label>Password</label>
+                    <input class="input-1" name="password" value="password" />
+                </div>
+
+                <div class="label-input">
+                    <label>Confirm Password</label>
+                    <input class="input-1" name="confirmPassword" value="password" />
+                </div>
+
+                <div class="checkbox-1">
+                    <input type="checkbox" id="checkbox-tnc" />
+                    <label for="checkbox-tnc">I have read and agree to the
+                        <a href="javascript:void(0);">Terms of Use</a> and
+                        <a href="javascript:void(0);">Privacy Policy</a></label>
+                </div>
+
+                <button type="submit" class="button-3">SUBMIT</button>
+
+                <label class="form-label-or">OR</label>
+
+                <button id="register-goto-login" type="button" class="button-2" title="Click here to Login">Login Here</button>
+            </form>
+        </div>
+
+
+        <!-- store application form -->
+        <div id="form-store-application-container" class="form-container-outer hidden">
+            <div class="form-container-inner"></div>
+            <div class="form-container-inner"></div>
+            <form method="POST" id="form-store-application">
+                <h2>Store Application</h2>
+
+                <p>Would you like to add your store to <span>Cuisine King</span> ?  Fill out the form below and we will email you an application</p>
+
+                <div class="label-input">
+                    <label>Your Name</label>
+                    <input class="input-1" name="first_name" value="james" />
+                </div>
+
+                <div class="label-input">
+                    <label>Email</label>
+                    <input class="input-1" name="email" value="james4165@hotmail.com" />
+                </div>
+
+                <div class="label-textarea">
+                    <label>Message</label>
+                    <textarea class="textarea-1" name="message"
+                              placeholder="Any notes or questions you would like to ask ?"></textarea>
+                </div>
+
+                <button type="submit" class="button-3">SUBMIT</button>
+
+                <label class="form-label-or">OR</label>
+
+                <button id="store-application-goto-login" type="button" class="button-2" title="Click here to Login">Login Here</button>
+            </form>
+        </div>
+
+
+        <!-- forgot password form -->
+        <div id="form-forgot-password-container" class="form-container-outer hidden">
+            <div class="form-container-inner"></div>
+            <div class="form-container-inner"></div>
+            <form method="POST" id="form-forgot-password">
+                <h2>Forgot Password</h2>
+
+                <div class="label-input">
+                    <label>Email</label>
+                    <input class="input-1" name="email" value="james4165@hotmail.com" />
+                </div>
+
+                <button type="submit" class="button-3">SUBMIT</button>
+
+                <label class="form-label-or">OR</label>
+
+                <button id="forgot-password-goto-login" type="button" class="button-2" title="Click here to Login">Return to Login</button>
+            </form>
+        </div>
+
+        <!-- For after registration -->
+        <div id="registration-success-container" class="form-container-outer hidden">
+            <div class="form-container-inner"></div>
+            <div class="form-container-inner"></div>
+            <div id="registration-success">
+                <h2>Thanks for registering !</h2>
+
+                <p>A email was sent to <span id="registration-success-email"></span></p>
+
+                <p>Please follow the link in the email to verify your account</p>
+
+                <button id="registration-success-resend" class="button-2">Didn't receive the email ?  Click here</button>
+            </div>
+        </div>
+
+        <!-- TODO: For after store application -->
+
+    </div>
+
+</div>

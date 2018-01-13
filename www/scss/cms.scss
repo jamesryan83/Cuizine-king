@@ -1,0 +1,93 @@
+@import "shared/common";
+@import "shared/checkbox";
+@import "shared/navbar";
+@import "shared/rating-control";
+@import "shared/toasts";
+@import "cms/business";
+@import "cms/dashboard";
+@import "cms/delivery-suburbs";
+@import "cms/menu";
+@import "cms/orders";
+@import "cms/settings";
+@import "cms/transactions";
+
+
+// make page stay 100% height
+#page-container {
+    height: 100% !important;
+
+
+    // header on each page, under the navbar
+    .page-main-header {
+        padding: 10px 40px 0 40px;
+        height: $loggedInHeaderHeight;
+        line-height: $loggedInHeaderHeight;
+
+        // heading
+        .main-page-heading {
+            font-size: 40px;
+            font-weight: 400;
+            color: $colorBlue2;
+            display: inline-block;
+        }
+
+        // buttons and stuff
+        .page-menu-controls {
+            vertical-align: top;
+            float: right;
+            height: 35px;
+            line-height: 35px;
+            margin-top: 9px;
+
+            label {
+                margin-right: 10px;
+            }
+
+            button {
+                margin-left: 10px;
+            }
+        }
+    }
+
+    // main content container
+    .page {
+        height: calc(100% - #{$loggedInNavbarHeight});
+    }
+}
+
+
+
+
+
+// Navbar on logged out pages
+#navbar-cms {
+    height: $loggedInNavbarHeight;
+
+
+    // Navbar icon
+    .navbar-heading {
+        .navbar-icon {
+            @include svgicon(70px, 35px, 70px, 35px,
+                url(/res/images/ck-logo.png));
+        }
+    }
+
+
+    // account links popup
+    #main-account-links-container {
+        display: none;
+    }
+
+
+    // mobile
+    @media (max-width: 870px) {
+        .navbar-links {
+            display: none;
+        }
+
+        .navbar-links-popup-button {
+            display: block;
+        }
+    }
+
+}

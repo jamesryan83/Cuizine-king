@@ -3,11 +3,11 @@
 var assert = require("assert");
 var supertest = require("supertest");
 
-var testutil = require("../testutil");
+var testutil = require("../test-util");
 var config = require("../../server/config");
 var meApi = require("../../server/api/me");
 var database = require("../../server/database/database");
-var users = require("../../server/database/procedures/_users");
+var users = require("../../server/procedures/_users");
 
 
 
@@ -72,7 +72,7 @@ describe("API - ME", function () {
 
                     // check data is there
                     var data = res.body.data;
-                    assert.ok(data.id_user);
+                    assert.ok(data.id_person);
                     assert.ok(data.id_pending_user == null);
                     assert.ok(data.first_name);
                     assert.ok(data.last_name);

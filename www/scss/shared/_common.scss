@@ -78,7 +78,7 @@ $colorGreen1: #3bcd3b;
 
 $elementHeight: 35px;
 
-$navbarHeight: 160px;
+$navbarHeight: 170px;
 $navbarPopupIconSize: 40px;
 
 $loggedInNavbarHeight: 70px;
@@ -115,6 +115,7 @@ $mediaMobileWidth1: 490px;
 .label-vegetarian {
     color: $colorGreen1;
 }
+
 
 
 // ----------- Fonts -----------
@@ -180,7 +181,7 @@ p, label, li, span {
 }
 
 
-select {
+select, button {
     cursor: pointer;
     letter-spacing: 1px;
 }
@@ -198,7 +199,13 @@ input::-ms-clear {
 }
 
 
+input, textarea {
+    letter-spacing: 1px;
 
+    &:read-only {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+}
 
 
 // ----------- Custom classes -----------
@@ -304,6 +311,20 @@ input::-ms-clear {
 
     &:hover {
         color: $colorBlue2;
+        background-color: transparent;
+    }
+}
+
+
+.button-3 {
+    @extend .button-1;
+    background-color: transparent;
+    border: 1px solid $colorGray2;
+    color: $colorGray2;
+
+    &:hover {
+        color: $colorBlue2;
+        border: 1px solid $colorBlue2;
         background-color: transparent;
     }
 }
@@ -569,5 +590,42 @@ input::-ms-clear {
         }
     }
 
+}
+
+
+
+
+
+
+// Custom file upload button
+// based on https://jsfiddle.net/gabrieleromanato/mxq9R/
+// input is just hidden and over the top of a div that looks like a button
+div.upload {
+    @extend .button-2;
+
+    text-align: center;
+    position: relative !important;
+    display: inline-block !important;
+    border-radius: 3px !important;
+    line-height: 35px !important;
+    pointer-events: none;
+    top: 1px;
+    border: 1px solid $colorGray3;
+
+    > label {
+        pointer-events: none;
+    }
+}
+
+div.upload input {
+    position: absolute !important;
+    width: 170px !important;
+    height: 35px !important;
+    left: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    font-size: 0 !important;
+    pointer-events: all;
 }
 

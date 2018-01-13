@@ -2,7 +2,7 @@
 
 // Current user api
 
-var dbApp = require("../database/procedures/_App");
+var dbApp = require("../procedures/_App");
 
 
 exports = module.exports = {
@@ -40,7 +40,7 @@ exports = module.exports = {
         // email is overriden if it's provided
         // Authorized user email is required for update
         b.email = req.user.email;
-        b.id_user = -1;
+        b.id_person = -1;
 
         dbApp.update_person(b, function (err) {
             return self.router.sendJson(res, null, err);

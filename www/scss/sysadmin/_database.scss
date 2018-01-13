@@ -1,0 +1,25 @@
+
+// Database page
+#tab-database {
+    overflow: hidden;
+
+    > div {
+        float: left;
+        width: 50%;
+        height: 100%;
+    }
+
+    #database-actions {
+
+    }
+
+    #database-output {
+        textarea {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            resize: none;
+        }
+    }
+
+}

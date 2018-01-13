@@ -2,7 +2,7 @@
 
 // Stores api
 
-var storeDB = require("../database/procedures/_Store");
+var storeDB = require("../procedures/_Store");
 
 
 exports = module.exports = {
@@ -16,7 +16,18 @@ exports = module.exports = {
 
 
     get: function (req, res) {
-        var b = req.body;
+        var self = this;
+
+        if (!req.query || !req.query.id_store) {
+            return self.router.sendJson(res, null, "Store Id missing");
+        }
+
+        if (this.router.validateInputs(req, res, req.query, global.validationRules.getStore))
+            return;
+
+        storeDB.stores_get({ id_store: Number(req.query.id_store) }, function (err, result) {
+            return self.router.sendJson(res, result);
+        });
     },
 
 

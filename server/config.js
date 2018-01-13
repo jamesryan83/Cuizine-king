@@ -22,6 +22,7 @@ var config = {
         "password": "",
         "server": "",
         "database": "menuthing",
+//        "parseJSON": true,
         "pool": {
             "max": 10,
             "min": 0,
@@ -34,6 +35,11 @@ var config = {
             "requestTimeout": 15000,
             "cancelTimeout": 5000
         }
+    },
+    "sqlScripts": {
+        "db": [
+            "sql/generated/_recreate-db.sql"
+        ]
     }
 }
 

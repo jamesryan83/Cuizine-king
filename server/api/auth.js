@@ -9,7 +9,8 @@ var config = require("../config");
 var mail = require("../other/mail");
 var database = require("../database/database");
 var passportAuth = require("../other/passport-auth");
-var appDB = require("../database/procedures/_App");
+
+var appDB = require("../procedures/_App");
 
 
 exports = module.exports = {
@@ -20,70 +21,6 @@ exports = module.exports = {
     init: function (router) {
         this.router = router;
     },
-
-
-//    // Register
-//    register: function (req, res) {
-//        var self = this;
-//        var b = req.body;
-//        var isRegisterStore = false;
-//
-//        if (req.url.indexOf("/register-store") !== -1) {
-//            isRegisterStore = true;
-//
-//            if (this.router.validateInputs(req, res, b, global.validationRules.registerStore))
-//                return;
-//        } else {
-//            if (this.router.validateInputs(req, res, b, global.validationRules.register))
-//                return;
-//        }
-//
-//
-//        // create tokens
-//        this.createRegistrationTokens(b.password, function (err, tokens) {
-//            if (err) return self.router.sendJson(res, null, err.message);
-//
-//            if (isRegisterStore) {
-//                // save store to db
-//                appDB.pending_add({
-//                    first_name: b.first_name,
-//                    last_name: b.last_name,
-//                    email: b.email,
-//                    password: tokens.password,
-//                    type: 0, // TODO : type
-//                    verification_token: tokens.verification
-//                }, function (err) {
-//                    if (err) return self.router.sendJson(res, null, err.message, err.status);
-//
-//                    // send user validation email
-//                    mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
-//                        if (err) return self.router.sendJson(res, null, err.message);
-//
-//                        return self.router.sendJson(res);
-//                    });
-//                });
-//            } else {
-//                // save user to db
-//                appDB.pending_add({
-//                    first_name: b.first_name,
-//                    last_name: b.last_name,
-//                    email: b.email,
-//                    password: tokens.password,
-//                    type: 0, // TODO : type
-//                    verification_token: tokens.verification
-//                }, function (err) {
-//                    if (err) return self.router.sendJson(res, null, err.message, err.status);
-//
-//                    // send user validation email
-//                    mail.sendUserRegistrationEmail(b.first_name, b.email, tokens.verification, function (err) {
-//                        if (err) return self.router.sendJson(res, null, err.message);
-//
-//                        return self.router.sendJson(res);
-//                    });
-//                });
-//            }
-//        });
-//    },
 
 
 
@@ -102,42 +39,6 @@ exports = module.exports = {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                 return self.router.sendJson(res, { jwt: jwToken });
-            });
-        });
-    },
-
-
-    // Login and verify a user (move them to actual users table from pending)
-    verifyAccountAndLogin: function (req, res, next) {
-        var self = this;
-        var b = req.body;
-
-        if (this.router.validateInputs(req, res, b, global.validationRules.verifyAccount))
-            return;
-
-        // check users password
-        passportAuth.checkUsersPassword(b.email, b.password, true, function (err, user) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-            // create jwt for new user
-            jwt.sign({ email: b.email }, config.secret, { expiresIn: config.jwtExpiry }, function (err, jwToken) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-                // validate email and move user to proper user table
-                appDB.pending_move_to_users({
-                    email: b.email,
-                    verification_token: b.token,
-                    jwt: jwToken
-                }, function (err) {
-                    if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-                    // login
-                    passportAuth.authenticate(req, res, function (err) {
-                        if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-                        return self.router.sendJson(res, { jwt: jwToken });
-                    });
-                });
             });
         });
     },
@@ -172,7 +73,7 @@ exports = module.exports = {
         appDB.get_person({ email: b.email }, function (err, user) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            if (user.id_user) return self.router.sendJson(res, null, "Account already verified", 400);
+            if (user.id_person) return self.router.sendJson(res, null, "Account already verified", 400);
 
             // send user validation email
             mail.sendUserRegistrationEmail(user.first_name, b.email, user.verification_token, function (err) {
@@ -196,10 +97,10 @@ exports = module.exports = {
             return;
 
         // find user in actual users table
-        appDB.get_person({ email: b.email }, function (err, user) {
+        appDB.people_get({ email: b.email }, function (err, user) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            if (!user.id_user) return self.router.sendJson(res, null, "Please verify your account", 401);
+            if (!user.id_person) return self.router.sendJson(res, null, "Please verify your account", 401);
 
             // create token -- TODO : needs stored proc
             var token = self.makeid();
@@ -250,8 +151,6 @@ exports = module.exports = {
             });
         });
     },
-
-
 
 
 

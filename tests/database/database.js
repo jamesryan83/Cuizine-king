@@ -49,6 +49,9 @@ describe("DATABASE", function () {
 
 
 
+
+
+
     // https://stackoverflow.com/questions/39716569/nodejs-unhandledpromiserejectionwarning
     it("#connect emits error on connection failure", function (done) {
         this.timeout(5000);
@@ -211,6 +214,11 @@ describe("DATABASE", function () {
             assert.equal(err.message, "Test error");
             done();
         });
+    });
+
+
+    it.skip("#runBatchFileSync does something", function () {
+
     });
 
 

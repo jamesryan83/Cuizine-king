@@ -2,7 +2,7 @@
 
 // Stores api
 
-var storeDB = require("../database/procedures/_Store");
+var storeDB = require("../procedures/_Store");
 
 var database = require("../database/database");
 

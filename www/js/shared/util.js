@@ -1,6 +1,4 @@
-"use strict";
 
-var app = app || {};
 
 app.util = {
 
@@ -23,49 +21,9 @@ app.util = {
     },
 
 
-    // Returns the current page (e.g. /home)
-    getCurrentRoute: function () {
-        var route = window.location.pathname;
-
-        if (app.util.isCordova()) {
-            route = route.substring(route.lastIndexOf("/"), route.length - 5);
-            if (route == "/index-cordova") route = "/";
-        }
-
-        return route;
-    },
-
-
     // Returns true if running on cordova
     isCordova: function () {
         return $("#is-cordova").val() == "true";
-    },
-
-
-    // Get if the user is logged in
-    isLoggedIn: function () {
-        var jwt = this.getJwtFromStorage();
-        return jwt && jwt.length > 30; // TODO : something better
-    },
-
-
-    // Get if the user is on a logged in route
-    isLoggedInRoute: function () {
-        return app.clientRouter.loggedInRoutesList
-            .indexOf(this.getCurrentRoute()) !== -1;
-    },
-
-
-    // Log a user out, invalide their jwt and redirect to /login
-    logUserOut: function () {
-        var self = this;
-
-        app.util.ajaxRequest("GET", "api/v1/logout", {}, function (err) {
-            if (err) return;
-
-            self.invalidateJwt();
-            window.location.href = "/login";
-        });
     },
 
 
