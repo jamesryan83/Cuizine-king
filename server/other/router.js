@@ -76,7 +76,7 @@ exports = module.exports = {
 
 
         // logout
-        router.get("/logout", function (req, res) { return auth.logout(req, res, self); });
+        router.get("/logout", function (req, res) { return passportAuth.logout(req, res, self); });
 
 
         // api
@@ -85,10 +85,9 @@ exports = module.exports = {
         router.put(   "/api/v1/me",     authenticateApi, meApi.update.bind(meApi));
         router.delete("/api/v1/me",     authenticateApi, meApi.delete.bind(meApi));
         router.get(   "/api/v1/people", authenticateApi, peopleApi.get.bind(peopleApi));
-        router.put(   "/api/v1/people", authenticateApi, peopleApi.update.bind(peopleApi));
-        router.delete("/api/v1/people", authenticateApi, peopleApi.delete.bind(peopleApi));
         router.get(   "/api/v1/store",    storesApi.get.bind(storesApi));
         router.get(   "/api/v1/location", locationApi.get.bind(locationApi));
+        router.post(  "/api/v1/store-application", storesApi.create.bind(storesApi));
 
 
         // auth api
@@ -98,11 +97,9 @@ exports = module.exports = {
         router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi));
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
         router.post("/api/v1/registration-email", authApi.sendRegistrationEmail.bind(authApi));
-
         router.post("/api/v1/register", peopleApi.create.bind(peopleApi));
         router.post("/api/v1/verify-account", peopleApi.verifyEmail.bind(peopleApi));
 
-        router.post("/api/v1/store-application", storesApi.create.bind(storesApi));
 
 
         // sysadmin TODO : ip authentication or something

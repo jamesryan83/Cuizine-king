@@ -3,8 +3,8 @@
 // Stores api
 
 var storeDB = require("../procedures/_Store");
-
 var database = require("../database/database");
+
 
 exports = module.exports = {
 

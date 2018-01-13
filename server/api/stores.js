@@ -15,6 +15,7 @@ exports = module.exports = {
     },
 
 
+    // Get a store
     get: function (req, res) {
         var self = this;
 
@@ -47,19 +48,11 @@ exports = module.exports = {
     },
 
 
-    // Update store
+    // update store
     update: function (req, res) {
         var b = req.body;
 
-        if (this.router.validateInputs(req, res, b, global.validationRules.companiesUpdate))
-            return;
+
     },
-
-
-    // Delete store
-    delete: function (req, res) {
-        var b = req.body;
-    },
-
 
 }

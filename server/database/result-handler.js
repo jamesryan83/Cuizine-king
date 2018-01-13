@@ -21,7 +21,7 @@ exports = module.exports = {
                 break;
 
             case "test":
-                this.returnResult(result, 200, null, callback);
+                this.returnResult(result, 200, "Oops", callback);
                 break;
 
             case "people_create":
@@ -112,42 +112,3 @@ exports = module.exports = {
 //}
 
 
-
-//case "login_attempts_add":
-//    break;
-//
-//case "people_delete":
-//    return callback(null);
-//    break;
-//case "users_pending_add":
-//    var rowsChanged = result.rowsAffected.reduce(function (t, n) { return t + n });
-//    if (rowsChanged > 0) {
-//        return callback(null);
-//    } else {
-//        return callback({ status: 500, message: "Server Error" });
-//    }
-//    break;
-//case "users_pending_move_to_users":
-//    var rowsChanged = result.rowsAffected.reduce(function (t, n) { return t + n });
-//    if (rowsChanged > 0) {
-//        return callback(null);
-//    } else {
-//        return callback({ status: 500, message: "Server Error" });
-//    }
-//    break;
-//case "users_update":
-//    var rowsChanged = result.rowsAffected.reduce(function (t, n) { return t + n });
-//    if (rowsChanged > 0) {
-//        return callback(null);
-//    } else {
-//        return callback({ status: 401, message: "Account not found" });
-//    }
-//    break;
-//case "users_update_reset_password_token":
-//    var rowsChanged = result.rowsAffected.reduce(function (t, n) { return t + n });
-//    if (rowsChanged > 0) {
-//        return callback(null);
-//    } else {
-//        return callback({ status: 401, message: "Account not found" });
-//    }
-//    break;

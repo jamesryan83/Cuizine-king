@@ -13,7 +13,6 @@ exports = module.exports = {
     suburbsCount: 0,
 
 
-
     init: function (router) {
         this.router = router;
 

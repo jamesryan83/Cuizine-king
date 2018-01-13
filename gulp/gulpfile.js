@@ -14,7 +14,6 @@ var generateSqlJs = require("./generate-sql-js.js");
 
 
 var scssInputsPath = path.join(__dirname, "../", "www", "scss", "**", "*.scss");
-var outputsPath = path.join(__dirname, "../", "www", "generated");
 
 
 // watch all
@@ -46,7 +45,7 @@ gulp.task("scss", function () {
             cascade: false
         }))
         .pipe(rename({ prefix: "_" }))
-        .pipe(gulp.dest(outputsPath));
+        .pipe(gulp.dest(path.join(__dirname, "../", "www", "generated")));
 });
 
 

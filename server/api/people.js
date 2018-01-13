@@ -21,6 +21,22 @@ exports = module.exports = {
     },
 
 
+    // Get person
+    get: function (req, res) {
+        var self = this;
+        var b = req.body;
+
+        if (this.router.validateInputs(req, res, b, global.validationRules.peopleCreate))
+            return;
+
+        dbApp.people_get(b, function (err, person) {
+            if (err) return self.router.sendJson(res, null, err.message);
+
+            return self.router.sendJson(res, { person: person });
+        });
+    },
+
+
 
     // Create person
     create: function (req, res) {
@@ -89,38 +105,6 @@ exports = module.exports = {
                 return self.router.sendJson(res, null);
             });
         });
-    },
-
-
-
-    // Get person
-    get: function (req, res) {
-        var b = req.body;
-
-        if (this.router.validateInputs(req, res, b, global.validationRules.peopleGet))
-            return;
-
-//        dbApp.get(req.user.id_person )
-    },
-
-
-
-    // Update person
-    update: function (req, res) {
-        var b = req.body;
-
-        if (this.router.validateInputs(req, res, b, global.validationRules.peopleUpdate))
-            return;
-    },
-
-
-
-    // Delete person
-    delete: function (req, res) {
-        var b = req.body;
-
-        if (this.router.validateInputs(req, res, b, global.validationRules.peopleDelete))
-            return;
     },
 
 

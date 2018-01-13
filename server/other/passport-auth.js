@@ -125,8 +125,7 @@ exports = module.exports = {
             if (!user.id_person) {
                 return callback({ status: 401, message: "Please verify your account" });
             }
-console.log(password)
-            console.log(user.password)
+
             // check if the password is correct
             bcrypt.compare(password, user.password, function (err, res) {
                 if (err) console.log(err)
