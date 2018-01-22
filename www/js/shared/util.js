@@ -38,16 +38,22 @@ app.util = {
 
         // remove toasts if there's too many stacked up
         if ($("#toasts").children().length >= 5) {
-            $("#toasts").children().first().remove();
+            $("#toasts").children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
+                $(this).remove();
+            });
         }
 
         // append toasts message and show toasts
         $("#toasts").append(toast[0]);
         $("#toasts").show();
 
+        $(toast).animate({ opacity: 1, bottom: 0 }, 100);
+
         // hide toast after a little bit
         var currentToast = setTimeout(function () {
-            toast.remove();
+            $("#toasts").children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
+                $(this).remove();
+            });
 
             // hide container if it's empty
             if ($("#toasts").children().length === 0) {

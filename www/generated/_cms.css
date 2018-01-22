@@ -596,21 +596,26 @@ div.upload input {
 
 #toasts {
   position: fixed;
-  bottom: 10px;
   left: 50%;
+  bottom: 20px;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
   text-align: center;
   display: none;
   z-index: 10000; }
   #toasts p {
+    position: relative;
     border-radius: 2px;
-    background-color: #585858;
+    background-color: #3e75ff;
     min-width: 100px;
     padding: 10px 20px;
+    border: 1px solid #e3e3e3;
+    border-radius: 2px;
     color: #e3e3e3;
+    white-space: nowrap;
+    opacity: 0;
     margin-bottom: 10px;
-    white-space: nowrap; }
+    bottom: -50px; }
 
 #page-main-business h3 {
   margin-top: 40px; }
