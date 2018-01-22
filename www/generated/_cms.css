@@ -205,6 +205,15 @@ input, textarea {
     text-align: left;
     vertical-align: middle; }
 
+.label-input, .label-textarea, .typeahead {
+  position: relative; }
+  .label-input.isrequired:before, .label-textarea.isrequired:before, .typeahead.isrequired:before {
+    content: "*";
+    color: red;
+    right: -15px;
+    font-size: 20px;
+    position: absolute; }
+
 .input-button {
   display: inline-block;
   white-space: nowrap; }

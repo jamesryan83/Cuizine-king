@@ -56,11 +56,6 @@ describe("ROUTER", function () {
     });
 
 
-    it.skip("#renderAdminPage", function () {
-
-    });
-
-
     it.skip("#sendJson", function () {
 
     });

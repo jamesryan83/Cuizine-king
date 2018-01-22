@@ -10,7 +10,6 @@ var multer  = require("multer");
 var validate = require("validate.js");
 var router = require("express").Router();
 
-var meApi = require("../api/me");
 var authApi = require("../api/auth");
 var peopleApi = require("../api/people");
 var storesApi = require("../api/stores");
@@ -36,8 +35,6 @@ exports = module.exports = {
 
     server: undefined,
 
-    dayStrings: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
-
 
     // Setup router
     init: function (expressServer) {
@@ -46,12 +43,13 @@ exports = module.exports = {
 
         passportAuth.init(this);
 
-        meApi.init(this);
         authApi.init(this);
         locationApi.init(this);
         peopleApi.init(this);
         storesApi.init(this);
         sysadminApi.init(this);
+
+        var authenticate = passportAuth.authenticate.bind(passportAuth);
 
 
         // index html files
@@ -63,6 +61,15 @@ exports = module.exports = {
 
         // log the requested route & headers
         router.use(function (req, res, next) {
+            if (global.devMode) {
+                // Change db when called from tests
+                if (req.headers["user-agent"] && req.headers["user-agent"].indexOf("node-superagent") !== -1) {
+                    config.mssql.database = "menuthingTest";
+                } else {
+                    config.mssql.database = "menuthing";
+                }
+            }
+
             if (config.logRequestRoute) console.log("requested url: " + req.url);
             if (config.logRequestHeaders) console.log(req.headers);
             next();
@@ -71,34 +78,26 @@ exports = module.exports = {
 
         // site, cms and sysadmin pages
         router.get(routerSite.routesList, function (req, res) { self.renderPage(req, res, "site"); });
-        router.get(routerCms.routesList, function (req, res) { self.renderPage(req, res, "cms"); }); // auth.authenticate,
-        router.get(routerSysadmin.routesList, function (req, res) { self.renderPage(req, res, "sysadmin"); });
-
-
-        // logout
-        router.get("/logout", function (req, res) { return passportAuth.logout(req, res, self); });
+        router.get(routerCms.routesList, authenticate, function (req, res) { self.renderPage(req, res, "cms"); }); // auth.authenticate,
+        router.get(routerSysadmin.routesList, authenticate, function (req, res) { self.renderPage(req, res, "sysadmin"); });
 
 
         // api
-        var authenticateApi = passportAuth.authenticateApi.bind(passportAuth);
-        router.get(   "/api/v1/me",     authenticateApi, meApi.get.bind(meApi)); // me is currently logged in user
-        router.put(   "/api/v1/me",     authenticateApi, meApi.update.bind(meApi));
-        router.delete("/api/v1/me",     authenticateApi, meApi.delete.bind(meApi));
-        router.get(   "/api/v1/people", authenticateApi, peopleApi.get.bind(peopleApi));
-        router.get(   "/api/v1/store",    storesApi.get.bind(storesApi));
-        router.get(   "/api/v1/location", locationApi.get.bind(locationApi));
-        router.post(  "/api/v1/store-application", storesApi.create.bind(storesApi));
+        router.get( "/api/v1/people", authenticate, peopleApi.get.bind(peopleApi));
+        router.get( "/api/v1/store", storesApi.get.bind(storesApi));
+        router.get( "/api/v1/location", locationApi.get.bind(locationApi));
+        router.post("/api/v1/store-application", storesApi.create.bind(storesApi));
 
 
         // auth api
         router.post("/api/v1/login", authApi.login.bind(authApi));
+        router.post("/api/v1/store-login", authApi.storeLogin.bind(authApi));
+        router.post("/api/v1/register", authApi.createUser.bind(authApi));
         router.get( "/api/v1/logout", authApi.logout.bind(authApi));
-        router.post("/api/v1/token", authApi.createJwt.bind(authApi)); // returns a new jwt from a user email
+        router.post("/api/v1/check-token", authenticate, authApi.checkJwt.bind(authApi)); // returns a new jwt from a user email
         router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi));
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
-        router.post("/api/v1/registration-email", authApi.sendRegistrationEmail.bind(authApi));
-        router.post("/api/v1/register", peopleApi.create.bind(peopleApi));
-        router.post("/api/v1/verify-account", peopleApi.verifyEmail.bind(peopleApi));
+        router.post("/api/v1/verify-account", authApi.verifyAccount.bind(authApi));
 
 
 
@@ -108,11 +107,7 @@ exports = module.exports = {
         router.get( "/api/sysadmin/recreate-database", sysadminApi.recreateDatabase.bind(sysadminApi));
 
 
-        router.post("/api/v1/upload-image", upload.single("files[]"), function (req, res, next) {
-            console.log(req.files);
-
-            res.sendStatus(200);
-        });
+        router.post("/api/v1/upload-logo", upload.single("logo"), storesApi.uploadLogo.bind(storesApi));
 
 
         router.use(this.catchAll.bind(this));
@@ -159,10 +154,6 @@ exports = module.exports = {
 
         if (route == "/reset-password") {
             pageData.reset_password_token = !req.query ? null : req.query.t;
-        }
-
-        if (route == "/sysadmin") {
-            pageData.dayStrings = this.dayStrings;
         }
 
         return res.send(ejs.render(currentPage, pageData));

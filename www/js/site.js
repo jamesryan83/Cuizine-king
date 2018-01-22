@@ -56,6 +56,13 @@ app.site = {
                 app.site.home.init(routeData);
             },
         },
+        "/account/:id": {
+            title: "Account",
+            file: "account",
+            initFunction: function (routeData) {
+                app.site.account.init(routeData);
+            },
+        },
         "/about": {
             title: "About",
             file: "about",

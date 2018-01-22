@@ -74,10 +74,10 @@ CREATE PROCEDURE stores_create
     BEGIN TRANSACTION
 
         -- stores need their own account, check if email already exists
-        IF (SELECT TOP 1 email FROM App.people WHERE email = @email) IS NOT NULL
+        IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
 	       THROW 50409, 'Invalid Email. Account already exists', 1
 
-        IF (SELECT TOP 1 email FROM Store.stores WHERE email = @email) IS NOT NULL
+        IF (SELECT TOP 1 email FROM Store.stores WHERE email = @email AND is_deleted = 0) IS NOT NULL
 	       THROW 50409, 'Invalid Email. Store Account already exists', 1
 
 
@@ -97,18 +97,24 @@ CREATE PROCEDURE stores_create
         SET @newAddressId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_address')
 
 
+        -- Get the person type
+        DECLARE @id_person_type INT
+        SET @id_person_type = (SELECT id_person_type FROM App.person_types WHERE name = 'store user')
+        IF @id_person_type IS NULL THROW 50400, 'Invalid person type', 1
+
+
         -- create a store user
         INSERT INTO App.people
-            (id_address, first_name, last_name, email, phone_number, password,
-            jwt, is_verified, is_web_user, is_store_user, internal_notes, updated_by)
+            (id_person_type, id_address, first_name, last_name, email, phone_number, password,
+            jwt, verification_token, is_verified, internal_notes, updated_by)
             VALUES
-            (null, @first_name, @last_name, @email, @phone_number_user, @password,
-             @jwt, 1, 0, 1, @internal_notes_user, @id_user_doing_update)
+            (@id_person_type, null, @first_name, @last_name, @email, @phone_number_user, @password,
+             @jwt, 'na', 1, @internal_notes_user, @id_user_doing_update)
 
         SET @newPersonId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_person')
 
 
-        -- create store
+        -- Create store
         INSERT INTO Store.stores
             (id_address, logo, name, description, email, phone_number, website,
              facebook, twitter, abn, bank_name, bank_bsb,

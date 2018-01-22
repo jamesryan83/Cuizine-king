@@ -8,9 +8,6 @@ var config = require("../config");
 var database = require("../database/database");
 var resultHandler = require("../database/result-handler");
 
-var dbName = config.mssql.database + ".dbo.";
-
-
 // Calls stored procedures for Store
 exports = module.exports = {
 
@@ -18,7 +15,7 @@ exports = module.exports = {
 	reviews_get: function (inputs, callback) {
 		database.pool.request()
 			.input("id_store", sql.Int, inputs.id_store)
-			.execute(dbName + "reviews_get", function (err, result) {
+			.execute(config.mssql.database + ".dbo.reviews_get", function (err, result) {
 				return resultHandler.handle("reviews_get", err, result, callback, inputs);
 		});
 	},
@@ -82,7 +79,7 @@ exports = module.exports = {
 			.input("hours_sat_delivery_close", sql.NVarChar, inputs.hours_sat_delivery_close)
 			.input("hours_sun_delivery_close", sql.NVarChar, inputs.hours_sun_delivery_close)
 			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
-			.execute(dbName + "stores_create", function (err, result) {
+			.execute(config.mssql.database + ".dbo.stores_create", function (err, result) {
 				return resultHandler.handle("stores_create", err, result, callback, inputs);
 		});
 	},
@@ -93,7 +90,7 @@ exports = module.exports = {
 		database.pool.request()
 			.input("id_store", sql.Int, inputs.id_store)
 			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
-			.execute(dbName + "stores_delete", function (err, result) {
+			.execute(config.mssql.database + ".dbo.stores_delete", function (err, result) {
 				return resultHandler.handle("stores_delete", err, result, callback, inputs);
 		});
 	},
@@ -103,7 +100,7 @@ exports = module.exports = {
 	stores_get: function (inputs, callback) {
 		database.pool.request()
 			.input("id_store", sql.Int, inputs.id_store)
-			.execute(dbName + "stores_get", function (err, result) {
+			.execute(config.mssql.database + ".dbo.stores_get", function (err, result) {
 				return resultHandler.handle("stores_get", err, result, callback, inputs);
 		});
 	},

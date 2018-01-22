@@ -45,6 +45,7 @@ app.vr._people_last_name_optional =            { length: { minimum: 2, maximum: 
 app.vr._people_password =                      { presence: true, length: { minimum: 3, maximum: 64 }};
 app.vr._people_reset_password_token =          { presence: true, length: 64 };
 app.vr._people_reset_password_token_optional = { presence: true, length: 64 };
+app.vr._people_jwt =                           { presence: true, length: { minimum: 30, maximum: 512 }};
 app.vr._people_jwt_optional =                  { length: { minimum: 30, maximum: 512 }};
 app.vr._people_verification_token =            { presence: true, length: 64 };
 
@@ -63,7 +64,12 @@ app.vr._reviews_rating =          { presence: true, numericality: { onlyInteger:
 app.vr._stores_logo =                 { presence: true, length: { maximum: 256 }};
 app.vr._stores_name =                 { presence: true, length: { maximum: 512 }};
 app.vr._stores_description_optional = { length: { maximum: 1024 }};
-app.vr._stores_abn =                  { presence: true, length: { maximum: 32 }};
+app.vr._stores_abn =                  { presence: true, length: { minimum: 10, maximum: 32 }};
+app.vr._stores_bank_name =            { presence: true, length: { minimum: 2, maximum: 128 }};
+app.vr._stores_bank_bsb =             { presence: true, length: { minimum: 6, maximum: 16 }};
+app.vr._stores_bank_account_name =    { presence: true, length: { minimum: 2, maximum: 128 }};
+app.vr._stores_bank_account_number =  { presence: true, length: { minimum: 2, maximum: 32 }};
+app.vr._stores_hours =                { presence: true, length: { minimum: 4, maximum: 5 }};
 
 app.vr._product_extras_name = { presence: true, length: { maximum: 128 }};
 
@@ -98,8 +104,12 @@ app.vr.login = {
     password: app.vr._people_password
 }
 
+app.vr.storeLogin = {
+    email: app.vr._email,
+    password: app.vr._people_password
+}
 
-app.vr.peopleCreate = {
+app.vr.createUser = {
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
     email: app.vr._email,
@@ -107,23 +117,29 @@ app.vr.peopleCreate = {
     confirmPassword: { equality: "password" }
 }
 
-app.vr.sendRegistrationEmail = { email: app.vr._email }
-
-
 app.vr.verifyAccount = {
     email: app.vr._email,
     password: app.vr._people_password,
-    token: app.vr._people_verification_token
+    verification_token: app.vr._people_verification_token
 }
 
+app.vr.logout = {
+    jwt: app.vr._people_jwt
+}
+
+app.vr.sendRegistrationEmail = { email: app.vr._email }
 
 app.vr.forgotPassword = { email: app.vr._email }
 
-
 app.vr.resetPassword = {
+    email: app.vr._people_email,
     password: app.vr._people_password,
     confirmPassword: { equality: "password" },
-    token: app.vr._people_reset_password_token
+    reset_password_token: app.vr._people_reset_password_token
+}
+
+app.vr.checkJwt = {
+    jwt: app.vr._people_jwt
 }
 
 
@@ -134,16 +150,17 @@ app.vr.resetPassword = {
 app.vr.createStore = {
     postcode: app.vr._postcodes_postcode,
     suburb: app.vr._postcodes_suburb,
-    unit_number: app.vr._addresses_unit_number_optional,
-    street_number: app.vr._addresses_street_number,
-    street: app.vr._addresses_street,
+
+    address_line_1: app.vr._addresses_line1,
+    address_line_2: app.vr._addresses_line2_optional,
+
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
     email_user: app.vr._email,
     phone_number_user: app.vr._phone_number,
     password: app.vr._people_password,
-    jwt: app.vr._people_jwt_optional, // TODO : Might not need to check this here
     internal_notes_user: app.vr._notes_optional,
+
     logo: app.vr._stores_logo,
     name: app.vr._stores_name,
     description: app.vr._stores_description_optional,
@@ -153,7 +170,40 @@ app.vr.createStore = {
     facebook: app.vr._url_link_optional,
     twitter: app.vr._url_link_optional,
     abn: app.vr._stores_abn,
-    internal_notes_store: app.vr._notes_optional
+    internal_notes_store: app.vr._notes_optional,
+    bank_name: app.vr._stores_bank_name,
+    bank_bsb: app.vr._stores_bank_bsb,
+    bank_account_name: app.vr._stores_bank_account_name,
+    bank_account_number: app.vr._stores_bank_account_number,
+
+    hours_mon_dinein_open: app.vr._stores_hours,
+    hours_tue_dinein_open: app.vr._stores_hours,
+    hours_wed_dinein_open: app.vr._stores_hours,
+    hours_thu_dinein_open: app.vr._stores_hours,
+    hours_fri_dinein_open: app.vr._stores_hours,
+    hours_sat_dinein_open: app.vr._stores_hours,
+    hours_sun_dinein_open: app.vr._stores_hours,
+    hours_mon_dinein_close: app.vr._stores_hours,
+    hours_tue_dinein_close: app.vr._stores_hours,
+    hours_wed_dinein_close: app.vr._stores_hours,
+    hours_thu_dinein_close: app.vr._stores_hours,
+    hours_fri_dinein_close: app.vr._stores_hours,
+    hours_sat_dinein_close: app.vr._stores_hours,
+    hours_sun_dinein_close: app.vr._stores_hours,
+    hours_mon_delivery_open: app.vr._stores_hours,
+    hours_tue_delivery_open: app.vr._stores_hours,
+    hours_wed_delivery_open: app.vr._stores_hours,
+    hours_thu_delivery_open: app.vr._stores_hours,
+    hours_fri_delivery_open: app.vr._stores_hours,
+    hours_sat_delivery_open: app.vr._stores_hours,
+    hours_sun_delivery_open: app.vr._stores_hours,
+    hours_mon_delivery_close: app.vr._stores_hours,
+    hours_tue_delivery_close: app.vr._stores_hours,
+    hours_wed_delivery_close: app.vr._stores_hours,
+    hours_thu_delivery_close: app.vr._stores_hours,
+    hours_fri_delivery_close: app.vr._stores_hours,
+    hours_sat_delivery_close: app.vr._stores_hours,
+    hours_sun_delivery_close: app.vr._stores_hours
 }
 
 app.vr.getStore = {
@@ -161,22 +211,6 @@ app.vr.getStore = {
 }
 
 
-
-// -------- API validation --------
-
-
-// Me
-app.vr.apiMeGet = { email: app.vr._email }
-
-app.vr.apiMeUpdate = {
-    id_person: app.vr._sequence_id_optional,
-    email: app.vr._email_optional,
-    token: app.vr._people_reset_password_token_optional,
-    first_name: app.vr._people_first_name_optional,
-    last_name: app.vr._people_last_name_optional
-}
-
-app.vr.apiMeDelete = { email: app.vr._email }
 
 
 // alias

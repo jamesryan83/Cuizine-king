@@ -16,6 +16,7 @@ CREATE TABLE Store.stores
     bank_account_name NVARCHAR(128) NOT NULL,
     bank_account_number NVARCHAR(32) NOT NULL,
     is_deleted BIT NOT NULL DEFAULT 0,
+    is_deleted_email NVARCHAR(256),
     internal_notes NVARCHAR(256),
     updated_by INT NOT NULL,
 	SysStartTime DateTime2 GENERATED ALWAYS AS ROW START,

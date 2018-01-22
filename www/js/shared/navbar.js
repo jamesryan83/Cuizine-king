@@ -9,8 +9,20 @@ app.navbar = {
 
         // Item clicked
         $(".navbar a").on("click", function () {
-            if (this.innerText == "blog" || this.innerText == "account")
+            if (this.innerText.toLowerCase() == "blog") {
+                app.util.showToast("Not working yet");
                 return false;
+            }
+
+            if (this.innerText.toLowerCase() == "account") {
+                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                return false;
+            }
+
+            if (this.innerText.toLowerCase() == "logout") {
+                app.routerBase.logUserOut();
+                return false;
+            }
 
             var route = this.href.replace(window.location.origin, "");
 
@@ -30,10 +42,11 @@ app.navbar = {
         });
 
 
+        // TODO : remove in production
         // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
-                window.location.href = "/sysadmin";
+                window.location.href = "/sysadmin/create-store";
             } else {
                 window.location.href = "/location/Balmoral-4171";
             }
@@ -60,9 +73,12 @@ app.navbar = {
         if (app.routerBase.isUserLoggedIn()) {
             $(".navbar-link-dashboard").show();
             $(".navbar-link-logout").show();
+            $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
         } else {
             $(".navbar-link-login").show();
+            $(".navbar-link-logout").hide();
+            $(".navbar-link-account").hide();
         }
     }
 

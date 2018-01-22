@@ -6,8 +6,9 @@ app.routerBase = {
 
     // url regexes
     regexUrlStore: /\/store\/\d*/,
+    regexUrlAccount: /\/account\/\d*/,
     regexUrlLocation: /\/location\/[\w\d%-]*-\d*/,
-    regexUrlStoreAdmin: /\/store\/\d*\/([\w-]*)/,
+    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
 
     firstLoad: true,
     lastSection: "",
@@ -35,10 +36,6 @@ app.routerBase = {
     loadPageForRoute: function (route, section, isAfterPopState) {
         var self = this;
         this.lastSection = section;
-
-        if (route == "/logout") {
-            return this.logUserOut();
-        }
 
 
         // get data for route
@@ -92,11 +89,13 @@ app.routerBase = {
         // replace variables with placeholders
         if (this.regexUrlStoreAdmin.exec(route)) {
             var temp = route.split("/");
-            route = "/store/:id/" + temp[temp.length - 1];
+            route = "/store-admin/:id/" + temp[temp.length - 1];
         } else if (this.regexUrlStore.exec(route)) {
             route = "/store/:id";
         } else if (this.regexUrlLocation.exec(route)) {
             route = "/location/:suburb";
+        } else if (this.regexUrlAccount.exec(route)) {
+            route = "/account/:id";
         }
 
         routeData.normalizedRoute = route;
@@ -109,7 +108,6 @@ app.routerBase = {
 
         // unknown route
         } else {
-            debugger;
             window.location.href = "/login";
             return;
         }
@@ -121,10 +119,10 @@ app.routerBase = {
 
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
-        app.util.ajaxRequest("GET", "/api/v1/logout", {}, function (err) {
+        app.util.ajaxRequest("GET", "/api/v1/logout", { auth: true }, function (err) {
             if (err) return;
 
-            app.util.invalidateJwt();
+            app.util.invalidateCredentials();
             window.location.href = "/login";
         });
     },

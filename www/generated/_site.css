@@ -205,6 +205,15 @@ input, textarea {
     text-align: left;
     vertical-align: middle; }
 
+.label-input, .label-textarea, .typeahead {
+  position: relative; }
+  .label-input.isrequired:before, .label-textarea.isrequired:before, .typeahead.isrequired:before {
+    content: "*";
+    color: red;
+    right: -15px;
+    font-size: 20px;
+    position: absolute; }
+
 .input-button {
   display: inline-block;
   white-space: nowrap; }
@@ -1227,6 +1236,8 @@ div.upload input {
       text-align: center; }
       .page-auth #page-login-form-container #registration-success-container p {
         margin-top: 10px; }
+      .page-auth #page-login-form-container #registration-success-container #registration-success-email {
+        color: #5595d8; }
       .page-auth #page-login-form-container #registration-success-container button {
         font-size: 12px;
         margin-top: 30px;
@@ -1385,6 +1396,7 @@ div.upload input {
     #navbar-site {
       text-align: center; }
       #navbar-site .navbar-heading .navbar-icon {
+        margin-left: 0;
         background-repeat: no-repeat;
         background-position: center;
         background-size: 180px 90px;

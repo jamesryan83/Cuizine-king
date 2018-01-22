@@ -41,13 +41,27 @@ app.sysadmin = {
     },
 
 
-    // CMS routes
+    // System admin routes
     routes: {
-        "/sysadmin": {
-            title: "System Admin",
-            file: "sysadmin",
+        "/sysadmin/create-store": {
+            title: "SysAdmin - Create Store",
+            file: "create-store",
             initFunction: function (routeData) {
-                app.sysadmin.main.init();
+                app.sysadmin.createStore.init();
+            },
+        },
+        "/sysadmin/edit-store": {
+            title: "SysAdmin - Edit Store",
+            file: "edit-store",
+            initFunction: function (routeData) {
+                app.sysadmin.editStore.init();
+            },
+        },
+        "/sysadmin/database": {
+            title: "SysAdmin - Database",
+            file: "database",
+            initFunction: function (routeData) {
+                app.sysadmin.database.init();
             },
         },
     }

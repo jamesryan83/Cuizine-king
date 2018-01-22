@@ -12,20 +12,59 @@ exports = module.exports = {
         }
 
         switch (procedure) {
+            case "people_create_web_user":
+                return this.returnOutput("newPersonId", result, callback);
+                break;
+
+            case "people_get_by_id":
+            case "people_get_by_email":
+            case "people_get_by_jwt":
+                return this.returnResult(result, 400, "Account not found", callback);
+                break;
+
+            case "people_update_jwt":
+                return this.returnOutput("id_person", result, callback);
+                break;
+
+            case "people_invalidate_jwt":
+                return callback(null, result.rowsAffected)
+                break;
+
+
+            case "reviews_get":
+                return callback(null);
+                break;
+
+            case "stores_create":
+                return callback(null);
+                break;
+
+            case "stores_delete":
+                return callback(null);
+                break;
+
             case "stores_get":
                 this.returnResult(result, 400, "Store not found", callback, true);
                 break;
 
-            case "people_get":
-                this.returnResult(result, 400, "Account not found", callback);
+
+            case "test_result":
+                this.returnResult(result, null, null, callback);
+                break;
+            case "test_result_error":
+                this.returnResult(result, 123, "test message", callback);
+                break;
+            case "test_null_err_result":
+                return callback(null);
+                break;
+            case "test_output":
+                return this.returnOutput("id_test", result, callback);
                 break;
 
-            case "test":
-                this.returnResult(result, 200, "Oops", callback);
-                break;
 
-            case "people_create":
-            case "people_validate_email":
+            case "people_update_password":
+            case "people_update_is_verified":
+            case "people_update_reset_password_token":
             default:
                 return callback(null);
         }
@@ -33,9 +72,9 @@ exports = module.exports = {
 
 
     // Returns the result
-    returnResult: function (result, status, message, callback, isJsonResult) {
+    returnResult: function (result, errStatus, errMessage, callback, isJsonResult) {
 
-        // data result
+        // Data result
         if (result.recordset && result.recordset.length > 0) {
 
             // regular data result
@@ -46,7 +85,7 @@ exports = module.exports = {
                 data = result.recordset[0]["JSON_F52E2B61-18A1-11d1-B105-00805F49916B"]
 
                 if (data.length === 0) {
-                    return callback({ status: status, message: message });
+                    return callback({ status: errStatus || 500, message: errMessage || "No Data" });
                 }
 
                 try {
@@ -55,15 +94,32 @@ exports = module.exports = {
                     console.log("Error parsing json result");
                     return ({ status: 500, message: "Server error" });
                 }
+
+                // Data is missing
+                if (Object.keys(data).length === 0) {
+                    return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
+                }
             }
 
+            // data ok
             return callback(null, data);
-
-        // regular result
-        } else {
-            return callback({ status: status, message: message });
         }
+
+        // Data is missing
+        return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
     },
+
+
+
+    // Returns an output parameter
+    returnOutput: function (outputName, result, callback) {
+        if (result.output) {
+            return callback(null, result.output[outputName]);
+        }
+
+        return callback({ status: 500, message: "Output missing" });
+    },
+
 
 
     // Returns the error message from an SQL THROW 50###, 'Some Message', 1
@@ -83,6 +139,8 @@ exports = module.exports = {
     }
 
 }
+
+
 
 
 // This is what the mssql error object looks like

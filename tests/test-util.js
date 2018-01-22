@@ -34,14 +34,8 @@ exports = module.exports = {
 
 
     // empty database and connect
-    startDatabase: function (withSeedData, callback) {
-        if (!callback) {
-            callback = withSeedData;
-            withSeedData = false;
-        }
-
+    startDatabase: function (callback) {
         database.runBatchFileSync("empty-test-db.bat", sqlCwd);
-//        if (withSeedData) database.runSqlScriptSync(sqlOtherCwd + "\\seed.sql");
 
         if (database.isConnected) {
             return callback();
@@ -66,28 +60,28 @@ exports = module.exports = {
     // Gets an api token for making api requests
     getApiToken: function (callback) {
         superagent
-            .post(this.supertestUrl + "/api/v1/token")
+            .post(this.supertestUrl + "/api/v1/login")
             .send({ email: this.fakeUser.email, password: this.fakeUser.password })
             .set("accept", "json")
             .end(function (err, res) {
-                return callback(err, res);
+                return callback(res.body.data.jwt);
             });
     },
 
 
     // test if page has valid html and other stuff
-    testValidPage: function (route, done, status, cookie) {
+    testValidPage: function (route, done, status, jwt) {
         if (!status) status = 200;
 
         supertest(this.supertestUrl)
             .get(route)
             .set("Content-Type", "text/html")
             .set("Accept", "text/html")
-            .set("Cookie", [cookie || ''])
+            .set("authorization", "Bearer " + jwt)
             .expect("Content-Type", "text/html; charset=utf-8")
             .expect(status)
             .end(function (err, res) {
-            if (err) return done(new Error(err));
+                if (err) return done(new Error(err));
 
                 assert(res.text.match(regexValidHtml), "Invalid html");
                 done();
@@ -99,6 +93,9 @@ exports = module.exports = {
     testRedirectToLogin: function (route, done) {
         supertest(this.supertestUrl)
             .get(route)
+            .set("Content-Type", "text/html")
+            .set("Accept", "text/html")
+            .expect("Content-Type", "text/html; charset=utf-8")
             .expect("location", "/login")
             .expect(302, done);
     },
@@ -120,5 +117,27 @@ exports = module.exports = {
             return callback(null, output);
         });
     },
+
+
+    // Create some test users TODO: more test users
+    createTestUsers: function (callback) {
+        supertest(this.supertestUrl)
+            .post("/api/v1/register")
+            .set("Content-Type", "application/json")
+            .send({
+                first_name: this.fakeUser.first_name,
+                last_name: this.fakeUser.last_name,
+                email: this.fakeUser.email,
+                password: this.fakeUser.password,
+                confirmPassword: this.fakeUser.password })
+            .expect("Content-Type", "application/json; charset=utf-8")
+            .expect(200)
+            .end(function (err, res) {
+                if (err) throw Error("error creating user");
+
+                return callback(res.body.data)
+            });
+    },
+
 
 }

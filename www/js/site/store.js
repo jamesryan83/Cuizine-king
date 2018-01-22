@@ -1,5 +1,5 @@
 
-
+// Page for a single store
 app.site.store = {
 
     init: function (routeData) {
@@ -18,8 +18,12 @@ app.site.store = {
         // Get store data
         app.util.ajaxRequest("GET", "/api/v1/store", { id_store: 1 }, function (err, result) {
             if (err) return console.log(err);
-
-            self.addDataToPage(result.data[0]);
+console.log(result)
+            if (Object.keys(result).length > 0) {
+                self.addDataToPage(result.data[0]);
+            } else {
+                app.util.showToast("Error loading store data");
+            }
         });
 
 

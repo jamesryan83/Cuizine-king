@@ -8,6 +8,8 @@ Don't use semantic html elements.  Makes things a bit easier
 
 Be careful with naming things.  Id's should be very specific especially on bigger pages
 
+Don't use default parameters in sql store procedure inputs.  Mssql seems to provide default values that override them
+
 Any images used for testing should be funny
 
 
@@ -106,7 +108,7 @@ The page is rendered with the data and sent to the client.  There are multiple
 
 All the database SQL code is in server/sql
 
-
+The seed data is generated in the excel workbook in the fakedata folder
 
 ## Testing
 

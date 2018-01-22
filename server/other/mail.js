@@ -43,6 +43,14 @@ exports = module.exports = {
     },
 
 
+    // Thanks for verifying email
+    sendThanksForVerifyingEmail: function (email, callback) {
+        var body = "<p>Thanks for verifying your account</p>";
+
+        this.sendEmail(email, config.title + " - Thanks for verifying your account", body, callback);
+    },
+
+
     // Send an email
     sendEmail: function (email, subject, message, callback) {
         if (!global.devMode) {

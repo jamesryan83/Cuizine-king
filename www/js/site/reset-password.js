@@ -1,5 +1,5 @@
 
-
+// Reset password page
 app.site.resetPassword = {
 
     init: function () {

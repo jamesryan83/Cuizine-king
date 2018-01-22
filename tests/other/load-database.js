@@ -10,7 +10,22 @@ var database = require("../../server/database/database");
 describe("LOAD - DATABASE", function () {
 
     before(function (done) {
+        this.timeout(5000);
+
         testutil.startDatabase(function () {
+            database.executeQuery("CREATE TABLE testtable ( id INT IDENTITY(1,1) PRIMARY KEY, name nvarchar(64), email nvarchar(64) )", function (err, result) {
+                if (err) return done(new Error(err));
+
+                done();
+            });
+        });
+    });
+
+
+    after(function (done) {
+        database.executeQuery("DROP TABLE IF EXISTS testtable", function (err, result) {
+            if (err) return done(new Error(err));
+
             done();
         });
     });

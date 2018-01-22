@@ -14,9 +14,6 @@ var express = require("express");
 var passport = require("passport");
 var requestIp = require("request-ip");
 var bodyParser = require("body-parser");
-var session = require("express-session");
-var cookieParser = require("cookie-parser");
-var MSSQLStore = require('connect-mssql')(session);
 
 
 var config = require("./config");
@@ -53,9 +50,11 @@ if (config.showLogPaths) {
 var server = express();
 
 
+// setup database
+database.connect(config.mssql);
 
-// After the database has connected
-function onDatabaseConnected() {
+database.once("connected", function () {
+    console.log("database connected");
 
     // security settings
     // https://helmetjs.github.io/docs/
@@ -74,14 +73,6 @@ function onDatabaseConnected() {
     server.use(requestIp.mw()); // get client IP on every request
     server.use(bodyParser.urlencoded({ extended: true, limit: 5242880 })); // 5MB
     server.use(bodyParser.json({ limit: 5242880 })); // 5MB
-    server.use(cookieParser());
-    server.use(session({
-        store: sessionStore,
-        secret: config.secret,
-        resave: true,
-        saveUninitialized: true,
-//        cookie: { expires: new Date(2147483647000) }
-    }));
     server.use(passport.initialize());
     server.use(passport.session());
     server.use(hpp()); // more security, stops duplicated querystring values
@@ -97,9 +88,7 @@ function onDatabaseConnected() {
 
     // override serve-static to stop it sending index.html
     server.use(function (req, res, next) {
-        if (req.url == "/") {
-            return router.renderPage(req, res, "site");
-        }
+        if (req.url == "/") return router.renderPage(req, res, "site");
 
         next();
     });
@@ -120,28 +109,6 @@ function onDatabaseConnected() {
     serverInstance = server.listen(port, function() {
         console.log("listening on port " + port);
     });
-}
-
-
-
-// setup database
-// both sessions db and regular db
-// have to be connected before starting the server
-var sessionStoreConnected = false;
-var databaseConnected = false;
-var sessionStore = new MSSQLStore(config.mssql);
-database.connect(config.mssql);
-
-sessionStore.once("connect", function () {
-    sessionStoreConnected = true;
-    console.log("session store connected");
-    if (databaseConnected) onDatabaseConnected();
-});
-
-database.once("connected", function () {
-    databaseConnected = true;
-    console.log("database connected");
-    if (sessionStoreConnected) onDatabaseConnected();
 });
 
 
@@ -163,13 +130,6 @@ function shutdown(err, err2) {
         database.close();
     }
 
-    if (sessionStore) {
-        console.log("closing session store");
-        sessionStore.connection.pool.release(); // TODO : do these work ?
-        sessionStore.connection.pool.destroy();
-        sessionStore = null;
-    }
-
     if (serverInstance) {
         console.log("stopping server");
         serverInstance.close();
@@ -181,7 +141,6 @@ function shutdown(err, err2) {
 server.once("error", shutdown);
 database.once("errorConnecting", shutdown);
 database.once("errorPool", shutdown);
-sessionStore.once("error", shutdown);
 process.once("uncaughtException", shutdown);
 process.once("SIGTERM", shutdown);
 process.once("SIGINT", shutdown);

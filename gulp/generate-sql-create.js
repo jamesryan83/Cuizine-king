@@ -14,7 +14,6 @@ exports = module.exports = {
     start: function () {
         var testDBName = config.mssql.database + "Test";
 
-
         // output filepaths
         var sqlFolderPath = path.join(__dirname, "../", "sql");
         var sqlOutputFolderPath = path.join(sqlFolderPath, "generated");
@@ -57,7 +56,6 @@ exports = module.exports = {
 
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-db.sql"), outputSql);
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-test-db.sql"), outputSqlTests);
-
 
 
 

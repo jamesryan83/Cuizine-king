@@ -1,0 +1,12 @@
+-- GENERATED FILE
+
+USE master
+
+IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'menuthingTest2')
+BEGIN
+ALTER DATABASE menuthingTest2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+DROP DATABASE menuthingTest2
+END
+CREATE DATABASE menuthingTest2
+
+GO

@@ -8,13 +8,15 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
 
     // when a dropdown item is selected
     function selectItem (el) {
-        $(listEl).prev().val(el.innerText); // put selected item into input
-        $(listEl).hide();
-
-        return callback({
+        var result = {
             suburb: encodeURIComponent($(el).find(".typeahead-item-suburb").text()),
             postcode: $(el).find(".typeahead-item-postcode").text()
-        });
+        };
+
+        $(listEl).prev().val(result.postcode + " - " + result.suburb); // put selected item into input
+        $(listEl).hide();
+
+        return callback(result);
     }
 
 

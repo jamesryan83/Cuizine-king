@@ -6,7 +6,8 @@ var config = {
     "host": "",
     "port": 1337,
     "secret": "fallout3isprettygood",
-    "jwtExpiry": "1y", // 2s 2h 2d
+    "jwtExpiryShort": "15m", // 2s 2m 2h 2d
+    "jwtExpiryLong": "7d",
     "showLogPaths": true,
     "logSQLerrors": true,
     "logRequestRoute": true,
@@ -22,7 +23,6 @@ var config = {
         "password": "",
         "server": "",
         "database": "menuthing",
-//        "parseJSON": true,
         "pool": {
             "max": 10,
             "min": 0,
@@ -36,10 +36,22 @@ var config = {
             "cancelTimeout": 5000
         }
     },
-    "sqlScripts": {
-        "db": [
-            "sql/generated/_recreate-db.sql"
-        ]
+    "dbConstants": {
+        "orderTypes": {
+            "delivery": 1,
+            "dinein": 2,
+            "takeaway": 3
+        },
+        "paymentMethods": {
+            "creditcard": 1,
+            "cash": 2,
+            "paypal": 3
+        },
+        "personTypes": {
+            "webuser": 1,
+            "storeuser": 2,
+            "systemuser": 3
+        }
     }
 }
 

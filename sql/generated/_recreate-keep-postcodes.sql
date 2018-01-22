@@ -11,6 +11,10 @@ ALTER TABLE App.addresses DROP CONSTRAINT FK_app_addresses_app_postcodes
 END
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'App' AND TABLE_NAME = 'people')
 BEGIN
+ALTER TABLE App.people DROP CONSTRAINT FK_app_people_app_person_types
+END
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'App' AND TABLE_NAME = 'people')
+BEGIN
 ALTER TABLE App.people DROP CONSTRAINT FK_app_people_app_addresses
 END
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'App' AND TABLE_NAME = 'people')
@@ -101,6 +105,7 @@ DROP TABLE IF EXISTS App.addresses
 DROP TABLE IF EXISTS App.order_types
 DROP TABLE IF EXISTS App.payment_methods
 DROP TABLE IF EXISTS App.people
+DROP TABLE IF EXISTS App.person_types
 
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_extras')
 BEGIN
@@ -144,9 +149,15 @@ GO
 
  -- Drop Procedures
 
-DROP PROCEDURE IF EXISTS people_create
-DROP PROCEDURE IF EXISTS people_get
-DROP PROCEDURE IF EXISTS people_validate_email
+DROP PROCEDURE IF EXISTS people_create_web_user
+DROP PROCEDURE IF EXISTS people_get_by_email
+DROP PROCEDURE IF EXISTS people_get_by_id
+DROP PROCEDURE IF EXISTS people_get_by_jwt
+DROP PROCEDURE IF EXISTS people_invalidate_jwt
+DROP PROCEDURE IF EXISTS people_update_is_verified
+DROP PROCEDURE IF EXISTS people_update_jwt
+DROP PROCEDURE IF EXISTS people_update_password
+DROP PROCEDURE IF EXISTS people_update_reset_password_token
 DROP PROCEDURE IF EXISTS reviews_get
 DROP PROCEDURE IF EXISTS stores_create
 DROP PROCEDURE IF EXISTS stores_delete
@@ -160,6 +171,7 @@ ALTER SEQUENCE Sequences.id_person RESTART WITH 1
 ALTER SEQUENCE Sequences.id_address RESTART WITH 1
 
 ALTER SEQUENCE Sequences.id_order_type RESTART WITH 1
+ALTER SEQUENCE Sequences.id_person_type RESTART WITH 1
 ALTER SEQUENCE Sequences.id_payment_method RESTART WITH 1
 ALTER SEQUENCE Sequences.id_store RESTART WITH 1
 ALTER SEQUENCE Sequences.id_business_hour RESTART WITH 1
@@ -218,7 +230,8 @@ CREATE TABLE App.payment_methods
 CREATE TABLE App.people
 (
 	id_person INT NOT NULL CONSTRAINT DF_app_people_id_person DEFAULT (NEXT VALUE FOR Sequences.id_person),
-	id_address INT,
+	id_person_type TINYINT NOT NULL DEFAULT 0,
+    id_address INT,
     first_name NVARCHAR(64) NOT NULL,
     last_name NVARCHAR(64) NOT NULL,
     email NVARCHAR(256) NOT NULL UNIQUE,
@@ -227,17 +240,26 @@ CREATE TABLE App.people
 	reset_password_token NVARCHAR(64),
     jwt NVARCHAR(512),
     is_verified BIT NOT NULL DEFAULT 0,
-    verification_token NVARCHAR(64),
-    is_system_user BIT NOT NULL DEFAULT 0,
-    is_web_user BIT NOT NULL DEFAULT 1,
-    is_store_user BIT NOT NULL DEFAULT 0,
+    verification_token NVARCHAR(64) NOT NULL,
     id_store INT,
     is_deleted BIT NOT NULL DEFAULT 0,
+    is_deleted_email NVARCHAR(256),
     internal_notes NVARCHAR(256) SPARSE NULL,
 	updated_by INT NOT NULL,
     created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
 	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
     CONSTRAINT PK_app_people PRIMARY KEY CLUSTERED (id_person)
+)
+
+
+CREATE TABLE App.person_types
+(
+    id_person_type TINYINT NOT NULL CONSTRAINT DF_app_person_types_id_person_type DEFAULT (NEXT VALUE FOR Sequences.id_person_type),
+    name NVARCHAR(16) NOT NULL,
+    updated_by INT NOT NULL DEFAULT 1,
+    created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
+	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
+    CONSTRAINT PK_app_person_types PRIMARY KEY CLUSTERED (id_person_type)
 )
 
 
@@ -472,6 +494,7 @@ CREATE TABLE Store.stores
     bank_account_name NVARCHAR(128) NOT NULL,
     bank_account_number NVARCHAR(32) NOT NULL,
     is_deleted BIT NOT NULL DEFAULT 0,
+    is_deleted_email NVARCHAR(256),
     internal_notes NVARCHAR(256),
     updated_by INT NOT NULL,
 	SysStartTime DateTime2 GENERATED ALWAYS AS ROW START,
@@ -488,6 +511,7 @@ WITH
  -- Create Constraints
 
 ALTER TABLE App.addresses ADD CONSTRAINT FK_app_addresses_app_postcodes FOREIGN KEY (id_postcode) REFERENCES App.postcodes (id_postcode)
+ALTER TABLE App.people ADD CONSTRAINT FK_app_people_app_person_types FOREIGN KEY (id_person_type) REFERENCES App.person_types (id_person_type)
 ALTER TABLE App.people ADD CONSTRAINT FK_app_people_app_addresses FOREIGN KEY (id_address) REFERENCES App.addresses (id_address)
 ALTER TABLE App.people ADD CONSTRAINT FK_app_people_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
 ALTER TABLE Product.product_extras ADD CONSTRAINT FK_product_product_extras_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
@@ -514,106 +538,117 @@ GO
 
  -- Create Stored Procedures
 
--- Create a person (not for store users)
-CREATE PROCEDURE people_create
-    @postcode NVARCHAR(6),
-    @suburb NVARCHAR(64),
-
-    @address_line_1 NVARCHAR(128),
-	@address_line_2 NVARCHAR(128),
-	@address_latitude DECIMAL(9,4),
-    @address_longitude DECIMAL(9,4),
-
+-- Create a web user
+CREATE PROCEDURE people_create_web_user
 	@first_name NVARCHAR(64),
     @last_name NVARCHAR(64),
     @email NVARCHAR(256),
-    @phone_number NVARCHAR(32),
 	@password NVARCHAR(64),
     @jwt NVARCHAR(512),
-    @is_verified BIT = 0,
     @verification_token NVARCHAR(64),
-    @is_system_user BIT = 0,
-    @is_web_user BIT = 1,
-    @internal_notes NVARCHAR(256),
-
-    @id_user_doing_update INT AS
-
-    DECLARE @id_postcode INT
-    DECLARE @newAddressId INT
-    DECLARE @newPersonId INT
+    @id_user_doing_update INT,
+    @newPersonId INT OUTPUT AS
 
     SET NOCOUNT ON
     SET XACT_ABORT ON
 
     BEGIN TRANSACTION
 
-        IF @is_system_user = 1 AND @is_web_user = 1
-            THROW 50400, 'Invalid is_system_user or is_web_user.  Both values cannot be 1', 1
-
-        IF @is_system_user = 0 AND @is_web_user = 0
-            THROW 50400, 'Invalid is_system_user or is_web_user.  Values missing', 1
-
-        -- stores need their own account, check if email already exists
-        IF (SELECT TOP 1 email FROM App.people WHERE email = @email) IS NOT NULL
-	       THROW 50409, 'Account already taken', 1
-
-        IF (SELECT TOP 1 email FROM Store.stores WHERE email = @email) IS NOT NULL
+        -- check if email already exists
+        IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
 	       THROW 50409, 'Account already taken', 1
 
 
-        -- Get postcode id
-        IF @postcode IS NOT NULL AND @suburb IS NOT NULL
-        BEGIN
-            SELECT @id_postcode = id_postcode FROM App.postcodes
-            WHERE postcode = @postcode AND suburb = @suburb
+        -- Get the person type
+        DECLARE @id_person_type INT
+        SET @id_person_type = (SELECT id_person_type FROM App.person_types WHERE name = 'web user')
+        IF @id_person_type IS NULL THROW 50400, 'Invalid person type', 1
 
-            IF @id_postcode IS NULL THROW 50400, 'Invalid postcode or suburb', 1
-        END
 
-        -- create person address if supplied
-        IF @id_postcode IS NOT NULL AND @address_line_1 IS NOT NULL
-        BEGIN
-            INSERT INTO App.addresses
-                (id_postcode, line1, line2, latitude, longitude, updated_by)
-                VALUES
-                (@id_postcode, @address_line_1, @address_line_2, @address_latitude, @address_longitude, @id_user_doing_update)
-
-            SET @newAddressId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_address')
-        END
-
-        -- create a store user
+        -- create a user
         INSERT INTO App.people
-            (id_address, first_name, last_name, email, phone_number, password,
-            jwt, is_verified, is_web_user, is_store_user, internal_notes, updated_by)
+            (id_person_type, first_name, last_name, email, password, jwt, verification_token, updated_by)
             VALUES
-            (@newAddressId, @first_name, @last_name, @email, @phone_number, @password,
-             @jwt, 1, 0, 1, @internal_notes, @id_user_doing_update)
+            (@id_person_type, @first_name, @last_name, @email, @password, @jwt, @verification_token, @id_user_doing_update)
+
+
+        -- output value
+        SET @newPersonId = (SELECT CAST(current_value AS INT) FROM sys.sequences WHERE name = 'id_person')
 
     COMMIT
 GO
 
 
--- Get a person by id or email
-CREATE PROCEDURE people_get
-	@id INT = -1,
-	@email NVARCHAR(255) = '' AS
+-- Get a person by email
+CREATE PROCEDURE people_get_by_email
+	@email NVARCHAR(256),
+    @id_person_type TINYINT AS
 
-	IF @id = -1 AND @email = '' THROW 50400, 'Must provide id or email', 1
+    IF @id_person_type IS NULL SET @id_person_type = 1
 
-	SET NOCOUNT ON
-
-	SELECT * FROM App.people
-	WHERE id_person = @id OR email = @email
+    SELECT * FROM App.people
+    WHERE email = @email AND id_person_type = @id_person_type AND is_deleted = 0
 GO
 
 
--- Validate a persons email
-CREATE PROCEDURE people_validate_email
+-- Get a person by id
+CREATE PROCEDURE people_get_by_id
+	@id INT,
+    @id_person_type TINYINT AS
+
+    IF @id_person_type IS NULL SET @id_person_type = 1
+
+    SELECT * FROM App.people
+    WHERE id_person = @id AND id_person_type = @id_person_type AND is_deleted = 0
+GO
+
+
+-- Get a person by jwt
+CREATE PROCEDURE people_get_by_jwt
+	@jwt NVARCHAR(512),
+	@email NVARCHAR(256),
+    @id_person_type TINYINT AS
+
+    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'Bad token', 1
+
+    IF @id_person_type IS NULL SET @id_person_type = 1
+
+	SET NOCOUNT ON
+
+    DECLARE @jwt_person AS NVARCHAR(512)
+    DECLARE @id_person AS INT
+
+	SELECT @id_person = id_person, @jwt_person = jwt
+    FROM App.people
+	WHERE @email = email AND id_person_type = @id_person_type AND is_deleted = 0
+
+    IF @id_person IS NULL THROW 50400, 'Account not found', 1
+
+    IF @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
+
+    SELECT * FROM App.people
+    WHERE id_person = @id_person AND id_person_type = @id_person_type AND is_deleted = 0
+GO
+
+
+-- Invalidate a jwt
+CREATE PROCEDURE people_invalidate_jwt
+	@jwt NVARCHAR(512) AS
+
+    UPDATE App.people SET jwt = '' WHERE jwt = @jwt
+
+    IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
+GO
+
+
+-- Update is verified
+CREATE PROCEDURE people_update_is_verified
 	@email NVARCHAR(256),
 	@verification_token NVARCHAR(64) AS
 
     DECLARE @id_person AS INT
     DECLARE @token AS NVARCHAR(64)
+    DECLARE @is_verified AS BIT = 0
 
     SET NOCOUNT ON
     SET XACT_ABORT ON
@@ -621,17 +656,83 @@ CREATE PROCEDURE people_validate_email
     BEGIN TRANSACTION
 
         -- find person id
-        SELECT @id_person = id_person, @token = verification_token FROM App.people
-        WHERE email = @email OR email = @email
+        SELECT @id_person = id_person, @token = verification_token, @is_verified = is_verified
+        FROM App.people
+        WHERE (email = @email OR email = @email) AND is_deleted = 0
 
         IF @id_person IS NULL THROW 50400, 'Account not found', 1
-        IF @verification_token <> @token THROW 50401, 'Invalid verification token', 1
 
-        -- set person as validated
+        IF @is_verified = 1 THROW 50400, 'Account already verified', 1
+
+        IF @verification_token <> @token THROW 50401, 'Invalid token', 1
+
+        SET NOCOUNT OFF
+
+        -- set person as verified
         UPDATE App.people SET is_verified = 1 WHERE id_person = @id_person
 
     COMMIT
 
+GO
+
+
+-- Update a persons jwt
+CREATE PROCEDURE people_update_jwt
+	@email NVARCHAR(255),
+    @jwt NVARCHAR(512),
+    @id_person INT OUTPUT AS
+
+    SET NOCOUNT ON
+
+	UPDATE App.people SET jwt = @jwt
+	WHERE email = @email AND is_deleted = 0
+
+    SELECT @id_person = id_person FROM App.people
+    WHERE email = @email AND is_deleted = 0
+GO
+
+
+-- Update password
+CREATE PROCEDURE people_update_password
+	@email NVARCHAR(256),
+	@reset_password_token NVARCHAR(64),
+    @password NVARCHAR (64) AS
+
+    IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'Bad token', 1
+
+    DECLARE @person_reset_password_token AS NVARCHAR(64)
+    DECLARE @id_person AS INT
+
+    SELECT @id_person = id_person, @person_reset_password_token = reset_password_token
+        FROM App.people WHERE email = @email AND is_deleted = 0
+
+    IF @id_person IS NULL THROW 50400, 'Account not found', 1
+
+    IF @person_reset_password_token <> @reset_password_token THROW 50401, 'Invalid token', 1
+
+    UPDATE App.people SET password = @password WHERE id_person = @id_person
+GO
+
+
+-- Update reset password token
+CREATE PROCEDURE people_update_reset_password_token
+	@email NVARCHAR(512),
+    @reset_password_token NVARCHAR(64) AS
+
+    DECLARE @id_person AS INT
+    DECLARE @is_verified AS BIT
+
+    SELECT @id_person = id_person, @is_verified = is_verified
+    FROM App.people
+    WHERE email = @email AND is_deleted = 0
+
+    IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
+
+    IF @is_verified = 0 THROW 50400, 'Please verify your account', 1
+
+    UPDATE App.people
+    SET reset_password_token = @reset_password_token
+    WHERE id_person = @id_person
 GO
 
 
@@ -723,10 +824,10 @@ CREATE PROCEDURE stores_create
     BEGIN TRANSACTION
 
         -- stores need their own account, check if email already exists
-        IF (SELECT TOP 1 email FROM App.people WHERE email = @email) IS NOT NULL
+        IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
 	       THROW 50409, 'Invalid Email. Account already exists', 1
 
-        IF (SELECT TOP 1 email FROM Store.stores WHERE email = @email) IS NOT NULL
+        IF (SELECT TOP 1 email FROM Store.stores WHERE email = @email AND is_deleted = 0) IS NOT NULL
 	       THROW 50409, 'Invalid Email. Store Account already exists', 1
 
 
@@ -746,18 +847,24 @@ CREATE PROCEDURE stores_create
         SET @newAddressId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_address')
 
 
+        -- Get the person type
+        DECLARE @id_person_type INT
+        SET @id_person_type = (SELECT id_person_type FROM App.person_types WHERE name = 'store user')
+        IF @id_person_type IS NULL THROW 50400, 'Invalid person type', 1
+
+
         -- create a store user
         INSERT INTO App.people
-            (id_address, first_name, last_name, email, phone_number, password,
-            jwt, is_verified, is_web_user, is_store_user, internal_notes, updated_by)
+            (id_person_type, id_address, first_name, last_name, email, phone_number, password,
+            jwt, verification_token, is_verified, internal_notes, updated_by)
             VALUES
-            (null, @first_name, @last_name, @email, @phone_number_user, @password,
-             @jwt, 1, 0, 1, @internal_notes_user, @id_user_doing_update)
+            (@id_person_type, null, @first_name, @last_name, @email, @phone_number_user, @password,
+             @jwt, 'na', 1, @internal_notes_user, @id_user_doing_update)
 
         SET @newPersonId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_person')
 
 
-        -- create store
+        -- Create store
         INSERT INTO Store.stores
             (id_address, logo, name, description, email, phone_number, website,
              facebook, twitter, abn, bank_name, bank_bsb,
@@ -815,7 +922,13 @@ CREATE PROCEDURE stores_delete
     @id_store INT,
     @id_user_doing_update INT AS
 
-    UPDATE Store.stores SET is_deleted = 1, updated_by = @id_user_doing_update
+    -- Get store email
+    DECLARE @email NVARCHAR(256)
+    SELECT @email = email FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
+    IF @email IS NULL THROW 50400, 'Store not found', 1
+
+    -- Set store deleted
+    UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
         WHERE id_store = @id_store
 GO
 
@@ -860,7 +973,7 @@ CREATE PROCEDURE stores_get
          WHERE pe.id_store = @id_store AND pe.active = 1 FOR JSON PATH) AS 'product_extras'
 
     FROM Store.stores AS s
-    WHERE s.id_store = @id_store
+    WHERE s.id_store = @id_store AND is_deleted = 0
     FOR JSON PATH
 
 GO

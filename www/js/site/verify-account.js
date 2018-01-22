@@ -1,6 +1,6 @@
 
 
-// Verify Account
+// Verify Account page
 app.site.verifyAccount = {
 
     init: function () {

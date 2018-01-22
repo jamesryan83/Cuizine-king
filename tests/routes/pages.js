@@ -17,13 +17,15 @@ describe("ROUTES - PAGES", function () {
         this.timeout(5000);
 
         testutil.startDatabase(function () {
-            done();
+            testutil.createTestUsers(function (data) {
+                done();
+            });
         });
     });
 
 
 
-    // Logged out pages
+    // Site pages
 
     it("#aboutPage returns valid html", function (done) {
         testutil.testValidPage("/about", done);
@@ -95,67 +97,136 @@ describe("ROUTES - PAGES", function () {
     });
 
 
-    it("#logoutPage redirects to home page", function (done) {
-        supertest(testutil.supertestUrl)
-            .get("/logout")
-            .expect("location", "/login")
-            .expect("Content-Type", "text/plain; charset=utf-8")
-            .expect(302, done);
-    });
-
-
     it("Invalid route returns valid html with 404", function (done) {
         testutil.testValidPage("/blahblah", done, 404);
     });
 
 
-    // TODO : should have authentication
-    it("#sysadminPage returns valid html", function (done) {
-        testutil.testValidPage("/sysadmin", done);
+
+
+    // System admin pages
+
+    it("#sysadminPage create-store invalid jwt redirects to login page with 302", function (done) {
+        testutil.testRedirectToLogin("/sysadmin/create-store", done);
+    });
+
+
+    it("#sysadminPage create-store valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/sysadmin/create-store", done, 200, jwt);
+        });
+    });
+
+
+    it("#sysadminPage edit-store invalid jwt redirects to login page with 302", function (done) {
+        testutil.testRedirectToLogin("/sysadmin/edit-store", done);
+    });
+
+
+    it("#sysadminPage edit-store valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/sysadmin/edit-store", done, 200, jwt);
+        });
+    });
+
+
+    it("#sysadminPage database invalid jwt redirects to login page with 302", function (done) {
+        testutil.testRedirectToLogin("/sysadmin/database", done);
+    });
+
+
+    it("#sysadminPage database valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/sysadmin/database", done, 200, jwt);
+        });
     });
 
 
 
 
-    // Logged in pages
+    // CMS pages
 
-//    it("#businessPage redirects to login page when unauthorized", function (done) {
-//        testutil.testRedirectToLogin("/store-admin/33/business", done);
-//    });
-
-
-//    it("#mainPage redirects to login page when unauthorized", function (done) {
-//        testutil.testRedirectToLogin("/store-admin/33/dashboard", done);
-//    });
+    it("#businessPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/business", done);
+    });
 
 
-//    it("#deliverySuburbsPage redirects to login page when unauthorized", function (done) {
-//        testutil.testRedirectToLogin("/store-admin/33/delivery-suburbs", done);
-//    });
+    it("#businessPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/business", done, 200, jwt);
+        });
+    });
 
 
-//    it("#mainPage returns valid html when authorized", function (done) {
-//        supertest(testutil.supertestUrl)
-//            .post("/api/v1/login")
-//            .send({ email: testutil.fakeUser.email, password: "password" })
-//            .end(function (err, res) {
-//                if (err) return done(new Error(err));
-//
-//                cookie = res.headers['set-cookie'];
-//                testutil.testValidPage("/dashboard", done, null, cookie);
-//                // TODO : logout again here
-//            });
-//    });
-//
-//
-//
-//
-//
-//    it.skip("#accountPage returns valid html when authorized", function (done) {
-//
-//    });
+    it("#dashboardPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/dashboard", done);
+    });
 
 
-    // TODO : other logged in pages
+    it("#dashboardPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/dashboard", done, 200, jwt);
+        });
+    });
+
+
+    it("#deliverySuburbsPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/delivery-suburbs", done);
+    });
+
+
+    it("#deliverySuburbsPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/delivery-suburbs", done, 200, jwt);
+        });
+    });
+
+
+    it("#menuPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/menu", done);
+    });
+
+
+    it("#menuPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/menu", done, 200, jwt);
+        });
+    });
+
+
+    it("#ordersPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/orders", done);
+    });
+
+
+    it("#ordersPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/orders", done, 200, jwt);
+        });
+    });
+
+
+    it("#settingsPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/settings", done);
+    });
+
+
+    it("#settingsPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/settings", done, 200, jwt);
+        });
+    });
+
+
+    it("#transactionsPage redirects to login page when unauthorized", function (done) {
+        testutil.testRedirectToLogin("/store-admin/1/transactions", done);
+    });
+
+
+    it("#transactionsPage valid jwt returns html", function (done) {
+        testutil.getApiToken(function (jwt) {
+            testutil.testValidPage("/store-admin/1/transactions", done, 200, jwt);
+        });
+    });
 
 });

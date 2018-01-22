@@ -2,6 +2,8 @@
 
 // Stores api
 
+var azure = require("azure-storage");
+
 var storeDB = require("../procedures/_Store");
 
 
@@ -12,6 +14,8 @@ exports = module.exports = {
 
     init: function (router) {
         this.router = router;
+
+//        this.blobService = azure.createBlobService();
     },
 
 
@@ -53,6 +57,17 @@ exports = module.exports = {
         var b = req.body;
 
 
+    },
+
+
+    uploadLogo: function (req, res) {
+        console.log(req.file);
+
+//        req.file.buffer
+
+        res.sendStatus(200);
+
+//        this.blobService.createContainerIfNotExists("")
     },
 
 }

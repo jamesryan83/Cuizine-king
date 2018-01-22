@@ -18,64 +18,31 @@
 
     <body>
 
-        <!-- Login and register page -->
-        <div id="page-sysadmin" class="page">
-
-            <h1>System Admin Page</h1>
-            <a href="/">Home</a>
-
-
-            <!-- tab control -->
-            <div id="page-sysadmin-tabcontrol" class="tabcontrol">
-
-                <ul class="tabs">
-                    <li class="active">CREATE STORE</li>
-                    <li>EDIT STORE</li>
-                    <li>DATABASE</li>
-                </ul>
-
-
-                <hr class="hr-1"></hr>
-
-
-                <div class="tab-content">
-
-                    <!-- create store tab -->
-                    <div id="sysadmin-tab-create-store" class="tab-item active">
-                        <?- include("create-store") ?>
-                    </div>
-
-
-                    <!-- edit store tab -->
-                    <div id="sysadmin-tab-edit-store" class="tab-item">
-                        database stuff
-                    </div>
-
-
-                    <!-- database tab -->
-                    <div id="sysadmin-tab-database" class="tab-item">
-                        <button>Recreate database</button>
-                        <button>Recreate test database</button>
-                        <button>Empty test database</button>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
+        <!-- Page container -->
+        <div id="page-container"></div>
 
 
         <!-- Toasts -->
         <div id="toasts" style="display: none;"></div>
 
 
+        <!-- Loading screen -->
+        <div id="loading-screen" style="display: none;">
+            <div id="loading-icon" class="center">
+                <label>Loading</label>
+            </div>
+        </div>
+
+
         <script src="/lib/jquery-3.0.js"></script>
+        <script src="/lib/validate.min.js"></script>
         <script src="/lib/jquery-file-upload/jquery.ui.widget.js"></script>
         <script src="/lib/jquery-file-upload/canvas-to-blob.js"></script>
         <script src="/lib/jquery-file-upload/jquery.iframe-transport.js"></script>
         <script src="/lib/jquery-file-upload/jquery.fileupload.js"></script>
         <script src="/lib/jquery-file-upload/jquery.fileupload-process.js"></script>
         <script src="/lib/jquery-file-upload/jquery.fileupload-validate.js"></script>
+
         <script src="/generated/_sysadmin.js"></script>
     </body>
 

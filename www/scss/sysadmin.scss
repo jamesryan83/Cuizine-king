@@ -5,17 +5,16 @@
 @import "sysadmin/edit-store";
 @import "shared/checkbox";
 @import "shared/tabcontrol";
+@import "shared/typeahead";
 
 
-#page-sysadmin {
-
-
-    .tabcontrol {
-        padding: 50px;
-    }
+#page-container {
+    text-align: center;
+    padding-top: 30px;
 
     h3 {
         margin-top: 40px;
+        font-size: 20px;
     }
 
     .button-1 {
@@ -24,14 +23,34 @@
         width: 150px;
     }
 
-    #form-create-store {
-        img {
-            height: 200px;
-            width: 200px;
-            margin-left: 20px;
+    .label-textarea {
+        text-align: left;
+
+        label {
+            text-align: left;
+            width: 145px;
+            margin-right: 5px;
         }
     }
 
+    .typeahead {
+        margin-top: 10px;
+        text-align: left;
+
+        > label {
+            width: 145px;
+        }
+    }
+
+    #navbar-sysadmin {
+        text-align: center;
+        margin: 20px;
+
+        a {
+            color: $colorBlue2;
+            margin: 10px;
+        }
+    }
 }
 
 

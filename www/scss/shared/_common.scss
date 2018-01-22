@@ -397,6 +397,22 @@ input, textarea {
 }
 
 
+// Is required star thing
+.label-input, .label-textarea, .typeahead {
+    position: relative;
+
+    &.isrequired {
+        &:before {
+            content: "*";
+            color: red;
+            right: -15px;
+            font-size: 20px;
+            position: absolute;
+        }
+    }
+}
+
+
 // TODO : search icon ?
 // Input with a button next to it
 .input-button {

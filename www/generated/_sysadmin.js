@@ -41,13 +41,27 @@ app.sysadmin = {
     },
 
 
-    // CMS routes
+    // System admin routes
     routes: {
-        "/sysadmin": {
-            title: "System Admin",
-            file: "sysadmin",
+        "/sysadmin/create-store": {
+            title: "SysAdmin - Create Store",
+            file: "create-store",
             initFunction: function (routeData) {
-                app.sysadmin.main.init();
+                app.sysadmin.createStore.init();
+            },
+        },
+        "/sysadmin/edit-store": {
+            title: "SysAdmin - Edit Store",
+            file: "edit-store",
+            initFunction: function (routeData) {
+                app.sysadmin.editStore.init();
+            },
+        },
+        "/sysadmin/database": {
+            title: "SysAdmin - Database",
+            file: "database",
+            initFunction: function (routeData) {
+                app.sysadmin.database.init();
             },
         },
     }
@@ -61,7 +75,7 @@ app.sysadmin.routesList = Object.keys(app.sysadmin.routes);
 
 
 // Sysadmin
-app.sysadmin.main = {
+app.sysadmin.createStore = {
 
 
     init: function (routeData) {
@@ -72,6 +86,12 @@ app.sysadmin.main = {
 
         // load tabcontrol
         new app.controls.TabControl("#page-sysadmin-tabcontrol", function (tab) { });
+
+
+        // suburb typeahead
+        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
+            console.log(data)
+        });
 
 
         // generate a random password
@@ -89,64 +109,85 @@ app.sysadmin.main = {
             $(el)[0].size = "10";
         });
 
-
-        // file upload button
-        $("#fileupload").fileupload({
-            maxNumberOfFiles: 1,
-            acceptFileTypes: /^image\/(jpe?g|png)$/i,
-            paramName: "files[]",
-            maxFileSize: 250000,
-            url: "/api/v1/upload-image",
-
-            add: function (e, data) {
-                // validate selected file
-
-                var $this = $(this);
-                var validation = data.process(function () {
-                    return $this.fileupload('process', data.files);
-                });
-
-                validation.done(function() {
-                    data.submit(); // ok
-                });
-
-                validation.fail(function(data) {
-                    app.util.showToast("Error - " + data.files[0].error);
-                    return;
-                });
-            },
-
-            beforeSend: function() {
-                $("#store-logo-loading").show();
-            },
-
-            done: function (e, data) {
-                self.afterImageUploaded(data);
-            },
-
-            fail: function(e, data) {
-                $("#store-logo-loading").hide();
-                app.util.showToast("Unknown server error");
+        $("#fileupload").on("change", function (e) {
+            if (e.target && e.target.files && e.target.files.length > 0) {
+                console.log(e.target.files[0])
             }
         });
 
+        $("#form-create-store").on("submit", function (e) {
+            var data = validate.collectFormValues($("#form-create-store")[0], { trim: true });
+console.log(data)
+//            if (!app.util.validateInputs(data, app.validationRules.createStore))
+//                return false;
+
+            return false;
+        })
+
+
+//        // file upload button
+//        $("#fileupload").fileupload({
+//            maxNumberOfFiles: 1,
+//            acceptFileTypes: /^image\/(jpe?g|png)$/i,
+//            paramName: "logo",
+//            maxFileSize: 250000,
+//            formData: {  },
+//            url: "/api/v1/upload-logo",
+//
+//            add: function (e, data) {
+//                // validate selected file
+//
+//                console.log(data)
+//
+////                var $this = $(this);
+////                var validation = data.process(function () {
+////                    if (data.files.length < 1) return false;
+////                    if (data.files[0].size > 250000) return false;
+////
+////                    return $this.fileupload('process', data.files);
+////                });
+////
+////                validation.done(function() {
+////                    data.submit(); // ok
+////                });
+////
+////                validation.fail(function(data) {
+////                    app.util.showToast("Error - " + data.files[0].error);
+////                    return;
+////                });
+//            },
+//
+//            beforeSend: function() {
+//                $("#store-logo-loading").show();
+//            },
+//
+//            done: function (e, data) {
+//                self.afterImageUploaded(data);
+//            },
+//
+//            fail: function(e, data) {
+//                $("#store-logo-loading").hide();
+//                app.util.showToast("Unknown server error");
+//            }
+//        });
+
     },
 
 
-    // After an image is uploaded
-    afterImageUploaded: function (data) {
-
-        // load image into background of div
-        var fr = new FileReader();
-        fr.onload = function () {
-            $("#store-logo").css({
-                "background-image": "url(" + fr.result + ")"
-            });
-
-            $("#store-logo-loading").hide();
-        }
-        fr.readAsDataURL(data.files[0]);
-    },
+//    // After an image is uploaded
+//    afterImageUploaded: function (data) {
+//
+//        // load image into background of div
+//        var fr = new FileReader();
+//        fr.onload = function () {
+//            $("#store-logo").css({
+//                "background-image": "url(" + fr.result + ")"
+//            });
+//
+//            $("#store-logo-loading").hide();
+//        }
+//        fr.readAsDataURL(data.files[0]);
+//    },
 
 
     // Generates a random string for the users first password
@@ -181,6 +222,38 @@ app.sysadmin.main = {
 
 }
 
+// Sysadmin database
+app.sysadmin.database = {
+
+
+    init: function (routeData) {
+        var self = this;
+
+
+
+    },
+
+
+
+
+}
+
+// Sysadmin database
+app.sysadmin.editStore = {
+
+
+    init: function (routeData) {
+        var self = this;
+
+
+
+    },
+
+
+
+
+}
+
 app.navbar = {
 
 
@@ -190,8 +263,20 @@ app.navbar = {
 
         // Item clicked
         $(".navbar a").on("click", function () {
-            if (this.innerText == "blog" || this.innerText == "account")
+            if (this.innerText.toLowerCase() == "blog") {
+                app.util.showToast("Not working yet");
                 return false;
+            }
+
+            if (this.innerText.toLowerCase() == "account") {
+                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                return false;
+            }
+
+            if (this.innerText.toLowerCase() == "logout") {
+                app.routerBase.logUserOut();
+                return false;
+            }
 
             var route = this.href.replace(window.location.origin, "");
 
@@ -211,10 +296,11 @@ app.navbar = {
         });
 
 
+        // TODO : remove in production
         // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
-                window.location.href = "/sysadmin";
+                window.location.href = "/sysadmin/create-store";
             } else {
                 window.location.href = "/location/Balmoral-4171";
             }
@@ -241,9 +327,12 @@ app.navbar = {
         if (app.routerBase.isUserLoggedIn()) {
             $(".navbar-link-dashboard").show();
             $(".navbar-link-logout").show();
+            $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
         } else {
             $(".navbar-link-login").show();
+            $(".navbar-link-logout").hide();
+            $(".navbar-link-account").hide();
         }
     }
 
@@ -256,8 +345,9 @@ app.routerBase = {
 
     // url regexes
     regexUrlStore: /\/store\/\d*/,
+    regexUrlAccount: /\/account\/\d*/,
     regexUrlLocation: /\/location\/[\w\d%-]*-\d*/,
-    regexUrlStoreAdmin: /\/store\/\d*\/([\w-]*)/,
+    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
 
     firstLoad: true,
     lastSection: "",
@@ -285,10 +375,6 @@ app.routerBase = {
     loadPageForRoute: function (route, section, isAfterPopState) {
         var self = this;
         this.lastSection = section;
-
-        if (route == "/logout") {
-            return this.logUserOut();
-        }
 
 
         // get data for route
@@ -342,11 +428,13 @@ app.routerBase = {
         // replace variables with placeholders
         if (this.regexUrlStoreAdmin.exec(route)) {
             var temp = route.split("/");
-            route = "/store/:id/" + temp[temp.length - 1];
+            route = "/store-admin/:id/" + temp[temp.length - 1];
         } else if (this.regexUrlStore.exec(route)) {
             route = "/store/:id";
         } else if (this.regexUrlLocation.exec(route)) {
             route = "/location/:suburb";
+        } else if (this.regexUrlAccount.exec(route)) {
+            route = "/account/:id";
         }
 
         routeData.normalizedRoute = route;
@@ -359,7 +447,6 @@ app.routerBase = {
 
         // unknown route
         } else {
-            debugger;
             window.location.href = "/login";
             return;
         }
@@ -371,10 +458,10 @@ app.routerBase = {
 
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
-        app.util.ajaxRequest("GET", "/api/v1/logout", {}, function (err) {
+        app.util.ajaxRequest("GET", "/api/v1/logout", { auth: true }, function (err) {
             if (err) return;
 
-            app.util.invalidateJwt();
+            app.util.invalidateCredentials();
             window.location.href = "/login";
         });
     },
@@ -391,6 +478,11 @@ app.routerBase = {
 
 
 app.util = {
+
+
+
+    // ---------------------- Stuff ----------------------
+
 
 
     // Get the users location
@@ -454,6 +546,21 @@ app.util = {
     },
 
 
+    // First letter of each word in a string to uppercase
+    // https://stackoverflow.com/a/4878800
+    toTitleCase: function(str) {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    },
+
+
+
+
+
+
+
+
+    // ---------------------- Credentials ----------------------
+
     // Add token to storage
     addJwtToStorage: function (token) {
         localStorage.setItem("jwt", token);
@@ -466,16 +573,68 @@ app.util = {
     },
 
 
-    // Replace current jwt with an invalid one
-    invalidateJwt: function () {
-        localStorage.setItem("jwt", "invalidToken");
+    // Add person id to storage
+    addPersonIdToStorage: function (id) {
+        localStorage.setItem("pid", id);
     },
 
 
-    // First letter of each word in a string to uppercase
-    // https://stackoverflow.com/a/4878800
-    toTitleCase: function(str) {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    // Returns person id from storage
+    getPersonIdFromStorage: function () {
+        return localStorage.getItem("pid");
+    },
+
+
+    // Add store id to storage
+    addStoreIdToStorage: function (id) {
+        localStorage.setItem("sid", id);
+    },
+
+
+    // Returns store id from storage
+    getStoreIdFromStorage: function () {
+        return localStorage.getItem("sid");
+    },
+
+
+    // Replace current id and jwt with invalid ones
+    invalidateCredentials: function () {
+        localStorage.setItem("jwt", "invalidToken");
+        localStorage.setItem("pid", "");
+
+        if (localStorage.getItem("sid") || localStorage.getItem("sid") === null) {
+            localStorage.setItem("sid", "");
+        }
+    },
+
+
+
+    // ---------------------- Ajax ----------------------
+
+
+    // check if jwt from local storage is valid
+    validateJwt: function (callback) {
+        var self = this;
+        var jwt = this.getJwtFromStorage();
+
+        if (jwt && jwt.length > 30) {
+
+            app.util.ajaxRequest("POST", "/api/v1/check-token", { auth: true }, function (err, result) {
+                if (err) {
+                    console.log(err);
+                    self.invalidateCredentials();
+                    return callback("invalid token");
+                }
+
+                self.addJwtToStorage(result.data.jwt);
+                self.addPersonIdToStorage(result.data.id_person);
+
+                return callback(null);
+            });
+        } else {
+            this.invalidateCredentials();
+            return callback("invalid token");
+        }
     },
 
 
@@ -500,8 +659,9 @@ app.util = {
     // Generic ajax request - returns (err, data)
     ajaxRequest: function (type, url, data, callback) {
         var self = this;
+        var auth = false;
         if (data) {
-            var auth = data.auth == true;
+            auth = data.auth == true;
             delete data.auth;
         }
 
@@ -579,6 +739,7 @@ app.vr._people_last_name_optional =            { length: { minimum: 2, maximum: 
 app.vr._people_password =                      { presence: true, length: { minimum: 3, maximum: 64 }};
 app.vr._people_reset_password_token =          { presence: true, length: 64 };
 app.vr._people_reset_password_token_optional = { presence: true, length: 64 };
+app.vr._people_jwt =                           { presence: true, length: { minimum: 30, maximum: 512 }};
 app.vr._people_jwt_optional =                  { length: { minimum: 30, maximum: 512 }};
 app.vr._people_verification_token =            { presence: true, length: 64 };
 
@@ -597,7 +758,12 @@ app.vr._reviews_rating =          { presence: true, numericality: { onlyInteger:
 app.vr._stores_logo =                 { presence: true, length: { maximum: 256 }};
 app.vr._stores_name =                 { presence: true, length: { maximum: 512 }};
 app.vr._stores_description_optional = { length: { maximum: 1024 }};
-app.vr._stores_abn =                  { presence: true, length: { maximum: 32 }};
+app.vr._stores_abn =                  { presence: true, length: { minimum: 10, maximum: 32 }};
+app.vr._stores_bank_name =            { presence: true, length: { minimum: 2, maximum: 128 }};
+app.vr._stores_bank_bsb =             { presence: true, length: { minimum: 6, maximum: 16 }};
+app.vr._stores_bank_account_name =    { presence: true, length: { minimum: 2, maximum: 128 }};
+app.vr._stores_bank_account_number =  { presence: true, length: { minimum: 2, maximum: 32 }};
+app.vr._stores_hours =                { presence: true, length: { minimum: 4, maximum: 5 }};
 
 app.vr._product_extras_name = { presence: true, length: { maximum: 128 }};
 
@@ -632,8 +798,12 @@ app.vr.login = {
     password: app.vr._people_password
 }
 
+app.vr.storeLogin = {
+    email: app.vr._email,
+    password: app.vr._people_password
+}
 
-app.vr.peopleCreate = {
+app.vr.createUser = {
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
     email: app.vr._email,
@@ -641,23 +811,29 @@ app.vr.peopleCreate = {
     confirmPassword: { equality: "password" }
 }
 
-app.vr.sendRegistrationEmail = { email: app.vr._email }
-
-
 app.vr.verifyAccount = {
     email: app.vr._email,
     password: app.vr._people_password,
-    token: app.vr._people_verification_token
+    verification_token: app.vr._people_verification_token
 }
 
+app.vr.logout = {
+    jwt: app.vr._people_jwt
+}
+
+app.vr.sendRegistrationEmail = { email: app.vr._email }
 
 app.vr.forgotPassword = { email: app.vr._email }
 
-
 app.vr.resetPassword = {
+    email: app.vr._people_email,
     password: app.vr._people_password,
     confirmPassword: { equality: "password" },
-    token: app.vr._people_reset_password_token
+    reset_password_token: app.vr._people_reset_password_token
+}
+
+app.vr.checkJwt = {
+    jwt: app.vr._people_jwt
 }
 
 
@@ -668,16 +844,17 @@ app.vr.resetPassword = {
 app.vr.createStore = {
     postcode: app.vr._postcodes_postcode,
     suburb: app.vr._postcodes_suburb,
-    unit_number: app.vr._addresses_unit_number_optional,
-    street_number: app.vr._addresses_street_number,
-    street: app.vr._addresses_street,
+
+    address_line_1: app.vr._addresses_line1,
+    address_line_2: app.vr._addresses_line2_optional,
+
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
     email_user: app.vr._email,
     phone_number_user: app.vr._phone_number,
     password: app.vr._people_password,
-    jwt: app.vr._people_jwt_optional, // TODO : Might not need to check this here
     internal_notes_user: app.vr._notes_optional,
+
     logo: app.vr._stores_logo,
     name: app.vr._stores_name,
     description: app.vr._stores_description_optional,
@@ -687,7 +864,40 @@ app.vr.createStore = {
     facebook: app.vr._url_link_optional,
     twitter: app.vr._url_link_optional,
     abn: app.vr._stores_abn,
-    internal_notes_store: app.vr._notes_optional
+    internal_notes_store: app.vr._notes_optional,
+    bank_name: app.vr._stores_bank_name,
+    bank_bsb: app.vr._stores_bank_bsb,
+    bank_account_name: app.vr._stores_bank_account_name,
+    bank_account_number: app.vr._stores_bank_account_number,
+
+    hours_mon_dinein_open: app.vr._stores_hours,
+    hours_tue_dinein_open: app.vr._stores_hours,
+    hours_wed_dinein_open: app.vr._stores_hours,
+    hours_thu_dinein_open: app.vr._stores_hours,
+    hours_fri_dinein_open: app.vr._stores_hours,
+    hours_sat_dinein_open: app.vr._stores_hours,
+    hours_sun_dinein_open: app.vr._stores_hours,
+    hours_mon_dinein_close: app.vr._stores_hours,
+    hours_tue_dinein_close: app.vr._stores_hours,
+    hours_wed_dinein_close: app.vr._stores_hours,
+    hours_thu_dinein_close: app.vr._stores_hours,
+    hours_fri_dinein_close: app.vr._stores_hours,
+    hours_sat_dinein_close: app.vr._stores_hours,
+    hours_sun_dinein_close: app.vr._stores_hours,
+    hours_mon_delivery_open: app.vr._stores_hours,
+    hours_tue_delivery_open: app.vr._stores_hours,
+    hours_wed_delivery_open: app.vr._stores_hours,
+    hours_thu_delivery_open: app.vr._stores_hours,
+    hours_fri_delivery_open: app.vr._stores_hours,
+    hours_sat_delivery_open: app.vr._stores_hours,
+    hours_sun_delivery_open: app.vr._stores_hours,
+    hours_mon_delivery_close: app.vr._stores_hours,
+    hours_tue_delivery_close: app.vr._stores_hours,
+    hours_wed_delivery_close: app.vr._stores_hours,
+    hours_thu_delivery_close: app.vr._stores_hours,
+    hours_fri_delivery_close: app.vr._stores_hours,
+    hours_sat_delivery_close: app.vr._stores_hours,
+    hours_sun_delivery_close: app.vr._stores_hours
 }
 
 app.vr.getStore = {
@@ -695,22 +905,6 @@ app.vr.getStore = {
 }
 
 
-
-// -------- API validation --------
-
-
-// Me
-app.vr.apiMeGet = { email: app.vr._email }
-
-app.vr.apiMeUpdate = {
-    id_person: app.vr._sequence_id_optional,
-    email: app.vr._email_optional,
-    token: app.vr._people_reset_password_token_optional,
-    first_name: app.vr._people_first_name_optional,
-    last_name: app.vr._people_last_name_optional
-}
-
-app.vr.apiMeDelete = { email: app.vr._email }
 
 
 // alias
@@ -897,13 +1091,15 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
 
     // when a dropdown item is selected
     function selectItem (el) {
-        $(listEl).prev().val(el.innerText); // put selected item into input
-        $(listEl).hide();
-
-        return callback({
+        var result = {
             suburb: encodeURIComponent($(el).find(".typeahead-item-suburb").text()),
             postcode: $(el).find(".typeahead-item-postcode").text()
-        });
+        };
+
+        $(listEl).prev().val(result.postcode + " - " + result.suburb); // put selected item into input
+        $(listEl).hide();
+
+        return callback(result);
     }
 
 

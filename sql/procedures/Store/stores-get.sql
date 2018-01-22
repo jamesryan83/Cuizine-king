@@ -38,7 +38,7 @@ CREATE PROCEDURE stores_get
          WHERE pe.id_store = @id_store AND pe.active = 1 FOR JSON PATH) AS 'product_extras'
 
     FROM Store.stores AS s
-    WHERE s.id_store = @id_store
+    WHERE s.id_store = @id_store AND is_deleted = 0
     FOR JSON PATH
 
 GO

@@ -1,6 +1,9 @@
 
-
+// Login, register, store-login, store application etc
 app.site.login = {
+
+
+    registeredIdPerson: 0,
 
 
     init: function (routeData) {
@@ -9,6 +12,8 @@ app.site.login = {
         // cached incase the user wants to resend the verification
         // email from the registration success thing
         var registrationData = undefined;
+
+
 
 
         // ----------- Forms -----------
@@ -23,12 +28,10 @@ app.site.login = {
             app.util.ajaxRequest("POST", "/api/v1/login", data, function (err, result) {
                 if (err) return false;
 
-                if (!result.data.jwt) alert("authentical token missing");
-
-                // add token to storage for api calls later
                 app.util.addJwtToStorage(result.data.jwt);
+                app.util.addPersonIdToStorage(result.data.id_person);
 
-                window.location.href = "/";
+                app.routerBase.loadPageForRoute("/account/" + result.data.id_person, "site");
             });
 
             return false;
@@ -38,23 +41,21 @@ app.site.login = {
 
         // Submit store login form
         $("#form-store-login").on("submit", function () {
-            window.location.href = "/store/1/dashboard";
+            var data = validate.collectFormValues($("#form-store-login")[0], { trim: true });
 
-//            var data = validate.collectFormValues($("#form-store-login")[0], { trim: true });
-//
-//            if (!app.util.validateInputs(data, app.validationRules.login))
-//                return false;
-//
-//            app.util.ajaxRequest("POST", "/api/v1/store-login", data, function (err, result) {
-//                if (err) return false;
-//
-//                if (!result.jwt) alert("jwt missing");
-//
-//                // add token to storage for api calls later
-//                app.util.addJwtToStorage(result.jwt);
-//
-//                window.location.href = "/dashboard";
-//            });
+            if (!app.util.validateInputs(data, app.validationRules.login))
+                return false;
+
+            app.util.ajaxRequest("POST", "/api/v1/store-login", data, function (err, result) {
+                if (err) return false;
+
+                app.util.addJwtToStorage(result.data.jwt);
+                app.util.addPersonIdToStorage(result.data.id_person);
+                app.util.addStoreIdToStorage(result.data.id_store);
+
+                // store is in a different section which requires page refresh
+                window.location.href = "/store/" + result.data.id_store  + "/dashboard";
+            });
 
             return false;
         });
@@ -68,17 +69,19 @@ app.site.login = {
                 return false;
             }
 
-            registrationData = validate.collectFormValues($("#form-register")[0], { trim: true });
+            var data = validate.collectFormValues($("#form-register")[0], { trim: true });
 
-            if (!app.util.validateInputs(registrationData, app.validationRules.peopleCreate))
+            if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/register", registrationData, function (err) {
+            app.util.ajaxRequest("POST", "/api/v1/register", data, function (err, result) {
                 if (err) return;
 
-                $("#form-register").addClass("hidden-other");
-                $("#registration-success").removeClass("hidden");
-                $("#registration-success-email").text(registrationData.email);
+                app.util.addJwtToStorage(result.data.jwt);
+                app.util.addPersonIdToStorage(result.data.id_person);
+
+                $("#registration-success-email").text(data.email);
+                self.showForm("#registration-success");
             });
 
             return false;
@@ -100,9 +103,7 @@ app.site.login = {
             app.util.ajaxRequest("POST", "/api/v1/store-application", registrationData, function (err) {
                 if (err) return;
 
-                $("#form-store-application").addClass("hidden-other");
-                $("#registration-success").removeClass("hidden");
-                $("#registration-success-email").text(registrationData.email);
+                //$("#registration-success-email").text(registrationData.email);
             });
 
             return false;
@@ -112,6 +113,7 @@ app.site.login = {
         // Send forgot password email
         $("#form-forgot-password").on("submit", function () {
             var email = validate.collectFormValues(this, { trim: true });
+
             if (!app.util.validateInputs(email, app.validationRules.forgotPassword))
                 return false;
 
@@ -123,6 +125,20 @@ app.site.login = {
 
             return false;
         });
+
+
+        // Registration success, go to acount page
+        $("#registration-success-account").on("click", function () {
+            var id_person = app.util.getPersonIdFromStorage();
+
+            if (id_person) {
+                window.location.href = "/account/" + id_person;
+            } else {
+                app.util.showToast("Error : Unable to go to account page");
+            }
+        });
+
+
 
 
 
@@ -178,22 +194,6 @@ app.site.login = {
         });
 
 
-        // Resend registration email button
-        $("#registration-success-resend").on("click", function () {
-            if (!registrationData) {
-                app.util.showToast("Unable to send email.  Please refresh the page", 4000);
-                return;
-            }
-
-            app.util.ajaxRequest("POST", "/api/v1/registration-email", registrationData, function (err) {
-                if (err) return;
-
-                app.util.showToast("Registration email has been resent.  Please check your emails");
-            });
-        });
-
-
-
         $(window).on("resize", function () {
             self.updateFormVisuals();
         });
@@ -202,6 +202,7 @@ app.site.login = {
         setTimeout(function () {
             self.updateFormVisuals();
 
+            // show form for route
             if (routeData.route == "/login") self.showForm("#form-login");
             if (routeData.route == "/store-login") self.showForm("#form-store-login");
             if (routeData.route == "/register") self.showForm("#form-register");
@@ -226,10 +227,9 @@ app.site.login = {
 
             document.title = title;
             window.history.pushState(null, pushStateUrl, pushStateUrl);
-
-            console.log(formContainer.offset().top)
-            $("html, body").animate({ "scrollTop": 100 }, 200);
         }
+
+        $("html, body").animate({ "scrollTop": 100 }, 200);
     },
 
 
@@ -246,9 +246,6 @@ app.site.login = {
             $(siblings[1]).css({ "height": height - 10, "width": width - 10 });
         });
     },
-
-
-
 
 
 }

@@ -42,7 +42,6 @@ exports = module.exports = {
                 'var config = require("../config");\n' +
                 'var database = require("../database/database");\n' +
                 'var resultHandler = require("../database/result-handler");\n\n' +
-                'var dbName = config.mssql.database + ".dbo.";\n\n\n' +
                 "// Calls stored procedures for " + key + "\n" +
                 "exports = module.exports = {\n\n";
 
@@ -82,8 +81,15 @@ exports = module.exports = {
                         case "GEOGRAPHY": sqlType = "Geography"; break;
                     }
 
-                    procedureInputsOutput +=
-                        '\t\t\t.input("' + match[2] + '", sql.' + sqlType + ", inputs." + match[2] + ")\n";
+                    if (procedureInputs[j].indexOf(" OUTPUT") === -1) {
+                        procedureInputsOutput +=
+                            '\t\t\t.input("' + match[2] + '", sql.' + sqlType + ", inputs." + match[2] + ")\n";
+                    } else {
+                        procedureInputsOutput +=
+                            '\t\t\t.output("' + match[2] + '", sql.' + sqlType + ")\n";
+                    }
+
+
                 }
 
                 // create js function
@@ -92,7 +98,7 @@ exports = module.exports = {
                     "\t" + functionName + ": function (inputs, callback) {\n" +
                         "\t\tdatabase.pool.request()\n" +
                             procedureInputsOutput +
-                            '\t\t\t.execute(dbName + "' + procedureName + '", function (err, result) {\n' +
+                            '\t\t\t.execute(config.mssql.database + ".dbo.' + procedureName + '", function (err, result) {\n' +
                                 '\t\t\t\treturn resultHandler.handle("' + procedureName + '", err, result, callback, inputs);\n' +
                             "\t\t});\n" +
                         "\t},\n\n\n";

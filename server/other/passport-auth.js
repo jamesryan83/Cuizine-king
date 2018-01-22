@@ -9,7 +9,6 @@ var jwt = require('jsonwebtoken');
 var passport = require("passport");
 var JwtStrategy = require("passport-jwt").Strategy;
 var ExtractJwt = require("passport-jwt").ExtractJwt;
-var LocalStrategy = require("passport-local").Strategy;
 
 var config = require("../config");
 var appDB = require("../procedures/_App");
@@ -25,133 +24,137 @@ exports = module.exports = {
         var self = this;
         this.router = router;
 
-        // this is run whenever passport.authenticate("local" is called
-        // local session auth
-        passport.use(new LocalStrategy({
-            usernameField: "email"
-        }, function (email, password, done) {
-
-            // get user from database
-            self.checkUsersPassword(email, password, function (err, user) {
-                if (err) return done(err);
-                return done(null, user);
-            });
-        }));
-
 
         // this is run whenever passport.authenticate("jwt" is called
-        // api jwt auth
-        passport.use(new JwtStrategy({
+        passport.use(new JwtStrategy({ // this calls jwt.verify(
             secretOrKey: config.secret,
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        }, function (jwt, done) { // called if token is found in cookie
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+        }, function (jwt, done) { // called if token is found in header
             return done(null, jwt);
         }));
 
 
-        // Serialize User
-        passport.serializeUser(function(user, done) {
-            return done(null, user.id_person);
-        });
-
-
-        // Deserialize User
-        passport.deserializeUser(function(id, done) {
-            appDB.people_get({ id: id }, function (err, user) {
-                if (err) return done(err);
-
-                return done(null, user);
-            });
-        });
+//        // Serialize User
+//        passport.serializeUser(function(user, done) {
+//            return done(null, user.id_person);
+//        });
+//
+//
+//        // Deserialize User
+//        passport.deserializeUser(function(id, done) {
+//            appDB.people_get_by_id_or_email({ id: id }, function (err, user) {
+//                if (err) return done(err);
+//
+//                return done(null, user);
+//            });
+//        });
     },
 
 
 
-    // for website page routes
-    // called from #login in auth api
+    // authenticate jwt
     authenticate: function (req, res, next) {
         var self = this;
-        if (req.isAuthenticated()) return next(); // continue if already authenticated
 
-        passport.authenticate("local", function (err, user) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+        // handle errors from authenticate()
+        function sendErrorResponse(err) {
+            if (self.router.isRequestAjax(req)) {
+                return self.router.sendJson(res, null, err.message, err.status);
+            }
 
-            // returnTo is also added to the user session here
-            // https://github.com/jaredhanson/connect-ensure-login
-            if (!user) return res.redirect("/login");
+            return res.redirect("/login");
+        }
 
-            // this triggers passport.serializeUser
-            req.logIn(user, function (err) {
-                if (err) {
-                    return next({ msg: "Server Error", status: 500 });
-                }
+        // check jwt against secret
+        passport.authenticate("jwt", { session: false }, function (err, jwTokenObject, info) {
+            if (err) return sendErrorResponse(err);
 
+            // TODO : jwt should fail if signature algorithm is set to none
+
+            if (!jwTokenObject) {
+                return sendErrorResponse({ message: "Not Authorized", status: 401 });
+            }
+
+            // TODO: refresh token on short expiry
+//            console.log(jwTokenObject.iat)
+//            console.log(jwTokenObject.exp)
+            console.log(jwTokenObject)
+
+            // check jwt against database
+            var jwToken = self.getJwtFromHeader(req, res);
+            appDB.people_get_by_jwt({ jwt: jwToken, email: jwTokenObject.sub }, function (err, person) {
+                res.locals.person = null;
+
+                if (err) return sendErrorResponse(err);
+
+                res.locals.person = person;
                 return next();
             });
 
-        })(req, res, next);
-    },
-
-
-
-    // for api routes
-    authenticateApi: function (req, res, next) {
-        var self = this;
-
-        passport.authenticate("jwt", { session: false }, function (err, token) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-            if (token) {
-                req.user = req.user || {};
-                req.user.email = token.email; // add users email to current request object
-
-                return next();
-            }
-
-            return self.router.sendJson(res, null, "Not Authorized", 401);
         })(req, res, next);
     },
 
 
 
     // Check the users password
-    // this is called in verifyAccountAndLogin and from new LocalStrategy above
-    checkUsersPassword: function (email, password, callback) {
+    checkUsersPassword: function (res, email, password, callback) {
+        var self = this;
 
-        appDB.people_get({ email: email }, function (err, user) {
+        // get the current user
+        appDB.people_get_by_email({ email: email }, function (err, user) {
             if (err) return callback(err);
 
-            // user must be in actual table to login
-            if (!user.id_person) {
-                return callback({ status: 401, message: "Please verify your account" });
-            }
+            // check password
+            self.comparePassword(password, user.password, function (err) {
+                if (err) return callback(err);
 
-            // check if the password is correct
-            bcrypt.compare(password, user.password, function (err, res) {
-                if (err) console.log(err)
-
-                if (!res) return callback({ status: 401, message: "Invalid Credentials" });
-
-                return callback(null, user); // pasword ok
+                res.locals.user = user;
+                return callback(null);
             });
         });
     },
 
 
 
-    // Logout
-    logout: function (req, res, router) {
-        // https://stackoverflow.com/a/19132999
-        req.session.destroy(function (err) {
-            if (err) {
-                console.log(err);
-                return router.renderErrorPage(req, res, { status: 500, message: "Error logging out" });
-            }
+    // Check the store owners password
+    checkStoreOwnersPassword: function (res, email, password, callback) {
 
-            // note: the user is still logged in at this point.  in rederPage of the
-            // redirect they'll be logged out though, so looks ok
+        // get the current user
+        appDB.people_get_by_email({ email: email }, function (err, user) {
+            if (err) return callback(err);
 
-            return res.redirect("/login");
+            // check password
+            self.comparePassword(password, user.password, function (err) {
+                if (err) return callback(err);
+
+                res.locals.user = user;
+                return callback(null);
+            });
+        });
+    },
+
+
+    // Returns a jwt from http header
+    getJwtFromHeader: function (req, res) {
+        var token = req.headers["authorization"];
+        if (token) {
+            return token.replace("Bearer ", "");
+        }
+
+        // token missing
+        return self.router.sendJson(res, null, "Not Authorized", 401);
+    },
+
+
+
+    // check if the password is correct
+    comparePassword: function (password, hashedPassword, callback) {
+        bcrypt.compare(password, hashedPassword, function (err, isValid) {
+            if (err) console.log(err)
+
+            if (!isValid) return callback({ status: 401, message: "Invalid Credentials" });
+
+            return callback(null); // password ok
         });
     },
 

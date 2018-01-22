@@ -25,20 +25,100 @@ exports = module.exports = {
 
 
     // Login
-    login: function (req, res, next) {
+    login: function (req, res) {
         var self = this;
+        var b = req.body;
 
-        if (this.router.validateInputs(req, res, req.body, global.validationRules.login))
+        if (this.router.validateInputs(req, res, b, global.validationRules.login))
             return;
 
-        passportAuth.authenticate(req, res, function (err) {
+        // check password
+        passportAuth.checkUsersPassword(res, b.email, b.password, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            // create jwt for user
-            jwt.sign({ email: req.body.email }, config.secret, { expiresIn: config.jwtExpiry }, function (err, jwToken) {
+            // create a jwt and send to user
+            self.createJwt(b.email, function (err, result) {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-                return self.router.sendJson(res, { jwt: jwToken });
+                return self.router.sendJson(res, result);
+            });
+        });
+    },
+
+
+
+    // Store Login
+    storeLogin: function (req, res) {
+        var self = this;
+
+        if (this.router.validateInputs(req, res, req.body, global.validationRules.storeLogin))
+            return;
+    },
+
+
+
+    // Register a user
+    createUser: function (req, res) {
+        var self = this;
+        var b = req.body;
+
+        if (this.router.validateInputs(req, res, b, global.validationRules.createUser))
+            return;
+
+        b.id_user_doing_update = 1; // system user
+
+        // encrypt password
+        bcrypt.hash(b.password, 10, function (err, encryptedPassword) {
+            if (err) return self.router.sendJson(res, null, "Error creating token", 500);
+
+            b.verification_token = self.makeid(); // create verification token
+            b.password = encryptedPassword;
+
+            // create person in db
+            appDB.people_create_web_user(b, function (err, newPersonId) {
+                if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                // create a jwt and send to user
+                self.createJwt(b.email, function (err, result) {
+                    if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                    // send user verification email
+                    mail.sendUserRegistrationEmail(b.first_name, b.email, b.verification_token, function (err) {
+                        if (err) console.log(err);
+                    });
+
+                    return self.router.sendJson(res, result);
+                });
+            });
+        });
+    },
+
+
+
+    // verify users email
+    verifyAccount: function (req, res) {
+        var self = this;
+        var b = req.body;
+
+        if (this.router.validateInputs(req, res, b, global.validationRules.verifyAccount))
+            return;
+
+        // check persons password
+        passportAuth.checkUsersPassword(res, b.email, b.password, function (err) {
+            if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+            delete b.password;
+
+            // set persons email as validated
+            appDB.people_update_is_verified(b, function (err) {
+                if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                // send thanks for verifying email
+                mail.sendThanksForVerifyingEmail(b.email, function (err) {
+                    if (err) console.log(err);
+                });
+
+                return self.router.sendJson(res, null);
             });
         });
     },
@@ -49,38 +129,15 @@ exports = module.exports = {
     logout: function (req, res) {
         var self = this;
 
-        req.session.destroy(function (err) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+        var inputs = { jwt: passportAuth.getJwtFromHeader(req, res) };
 
-            if (req.user) console.log("Warning : #logout - user should be null but is " + req.user + ". session: " + req.session);
-
-            return self.router.sendJson(res);
-        });
-    },
-
-
-
-    // Send the user registration email for a pending user
-    sendRegistrationEmail: function (req, res) {
-        var self = this;
-        var b = req.body;
-
-        if (this.router.validateInputs(req, res, b, global.validationRules.sendRegistrationEmail))
+        if (this.router.validateInputs(req, res, inputs, global.validationRules.logout))
             return;
 
-        // TODO : throttle
-
-        appDB.get_person({ email: b.email }, function (err, user) {
+        appDB.people_invalidate_jwt(inputs, function (err, rowsAffected) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            if (user.id_person) return self.router.sendJson(res, null, "Account already verified", 400);
-
-            // send user validation email
-            mail.sendUserRegistrationEmail(user.first_name, b.email, user.verification_token, function (err) {
-                if (err) return self.router.sendJson(res, null, err.message);
-
-                return self.router.sendJson(res);
-            });
+            return self.router.sendJson(res);
         });
     },
 
@@ -96,25 +153,16 @@ exports = module.exports = {
         if (this.router.validateInputs(req, res, b, global.validationRules.forgotPassword))
             return;
 
-        // find user in actual users table
-        appDB.people_get({ email: b.email }, function (err, user) {
+        var reset_password_token = self.makeid();
+
+        appDB.people_update_reset_password_token({
+            email: b.email,
+            reset_password_token: reset_password_token
+        }, function (err, id_person) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            if (!user.id_person) return self.router.sendJson(res, null, "Please verify your account", 401);
-
-            // create token -- TODO : needs stored proc
-            var token = self.makeid();
-            var query = "UPDATE users SET reset_password_token = '" +
-                token + "' WHERE email = '" + b.email + "'";
-
-            // TODO : don't do this, wait for result
-            // add token to database without waiting for response
-            database.executeQuery(query, function (err) {
-                if (err) console.log(err);
-            });
-
             // send reset link
-            mail.sendForgotPasswordEmail(user.email, token, function (err) {
+            mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err) {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                 return self.router.sendJson(res, {
@@ -139,13 +187,12 @@ exports = module.exports = {
             if (err) return self.router.sendJson(res, null, err.message);
 
             // add password to database
-            appDB.update_reset_password_token({
+            appDB.people_update_password({
+                email: b.email,
                 password: encryptedPassword,
-                reset_password_token: b.token
+                reset_password_token: b.reset_password_token
             }, function (err) {
                 if (err) return self.router.sendJson(res, null, err.message);
-
-                // TODO : login here
 
                 return self.router.sendJson(res);
             });
@@ -154,21 +201,39 @@ exports = module.exports = {
 
 
 
-    // ------------------- create tokens -------------------
+    // Checks if a jwt is valid and returns id_person
+    checkJwt: function (req, res) {
+        if (res.locals.person) {
+            var person = res.locals.person;
+            return this.router.sendJson(res, { id_person: person.id_person, jwt: person.jwt });
+        }
+
+        return this.router.sendJson(res, null, "Not Authorized", 401);
+    },
 
 
-    // Create all tokens required for registration
-    createRegistrationTokens: function (password, callback) {
 
-        var verificationToken = this.makeid(); // value is also in validation-routes.js and sql
 
-        // encrypt password
-        bcrypt.hash(password, 10, function (err, encryptedPassword) {
+
+
+
+
+    // ------------------- Other functions -------------------
+
+
+
+    // create a jwt for a user
+    createJwt: function (email, callback) {
+
+        // create jwt for user
+        jwt.sign({ sub: email }, config.secret, { expiresIn: config.jwtExpiryLong }, function (err, jwToken) {
             if (err) return callback(err);
 
-            return callback(null, {
-                password: encryptedPassword,
-                verification: verificationToken
+            // update jwt in db
+            appDB.people_update_jwt({ email: email, jwt: jwToken }, function (err, id_person) {
+                if (err) return callback(err);
+
+                return callback(null, { jwt: jwToken, id_person: id_person });
             });
         });
     },
@@ -177,7 +242,7 @@ exports = module.exports = {
     // Create a random alphanumeric string
     // https://stackoverflow.com/a/1349426
     makeid: function () {
-        var tokenLength = 50;
+        var tokenLength = 64;
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -188,30 +253,5 @@ exports = module.exports = {
         return text;
     },
 
-
-
-    // Create a jwt for a user
-    createJwt: function (req, res) {
-        var self = this;
-        var b = req.body;
-
-        if (this.router.validateInputs(req, res, b, global.validationRules.login))
-            return;
-
-        // TODO : this is duplicated above
-        // check password
-        passportAuth.checkUsersPassword(b.email, b.password, function (err, user) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-            // make jwt
-            jwt.sign({ email: b.email }, config.secret, { expiresIn: config.jwtExpiry }, function (err, jwToken) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
-
-                // send jwt back
-                return self.router.sendJson(res, { jwt: jwToken });
-            });
-
-        });
-    },
 
 }

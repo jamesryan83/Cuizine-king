@@ -1,5 +1,5 @@
 
-
+// Home page
 app.site.home = {
 
 

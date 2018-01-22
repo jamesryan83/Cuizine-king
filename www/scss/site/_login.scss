@@ -309,6 +309,10 @@
                 margin-top: 10px;
             }
 
+            #registration-success-email {
+                color: $colorBlue2;
+            }
+
             button {
                 font-size: 12px;
                 margin-top: 30px;
@@ -335,19 +339,6 @@
 
 
 
-
-    @media (max-width: $mediaWidth1) {
-//        #page-login-form-container {
-//            min-height: 500px;
-//
-//            > form {
-//                top: 30px;
-//                transform: translate(-50%, 0);
-//            }
-//        }
-    }
-
-
     // mobile
     @media (max-width: $mediaMobileWidth1) {
 
@@ -356,68 +347,9 @@
         }
 
         #page-login-form-container {
-//            min-height: 650px;
-
             form, #registration-success-container {
                 padding: 10px 10px;
             }
-
-//            > form {
-//                top: 20px;
-//                transform: translate(-50%, 0);
-//            }
-//
-//            .label-input, .label-textarea {
-//                width: 320px;
-//                margin-top: 0;
-//
-//                label {
-//                    display: block;
-//                    text-align: left;
-//                    width: 100%;
-//                    height: $elementHeight;
-//                    line-height: $elementHeight;
-//                }
-//
-//                textarea {
-//                    width: 100%;
-//                }
-//
-//                input {
-//                    float: none;
-//                    width: 100%;
-//                }
-//            }
-//
-//             #page-login-register-form {
-//                min-height: 650px;
-//            }
-//
-//            #form-forgot-password-container {
-//                .label-input {
-//                    width: 320px;
-//                    margin-top: 0;
-//
-//                    label {
-//                        width: 100%;
-//                    }
-//                }
-//            }
-//
-//            #form-register-container {
-//                .checkbox-1 {
-//                    text-align: left;
-//                    margin-top: 20px;
-//
-//                    label {
-//                        padding-left: 50px;
-//                        text-align: left;
-//                        width: 100%;
-//                        word-break: break-word;
-//                        white-space: normal;
-//                    }
-//                }
-//            }
         }
     }
 

@@ -44,55 +44,55 @@ app.cms = {
 
     // Called whenever the page is changed
     onPageChanged: function (routeData) {
-
+        app.navbar.init(routeData);
     },
 
 
     // CMS routes
     routes: {
-        "/store/:id/business": {
+        "/store-admin/:id/business": {
             title: "Business",
             file: "business",
             initFunction: function () {
                 app.cms.business.init();
             },
         },
-        "/store/:id/dashboard": {
+        "/store-admin/:id/dashboard": {
             title: "Dashboard",
             file: "dashboard",
             initFunction: function () {
                 app.cms.dashboard.init();
             },
         },
-        "/store/:id/delivery-suburbs": {
+        "/store-admin/:id/delivery-suburbs": {
             title: "Delivery Suburbs",
             file: "delivery-suburbs",
             initFunction: function () {
                 app.cms.deliverySuburbs.init();
             },
         },
-        "/store/:id/menu": {
+        "/store-admin/:id/menu": {
             title: "Menu",
             file: "menu",
             initFunction: function () {
                 app.cms.menu.init();
             },
         },
-        "/store/:id/orders": {
+        "/store-admin/:id/orders": {
             title: "Orders",
             file: "orders",
             initFunction: function () {
                 app.cms.orders.init();
             },
         },
-        "/store/:id/settings": {
+        "/store-admin/:id/settings": {
             title: "Settings",
             file: "settings",
             initFunction: function () {
                 app.cms.settings.init();
             },
         },
-        "/store/:id/transactions": {
+        "/store-admin/:id/transactions": {
             title: "Transactions",
             file: "transactions",
             initFunction: function () {

@@ -10,6 +10,7 @@
 @import "dialogs/description";
 @import "dialogs/reviews";
 @import "site/about";
+@import "site/account";
 @import "site/help";
 @import "site/home";
 @import "site/home-store-list-item";
@@ -37,6 +38,8 @@
 
         .navbar-heading {
             .navbar-icon {
+                margin-left: 0;
+
                 @include svgicon(180px, 90px, 180px, 90px,
                     url(/res/images/ck-logo.png));
             }

@@ -1,5 +1,5 @@
 
-
+// Location page with list of stores
 app.site.location = {
 
     suburbs: [],
