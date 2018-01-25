@@ -16,7 +16,7 @@ app.site.store = {
 
 
         // store id from url
-        var storeId = window.location.pathname.split("/");
+        var storeId = routeData.route.split("/");
         storeId = storeId[storeId.length - 1];
 
 
