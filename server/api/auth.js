@@ -25,15 +25,41 @@ exports = module.exports = {
 
 
     // Login
-    login: function (req, res) {
+    websiteLogin: function (req, res) {
+        this.login(config.dbConstants.personTypes.webuser, req, res);
+    },
+
+
+    // Store Login
+    storeLogin: function (req, res) {
+        this.login(config.dbConstants.personTypes.storeuser, req, res);
+    },
+
+
+    // System Login
+    systemLogin: function (req, res) {
+        this.login(config.dbConstants.personTypes.systemuser, req, res);
+    },
+
+
+    // Login called by functions above
+    login: function (id_person_type, req, res) {
         var self = this;
         var b = req.body;
+
+        // Check person type is correct for the route
+        if (
+            (id_person_type === config.dbConstants.personTypes.webuser && req.url !== "/api/v1/login") ||
+            (id_person_type === config.dbConstants.personTypes.storeuser && req.url !== "/api/v1/store-login") ||
+            (id_person_type === config.dbConstants.personTypes.systemuser && req.url !== "/admin-login")) {
+            return this.router.sendJson(res, null, "Bad inputs", 400);
+        }
 
         if (this.router.validateInputs(req, res, b, global.validationRules.login))
             return;
 
         // check password
-        passportAuth.checkUsersPassword(res, b.email, b.password, function (err) {
+        passportAuth.checkUsersPassword(res, b.email, b.password, id_person_type, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             // create a jwt and send to user
@@ -43,16 +69,6 @@ exports = module.exports = {
                 return self.router.sendJson(res, result);
             });
         });
-    },
-
-
-
-    // Store Login
-    storeLogin: function (req, res) {
-        var self = this;
-
-        if (this.router.validateInputs(req, res, req.body, global.validationRules.storeLogin))
-            return;
     },
 
 
@@ -71,14 +87,15 @@ exports = module.exports = {
         bcrypt.hash(b.password, 10, function (err, encryptedPassword) {
             if (err) return self.router.sendJson(res, null, "Error creating token", 500);
 
-            b.verification_token = self.makeid(); // create verification token
+            // add verification token and password to inputs
+            b.verification_token = self.makeid();
             b.password = encryptedPassword;
 
             // create person in db
             appDB.people_create_web_user(b, function (err, newPersonId) {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-                // create a jwt and send to user
+                // create a jwt
                 self.createJwt(b.email, function (err, result) {
                     if (err) return self.router.sendJson(res, null, err.message, err.status);
 
@@ -104,7 +121,7 @@ exports = module.exports = {
             return;
 
         // check persons password
-        passportAuth.checkUsersPassword(res, b.email, b.password, function (err) {
+        passportAuth.checkUsersPassword(res, b.email, b.password, null, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             delete b.password;
@@ -118,7 +135,12 @@ exports = module.exports = {
                     if (err) console.log(err);
                 });
 
-                return self.router.sendJson(res, null);
+                // create a jwt and send to user
+                self.createJwt(b.email, function (err, result) {
+                    if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                    return self.router.sendJson(res, result);
+                });
             });
         });
     },
@@ -134,6 +156,7 @@ exports = module.exports = {
         if (this.router.validateInputs(req, res, inputs, global.validationRules.logout))
             return;
 
+        // TODO : security of inputs
         appDB.people_invalidate_jwt(inputs, function (err, rowsAffected) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
@@ -175,6 +198,7 @@ exports = module.exports = {
 
 
     // Reset password
+    // used after getting a forgot password email
     resetPassword: function (req, res) {
         var self = this;
         var b = req.body;
@@ -205,7 +229,13 @@ exports = module.exports = {
     checkJwt: function (req, res) {
         if (res.locals.person) {
             var person = res.locals.person;
-            return this.router.sendJson(res, { id_person: person.id_person, jwt: person.jwt });
+            var result = { id_person: person.id_person, jwt: person.jwt };
+
+            if (person.id_store && person.id_store > 0 && person.id_person_type === config.dbConstants.personTypes.storeuser) {
+                result.id_store = person.id_store;
+            }
+
+            return this.router.sendJson(res, result);
         }
 
         return this.router.sendJson(res, null, "Not Authorized", 401);
@@ -230,10 +260,16 @@ exports = module.exports = {
             if (err) return callback(err);
 
             // update jwt in db
-            appDB.people_update_jwt({ email: email, jwt: jwToken }, function (err, id_person) {
+            appDB.people_update_jwt({ email: email, jwt: jwToken }, function (err, person) {
                 if (err) return callback(err);
 
-                return callback(null, { jwt: jwToken, id_person: id_person });
+                var result = { jwt: jwToken, id_person: person.id_person };
+
+                if (person.id_store && person.id_store > 0 && person.id_person_type === config.dbConstants.personTypes.storeuser) {
+                    result.id_store = person.id_store;
+                }
+
+                return callback(null, result);
             });
         });
     },

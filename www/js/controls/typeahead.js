@@ -85,7 +85,9 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
 
             // get locations from server
             var url = "/api/v1/location?q=" + value;
-            app.util.ajaxRequest("GET", url, null, function (err, result) {
+            app.util.ajaxRequest({
+                method: "GET", url: url
+            }, function (err, result) {
                 if (err) return;
 
                 // create new list items

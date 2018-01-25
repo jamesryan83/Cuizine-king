@@ -1126,7 +1126,7 @@ div.upload input {
       margin: 5px 20px;
       background-color: #626262;
       display: inline-block; }
-  .page-auth form, .page-auth #registration-success-container {
+  .page-auth form, .page-auth #registration-success-container, .page-auth #store-application-success-container {
     z-index: 100;
     padding: 10px 50px;
     background: linear-gradient(to bottom, #151b26, #212328);
@@ -1237,23 +1237,23 @@ div.upload input {
       .page-auth #page-login-form-container #form-forgot-password-container.hidden .form-container-inner {
         left: -20px;
         top: 20px; }
-    .page-auth #page-login-form-container #registration-success-container {
+    .page-auth #page-login-form-container #registration-success-container, .page-auth #page-login-form-container #store-application-success-container {
       text-align: center; }
-      .page-auth #page-login-form-container #registration-success-container p {
+      .page-auth #page-login-form-container #registration-success-container p, .page-auth #page-login-form-container #store-application-success-container p {
         margin-top: 10px; }
-      .page-auth #page-login-form-container #registration-success-container #registration-success-email {
+      .page-auth #page-login-form-container #registration-success-container #registration-success-email, .page-auth #page-login-form-container #registration-success-container #store-application-success-email, .page-auth #page-login-form-container #store-application-success-container #registration-success-email, .page-auth #page-login-form-container #store-application-success-container #store-application-success-email {
         color: #5595d8; }
-      .page-auth #page-login-form-container #registration-success-container button {
+      .page-auth #page-login-form-container #registration-success-container button, .page-auth #page-login-form-container #store-application-success-container button {
         font-size: 12px;
-        margin-top: 30px;
-        display: inline-block; }
-        .page-auth #page-login-form-container #registration-success-container button:hover {
+        display: inline-block;
+        margin-bottom: 10px; }
+        .page-auth #page-login-form-container #registration-success-container button:hover, .page-auth #page-login-form-container #store-application-success-container button:hover {
           color: #1f58c6; }
-      .page-auth #page-login-form-container #registration-success-container.hidden {
+      .page-auth #page-login-form-container #registration-success-container.hidden, .page-auth #page-login-form-container #store-application-success-container.hidden {
         left: 90%;
         opacity: 0;
         pointer-events: none; }
-        .page-auth #page-login-form-container #registration-success-container.hidden .form-container-inner {
+        .page-auth #page-login-form-container #registration-success-container.hidden .form-container-inner, .page-auth #page-login-form-container #store-application-success-container.hidden .form-container-inner {
           left: -20px;
           top: 20px; }
   @media (max-width: 490px) {
@@ -1386,6 +1386,31 @@ div.upload input {
       font-size: 12px; }
       #page-store #store-footer-links #store-footer-links-container > a:hover {
         color: #5595d8; }
+
+#page-verify-account #form-verify-account {
+  transition: left 0.2s, opacity 0.2s; }
+  #page-verify-account #form-verify-account label {
+    text-align: right; }
+  #page-verify-account #form-verify-account button {
+    float: right; }
+  #page-verify-account #form-verify-account.hidden {
+    left: 10%;
+    opacity: 0;
+    pointer-events: none; }
+
+#page-verify-account #verify-account-success {
+  text-align: center;
+  transition: left 0.2s, opacity 0.2s; }
+  #page-verify-account #verify-account-success button {
+    font-size: 12px;
+    display: inline-block;
+    margin-bottom: 10px; }
+    #page-verify-account #verify-account-success button:hover {
+      color: #1f58c6; }
+  #page-verify-account #verify-account-success.hidden {
+    left: 90%;
+    opacity: 0;
+    pointer-events: none; }
 
 #navbar-site {
   height: 170px; }

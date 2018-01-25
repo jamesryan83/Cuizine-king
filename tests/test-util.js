@@ -12,7 +12,7 @@ var database = require("../server/database/database");
 
 var sqlCwd = path.join(__dirname, "../", "sql");
 
-var regexValidHtml = /(\s*)<!DOCTYPE html>(\s*)<html>(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi;
+
 
 global.logSQLerrors = config.logSQLerrors; // used elsewhere
 global.devMode = true;
@@ -23,6 +23,8 @@ config.mssql.database = "menuthingTest";
 
 // General functions and stuff for testing
 exports = module.exports = {
+
+    regexValidHtml: /(\s*)<!DOCTYPE html>(\s*)<html>(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi,
 
     supertestUrl: "http://localhost:" + config.port,
 
@@ -58,10 +60,10 @@ exports = module.exports = {
 
 
     // Gets an api token for making api requests
-    getApiToken: function (callback) {
+    getApiToken: function (callback, email, password, url) {
         superagent
-            .post(this.supertestUrl + "/api/v1/login")
-            .send({ email: this.fakeUser.email, password: this.fakeUser.password })
+            .post(this.supertestUrl + (url || "/api/v1/login"))
+            .send({ email: (email || this.fakeUser.email), password: (password || this.fakeUser.password) })
             .set("accept", "json")
             .end(function (err, res) {
                 return callback(res.body.data.jwt);
@@ -71,6 +73,7 @@ exports = module.exports = {
 
     // test if page has valid html and other stuff
     testValidPage: function (route, done, status, jwt) {
+        var self = this;
         if (!status) status = 200;
 
         supertest(this.supertestUrl)
@@ -83,7 +86,7 @@ exports = module.exports = {
             .end(function (err, res) {
                 if (err) return done(new Error(err));
 
-                assert(res.text.match(regexValidHtml), "Invalid html");
+                assert(res.text.match(self.regexValidHtml), "Invalid html");
                 done();
             });
     },
@@ -96,8 +99,12 @@ exports = module.exports = {
             .set("Content-Type", "text/html")
             .set("Accept", "text/html")
             .expect("Content-Type", "text/html; charset=utf-8")
-            .expect("location", "/login")
-            .expect(302, done);
+//            .expect("location", "/login")
+            .end(function (err, res) {
+                console.log(err)
+                console.log(res.body)
+            })
+
     },
 
 
@@ -135,8 +142,20 @@ exports = module.exports = {
             .end(function (err, res) {
                 if (err) throw Error("error creating user");
 
+                // add admin users
+                database.runSqlScriptSync(
+                    path.join(__dirname, "../", "sql", "other", "seed-admin.sql"),
+                    config.mssql.database);
+
                 return callback(res.body.data)
             });
+    },
+
+
+    // Empty the test database and add system users
+    createSystemUsers: function () {
+        database.runBatchFileSync("empty-test-db.bat", sqlCwd);
+
     },
 
 

@@ -24,7 +24,9 @@ app.cms.business = {
             if (!app.util.validateInputs({ email: email }, app.validationRules.forgotPassword))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/forgot-password", { email: email }, function (err, data) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/forgot-password", data: { email: email }
+            }, function (err, data) {
                 if (!err && data) {
                     app.util.showToast(data, 4000);
                 }

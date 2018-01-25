@@ -13,8 +13,9 @@ app.dialogs.businessHours = {
     init: function (storeHours) {
         var self = this;
 
-        this.addHoursToList(storeHours.dineIn, this.hoursLeftEl);
-        this.addHoursToList(storeHours.delivery, this.hoursRightEl);
+
+        this.addHoursToList(storeHours.slice(0, 7), this.hoursLeftEl);
+        this.addHoursToList(storeHours.slice(7, 14), this.hoursRightEl);
 
         $(this.dialogCloseEl).off().on("click", function () {
             self.hide();
@@ -22,9 +23,16 @@ app.dialogs.businessHours = {
     },
 
     addHoursToList: function (hours, hoursEl) {
+        var text = "";
         var frag = document.createDocumentFragment();
         for (var i = 0; i < 7; i++) {
-            frag.append($("<li><span>" + this.days[i] + "</span> " + hours[i] + "</li>")[0]);
+            if (hours[i].opens === "c") {
+                text = "closed";
+            } else {
+                text = hours[i].opens + " to " + hours[i].closes;
+            }
+
+            frag.append($("<li><span>" + this.days[i] + "</span> " + text + "</li>")[0]);
         }
         $(hoursEl).empty().append(frag);
     },

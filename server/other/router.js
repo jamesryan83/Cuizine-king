@@ -28,7 +28,8 @@ var upload = multer();
 
 var wwwFolder = path.join(__dirname, "../", "../", "www");
 
-// TODO : csrf tokens
+
+// TODO : csrf tokens if using cookies
 
 
 exports = module.exports = {
@@ -51,12 +52,12 @@ exports = module.exports = {
 
         var authenticate = passportAuth.authenticate.bind(passportAuth);
 
-
         // index html files
         this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
         this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
         this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
         this.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
+        this.adminLogin = fs.readFileSync(path.join(wwwFolder, "sysadmin-login.html"), "utf8");
 
 
         // log the requested route & headers
@@ -78,22 +79,22 @@ exports = module.exports = {
 
         // site, cms and sysadmin pages
         router.get(routerSite.routesList, function (req, res) { self.renderPage(req, res, "site"); });
-        router.get(routerCms.routesList, authenticate, function (req, res) { self.renderPage(req, res, "cms"); }); // auth.authenticate,
-        router.get(routerSysadmin.routesList, authenticate, function (req, res) { self.renderPage(req, res, "sysadmin"); });
+        router.get(routerCms.routesList, function (req, res) { self.renderPage(req, res, "cms"); });
+        router.get(routerSysadmin.routesList, function (req, res) { self.renderPage(req, res, "sysadmin"); });
 
 
         // api
-        router.get( "/api/v1/people", authenticate, peopleApi.get.bind(peopleApi));
+        router.get( "/api/v1/people", peopleApi.get.bind(peopleApi));
         router.get( "/api/v1/store", storesApi.get.bind(storesApi));
         router.get( "/api/v1/location", locationApi.get.bind(locationApi));
-        router.post("/api/v1/store-application", storesApi.create.bind(storesApi));
+        router.post("/api/v1/store-application", storesApi.requestStoreApplication.bind(storesApi));
 
 
         // auth api
-        router.post("/api/v1/login", authApi.login.bind(authApi));
+        router.post("/api/v1/login", authApi.websiteLogin.bind(authApi));
         router.post("/api/v1/store-login", authApi.storeLogin.bind(authApi));
         router.post("/api/v1/register", authApi.createUser.bind(authApi));
-        router.get( "/api/v1/logout", authApi.logout.bind(authApi));
+        router.get( "/api/v1/logout", authenticate, authApi.logout.bind(authApi));
         router.post("/api/v1/check-token", authenticate, authApi.checkJwt.bind(authApi)); // returns a new jwt from a user email
         router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi));
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
@@ -102,9 +103,12 @@ exports = module.exports = {
 
 
         // sysadmin TODO : ip authentication or something
-        router.post("/api/sysadmin/stores", storesApi.create.bind(storesApi));
-        router.put( "/api/sysadmin/stores", storesApi.update.bind(storesApi));
+        router.get("/admin-login", this.sysadminLoginPage.bind(this));
+        router.post("/admin-login", authApi.systemLogin.bind(authApi));
+        router.post("/api/sysadmin/create-store", storesApi.create.bind(storesApi));
         router.get( "/api/sysadmin/recreate-database", sysadminApi.recreateDatabase.bind(sysadminApi));
+
+
 
 
         router.post("/api/v1/upload-logo", upload.single("logo"), storesApi.uploadLogo.bind(storesApi));
@@ -160,6 +164,16 @@ exports = module.exports = {
     },
 
 
+    // System admin login page
+    sysadminLoginPage: function (req, res) {
+        if (global.devMode) { // no cache
+            this.adminLogin = fs.readFileSync(path.join(wwwFolder, "sysadmin-login.html"), "utf8");
+        }
+
+        return res.send(ejs.render(this.adminLogin));
+    },
+
+
     // send Json response
     sendJson: function (res, data, err, status) {
         if (err) {
@@ -185,6 +199,7 @@ exports = module.exports = {
     // Returns an error page or json
     catchAll: function (req, res, next) {
         var errorMessage = "Unknown Route";
+        console.log(errorMessage + " " + req.url);
 
         if (this.isRequestAjax(req)) {
             return this.sendJson(res, null, errorMessage, 404);

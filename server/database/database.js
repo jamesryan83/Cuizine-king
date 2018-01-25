@@ -78,9 +78,12 @@ exports = module.exports = {
 
 
     // Runs an sql script in another process and waits for result
-    runSqlScriptSync: function (scriptPath) {
+    runSqlScriptSync: function (scriptPath, databaseName) {
         try {
-            var result = execSync("Sqlcmd -S localhost -i " + scriptPath);
+            var command = "Sqlcmd -S localhost -d " + (databaseName || config.mssql.database) + " -i " + scriptPath;
+            console.log("executing: " + command);
+
+            var result = execSync(command);
 
             if (global.logSQLerrors) console.log(result.toString("utf-8").trim());
 

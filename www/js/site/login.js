@@ -3,16 +3,8 @@
 app.site.login = {
 
 
-    registeredIdPerson: 0,
-
-
     init: function (routeData) {
         var self = this;
-
-        // cached incase the user wants to resend the verification
-        // email from the registration success thing
-        var registrationData = undefined;
-
 
 
 
@@ -25,7 +17,9 @@ app.site.login = {
             if (!app.util.validateInputs(data, app.validationRules.login))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/login", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/login", data: data
+            }, function (err, result) {
                 if (err) return false;
 
                 app.util.addJwtToStorage(result.data.jwt);
@@ -46,7 +40,9 @@ app.site.login = {
             if (!app.util.validateInputs(data, app.validationRules.login))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/store-login", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/store-login", data: data
+            }, function (err, result) {
                 if (err) return false;
 
                 app.util.addJwtToStorage(result.data.jwt);
@@ -54,7 +50,7 @@ app.site.login = {
                 app.util.addStoreIdToStorage(result.data.id_store);
 
                 // store is in a different section which requires page refresh
-                window.location.href = "/store/" + result.data.id_store  + "/dashboard";
+                window.location.href = "/store-admin/" + result.data.id_store  + "/dashboard";
             });
 
             return false;
@@ -74,7 +70,9 @@ app.site.login = {
             if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/register", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/register", data: data
+            }, function (err, result) {
                 if (err) return;
 
                 app.util.addJwtToStorage(result.data.jwt);
@@ -90,20 +88,18 @@ app.site.login = {
 
         // Submit store application form
         $("#form-store-application").on("submit", function () {
-            if (!$("#checkbox-tnc-store").is(":checked")) {
-                app.util.showToast("You need to agree to the terms and conditions");
-                return false;
-            }
+            var data = validate.collectFormValues($("#form-store-application")[0], { trim: true });
 
-            registrationData = validate.collectFormValues($("#form-store-application")[0], { trim: true });
-
-            if (!app.util.validateInputs(registrationData, app.validationRules.registerStore))
+            if (!app.util.validateInputs(data, app.validationRules.storeApplication))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/store-application", registrationData, function (err) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/store-application", data: data
+            }, function (err) {
                 if (err) return;
 
-                //$("#registration-success-email").text(registrationData.email);
+                $("#store-application-success-email").text(data.email);
+                self.showForm("#store-application-success");
             });
 
             return false;
@@ -112,16 +108,21 @@ app.site.login = {
 
         // Send forgot password email
         $("#form-forgot-password").on("submit", function () {
-            var email = validate.collectFormValues(this, { trim: true });
+//            var email = validate.collectFormValues(this, { trim: true });
+//
+//            if (!app.util.validateInputs(email, app.validationRules.forgotPassword))
+//                return false;
+//
+//            app.util.ajaxRequest({
+//                method: "POST", url: "/api/v1/forgot-password", data: data
+//            }, function (err, data) {
+//                if (!err && data) {
+//                    app.util.showToast(data.message, 4000);
+//                }
+//            });
 
-            if (!app.util.validateInputs(email, app.validationRules.forgotPassword))
-                return false;
-
-            app.util.ajaxRequest("POST", "/api/v1/forgot-password", email, function (err, data) {
-                if (!err && data) {
-                    app.util.showToast(data.message, 4000);
-                }
-            });
+            // TODO : fix
+            app.util.showToast("not working just yet");
 
             return false;
         });
@@ -136,6 +137,12 @@ app.site.login = {
             } else {
                 app.util.showToast("Error : Unable to go to account page");
             }
+        });
+
+
+        // Store application success, go to home page
+        $("#store-application-success-home").on("click", function () {
+            window.location.href = "/";
         });
 
 

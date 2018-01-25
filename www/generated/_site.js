@@ -151,7 +151,7 @@ app.site.account = {
     init: function (routeData) {
         var self = this;
 
-        app.util.validateJwt(function (err) {
+        app.util.checkToken(function (err) {
             if (err) {
                 window.location.href = "/login";
             }
@@ -208,8 +208,9 @@ app.dialogs.businessHours = {
     init: function (storeHours) {
         var self = this;
 
-        this.addHoursToList(storeHours.dineIn, this.hoursLeftEl);
-        this.addHoursToList(storeHours.delivery, this.hoursRightEl);
+
+        this.addHoursToList(storeHours.slice(0, 7), this.hoursLeftEl);
+        this.addHoursToList(storeHours.slice(7, 14), this.hoursRightEl);
 
         $(this.dialogCloseEl).off().on("click", function () {
             self.hide();
@@ -217,9 +218,16 @@ app.dialogs.businessHours = {
     },
 
     addHoursToList: function (hours, hoursEl) {
+        var text = "";
         var frag = document.createDocumentFragment();
         for (var i = 0; i < 7; i++) {
-            frag.append($("<li><span>" + this.days[i] + "</span> " + hours[i] + "</li>")[0]);
+            if (hours[i].opens === "c") {
+                text = "closed";
+            } else {
+                text = hours[i].opens + " to " + hours[i].closes;
+            }
+
+            frag.append($("<li><span>" + this.days[i] + "</span> " + text + "</li>")[0]);
         }
         $(hoursEl).empty().append(frag);
     },
@@ -418,7 +426,9 @@ app.site.location = {
 
 
         // load stores
-        app.util.ajaxRequest("GET", "/res/_stores.json", null, function (err, result) {
+        app.util.ajaxRequest({
+            method: "GET", url: "/res/_stores.json"
+        }, function (err, result) {
             if (err) return;
 
             self.storeData = result;
@@ -569,16 +579,8 @@ app.site.location = {
 app.site.login = {
 
 
-    registeredIdPerson: 0,
-
-
     init: function (routeData) {
         var self = this;
-
-        // cached incase the user wants to resend the verification
-        // email from the registration success thing
-        var registrationData = undefined;
-
 
 
 
@@ -591,7 +593,9 @@ app.site.login = {
             if (!app.util.validateInputs(data, app.validationRules.login))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/login", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/login", data: data
+            }, function (err, result) {
                 if (err) return false;
 
                 app.util.addJwtToStorage(result.data.jwt);
@@ -612,7 +616,9 @@ app.site.login = {
             if (!app.util.validateInputs(data, app.validationRules.login))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/store-login", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/store-login", data: data
+            }, function (err, result) {
                 if (err) return false;
 
                 app.util.addJwtToStorage(result.data.jwt);
@@ -620,7 +626,7 @@ app.site.login = {
                 app.util.addStoreIdToStorage(result.data.id_store);
 
                 // store is in a different section which requires page refresh
-                window.location.href = "/store/" + result.data.id_store  + "/dashboard";
+                window.location.href = "/store-admin/" + result.data.id_store  + "/dashboard";
             });
 
             return false;
@@ -640,7 +646,9 @@ app.site.login = {
             if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/register", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/register", data: data
+            }, function (err, result) {
                 if (err) return;
 
                 app.util.addJwtToStorage(result.data.jwt);
@@ -656,20 +664,18 @@ app.site.login = {
 
         // Submit store application form
         $("#form-store-application").on("submit", function () {
-            if (!$("#checkbox-tnc-store").is(":checked")) {
-                app.util.showToast("You need to agree to the terms and conditions");
-                return false;
-            }
+            var data = validate.collectFormValues($("#form-store-application")[0], { trim: true });
 
-            registrationData = validate.collectFormValues($("#form-store-application")[0], { trim: true });
-
-            if (!app.util.validateInputs(registrationData, app.validationRules.registerStore))
+            if (!app.util.validateInputs(data, app.validationRules.storeApplication))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/store-application", registrationData, function (err) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/store-application", data: data
+            }, function (err) {
                 if (err) return;
 
-                //$("#registration-success-email").text(registrationData.email);
+                $("#store-application-success-email").text(data.email);
+                self.showForm("#store-application-success");
             });
 
             return false;
@@ -678,16 +684,21 @@ app.site.login = {
 
         // Send forgot password email
         $("#form-forgot-password").on("submit", function () {
-            var email = validate.collectFormValues(this, { trim: true });
+//            var email = validate.collectFormValues(this, { trim: true });
+//
+//            if (!app.util.validateInputs(email, app.validationRules.forgotPassword))
+//                return false;
+//
+//            app.util.ajaxRequest({
+//                method: "POST", url: "/api/v1/forgot-password", data: data
+//            }, function (err, data) {
+//                if (!err && data) {
+//                    app.util.showToast(data.message, 4000);
+//                }
+//            });
 
-            if (!app.util.validateInputs(email, app.validationRules.forgotPassword))
-                return false;
-
-            app.util.ajaxRequest("POST", "/api/v1/forgot-password", email, function (err, data) {
-                if (!err && data) {
-                    app.util.showToast(data.message, 4000);
-                }
-            });
+            // TODO : fix
+            app.util.showToast("not working just yet");
 
             return false;
         });
@@ -702,6 +713,12 @@ app.site.login = {
             } else {
                 app.util.showToast("Error : Unable to go to account page");
             }
+        });
+
+
+        // Store application success, go to home page
+        $("#store-application-success-home").on("click", function () {
+            window.location.href = "/";
         });
 
 
@@ -841,7 +858,9 @@ app.site.resetPassword = {
             if (!app.util.validateInputs(data, app.validationRules.resetPassword))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/reset-password", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/reset-password", data: data
+            }, function (err, result) {
                 if (err) return;
 
                 window.location.href = "/login";
@@ -868,10 +887,17 @@ app.site.store = {
         });
 
 
+        // store id from url
+        var storeId = window.location.pathname.split("/");
+        storeId = storeId[storeId.length - 1];
+
+
         // Get store data
-        app.util.ajaxRequest("GET", "/api/v1/store", { id_store: 1 }, function (err, result) {
-            if (err) return console.log(err);
-console.log(result)
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
+        }, function (err, result) {
+            if (err) return;
+
             if (Object.keys(result).length > 0) {
                 self.addDataToPage(result.data[0]);
             } else {
@@ -945,53 +971,56 @@ console.log(data)
         var item = null;
         var itemProperties = "";
         var frag = document.createDocumentFragment();
-        for (var i = 0; i < data.products.length; i++) {
+        if (data.products) {
+            for (var i = 0; i < data.products.length; i++) {
 
-            // product category heading
-            frag.append(
-                $("<div class='store-menu-list-item heading'>" +
-                    "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
-                    "<hr class='hr-1' />" +
-                "</div>")[0]);
-
-            // product items
-            for (var j = 0; j < data.products[i].items.length; j++) {
-                item = data.products[i].items[j];
-
-                itemProperties = "";
-                if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
-                if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
-                if (!item.delivery) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
-
-                if (!itemProperties) itemProperties = "<br />";
-
+                // product category heading
                 frag.append(
-                    $("<div class='store-menu-list-item clearfix'>" +
-                        "<div>" +
-                            "<h4>" + item.title + "</h4>" +
-                            "<p>" + item.description + "</p>" +
-                            itemProperties +
-                        "</div>" +
-                        "<label>Add to order</label>" +
+                    $("<div class='store-menu-list-item heading'>" +
+                        "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
+                        "<hr class='hr-1' />" +
                     "</div>")[0]);
+
+                // product items
+                for (var j = 0; j < data.products[i].items.length; j++) {
+                    item = data.products[i].items[j];
+
+                    itemProperties = "";
+                    if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
+                    if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
+                    if (!item.delivery) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
+
+                    if (!itemProperties) itemProperties = "<br />";
+
+                    frag.append(
+                        $("<div class='store-menu-list-item clearfix'>" +
+                            "<div>" +
+                                "<h4>" + item.title + "</h4>" +
+                                "<p>" + item.description + "</p>" +
+                                itemProperties +
+                            "</div>" +
+                            "<label>Add to order</label>" +
+                        "</div>")[0]);
+                }
             }
+
+            $("#store-menu-list").append(frag);
+
+
+            // Category nav
+            frag = document.createDocumentFragment();
+            for (var i = 0; i < data.products.length; i++) {
+                frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
+            }
+            $("#store-menu-nav-list").append(frag);
+
+            $(".store-menu-nav-list-item").on("click", function (e) {
+                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+                $("html").animate({ scrollTop: el[0].offsetTop }, 500);
+            });
         }
 
-        $("#store-menu-list").append(frag);
-
-
-        // Category nav
-        frag = document.createDocumentFragment();
-        for (var i = 0; i < data.products.length; i++) {
-            frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
-        }
-        $("#store-menu-nav-list").append(frag);
-
-        $(".store-menu-nav-list-item").on("click", function (e) {
-            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-
-            $("html").animate({ scrollTop: el[0].offsetTop }, 500);
-        });
 
 
         // Checkout
@@ -1002,7 +1031,7 @@ console.log(data)
         // Setup dialogs
         app.dialogs.description.init(data.name, data.description);
         app.dialogs.businessHours.init(data.hours);
-        app.dialogs.reviews.init(data);
+        //app.dialogs.reviews.init(data);
 
         $("#store-info-button-hours").show();
         $("#store-info-button-reviews").show();
@@ -1032,27 +1061,47 @@ app.site.verifyAccount = {
         $("#form-verify-account").on("submit", function () {
             var data = validate.collectFormValues($("#form-verify-account")[0], { trim: true });
 
-            data.token = self.verificationToken;
+            data.verification_token = self.verificationToken;
 
             if (!app.util.validateInputs(data, app.validationRules.verifyAccount))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/verify-account", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/verify-account", data: data
+            }, function (err, result) {
                 if (err) return;
 
-                if (!result.jwt) alert("jwt missing");
+                if (!result.data.jwt) alert("jwt missing");
 
-                // add token to storage for api calls later
-                app.util.addJwtToStorage(result.jwt);
+                app.util.addJwtToStorage(result.data.jwt);
+                app.util.addPersonIdToStorage(result.data.id_person);
 
-                window.location.href = "/";
+                $("#form-verify-account").addClass("hidden");
+                $("#verify-account-success").removeClass("hidden");
             }, true);
 
             return false;
         });
+
+
+        $("#verify-account-success-account").on("click", function () {
+            var id_person = app.util.getPersonIdFromStorage();
+
+            if (id_person) {
+                window.location.href = "/account/" + id_person;
+            } else {
+                app.util.showToast("Error : Unable to go to account page");
+            }
+        });
+
+
+        $("#verify-account-success-home").on("click", function () {
+            window.location.href = "/";
+        });
     }
 }
-// ?t=7h5GAbJWWfGBrPtEXk2DeAIA2rYC49GB6n6xVCUwwGpo0emkE3
+
+
 
 app.navbar = {
 
@@ -1061,15 +1110,19 @@ app.navbar = {
     init: function (routeData) {
         var self = this;
 
-        // Item clicked
-        $(".navbar a").on("click", function () {
+        // Item clicked.  // TODO : security
+        $(".navbar a").on("click", function (e) {
+            var isCms = window.location.pathname.indexOf("/store-admin") === 0;
+
             if (this.innerText.toLowerCase() == "blog") {
                 app.util.showToast("Not working yet");
                 return false;
             }
 
             if (this.innerText.toLowerCase() == "account") {
-                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                if (!isCms) {
+                    app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                }
                 return false;
             }
 
@@ -1078,9 +1131,15 @@ app.navbar = {
                 return false;
             }
 
-            var route = this.href.replace(window.location.origin, "");
 
-            var routeData = app.routerBase.loadPageForRoute(route, "site");
+            var route = this.href.replace(window.location.origin, "");
+            var section = "site";
+            if (window.location.pathname.indexOf("/store-admin") === 0) {
+                section = "cms";
+                route = "/store-admin/" + app.util.getStoreIdFromStorage() + e.target.pathname;
+            }
+
+            var routeData = app.routerBase.loadPageForRoute(route, section);
 
             return false;
         });
@@ -1100,7 +1159,7 @@ app.navbar = {
         // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
-                window.location.href = "/sysadmin/create-store";
+                window.location.href = "/admin-login";
             } else {
                 window.location.href = "/location/Balmoral-4171";
             }
@@ -1125,7 +1184,6 @@ app.navbar = {
 
         // if logged in
         if (app.routerBase.isUserLoggedIn()) {
-            $(".navbar-link-dashboard").show();
             $(".navbar-link-logout").show();
             $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
@@ -1258,9 +1316,9 @@ app.routerBase = {
 
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
-        app.util.ajaxRequest("GET", "/api/v1/logout", { auth: true }, function (err) {
-            if (err) return;
-
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/logout", auth: true
+        }, function (err) {
             app.util.invalidateCredentials();
             window.location.href = "/login";
         });
@@ -1419,13 +1477,15 @@ app.util = {
 
 
     // check if jwt from local storage is valid
-    validateJwt: function (callback) {
+    checkToken: function (callback) {
         var self = this;
         var jwt = this.getJwtFromStorage();
 
         if (jwt && jwt.length > 30) {
 
-            app.util.ajaxRequest("POST", "/api/v1/check-token", { auth: true }, function (err, result) {
+            this.ajaxRequest({
+                method: "POST", url: "/api/v1/check-token", auth: true
+            }, function (err, result) {
                 if (err) {
                     console.log(err);
                     self.invalidateCredentials();
@@ -1434,6 +1494,9 @@ app.util = {
 
                 self.addJwtToStorage(result.data.jwt);
                 self.addPersonIdToStorage(result.data.id_person);
+                if (result.data.id_store && result.data.id_store > 0) {
+                    localStorage.setItem("sid", result.data.id_store);
+                }
 
                 return callback(null);
             });
@@ -1462,21 +1525,19 @@ app.util = {
     },
 
 
-    // Generic ajax request - returns (err, data)
-    ajaxRequest: function (type, url, data, callback) {
+    // Generic ajax request
+    // options are { method, url, data, auth, datatype, cache }, returns (err, data)
+    ajaxRequest: function (options, callback) {
         var self = this;
-        var auth = false;
-        if (data) {
-            auth = data.auth == true;
-            delete data.auth;
-        }
 
-        $.ajax({
-            type: type,
-            url: url,
-            data: data,
+        // setup options
+        var ajaxOptions = {
+            method: options.method,
+            url: options.url,
+            data: options.data,
+            cache: options.cache || false,
             beforeSend: function(request) {
-                if (auth) {
+                if (options.auth) {
                     request.setRequestHeader("Authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
@@ -1494,7 +1555,15 @@ app.util = {
 
                 return callback(err);
             }
-        });
+        }
+
+        // set datatype
+        if (options.dataType) {
+            ajaxOptions.dataType = options.dataType;
+        }
+
+        // send request
+        $.ajax(ajaxOptions);
     },
 
 };
@@ -1710,7 +1779,11 @@ app.vr.getStore = {
     id_store: app.vr._sequence_id
 }
 
-
+app.vr.storeApplication = {
+    name: { presence: true, length: { maximum: 128 }},
+    email: app.vr._email,
+    message: { length: { maximum: 256 }}
+}
 
 
 // alias
@@ -1974,7 +2047,9 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
 
             // get locations from server
             var url = "/api/v1/location?q=" + value;
-            app.util.ajaxRequest("GET", url, null, function (err, result) {
+            app.util.ajaxRequest({
+                method: "GET", url: url
+            }, function (err, result) {
                 if (err) return;
 
                 // create new list items

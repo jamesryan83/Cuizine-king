@@ -23,7 +23,9 @@ app.site.resetPassword = {
             if (!app.util.validateInputs(data, app.validationRules.resetPassword))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/reset-password", data, function (err, result) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/reset-password", data: data
+            }, function (err, result) {
                 if (err) return;
 
                 window.location.href = "/login";

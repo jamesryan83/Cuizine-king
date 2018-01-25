@@ -55,7 +55,6 @@ exports = module.exports = {
 		database.pool.request()
 			.input("jwt", sql.NVarChar, inputs.jwt)
 			.input("email", sql.NVarChar, inputs.email)
-			.input("id_person_type", sql.TinyInt, inputs.id_person_type)
 			.execute(config.mssql.database + ".dbo.people_get_by_jwt", function (err, result) {
 				return resultHandler.handle("people_get_by_jwt", err, result, callback, inputs);
 		});
@@ -88,7 +87,6 @@ exports = module.exports = {
 		database.pool.request()
 			.input("email", sql.NVarChar, inputs.email)
 			.input("jwt", sql.NVarChar, inputs.jwt)
-			.output("id_person", sql.Int)
 			.execute(config.mssql.database + ".dbo.people_update_jwt", function (err, result) {
 				return resultHandler.handle("people_update_jwt", err, result, callback, inputs);
 		});

@@ -1,8 +1,12 @@
 
 <!-- Verify account page -->
-<div id="page-verify-account" class="page page-auth">
+<div id="page-verify-account" class="page">
 
-    <?- include("navbar-site") ?>
+    <div id="navbar-site" class="navbar">
+        <div class="navbar-heading">
+            <div class="navbar-icon"></div>
+        </div>
+    </div>
 
     <!-- verify-account form -->
     <form method="POST" id="form-verify-account" class="center">
@@ -20,4 +24,13 @@
 
         <button type="submit" class="button-1">SUBMIT</button>
     </form>
+
+
+    <!-- For after verify-account -->
+    <div id="verify-account-success" class="center hidden">
+        <h2>Thanks for verifying your account !</h2>
+
+        <button id="verify-account-success-account" type="button" class="button-3">Click here to go to your account</button>
+        <button id="verify-account-success-home" type="button" class="button-3">Click here to go to the Home page</button>
+    </div>
 </div>

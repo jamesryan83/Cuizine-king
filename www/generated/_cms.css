@@ -711,8 +711,6 @@ div.upload input {
     width: 70px;
     background-image: url(/res/images/ck-logo.png);
     display: inline-block; }
-  #navbar-cms #main-account-links-container {
-    display: none; }
   @media (max-width: 870px) {
     #navbar-cms .navbar-links {
       display: none; }

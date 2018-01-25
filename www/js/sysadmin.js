@@ -31,13 +31,16 @@ app.sysadmin = {
         }).fail(function (err) {
             // TODO : error msg
         });
-
     },
 
 
     // Called whenever the page is changed
     onPageChanged: function (routeData) {
 
+        // logout button
+        $("#navbar-link-logout").on("click", function () {
+            app.routerBase.logUserOut();
+        });
     },
 
 

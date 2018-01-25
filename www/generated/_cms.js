@@ -15,7 +15,6 @@ if (typeof window != "undefined") {
 // CMS pages
 app.cms = {
 
-
     htmlFiles: {}, // cached html
 
 
@@ -134,7 +133,9 @@ app.cms.business = {
             if (!app.util.validateInputs({ email: email }, app.validationRules.forgotPassword))
                 return false;
 
-            app.util.ajaxRequest("POST", "/api/v1/forgot-password", { email: email }, function (err, data) {
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/forgot-password", data: { email: email }
+            }, function (err, data) {
                 if (!err && data) {
                     app.util.showToast(data, 4000);
                 }
@@ -242,15 +243,19 @@ app.navbar = {
     init: function (routeData) {
         var self = this;
 
-        // Item clicked
-        $(".navbar a").on("click", function () {
+        // Item clicked.  // TODO : security
+        $(".navbar a").on("click", function (e) {
+            var isCms = window.location.pathname.indexOf("/store-admin") === 0;
+
             if (this.innerText.toLowerCase() == "blog") {
                 app.util.showToast("Not working yet");
                 return false;
             }
 
             if (this.innerText.toLowerCase() == "account") {
-                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                if (!isCms) {
+                    app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                }
                 return false;
             }
 
@@ -259,9 +264,15 @@ app.navbar = {
                 return false;
             }
 
-            var route = this.href.replace(window.location.origin, "");
 
-            var routeData = app.routerBase.loadPageForRoute(route, "site");
+            var route = this.href.replace(window.location.origin, "");
+            var section = "site";
+            if (window.location.pathname.indexOf("/store-admin") === 0) {
+                section = "cms";
+                route = "/store-admin/" + app.util.getStoreIdFromStorage() + e.target.pathname;
+            }
+
+            var routeData = app.routerBase.loadPageForRoute(route, section);
 
             return false;
         });
@@ -281,7 +292,7 @@ app.navbar = {
         // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
-                window.location.href = "/sysadmin/create-store";
+                window.location.href = "/admin-login";
             } else {
                 window.location.href = "/location/Balmoral-4171";
             }
@@ -306,7 +317,6 @@ app.navbar = {
 
         // if logged in
         if (app.routerBase.isUserLoggedIn()) {
-            $(".navbar-link-dashboard").show();
             $(".navbar-link-logout").show();
             $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
@@ -439,9 +449,9 @@ app.routerBase = {
 
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
-        app.util.ajaxRequest("GET", "/api/v1/logout", { auth: true }, function (err) {
-            if (err) return;
-
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/logout", auth: true
+        }, function (err) {
             app.util.invalidateCredentials();
             window.location.href = "/login";
         });
@@ -600,13 +610,15 @@ app.util = {
 
 
     // check if jwt from local storage is valid
-    validateJwt: function (callback) {
+    checkToken: function (callback) {
         var self = this;
         var jwt = this.getJwtFromStorage();
 
         if (jwt && jwt.length > 30) {
 
-            app.util.ajaxRequest("POST", "/api/v1/check-token", { auth: true }, function (err, result) {
+            this.ajaxRequest({
+                method: "POST", url: "/api/v1/check-token", auth: true
+            }, function (err, result) {
                 if (err) {
                     console.log(err);
                     self.invalidateCredentials();
@@ -615,6 +627,9 @@ app.util = {
 
                 self.addJwtToStorage(result.data.jwt);
                 self.addPersonIdToStorage(result.data.id_person);
+                if (result.data.id_store && result.data.id_store > 0) {
+                    localStorage.setItem("sid", result.data.id_store);
+                }
 
                 return callback(null);
             });
@@ -643,21 +658,19 @@ app.util = {
     },
 
 
-    // Generic ajax request - returns (err, data)
-    ajaxRequest: function (type, url, data, callback) {
+    // Generic ajax request
+    // options are { method, url, data, auth, datatype, cache }, returns (err, data)
+    ajaxRequest: function (options, callback) {
         var self = this;
-        var auth = false;
-        if (data) {
-            auth = data.auth == true;
-            delete data.auth;
-        }
 
-        $.ajax({
-            type: type,
-            url: url,
-            data: data,
+        // setup options
+        var ajaxOptions = {
+            method: options.method,
+            url: options.url,
+            data: options.data,
+            cache: options.cache || false,
             beforeSend: function(request) {
-                if (auth) {
+                if (options.auth) {
                     request.setRequestHeader("Authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
@@ -675,7 +688,15 @@ app.util = {
 
                 return callback(err);
             }
-        });
+        }
+
+        // set datatype
+        if (options.dataType) {
+            ajaxOptions.dataType = options.dataType;
+        }
+
+        // send request
+        $.ajax(ajaxOptions);
     },
 
 };
@@ -891,7 +912,11 @@ app.vr.getStore = {
     id_store: app.vr._sequence_id
 }
 
-
+app.vr.storeApplication = {
+    name: { presence: true, length: { maximum: 128 }},
+    email: app.vr._email,
+    message: { length: { maximum: 256 }}
+}
 
 
 // alias
@@ -1155,7 +1180,9 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
 
             // get locations from server
             var url = "/api/v1/location?q=" + value;
-            app.util.ajaxRequest("GET", url, null, function (err, result) {
+            app.util.ajaxRequest({
+                method: "GET", url: url
+            }, function (err, result) {
                 if (err) return;
 
                 // create new list items

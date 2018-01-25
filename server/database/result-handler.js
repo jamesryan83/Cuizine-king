@@ -19,11 +19,8 @@ exports = module.exports = {
             case "people_get_by_id":
             case "people_get_by_email":
             case "people_get_by_jwt":
-                return this.returnResult(result, 400, "Account not found", callback);
-                break;
-
             case "people_update_jwt":
-                return this.returnOutput("id_person", result, callback);
+                return this.returnResult(result, 400, "Account not found", callback);
                 break;
 
             case "people_invalidate_jwt":
@@ -76,7 +73,7 @@ exports = module.exports = {
 
         // Data result
         if (result.recordset && result.recordset.length > 0) {
-
+console.log("resulst !")
             // regular data result
             var data = result.recordset[0];
 
@@ -100,11 +97,11 @@ exports = module.exports = {
                     return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
                 }
             }
-
+console.log("data ok")
             // data ok
             return callback(null, data);
         }
-
+console.log("not ok !!")
         // Data is missing
         return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
     },

@@ -4,6 +4,7 @@
 
 var azure = require("azure-storage");
 
+var mail = require("../other/mail");
 var storeDB = require("../procedures/_Store");
 
 
@@ -39,6 +40,7 @@ exports = module.exports = {
     // create store
     create: function (req, res) {
         var b = req.body;
+        var self = this;
 
         if (this.router.validateInputs(req, res, b, global.validationRules.companiesGet))
             return;
@@ -52,11 +54,23 @@ exports = module.exports = {
     },
 
 
-    // update store
-    update: function (req, res) {
+    // user request store application
+    requestStoreApplication: function (req, res) {
         var b = req.body;
+        var self = this;
 
+        if (this.router.validateInputs(req, res, b, global.validationRules.storeApplication))
+            return;
 
+        // send user verification email
+        mail.sendStoreApplicationEmail(b.name, b.email, function (err) {
+            if (err) console.log(err);
+        });
+
+        // TODO : save store application to db
+        // TODO : send internal email for new application
+
+        return self.router.sendJson(res);
     },
 
 

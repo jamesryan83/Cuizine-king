@@ -7,15 +7,19 @@ app.navbar = {
     init: function (routeData) {
         var self = this;
 
-        // Item clicked
-        $(".navbar a").on("click", function () {
+        // Item clicked.  // TODO : security
+        $(".navbar a").on("click", function (e) {
+            var isCms = window.location.pathname.indexOf("/store-admin") === 0;
+
             if (this.innerText.toLowerCase() == "blog") {
                 app.util.showToast("Not working yet");
                 return false;
             }
 
             if (this.innerText.toLowerCase() == "account") {
-                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                if (!isCms) {
+                    app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                }
                 return false;
             }
 
@@ -24,9 +28,15 @@ app.navbar = {
                 return false;
             }
 
-            var route = this.href.replace(window.location.origin, "");
 
-            var routeData = app.routerBase.loadPageForRoute(route, "site");
+            var route = this.href.replace(window.location.origin, "");
+            var section = "site";
+            if (window.location.pathname.indexOf("/store-admin") === 0) {
+                section = "cms";
+                route = "/store-admin/" + app.util.getStoreIdFromStorage() + e.target.pathname;
+            }
+
+            var routeData = app.routerBase.loadPageForRoute(route, section);
 
             return false;
         });
@@ -46,7 +56,7 @@ app.navbar = {
         // Debug - go to sysadmin page when click on the icon
         $(".navbar-icon").on("click", function (e) {
             if (e.ctrlKey) {
-                window.location.href = "/sysadmin/create-store";
+                window.location.href = "/admin-login";
             } else {
                 window.location.href = "/location/Balmoral-4171";
             }
@@ -71,7 +81,6 @@ app.navbar = {
 
         // if logged in
         if (app.routerBase.isUserLoggedIn()) {
-            $(".navbar-link-dashboard").show();
             $(".navbar-link-logout").show();
             $(".navbar-link-account").show();
             $(".navbar-link-login").hide();

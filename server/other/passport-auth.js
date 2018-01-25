@@ -29,98 +29,76 @@ exports = module.exports = {
         passport.use(new JwtStrategy({ // this calls jwt.verify(
             secretOrKey: config.secret,
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-        }, function (jwt, done) { // called if token is found in header
-            return done(null, jwt);
+        }, function (jwTokenObject, done) { // called if token is found in header
+            return done(null, jwTokenObject);
         }));
-
-
-//        // Serialize User
-//        passport.serializeUser(function(user, done) {
-//            return done(null, user.id_person);
-//        });
-//
-//
-//        // Deserialize User
-//        passport.deserializeUser(function(id, done) {
-//            appDB.people_get_by_id_or_email({ id: id }, function (err, user) {
-//                if (err) return done(err);
-//
-//                return done(null, user);
-//            });
-//        });
     },
 
 
-
-    // authenticate jwt
+    // Checks jwt and gets person from database
     authenticate: function (req, res, next) {
         var self = this;
 
-        // handle errors from authenticate()
+        // Returns an error response if there's an error during authentication
         function sendErrorResponse(err) {
             if (self.router.isRequestAjax(req)) {
                 return self.router.sendJson(res, null, err.message, err.status);
             }
-
             return res.redirect("/login");
         }
 
+
         // check jwt against secret
         passport.authenticate("jwt", { session: false }, function (err, jwTokenObject, info) {
+            console.log(err)
+            console.log(jwTokenObject)
+            var d = Date.now() / 1000;
+            console.log(d)
+            console.log("iat: " + (d - jwTokenObject.iat))
+            console.log("exp: " + (d - jwTokenObject.exp))
             if (err) return sendErrorResponse(err);
+            if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
 
             // TODO : jwt should fail if signature algorithm is set to none
 
-            if (!jwTokenObject) {
-                return sendErrorResponse({ message: "Not Authorized", status: 401 });
-            }
-
             // TODO: refresh token on short expiry
-//            console.log(jwTokenObject.iat)
-//            console.log(jwTokenObject.exp)
-            console.log(jwTokenObject)
+//            console.log(jwTokenObject.iat) // created
+//            console.log(jwTokenObject.exp) // expiry
+//            console.log(jwTokenObject.sub) // email
 
-            // check jwt against database
-            var jwToken = self.getJwtFromHeader(req, res);
-            appDB.people_get_by_jwt({ jwt: jwToken, email: jwTokenObject.sub }, function (err, person) {
+            var jwt = self.getJwtFromHeader(req, res);
+
+            // get person from database by their jwt and email
+            appDB.people_get_by_jwt({
+                jwt: jwt,
+                email: jwTokenObject.sub
+            }, function (err, person) {
                 res.locals.person = null;
 
                 if (err) return sendErrorResponse(err);
 
+                // TODO: check id_person_type agains requested resource
+
+                // save person to the response for other functions
                 res.locals.person = person;
+
                 return next();
             });
-
         })(req, res, next);
     },
 
 
 
+    // ----------------------- Other functions -----------------------
+
+
+
     // Check the users password
-    checkUsersPassword: function (res, email, password, callback) {
+    checkUsersPassword: function (res, email, password, id_person_type, callback) {
         var self = this;
 
         // get the current user
-        appDB.people_get_by_email({ email: email }, function (err, user) {
-            if (err) return callback(err);
-
-            // check password
-            self.comparePassword(password, user.password, function (err) {
-                if (err) return callback(err);
-
-                res.locals.user = user;
-                return callback(null);
-            });
-        });
-    },
-
-
-
-    // Check the store owners password
-    checkStoreOwnersPassword: function (res, email, password, callback) {
-
-        // get the current user
-        appDB.people_get_by_email({ email: email }, function (err, user) {
+        appDB.people_get_by_email({ email: email, id_person_type: id_person_type }, function (err, user) {
             if (err) return callback(err);
 
             // check password
@@ -142,9 +120,8 @@ exports = module.exports = {
         }
 
         // token missing
-        return self.router.sendJson(res, null, "Not Authorized", 401);
+        return this.router.sendJson(res, null, "Not Authorized", 401);
     },
-
 
 
     // check if the password is correct

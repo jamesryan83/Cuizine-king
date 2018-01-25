@@ -142,13 +142,15 @@ app.util = {
 
 
     // check if jwt from local storage is valid
-    validateJwt: function (callback) {
+    checkToken: function (callback) {
         var self = this;
         var jwt = this.getJwtFromStorage();
 
         if (jwt && jwt.length > 30) {
 
-            app.util.ajaxRequest("POST", "/api/v1/check-token", { auth: true }, function (err, result) {
+            this.ajaxRequest({
+                method: "POST", url: "/api/v1/check-token", auth: true
+            }, function (err, result) {
                 if (err) {
                     console.log(err);
                     self.invalidateCredentials();
@@ -157,6 +159,9 @@ app.util = {
 
                 self.addJwtToStorage(result.data.jwt);
                 self.addPersonIdToStorage(result.data.id_person);
+                if (result.data.id_store && result.data.id_store > 0) {
+                    localStorage.setItem("sid", result.data.id_store);
+                }
 
                 return callback(null);
             });
@@ -185,21 +190,19 @@ app.util = {
     },
 
 
-    // Generic ajax request - returns (err, data)
-    ajaxRequest: function (type, url, data, callback) {
+    // Generic ajax request
+    // options are { method, url, data, auth, datatype, cache }, returns (err, data)
+    ajaxRequest: function (options, callback) {
         var self = this;
-        var auth = false;
-        if (data) {
-            auth = data.auth == true;
-            delete data.auth;
-        }
 
-        $.ajax({
-            type: type,
-            url: url,
-            data: data,
+        // setup options
+        var ajaxOptions = {
+            method: options.method,
+            url: options.url,
+            data: options.data,
+            cache: options.cache || false,
             beforeSend: function(request) {
-                if (auth) {
+                if (options.auth) {
                     request.setRequestHeader("Authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
@@ -217,7 +220,15 @@ app.util = {
 
                 return callback(err);
             }
-        });
+        }
+
+        // set datatype
+        if (options.dataType) {
+            ajaxOptions.dataType = options.dataType;
+        }
+
+        // send request
+        $.ajax(ajaxOptions);
     },
 
 };

@@ -46,7 +46,9 @@ app.site.location = {
 
 
         // load stores
-        app.util.ajaxRequest("GET", "/res/_stores.json", null, function (err, result) {
+        app.util.ajaxRequest({
+            method: "GET", url: "/res/_stores.json"
+        }, function (err, result) {
             if (err) return;
 
             self.storeData = result;

@@ -51,6 +51,14 @@ exports = module.exports = {
     },
 
 
+    // Sends a store application form
+    sendStoreApplicationEmail: function (name, email, callback) {
+        var body = "<p>Hi " + name + ".  Thanks for your enquiry.  Attached is a store application form for you to complete.</p>";
+
+        this.sendEmail(email, config.title + " - Thanks for your enquiry", body, callback);
+    },
+
+
     // Send an email
     sendEmail: function (email, subject, message, callback) {
         if (!global.devMode) {

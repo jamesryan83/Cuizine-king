@@ -15,7 +15,6 @@ if (typeof window != "undefined") {
 // CMS pages
 app.cms = {
 
-
     htmlFiles: {}, // cached html
 
 

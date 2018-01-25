@@ -15,10 +15,17 @@ app.site.store = {
         });
 
 
+        // store id from url
+        var storeId = window.location.pathname.split("/");
+        storeId = storeId[storeId.length - 1];
+
+
         // Get store data
-        app.util.ajaxRequest("GET", "/api/v1/store", { id_store: 1 }, function (err, result) {
-            if (err) return console.log(err);
-console.log(result)
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
+        }, function (err, result) {
+            if (err) return;
+
             if (Object.keys(result).length > 0) {
                 self.addDataToPage(result.data[0]);
             } else {
@@ -92,53 +99,56 @@ console.log(data)
         var item = null;
         var itemProperties = "";
         var frag = document.createDocumentFragment();
-        for (var i = 0; i < data.products.length; i++) {
+        if (data.products) {
+            for (var i = 0; i < data.products.length; i++) {
 
-            // product category heading
-            frag.append(
-                $("<div class='store-menu-list-item heading'>" +
-                    "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
-                    "<hr class='hr-1' />" +
-                "</div>")[0]);
-
-            // product items
-            for (var j = 0; j < data.products[i].items.length; j++) {
-                item = data.products[i].items[j];
-
-                itemProperties = "";
-                if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
-                if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
-                if (!item.delivery) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
-
-                if (!itemProperties) itemProperties = "<br />";
-
+                // product category heading
                 frag.append(
-                    $("<div class='store-menu-list-item clearfix'>" +
-                        "<div>" +
-                            "<h4>" + item.title + "</h4>" +
-                            "<p>" + item.description + "</p>" +
-                            itemProperties +
-                        "</div>" +
-                        "<label>Add to order</label>" +
+                    $("<div class='store-menu-list-item heading'>" +
+                        "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
+                        "<hr class='hr-1' />" +
                     "</div>")[0]);
+
+                // product items
+                for (var j = 0; j < data.products[i].items.length; j++) {
+                    item = data.products[i].items[j];
+
+                    itemProperties = "";
+                    if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
+                    if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
+                    if (!item.delivery) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
+
+                    if (!itemProperties) itemProperties = "<br />";
+
+                    frag.append(
+                        $("<div class='store-menu-list-item clearfix'>" +
+                            "<div>" +
+                                "<h4>" + item.title + "</h4>" +
+                                "<p>" + item.description + "</p>" +
+                                itemProperties +
+                            "</div>" +
+                            "<label>Add to order</label>" +
+                        "</div>")[0]);
+                }
             }
+
+            $("#store-menu-list").append(frag);
+
+
+            // Category nav
+            frag = document.createDocumentFragment();
+            for (var i = 0; i < data.products.length; i++) {
+                frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
+            }
+            $("#store-menu-nav-list").append(frag);
+
+            $(".store-menu-nav-list-item").on("click", function (e) {
+                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+                $("html").animate({ scrollTop: el[0].offsetTop }, 500);
+            });
         }
 
-        $("#store-menu-list").append(frag);
-
-
-        // Category nav
-        frag = document.createDocumentFragment();
-        for (var i = 0; i < data.products.length; i++) {
-            frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
-        }
-        $("#store-menu-nav-list").append(frag);
-
-        $(".store-menu-nav-list-item").on("click", function (e) {
-            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-
-            $("html").animate({ scrollTop: el[0].offsetTop }, 500);
-        });
 
 
         // Checkout
@@ -149,7 +159,7 @@ console.log(data)
         // Setup dialogs
         app.dialogs.description.init(data.name, data.description);
         app.dialogs.businessHours.init(data.hours);
-        app.dialogs.reviews.init(data);
+        //app.dialogs.reviews.init(data);
 
         $("#store-info-button-hours").show();
         $("#store-info-button-reviews").show();

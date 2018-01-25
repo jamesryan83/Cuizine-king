@@ -119,9 +119,9 @@ app.routerBase = {
 
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
-        app.util.ajaxRequest("GET", "/api/v1/logout", { auth: true }, function (err) {
-            if (err) return;
-
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/logout", auth: true
+        }, function (err) {
             app.util.invalidateCredentials();
             window.location.href = "/login";
         });

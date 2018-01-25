@@ -210,7 +210,11 @@ app.vr.getStore = {
     id_store: app.vr._sequence_id
 }
 
-
+app.vr.storeApplication = {
+    name: { presence: true, length: { maximum: 128 }},
+    email: app.vr._email,
+    message: { length: { maximum: 256 }}
+}
 
 
 // alias
