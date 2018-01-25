@@ -974,51 +974,53 @@ console.log(data)
         if (data.products) {
             for (var i = 0; i < data.products.length; i++) {
 
-                // product category heading
-                frag.append(
-                    $("<div class='store-menu-list-item heading'>" +
-                        "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
-                        "<hr class='hr-1' />" +
-                    "</div>")[0]);
+//                // product category heading
+//                frag.append(
+//                    $("<div class='store-menu-list-item heading'>" +
+//                        "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
+//                        "<hr class='hr-1' />" +
+//                    "</div>")[0]);
 
                 // product items
-                for (var j = 0; j < data.products[i].items.length; j++) {
-                    item = data.products[i].items[j];
+//                for (var j = 0; j < data.products[i].items.length; j++) {
+//                    item = data.products[i].items[j];
 
-                    itemProperties = "";
-                    if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
-                    if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
-                    if (!item.delivery) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
+                item = data.products[i];
 
-                    if (!itemProperties) itemProperties = "<br />";
+                itemProperties = "";
+                if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
+                if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
+                if (!item.delivery_available) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
 
-                    frag.append(
-                        $("<div class='store-menu-list-item clearfix'>" +
-                            "<div>" +
-                                "<h4>" + item.title + "</h4>" +
-                                "<p>" + item.description + "</p>" +
-                                itemProperties +
-                            "</div>" +
-                            "<label>Add to order</label>" +
-                        "</div>")[0]);
-                }
+                if (!itemProperties) itemProperties = "<br />";
+
+                frag.append(
+                    $("<div class='store-menu-list-item clearfix'>" +
+                        "<div>" +
+                            "<h4>" + item.name + "</h4>" +
+                            "<p>" + item.description + "</p>" +
+                            itemProperties +
+                        "</div>" +
+                        "<label>Add to order</label>" +
+                    "</div>")[0]);
+//                }
             }
 
             $("#store-menu-list").append(frag);
 
 
-            // Category nav
-            frag = document.createDocumentFragment();
-            for (var i = 0; i < data.products.length; i++) {
-                frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
-            }
-            $("#store-menu-nav-list").append(frag);
-
-            $(".store-menu-nav-list-item").on("click", function (e) {
-                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-
-                $("html").animate({ scrollTop: el[0].offsetTop }, 500);
-            });
+//            // Category nav
+//            frag = document.createDocumentFragment();
+//            for (var i = 0; i < data.products.length; i++) {
+//                frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
+//            }
+//            $("#store-menu-nav-list").append(frag);
+//
+//            $(".store-menu-nav-list-item").on("click", function (e) {
+//                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+//
+//                $("html").animate({ scrollTop: el[0].offsetTop }, 500);
+//            });
         }
 
 
