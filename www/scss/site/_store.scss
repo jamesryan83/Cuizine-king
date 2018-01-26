@@ -2,11 +2,11 @@
 
 // Store page
 #page-store {
-    padding: 20px 50px;
     position: relative;
 
     // Header
     #store-header {
+        padding: 40px 40px;
 
         #store-header-h1 {
             display: inline-block;
@@ -35,193 +35,12 @@
     }
 
 
-    // Info
-    #store-info {
-        padding: 40px 20px;
-
-        #store-info-inner {
-            height: 240px;
-
-            // Image
-            #store-info-image {
-                height: 240px;
-                width: 340px;
-                float: left;
-            }
-
-
-            // Details
-            #store-info-details {
-                float: right;
-                width: calc(100% - 340px);
-                padding: 10px 20px 0 30px;
-                min-width: 500px;
-
-                label {
-                    display: inline-block;
-                }
-
-                > div {
-                    label:first-of-type:not(.label-link) {
-                        font-weight: bold;
-                        width: 90px;
-                    }
-                }
-
-                // description
-                #store-info-description-container {
-                    min-height: 120px;
-
-                    #store-info-description {
-                        overflow: hidden;
-                        text-align: justify;
-                        max-height: 92px;
-                    }
-
-                    #store-info-button-description {
-                        margin-left: 5px;
-                    }
-                }
-
-                #store-info-address {
-
-                }
-
-                #store-info-hours-is-open {
-                    color: $colorBlue2;
-                    margin-right: 10px;
-                    font-weight: bold;
-                    font-size: 20px;
-                    height: 20px;
-                    line-height: 20px;
-                    vertical-align: middle;
-                }
-
-                #store-info-hours-opens-at {
-                    color: $colorRed1;
-                }
-
-                .rating-control {
-                    padding: 2px;
-                    margin-right: 10px;
-                }
-
-                #store-info-phone-number {
-                    margin: 0 10px;
-                    color: $colorBlue2;
-                }
-
-                #store-info-email {
-                    margin-left: 10px;
-                    color: $colorBlue2;
-                }
-
-            }
-        }
-    }
-
-
-    // Menu
-    #store-menu {
-
-        // list of menu items
-        #store-menu-list {
-            float: left;
-            height: 100%;
-            width: calc(100% - 200px);
-
-
-            // heading item
-            .store-menu-list-item.heading {
-                margin: 20px 0;
-
-                h4 {
-                    font-size: 30px;
-                    line-height: 30px;
-                    height: 30px;
-                    color: $colorBlue2;
-                }
-
-                > hr {
-                    margin-bottom: 10px;
-                    background-color: $colorBlue3;
-                }
-            }
-
-            .store-menu-list-item.heading:not(:first-of-type) {
-                margin: 20px 0;
-            }
-
-
-            // normal menu item
-            .store-menu-list-item {
-
-                > div {
-                    float: left;
-                    width: calc(100% - 100px);
-                    padding: 5px 20px;
-
-                    > p {
-                        max-height: 46px;
-                        overflow: hidden;
-                    }
-                }
-
-                // add to order
-                > label {
-                    float: right;
-                    height: 100%;
-                    width: 100px;
-                    color: $colorBlue2;
-                    font-size: 14px;
-                    display: block;
-                    margin-top: 20px;
-                    text-decoration: underline;
-                    cursor: pointer;
-
-                    &:hover {
-                        color: $colorBlue1;
-                    }
-                }
-            }
-        }
-
-
-        // category groups nav thing
-        #store-menu-nav {
-            float: left;
-            width: 200px;
-
-            ul {
-                list-style: none;
-                margin-top: 30px;
-
-                li {
-                    padding: 10px 10px 10px 50px;
-                    font-weight: bold;
-
-                    &:hover {
-                        cursor: pointer;
-                        color: $colorBlue2;
-                    }
-                }
-            }
-        }
-
-    }
-
-
-    // Footer
-    #store-footer {
-        padding: 30px 10px;
-        > p {
-            font-size: 10px;
-        }
-    }
+    // store content is in another file
 
 
     // Footer links
     #store-footer-links {
+        padding: 40px 40px;
 
         #store-footer-facebook {
 

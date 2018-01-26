@@ -594,6 +594,105 @@ div.upload input {
     line-height: 25px;
     pointer-events: none; }
 
+#store-content {
+  padding: 0 50px; }
+  #store-content #store-info {
+    padding: 40px 20px; }
+    #store-content #store-info #store-info-inner {
+      height: 240px; }
+      #store-content #store-info #store-info-inner #store-info-image {
+        height: 240px;
+        width: 340px;
+        float: left; }
+      #store-content #store-info #store-info-inner #store-info-details {
+        float: right;
+        width: calc(100% - 340px);
+        padding: 10px 20px 0 30px;
+        min-width: 500px; }
+        #store-content #store-info #store-info-inner #store-info-details label {
+          display: inline-block; }
+        #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
+          font-weight: bold;
+          width: 90px; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-description-container {
+          min-height: 120px; }
+          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
+            overflow: hidden;
+            text-align: justify;
+            max-height: 92px; }
+          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
+            margin-left: 5px; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
+          color: #5595d8;
+          margin-right: 10px;
+          font-weight: bold;
+          font-size: 20px;
+          height: 20px;
+          line-height: 20px;
+          vertical-align: middle; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
+          color: #ff7373; }
+        #store-content #store-info #store-info-inner #store-info-details .rating-control {
+          padding: 2px;
+          margin-right: 10px; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-phone-number {
+          margin: 0 10px;
+          color: #5595d8; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-email {
+          margin-left: 10px;
+          color: #5595d8; }
+  #store-content #store-menu #store-menu-list {
+    float: left;
+    height: 100%;
+    width: calc(100% - 200px); }
+    #store-content #store-menu #store-menu-list .store-menu-list-item.heading {
+      margin: 20px 0; }
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4 {
+        font-size: 30px;
+        line-height: 30px;
+        height: 30px;
+        color: #5595d8; }
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr {
+        margin-bottom: 10px;
+        background-color: #373748; }
+    #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
+      margin: 20px 0; }
+    #store-content #store-menu #store-menu-list .store-menu-list-item > div {
+      float: left;
+      width: calc(100% - 100px);
+      padding: 5px 20px; }
+      #store-content #store-menu #store-menu-list .store-menu-list-item > div > p {
+        max-height: 46px;
+        overflow: hidden; }
+    #store-content #store-menu #store-menu-list .store-menu-list-item > label {
+      float: right;
+      height: 100%;
+      width: 100px;
+      color: #5595d8;
+      font-size: 14px;
+      display: block;
+      margin-top: 20px;
+      text-decoration: underline;
+      cursor: pointer; }
+      #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
+        color: #1f58c6; }
+  #store-content #store-menu #store-menu-nav {
+    float: left;
+    width: 200px; }
+    #store-content #store-menu #store-menu-nav ul {
+      list-style: none;
+      margin-top: 30px; }
+      #store-content #store-menu #store-menu-nav ul li {
+        padding: 10px 10px 10px 50px;
+        font-weight: bold; }
+        #store-content #store-menu #store-menu-nav ul li:hover {
+          cursor: pointer;
+          color: #5595d8; }
+  #store-content #store-footer {
+    padding: 30px 10px; }
+    #store-content #store-footer > p {
+      font-size: 10px; }
+
 .tabcontrol {
   width: 100%; }
   .tabcontrol > .tabs {
@@ -1263,129 +1362,36 @@ div.upload input {
       padding: 10px 10px; } }
 
 #page-store {
-  padding: 20px 50px;
   position: relative; }
-  #page-store #store-header #store-header-h1 {
-    display: inline-block;
-    font-weight: 400;
-    font-size: 30px;
-    height: 30px;
-    line-height: 30px; }
-    #page-store #store-header #store-header-h1 span {
+  #page-store #store-header {
+    padding: 40px 40px; }
+    #page-store #store-header #store-header-h1 {
+      display: inline-block;
+      font-weight: 400;
       font-size: 30px;
-      color: #5595d8; }
-  #page-store #store-header > div {
-    width: auto;
-    float: right; }
-    #page-store #store-header > div label {
-      width: auto;
-      margin-right: 10px; }
-  #page-store #store-info {
-    padding: 40px 20px; }
-    #page-store #store-info #store-info-inner {
-      height: 240px; }
-      #page-store #store-info #store-info-inner #store-info-image {
-        height: 240px;
-        width: 340px;
-        float: left; }
-      #page-store #store-info #store-info-inner #store-info-details {
-        float: right;
-        width: calc(100% - 340px);
-        padding: 10px 20px 0 30px;
-        min-width: 500px; }
-        #page-store #store-info #store-info-inner #store-info-details label {
-          display: inline-block; }
-        #page-store #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
-          font-weight: bold;
-          width: 90px; }
-        #page-store #store-info #store-info-inner #store-info-details #store-info-description-container {
-          min-height: 120px; }
-          #page-store #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
-            overflow: hidden;
-            text-align: justify;
-            max-height: 92px; }
-          #page-store #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
-            margin-left: 5px; }
-        #page-store #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
-          color: #5595d8;
-          margin-right: 10px;
-          font-weight: bold;
-          font-size: 20px;
-          height: 20px;
-          line-height: 20px;
-          vertical-align: middle; }
-        #page-store #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
-          color: #ff7373; }
-        #page-store #store-info #store-info-inner #store-info-details .rating-control {
-          padding: 2px;
-          margin-right: 10px; }
-        #page-store #store-info #store-info-inner #store-info-details #store-info-phone-number {
-          margin: 0 10px;
-          color: #5595d8; }
-        #page-store #store-info #store-info-inner #store-info-details #store-info-email {
-          margin-left: 10px;
-          color: #5595d8; }
-  #page-store #store-menu #store-menu-list {
-    float: left;
-    height: 100%;
-    width: calc(100% - 200px); }
-    #page-store #store-menu #store-menu-list .store-menu-list-item.heading {
-      margin: 20px 0; }
-      #page-store #store-menu #store-menu-list .store-menu-list-item.heading h4 {
+      height: 30px;
+      line-height: 30px; }
+      #page-store #store-header #store-header-h1 span {
         font-size: 30px;
-        line-height: 30px;
-        height: 30px;
         color: #5595d8; }
-      #page-store #store-menu #store-menu-list .store-menu-list-item.heading > hr {
-        margin-bottom: 10px;
-        background-color: #373748; }
-    #page-store #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
-      margin: 20px 0; }
-    #page-store #store-menu #store-menu-list .store-menu-list-item > div {
-      float: left;
-      width: calc(100% - 100px);
-      padding: 5px 20px; }
-      #page-store #store-menu #store-menu-list .store-menu-list-item > div > p {
-        max-height: 46px;
-        overflow: hidden; }
-    #page-store #store-menu #store-menu-list .store-menu-list-item > label {
-      float: right;
-      height: 100%;
-      width: 100px;
-      color: #5595d8;
-      font-size: 14px;
-      display: block;
-      margin-top: 20px;
-      text-decoration: underline;
-      cursor: pointer; }
-      #page-store #store-menu #store-menu-list .store-menu-list-item > label:hover {
-        color: #1f58c6; }
-  #page-store #store-menu #store-menu-nav {
-    float: left;
-    width: 200px; }
-    #page-store #store-menu #store-menu-nav ul {
-      list-style: none;
-      margin-top: 30px; }
-      #page-store #store-menu #store-menu-nav ul li {
-        padding: 10px 10px 10px 50px;
-        font-weight: bold; }
-        #page-store #store-menu #store-menu-nav ul li:hover {
-          cursor: pointer;
+    #page-store #store-header > div {
+      width: auto;
+      float: right; }
+      #page-store #store-header > div label {
+        width: auto;
+        margin-right: 10px; }
+  #page-store #store-footer-links {
+    padding: 40px 40px; }
+    #page-store #store-footer-links #store-footer-links-container {
+      text-align: right; }
+      #page-store #store-footer-links #store-footer-links-container > a {
+        text-decoration: none;
+        font-weight: bold;
+        margin: 2px 5px;
+        color: #e3e3e3;
+        font-size: 12px; }
+        #page-store #store-footer-links #store-footer-links-container > a:hover {
           color: #5595d8; }
-  #page-store #store-footer {
-    padding: 30px 10px; }
-    #page-store #store-footer > p {
-      font-size: 10px; }
-  #page-store #store-footer-links #store-footer-links-container {
-    text-align: right; }
-    #page-store #store-footer-links #store-footer-links-container > a {
-      text-decoration: none;
-      font-weight: bold;
-      margin: 2px 5px;
-      color: #e3e3e3;
-      font-size: 12px; }
-      #page-store #store-footer-links #store-footer-links-container > a:hover {
-        color: #5595d8; }
 
 #page-verify-account #form-verify-account {
   transition: left 0.2s, opacity 0.2s; }

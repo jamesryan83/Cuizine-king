@@ -23,10 +23,7 @@ app.routerBase = {
             app.cordova.init();
         }, false);
 
-        // for back button after pushstate
-        window.onpopstate = function () {
-            self.loadPageForRoute(window.location.pathname, self.lastSection, true);
-        };
+
     },
 
 
@@ -36,6 +33,17 @@ app.routerBase = {
     loadPageForRoute: function (route, section, isAfterPopState) {
         var self = this;
         this.lastSection = section;
+
+
+        // reset window events // TODO : test is working
+        $(window).off();
+        $(document).off();
+
+
+        // for back button after pushstate
+        window.onpopstate = function () {
+            self.loadPageForRoute(window.location.pathname, self.lastSection, true);
+        };
 
 
         // get data for route
