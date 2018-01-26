@@ -1,38 +1,8 @@
 
 // business page
 
-#page-main-business {
+#page-cms-business {
 
-    h3 {
-        margin-top: 40px;
-    }
 
-    p {
-        margin: 10px 0;
-    }
-
-    button {
-        margin: 10px;
-        width: 100px;
-    }
-
-    img {
-        height: 150px;
-        width: 150px;
-        display: block;
-    }
-
-    form {
-        > div:first-of-type {
-            height: auto;
-            padding-bottom: 20px;
-        }
-    }
-
-    #page-main-business-email-container {
-        > a {
-            margin-left: 10px;
-        }
-    }
 
 }

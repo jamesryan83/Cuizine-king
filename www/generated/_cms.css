@@ -594,35 +594,35 @@ div.upload input {
     line-height: 25px;
     pointer-events: none; }
 
-#store-content {
+#store-content, #store-content-editable {
   padding: 0 50px; }
-  #store-content #store-info {
+  #store-content #store-info, #store-content-editable #store-info {
     padding: 40px 20px; }
-    #store-content #store-info #store-info-inner {
+    #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
       height: 240px; }
-      #store-content #store-info #store-info-inner #store-info-image {
+      #store-content #store-info #store-info-inner #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image {
         height: 240px;
         width: 340px;
         float: left; }
-      #store-content #store-info #store-info-inner #store-info-details {
+      #store-content #store-info #store-info-inner #store-info-details, #store-content-editable #store-info #store-info-inner #store-info-details {
         float: right;
         width: calc(100% - 340px);
         padding: 10px 20px 0 30px;
         min-width: 500px; }
-        #store-content #store-info #store-info-inner #store-info-details label {
+        #store-content #store-info #store-info-inner #store-info-details label, #store-content-editable #store-info #store-info-inner #store-info-details label {
           display: inline-block; }
-        #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
+        #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link), #store-content-editable #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
           font-weight: bold;
           width: 90px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-description-container {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-description-container, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container {
           min-height: 120px; }
-          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
+          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
             overflow: hidden;
             text-align: justify;
             max-height: 92px; }
-          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
+          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
             margin-left: 5px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-is-open, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
           color: #5595d8;
           margin-right: 10px;
           font-weight: bold;
@@ -630,41 +630,41 @@ div.upload input {
           height: 20px;
           line-height: 20px;
           vertical-align: middle; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
           color: #ff7373; }
-        #store-content #store-info #store-info-inner #store-info-details .rating-control {
+        #store-content #store-info #store-info-inner #store-info-details .rating-control, #store-content-editable #store-info #store-info-inner #store-info-details .rating-control {
           padding: 2px;
           margin-right: 10px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-phone-number {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-phone-number, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-phone-number {
           margin: 0 10px;
           color: #5595d8; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-email {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-email, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-email {
           margin-left: 10px;
           color: #5595d8; }
-  #store-content #store-menu #store-menu-list {
+  #store-content #store-menu #store-menu-list, #store-content-editable #store-menu #store-menu-list {
     float: left;
     height: 100%;
     width: calc(100% - 200px); }
-    #store-content #store-menu #store-menu-list .store-menu-list-item.heading {
+    #store-content #store-menu #store-menu-list .store-menu-list-item.heading, #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading {
       margin: 20px 0; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4 {
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4, #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading h4 {
         font-size: 30px;
         line-height: 30px;
         height: 30px;
         color: #5595d8; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr {
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr, #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading > hr {
         margin-bottom: 10px;
         background-color: #373748; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
+    #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type), #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
       margin: 20px 0; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item > div {
+    #store-content #store-menu #store-menu-list .store-menu-list-item > div, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > div {
       float: left;
       width: calc(100% - 100px);
       padding: 5px 20px; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item > div > p {
+      #store-content #store-menu #store-menu-list .store-menu-list-item > div > p, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > div > p {
         max-height: 46px;
         overflow: hidden; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item > label {
+    #store-content #store-menu #store-menu-list .store-menu-list-item > label, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > label {
       float: right;
       height: 100%;
       width: 100px;
@@ -674,23 +674,23 @@ div.upload input {
       margin-top: 20px;
       text-decoration: underline;
       cursor: pointer; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
+      #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > label:hover {
         color: #1f58c6; }
-  #store-content #store-menu #store-menu-nav {
+  #store-content #store-menu #store-menu-nav, #store-content-editable #store-menu #store-menu-nav {
     float: left;
     width: 200px; }
-    #store-content #store-menu #store-menu-nav ul {
+    #store-content #store-menu #store-menu-nav ul, #store-content-editable #store-menu #store-menu-nav ul {
       list-style: none;
       margin-top: 30px; }
-      #store-content #store-menu #store-menu-nav ul li {
+      #store-content #store-menu #store-menu-nav ul li, #store-content-editable #store-menu #store-menu-nav ul li {
         padding: 10px 10px 10px 50px;
         font-weight: bold; }
-        #store-content #store-menu #store-menu-nav ul li:hover {
+        #store-content #store-menu #store-menu-nav ul li:hover, #store-content-editable #store-menu #store-menu-nav ul li:hover {
           cursor: pointer;
           color: #5595d8; }
-  #store-content #store-footer {
+  #store-content #store-footer, #store-content-editable #store-footer {
     padding: 30px 10px; }
-    #store-content #store-footer > p {
+    #store-content #store-footer > p, #store-content-editable #store-footer > p {
       font-size: 10px; }
 
 #toasts {
@@ -716,34 +716,36 @@ div.upload input {
     margin-bottom: 10px;
     bottom: -50px; }
 
-#page-main-business h3 {
-  margin-top: 40px; }
+#page-cms-menu #cms-menu-header {
+  padding: 20px 40px;
+  text-align: right; }
+  #page-cms-menu #cms-menu-header button {
+    margin-right: 20px;
+    width: 120px; }
+    #page-cms-menu #cms-menu-header button.active {
+      background-color: #1f58c6; }
 
-#page-main-business p {
-  margin: 10px 0; }
-
-#page-main-business button {
-  margin: 10px;
-  width: 100px; }
-
-#page-main-business img {
-  height: 150px;
-  width: 150px;
-  display: block; }
-
-#page-main-business form > div:first-of-type {
-  height: auto;
-  padding-bottom: 20px; }
-
-#page-main-business #page-main-business-email-container > a {
-  margin-left: 10px; }
-
-#page-main-menu {
-  position: relative;
-  height: 100%; }
+#page-cms-menu #edit-mode-border {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border: 5px solid #1f58c6;
+  pointer-events: none;
+  z-index: 100000; }
+  #page-cms-menu #edit-mode-border label {
+    text-align: center;
+    background-color: #1f58c6;
+    color: white;
+    padding: 5px;
+    width: 100px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block; }
 
 #page-container {
-  height: 100% !important; }
+  height: 100%; }
   #page-container .page-main-header {
     padding: 10px 40px 0 40px;
     height: 50px;
@@ -763,8 +765,6 @@ div.upload input {
         margin-right: 10px; }
       #page-container .page-main-header .page-menu-controls button {
         margin-left: 10px; }
-  #page-container .page {
-    height: calc(100% - 70px); }
 
 #navbar-cms {
   height: 70px; }

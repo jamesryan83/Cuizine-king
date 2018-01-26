@@ -1,9 +1,44 @@
 
 // Menu page
 
-#page-main-menu {
-    position: relative;
-    height: 100%;
+#page-cms-menu {
+
+    #cms-menu-header {
+        padding: 20px 40px;
+        text-align: right;
+
+        button {
+            margin-right: 20px;
+            width: 120px;
+
+            &.active {
+                background-color: $colorBlue1;
+            }
+        }
+    }
+
+
+    #edit-mode-border {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border: 5px solid $colorBlue1;
+        pointer-events: none;
+        z-index: 100000;
+
+        label {
+            text-align: center;
+            background-color: $colorBlue1;
+            color: white;
+            padding: 5px;
+            width: 100px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+    }
 
     // store content is in another file
 

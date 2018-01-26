@@ -115,55 +115,6 @@ app.cms.business = {
     init: function () {
         var self = this;
 
-        $("#main-account-save").on("click", function () {
-            var data = validate.collectFormValues($("#form-main-account")[0], { trim: true });
-
-            if (!app.util.validateInputs(data, app.validationRules.mainAccountSave))
-                return false;
-
-            console.log(data)
-
-            return false;
-        });
-
-
-        $("#main-account-change-password").on("click", function () {
-            var email = $("label[name='email']").text();
-
-            if (!app.util.validateInputs({ email: email }, app.validationRules.forgotPassword))
-                return false;
-
-            app.util.ajaxRequest({
-                method: "POST", url: "/api/v1/forgot-password", data: { email: email }
-            }, function (err, data) {
-                if (!err && data) {
-                    app.util.showToast(data, 4000);
-                }
-            });
-        });
-
-
-        $("#main-account-delete-account").on("click", function () {
-            console.log("delete-account")
-        });
-
-
-//        // Get account data
-//        app.util.ajaxRequest("GET", "api/v1/me", { auth: true }, function (err, result) {
-//            if (err) return;
-//
-//            // add data to ui
-//            for (var propName in result) {
-//                var el = $("[name='" + propName + "']");
-//                if (el.prop("nodeName") === "INPUT") {
-//                    $(el).val(result[propName]);
-//                } else if (el.prop("nodeName") === "IMG") {
-//                    $(el).attr("src", result[propName]);
-//                } else {
-//                    $(el).text(result[propName]);
-//                }
-//            }
-//        });
     },
 
 }
@@ -192,19 +143,22 @@ app.cms.menu = {
     init: function () {
         var self = this;
 
-        var editMenuPopup = $("#popup-edit-menu-item");
-
-        $("#main-menu-edit").on("click", function () {
-            editMenuPopup.addClass("active")
+        $("#cms-menu-edit").on("click", function () {
+            $("#store-content-preview-container").hide();
+            $("#store-content-edit-container").show();
+            $("#cms-menu-preview").removeClass("active");
+            $("#cms-menu-edit").addClass("active");
+            $("#edit-mode-border").show();
         });
 
-        $("#main-menu-edit-cancel").on("click", function () {
-            editMenuPopup.removeClass("active");
+        $("#cms-menu-preview").on("click", function () {
+            $("#store-content-edit-container").hide();
+            $("#store-content-preview-container").show();
+            $("#cms-menu-preview").addClass("active");
+            $("#cms-menu-edit").removeClass("active");
+            $("#edit-mode-border").hide();
         });
 
-        $("#main-menu-edit-save").on("click", function () {
-            editMenuPopup.removeClass("active");
-        });
     },
 
 }

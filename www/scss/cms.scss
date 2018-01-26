@@ -15,7 +15,7 @@
 
 // make page stay 100% height
 #page-container {
-    height: 100% !important;
+    height: 100%;
 
 
     // header on each page, under the navbar
@@ -50,10 +50,6 @@
         }
     }
 
-    // main content container
-    .page {
-        height: calc(100% - #{$loggedInNavbarHeight});
-    }
 }
 
 
