@@ -598,8 +598,9 @@ input, textarea {
   #store-content #store-info, #store-content-editable #store-info {
     padding: 40px 20px; }
     #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
+      position: relative;
       height: 240px; }
-      #store-content #store-info #store-info-inner #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image {
+      #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
         height: 240px;
         width: 340px;
         float: left; }
@@ -693,33 +694,6 @@ input, textarea {
     #store-content #store-footer > p, #store-content-editable #store-footer > p {
       font-size: 10px; }
 
-#store-content-editable:not(.edit-mode) [contenteditable=true]:empty:before {
-  content: attr(placeholder);
-  display: block;
-  /* For Firefox */
-  color: #ff7373;
-  font-weight: bold; }
-
-#store-content-editable:not(.edit-mode) [contenteditable=true] {
-  cursor: text;
-  font-size: 14px;
-  font-weight: 400; }
-
-#store-content-editable #store-info-inner {
-  position: relative; }
-  #store-content-editable #store-info-inner .upload-button {
-    position: absolute;
-    left: 0;
-    top: 245px;
-    border: none; }
-    #store-content-editable #store-info-inner .upload-button label {
-      color: #ff7373; }
-
-#store-content-editable #menu-edit-controls {
-  text-align: center; }
-  #store-content-editable #menu-edit-controls button {
-    margin: 20px; }
-
 #toasts {
   position: fixed;
   left: 50%;
@@ -743,16 +717,8 @@ input, textarea {
     margin-bottom: 10px;
     bottom: -50px; }
 
-#page-cms-menu #cms-menu-header {
-  padding: 20px 40px;
-  text-align: right; }
-  #page-cms-menu #cms-menu-header button {
-    margin-right: 20px;
-    width: 120px; }
-    #page-cms-menu #cms-menu-header button.active {
-      background-color: #1f58c6; }
-  #page-cms-menu #cms-menu-header #cms-menu-save {
-    background-color: #3bcd3b; }
+#page-cms-menu .page-cms-header #cms-menu-save {
+  background-color: #3bcd3b; }
 
 #page-cms-menu #preview-mode-border {
   height: 100%;
@@ -762,7 +728,7 @@ input, textarea {
   left: 0;
   border: 5px solid #1f58c6;
   pointer-events: none;
-  z-index: 100000; }
+  z-index: 10000; }
   #page-cms-menu #preview-mode-border label {
     text-align: center;
     background-color: #1f58c6;
@@ -773,27 +739,30 @@ input, textarea {
     font-weight: bold;
     display: inline-block; }
 
-#page-container {
-  height: 100%; }
-  #page-container .page-main-header {
-    padding: 10px 40px 0 40px;
-    height: 50px;
-    line-height: 50px; }
-    #page-container .page-main-header .main-page-heading {
-      font-size: 40px;
-      font-weight: 400;
-      color: #5595d8;
-      display: inline-block; }
-    #page-container .page-main-header .page-menu-controls {
-      vertical-align: top;
-      float: right;
-      height: 35px;
-      line-height: 35px;
-      margin-top: 9px; }
-      #page-container .page-main-header .page-menu-controls label {
-        margin-right: 10px; }
-      #page-container .page-main-header .page-menu-controls button {
-        margin-left: 10px; }
+#page-cms-menu #store-content-editable:not(.edit-mode) [contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  /* For Firefox */
+  color: #ff7373;
+  font-weight: bold; }
+
+#page-cms-menu #store-content-editable:not(.edit-mode) [contenteditable=true] {
+  cursor: text;
+  font-size: 14px;
+  font-weight: 400; }
+
+#page-cms-menu #store-content-editable .upload-button {
+  position: absolute;
+  left: 85px;
+  top: 245px;
+  border: none; }
+  #page-cms-menu #store-content-editable .upload-button label {
+    color: #ff7373; }
+
+#page-cms-menu #store-content-editable #menu-edit-controls {
+  text-align: center; }
+  #page-cms-menu #store-content-editable #menu-edit-controls button {
+    margin: 20px; }
 
 #navbar-cms {
   height: 70px; }
@@ -810,3 +779,23 @@ input, textarea {
       display: none; }
     #navbar-cms .navbar-links-popup-button {
       display: block; } }
+
+#page-container {
+  height: 100%; }
+  #page-container .page-cms-header {
+    padding: 30px 40px 20px 40px; }
+    #page-container .page-cms-header .cms-page-heading {
+      font-size: 40px;
+      font-weight: 400;
+      color: #5595d8;
+      display: inline-block;
+      height: 40px;
+      line-height: 40px;
+      vertical-align: top; }
+    #page-container .page-cms-header .page-cms-header-controls {
+      float: right; }
+      #page-container .page-cms-header .page-cms-header-controls button {
+        margin-right: 20px;
+        width: 120px; }
+        #page-container .page-cms-header .page-cms-header-controls button.active {
+          background-color: #1f58c6; }

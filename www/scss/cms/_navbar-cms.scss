@@ -1,0 +1,27 @@
+
+// Navbar on logged out pages
+#navbar-cms {
+    height: $loggedInNavbarHeight;
+
+
+    // Navbar icon
+    .navbar-heading {
+        .navbar-icon {
+            @include svgicon(90px, 45px, 90px, 45px,
+                url(/res/images/ck-logo.png));
+        }
+    }
+
+
+    // mobile
+    @media (max-width: 870px) {
+        .navbar-links {
+            display: none;
+        }
+
+        .navbar-links-popup-button {
+            display: block;
+        }
+    }
+
+}

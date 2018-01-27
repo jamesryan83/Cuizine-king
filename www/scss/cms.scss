@@ -8,9 +8,11 @@
 @import "cms/dashboard";
 @import "cms/delivery-suburbs";
 @import "cms/menu";
+@import "cms/navbar-cms";
 @import "cms/orders";
 @import "cms/settings";
 @import "cms/transactions";
+
 
 
 // make page stay 100% height
@@ -19,35 +21,33 @@
 
 
     // header on each page, under the navbar
-    .page-main-header {
-        padding: 10px 40px 0 40px;
-        height: $loggedInHeaderHeight;
-        line-height: $loggedInHeaderHeight;
+    .page-cms-header {
+        padding: 30px 40px 20px 40px;
 
         // heading
-        .main-page-heading {
+        .cms-page-heading {
             font-size: 40px;
             font-weight: 400;
             color: $colorBlue2;
             display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            vertical-align: top;
         }
 
-        // buttons and stuff
-        .page-menu-controls {
-            vertical-align: top;
+        .page-cms-header-controls {
             float: right;
-            height: 35px;
-            line-height: 35px;
-            margin-top: 9px;
-
-            label {
-                margin-right: 10px;
-            }
 
             button {
-                margin-left: 10px;
+                margin-right: 20px;
+                width: 120px;
+
+                &.active {
+                    background-color: $colorBlue1;
+                }
             }
         }
+
     }
 
 }
@@ -56,29 +56,3 @@
 
 
 
-// Navbar on logged out pages
-#navbar-cms {
-    height: $loggedInNavbarHeight;
-
-
-    // Navbar icon
-    .navbar-heading {
-        .navbar-icon {
-            @include svgicon(90px, 45px, 90px, 45px,
-                url(/res/images/ck-logo.png));
-        }
-    }
-
-
-    // mobile
-    @media (max-width: 870px) {
-        .navbar-links {
-            display: none;
-        }
-
-        .navbar-links-popup-button {
-            display: block;
-        }
-    }
-
-}

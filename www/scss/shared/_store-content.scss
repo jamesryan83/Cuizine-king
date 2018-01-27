@@ -8,13 +8,17 @@
         padding: 40px 20px;
 
         #store-info-inner {
+            position: relative;
             height: 240px;
 
+
             // Image
-            #store-info-image {
-                height: 240px;
-                width: 340px;
-                float: left;
+            #store-info-image-container {
+                #store-info-image {
+                    height: 240px;
+                    width: 340px;
+                    float: left;
+                }
             }
 
 
@@ -191,48 +195,3 @@
 
 
 
-
-// cms menu edit mode
-#store-content-editable {
-
-    &:not(.edit-mode) {
-        [contenteditable=true]:empty:before {
-            content: attr(placeholder);
-            display: block; /* For Firefox */
-            color: $colorRed1;
-            font-weight: bold;
-        }
-
-        [contenteditable=true] {
-            cursor: text;
-            font-size: 14px;
-            font-weight: 400;
-        }
-    }
-
-    #store-info-inner {
-        position: relative;
-
-        .upload-button {
-            position: absolute;
-            left: 0;
-            top: 245px;
-            border: none;
-
-            label {
-                color: $colorRed1;
-
-            }
-        }
-    }
-
-
-    #menu-edit-controls {
-        text-align: center;
-
-        button {
-            margin: 20px;
-        }
-    }
-
-}

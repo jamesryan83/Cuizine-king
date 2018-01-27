@@ -598,8 +598,9 @@ input, textarea {
   #store-content #store-info, #store-content-editable #store-info {
     padding: 40px 20px; }
     #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
+      position: relative;
       height: 240px; }
-      #store-content #store-info #store-info-inner #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image {
+      #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
         height: 240px;
         width: 340px;
         float: left; }
@@ -692,33 +693,6 @@ input, textarea {
     padding: 30px 10px; }
     #store-content #store-footer > p, #store-content-editable #store-footer > p {
       font-size: 10px; }
-
-#store-content-editable:not(.edit-mode) [contenteditable=true]:empty:before {
-  content: attr(placeholder);
-  display: block;
-  /* For Firefox */
-  color: #ff7373;
-  font-weight: bold; }
-
-#store-content-editable:not(.edit-mode) [contenteditable=true] {
-  cursor: text;
-  font-size: 14px;
-  font-weight: 400; }
-
-#store-content-editable #store-info-inner {
-  position: relative; }
-  #store-content-editable #store-info-inner .upload-button {
-    position: absolute;
-    left: 0;
-    top: 245px;
-    border: none; }
-    #store-content-editable #store-info-inner .upload-button label {
-      color: #ff7373; }
-
-#store-content-editable #menu-edit-controls {
-  text-align: center; }
-  #store-content-editable #menu-edit-controls button {
-    margin: 20px; }
 
 .tabcontrol {
   width: 100%; }

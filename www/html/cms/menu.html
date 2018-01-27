@@ -4,24 +4,36 @@
 
     <?- include("navbar-cms") ?>
 
-    <div id="cms-menu-header">
-        <button id="cms-menu-preview" class="button-3">PREVIEW</button>
-        <button id="cms-menu-return" class="button-3" style="display: none;">RETURN</button>
+
+    <div class="page-cms-header">
+        <h2 class="cms-page-heading">Edit Menu</h2>
+
+        <div class="page-cms-header-controls">
+            <button id="cms-menu-edit" class="button-3">EDIT</button>
+            <button id="cms-menu-preview" class="button-3">PREVIEW</button>
+            <button id="cms-menu-return" class="button-3" style="display: none;">RETURN</button>
+        </div>
     </div>
 
 
+
+    <!-- store content -->
     <div id="store-content-editable">
 
         <!-- Info -->
         <div id="store-info">
             <div id="store-info-inner" class="clearfix">
 
-                <img id="store-info-image" />
-                <div class="upload-button">
-                    <label>Click here to add a logo</label>
-                    <input id="fileupload" class="fileupload" type="file" name="logo">
+                <!-- image -->
+                <div id="store-info-image-container">
+                    <img id="store-info-image" />
+                    <div class="upload-button">
+                        <label>Click here to add a logo</label>
+                        <input id="fileupload" class="fileupload" type="file" name="logo">
+                    </div>
                 </div>
 
+                <!-- details -->
                 <div id="store-info-details">
                     <div id="store-info-description-container">
                         <p id="store-info-description" class="menu-edit-control" contenteditable="true" placeholder="Enter a description..."></p>
@@ -30,7 +42,7 @@
 
                     <div>
                         <label>Location</label>
-                        <label id="store-info-address" class="menu-edit-control" contenteditable="true" placeholder="Enter an address..."></label>
+                        <label id="store-info-address" class="menu-edit-control">Click here to add an address...</label>
                     </div>
 
                     <div>
@@ -73,7 +85,6 @@
 
 
 
-
         <!-- Menu -->
         <div id="store-menu" class="clearfix">
             <div id="store-menu-list"></div>
@@ -98,10 +109,23 @@
         <label>PREVIEW</label>
     </div>
 
+
+<!--
+     edit menu sidebar
+    <div id="store-menu-edit-sidebar">
+        <div id="store-menu-edit-sidebar-header">
+            <label>Edit Store Menu</label>
+            <div id="store-menu-edit-sidebar-close"></div>
+        </div>
+    </div>
+-->
+
+
 </div>
 
 
 
+<!--
 <script type="text/html">
     <div id="menu-edit-add-category">
         <label>Category Name</label>
@@ -140,3 +164,4 @@
         </div>
     </div>
 </script>
+-->

@@ -1,27 +1,19 @@
 
 // Menu page
+// store content is in another file
 
 #page-cms-menu {
 
 
     // header
-    #cms-menu-header {
-        padding: 20px 40px;
-        text-align: right;
+    .page-cms-header {
 
-        button {
-            margin-right: 20px;
-            width: 120px;
-
-            &.active {
-                background-color: $colorBlue1;
-            }
-        }
 
         #cms-menu-save {
             background-color: $colorGreen1;
         }
     }
+
 
 
     // preview border
@@ -33,7 +25,7 @@
         left: 0;
         border: 5px solid $colorBlue1;
         pointer-events: none;
-        z-index: 100000;
+        z-index: $zIndexToast;
 
         label {
             text-align: center;
@@ -48,6 +40,88 @@
     }
 
 
-    // store content is in another file
+
+    // Store content
+    #store-content-editable {
+
+
+        // content editable
+        &:not(.edit-mode) {
+            [contenteditable=true]:empty:before {
+                content: attr(placeholder);
+                display: block; /* For Firefox */
+                color: $colorRed1;
+                font-weight: bold;
+            }
+
+            [contenteditable=true] {
+                cursor: text;
+                font-size: 14px;
+                font-weight: 400;
+            }
+        }
+
+
+
+        // Upload button
+        .upload-button {
+            position: absolute;
+            left: 85px;
+            top: 245px;
+            border: none;
+
+            label {
+                color: $colorRed1;
+
+            }
+        }
+
+
+        // Edit menu controls
+        #menu-edit-controls {
+            text-align: center;
+
+            button {
+                margin: 20px;
+            }
+        }
+    }
+
+
+//    // Edit menu sidebar
+//    #store-menu-edit-sidebar {
+//        position: fixed;
+//        top: 0;
+//        right: -340px;
+//        width: 340px;
+//        height: 100%;
+//        background-color: $colorGray14;
+//        z-index: $zIndexSidebar;
+//        border-left: 1px solid $colorBlue3;
+//
+//        #store-menu-edit-sidebar-header {
+//            padding: 20px;
+//
+//            > label {
+//                font-size: 24px;
+//                font-weight: bold;
+//                margin-top: 2px;
+//                display: inline-block;
+//            }
+//
+//            // close button
+//            #store-menu-edit-sidebar-close {
+//                position: absolute;
+//                top: 20px;
+//                right: 20px;
+//
+//                @include svgicon($navbarPopupIconSize, $navbarPopupIconSize, 20px, 20px,
+//                    url(/res/svg/icon-close.svg), url(/res/svg/icon-close-hover.svg));
+//            }
+//
+//        }
+//
+//
+//    }
 
 }

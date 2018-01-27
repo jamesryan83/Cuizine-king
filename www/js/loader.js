@@ -17,8 +17,6 @@ $(document).ready(function () {
 
             console.log("authorized");
 
-            console.log($("#page-container").children().length)
-
             // load script for section
             app.util.ajaxRequest({
                 method: "GET", url: scriptUrl, auth: true, cache: true

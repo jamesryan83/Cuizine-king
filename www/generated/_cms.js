@@ -153,6 +153,7 @@ app.cms.menu = {
             $("#preview-mode-border").hide();
             $("#cms-menu-preview").show();
             $("#cms-menu-return").hide();
+            $("#cms-menu-edit").show();
         });
 
         // Show Preview
@@ -165,11 +166,24 @@ app.cms.menu = {
             $("#preview-mode-border").show();
             $("#cms-menu-preview").hide();
             $("#cms-menu-return").show();
+            $("#cms-menu-edit").hide();
         });
 
         $(".menu-edit-control").on("blur", function (e) {
             console.log(this.innerText)
         });
+
+
+        // Edit button
+        $("#cms-menu-edit").on("click", function () {
+            $("#store-menu-edit-sidebar").animate({ right: 0 }, 200);
+        });
+
+        // Sidebar close
+        $("#store-menu-edit-sidebar-close").on("click", function () {
+            $("#store-menu-edit-sidebar").animate({ right: -340 }, 200);
+        });
+
     },
 
 }
