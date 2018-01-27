@@ -5,93 +5,138 @@
     <?- include("navbar-cms") ?>
 
     <div id="cms-menu-header">
-        <button id="cms-menu-edit" class="button-3 active">EDIT</button>
         <button id="cms-menu-preview" class="button-3">PREVIEW</button>
+        <button id="cms-menu-return" class="button-3" style="display: none;">RETURN</button>
     </div>
 
-    <div id="store-content-container">
 
-        <!-- Preview Mode -->
-        <div id="store-content-preview-container" style="display: none;">
-            <?- include("store-content") ?>
-        </div>
+    <div id="store-content-editable">
 
+        <!-- Info -->
+        <div id="store-info">
+            <div id="store-info-inner" class="clearfix">
 
-        <!-- Edit Mode -->
-        <div id="store-content-edit-container">
-            <div id="store-content-editable">
-
-                <!-- Info -->
-                <div id="store-info">
-                    <div id="store-info-inner" class="clearfix">
-
-                        <img id="store-info-image" />
-
-                        <div id="store-info-details">
-                            <div id="store-info-description-container">
-                                <p id="store-info-description"></p>
-                                <label id="store-info-button-description" class="label-link">more...</label>
-                            </div>
-
-                            <div>
-                                <label>Location</label>
-                                <label id="store-info-address"></label>
-                            </div>
-
-                            <div>
-                                <label>Hours</label>
-                                <label id="store-info-hours-is-open">Open Now</label>
-                                <label id="store-info-hours-opens-at">Closes at 2am</label>
-                                <label id="store-info-button-hours" class="label-link">show all hours</label>
-                            </div>
-
-                            <div>
-                                <label>Reviews</label>
-                                <ul id="store-info-rating-control" class="rating-control inactive">
-                                    <li class="rating-control-star"></li>
-                                    <li class="rating-control-star"></li>
-                                    <li class="rating-control-star"></li>
-                                    <li class="rating-control-star"></li>
-                                    <li class="rating-control-star"></li>
-                                </ul>
-                                <label id="store-info-review-count"></label>
-                                <label id="store-info-button-reviews" class="label-link">show all reviews</label>
-                            </div>
-
-                            <div>
-                                <label>Contact</label>
-                                <label>Ph:</label>
-                                <label id="store-info-phone-number"></label>
-                                <label>Email:</label>
-                                <label id="store-info-email"></label>
-                            </div>
-                        </div>
-                    </div>
+                <img id="store-info-image" />
+                <div class="upload-button">
+                    <label>Click here to add a logo</label>
+                    <input id="fileupload" class="fileupload" type="file" name="logo">
                 </div>
 
+                <div id="store-info-details">
+                    <div id="store-info-description-container">
+                        <p id="store-info-description" class="menu-edit-control" contenteditable="true" placeholder="Enter a description..."></p>
+                        <label id="store-info-button-description" class="label-link">more...</label>
+                    </div>
 
-                <!-- Menu -->
-                <div id="store-menu" class="clearfix">
-                    <div id="store-menu-list"></div>
+                    <div>
+                        <label>Location</label>
+                        <label id="store-info-address" class="menu-edit-control" contenteditable="true" placeholder="Enter an address..."></label>
+                    </div>
 
-                    <div id="store-menu-nav">
-                        <ul id="store-menu-nav-list">
+                    <div>
+                        <label>Hours</label>
+                        <label id="store-info-hours-is-open">Open Now</label>
+                        <label id="store-info-hours-opens-at">Closes at 2am</label>
+                        <label id="store-info-button-hours" class="label-link">show all hours</label>
+                    </div>
 
+                    <div>
+                        <label>Reviews</label>
+                        <ul id="store-info-rating-control" class="rating-control inactive">
+                            <li class="rating-control-star"></li>
+                            <li class="rating-control-star"></li>
+                            <li class="rating-control-star"></li>
+                            <li class="rating-control-star"></li>
+                            <li class="rating-control-star"></li>
                         </ul>
+                        <label id="store-info-review-count"></label>
+                        <label id="store-info-button-reviews" class="label-link">show all reviews</label>
                     </div>
-                </div>
 
-
-                <!-- Footer -->
-                <div id="store-footer">
-                    <p id="store-disclaimer"></p>
+                    <div>
+                        <label>Contact</label>
+                        <label>Ph:</label>
+                        <label id="store-info-phone-number" class="menu-edit-control" contenteditable="true" placeholder="Enter a phone number..."></label>
+                        <label>Email:</label>
+                        <label id="store-info-email" class="menu-edit-control" contenteditable="true" placeholder="Enter an email..."></label>
+                    </div>
                 </div>
             </div>
         </div>
+
+
+        <!-- Controls to add menu items and stuff -->
+        <div id="menu-edit-controls">
+            <button class="button-3">Add a category</button>
+            <button class="button-3">Add a menu item</button>
+        </div>
+
+
+
+
+        <!-- Menu -->
+        <div id="store-menu" class="clearfix">
+            <div id="store-menu-list"></div>
+
+            <div id="store-menu-nav">
+                <ul id="store-menu-nav-list">
+
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <div id="store-footer">
+            <p id="store-disclaimer"></p>
+        </div>
     </div>
 
-    <div id="edit-mode-border">
-        <label>EDIT MODE</label>
+
+    <!-- preview border -->
+    <div id="preview-mode-border" style="display: none;">
+        <label>PREVIEW</label>
     </div>
 
 </div>
+
+
+
+<script type="text/html">
+    <div id="menu-edit-add-category">
+        <label>Category Name</label>
+        <input id="menu-edit-category-name" />
+    </div>
+
+    <div id="menu-edit-add-item">
+        <label>Menu Item Name</label>
+        <input id="menu-edit-item-name" />
+
+        <label>Menu Item Name</label>
+        <input id="menu-edit-item-name" />
+
+        <label>Menu Item Name</label>
+        <input id="menu-edit-item-name" />
+
+        <div class="checkbox-1">
+            <input type="checkbox" id="menu-edit-item-delivery-available" />
+            <label for="menu-edit-item-delivery-available">Delivery Available</label>
+        </div>
+        <div class="checkbox-1">
+            <input type="checkbox" id="menu-edit-item-gluten-free" />
+            <label for="menu-edit-item-gluten-free">Gluten Free</label>
+        </div>
+        <div class="checkbox-1">
+            <input type="checkbox" id="menu-edit-item-vegetarian" />
+            <label for="menu-edit-item-vegetarian">Vegetarian</label>
+        </div>
+        <div class="checkbox-1">
+            <input type="checkbox" id="menu-edit-item-in-stock" />
+            <label for="menu-edit-item-in-stock">In Stock</label>
+        </div>
+        <div class="checkbox-1">
+            <input type="checkbox" id="menu-edit-item-active" />
+            <label for="menu-edit-item-active">Active</label>
+        </div>
+    </div>
+</script>

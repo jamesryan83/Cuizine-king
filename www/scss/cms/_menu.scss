@@ -3,6 +3,8 @@
 
 #page-cms-menu {
 
+
+    // header
     #cms-menu-header {
         padding: 20px 40px;
         text-align: right;
@@ -15,10 +17,15 @@
                 background-color: $colorBlue1;
             }
         }
+
+        #cms-menu-save {
+            background-color: $colorGreen1;
+        }
     }
 
 
-    #edit-mode-border {
+    // preview border
+    #preview-mode-border {
         height: 100%;
         width: 100%;
         position: fixed;
@@ -39,6 +46,7 @@
             display: inline-block;
         }
     }
+
 
     // store content is in another file
 

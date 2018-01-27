@@ -616,14 +616,14 @@ input, textarea {
 // Custom file upload button
 // based on https://jsfiddle.net/gabrieleromanato/mxq9R/
 // input is just hidden and over the top of a div that looks like a button
-div.upload {
+.upload-button {
     @extend .button-2;
 
     text-align: center;
-    position: relative !important;
-    display: inline-block !important;
-    border-radius: 3px !important;
-    line-height: 35px !important;
+    position: relative;
+    display: inline-block;
+    border-radius: 3px;
+    line-height: 35px;
     pointer-events: none;
     top: 1px;
     border: 1px solid $colorGray3;
@@ -631,17 +631,18 @@ div.upload {
     > label {
         pointer-events: none;
     }
+
+    > input {
+        position: absolute;
+        width: 170px;
+        height: 35px;
+        left: 0;
+        opacity: 0;
+        overflow: hidden;
+        cursor: pointer;
+        font-size: 0;
+        pointer-events: all;
+    }
 }
 
-div.upload input {
-    position: absolute !important;
-    width: 170px !important;
-    height: 35px !important;
-    left: 0 !important;
-    opacity: 0 !important;
-    overflow: hidden !important;
-    cursor: pointer !important;
-    font-size: 0 !important;
-    pointer-events: all;
-}
 

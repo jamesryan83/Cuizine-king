@@ -66,17 +66,18 @@
                 }
 
                 #store-info-hours-opens-at {
-                    color: $colorRed1;
+                    color: $colorGreen1;
                 }
 
                 .rating-control {
                     padding: 2px;
-                    margin-right: 10px;
+                    margin-left: -5px;
                 }
 
                 #store-info-phone-number {
                     margin: 0 10px;
                     color: $colorBlue2;
+                    min-width: 90px;
                 }
 
                 #store-info-email {
@@ -186,4 +187,52 @@
             font-size: 10px;
         }
     }
+}
+
+
+
+
+// cms menu edit mode
+#store-content-editable {
+
+    &:not(.edit-mode) {
+        [contenteditable=true]:empty:before {
+            content: attr(placeholder);
+            display: block; /* For Firefox */
+            color: $colorRed1;
+            font-weight: bold;
+        }
+
+        [contenteditable=true] {
+            cursor: text;
+            font-size: 14px;
+            font-weight: 400;
+        }
+    }
+
+    #store-info-inner {
+        position: relative;
+
+        .upload-button {
+            position: absolute;
+            left: 0;
+            top: 245px;
+            border: none;
+
+            label {
+                color: $colorRed1;
+
+            }
+        }
+    }
+
+
+    #menu-edit-controls {
+        text-align: center;
+
+        button {
+            margin: 20px;
+        }
+    }
+
 }

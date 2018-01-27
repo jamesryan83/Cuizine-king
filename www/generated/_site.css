@@ -125,7 +125,7 @@ input, textarea {
   height: 80px;
   padding: 10px; }
 
-.button-1, .button-2, div.upload, .button-3 {
+.button-1, .button-2, .upload-button, .button-3 {
   height: 35px;
   padding: 0 10px;
   border: none;
@@ -135,19 +135,19 @@ input, textarea {
   font-weight: bold;
   border: 1px solid transparent;
   color: #444444; }
-  .button-1:hover, .button-2:hover, div.upload:hover, .button-3:hover {
+  .button-1:hover, .button-2:hover, .upload-button:hover, .button-3:hover {
     background-color: #d9d9d9;
     border: 1px solid #5595d8; }
-  .button-1:active, .button-2:active, div.upload:active, .button-3:active {
+  .button-1:active, .button-2:active, .upload-button:active, .button-3:active {
     -webkit-transform: scale(0.95);
     transform: scale(0.95);
     background-color: #b9b9b9; }
 
-.button-2, div.upload {
+.button-2, .upload-button {
   background-color: transparent;
   color: #f4f4f4;
   font-size: 14px; }
-  .button-2:hover, div.upload:hover {
+  .button-2:hover, .upload-button:hover {
     color: #5595d8;
     background-color: transparent; }
 
@@ -346,28 +346,27 @@ input, textarea {
         cursor: pointer;
         background-image: url(/res/svg/icon-close-hover.svg); }
 
-div.upload {
+.upload-button {
   text-align: center;
-  position: relative !important;
-  display: inline-block !important;
-  border-radius: 3px !important;
-  line-height: 35px !important;
+  position: relative;
+  display: inline-block;
+  border-radius: 3px;
+  line-height: 35px;
   pointer-events: none;
   top: 1px;
   border: 1px solid #d9d9d9; }
-  div.upload > label {
+  .upload-button > label {
     pointer-events: none; }
-
-div.upload input {
-  position: absolute !important;
-  width: 170px !important;
-  height: 35px !important;
-  left: 0 !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
-  cursor: pointer !important;
-  font-size: 0 !important;
-  pointer-events: all; }
+  .upload-button > input {
+    position: absolute;
+    width: 170px;
+    height: 35px;
+    left: 0;
+    opacity: 0;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 0;
+    pointer-events: all; }
 
 .checkbox-1 > input, .checkbox-2 > input {
   display: none;
@@ -631,13 +630,14 @@ div.upload input {
           line-height: 20px;
           vertical-align: middle; }
         #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
-          color: #ff7373; }
+          color: #3bcd3b; }
         #store-content #store-info #store-info-inner #store-info-details .rating-control, #store-content-editable #store-info #store-info-inner #store-info-details .rating-control {
           padding: 2px;
-          margin-right: 10px; }
+          margin-left: -5px; }
         #store-content #store-info #store-info-inner #store-info-details #store-info-phone-number, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-phone-number {
           margin: 0 10px;
-          color: #5595d8; }
+          color: #5595d8;
+          min-width: 90px; }
         #store-content #store-info #store-info-inner #store-info-details #store-info-email, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-email {
           margin-left: 10px;
           color: #5595d8; }
@@ -692,6 +692,33 @@ div.upload input {
     padding: 30px 10px; }
     #store-content #store-footer > p, #store-content-editable #store-footer > p {
       font-size: 10px; }
+
+#store-content-editable:not(.edit-mode) [contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  /* For Firefox */
+  color: #ff7373;
+  font-weight: bold; }
+
+#store-content-editable:not(.edit-mode) [contenteditable=true] {
+  cursor: text;
+  font-size: 14px;
+  font-weight: 400; }
+
+#store-content-editable #store-info-inner {
+  position: relative; }
+  #store-content-editable #store-info-inner .upload-button {
+    position: absolute;
+    left: 0;
+    top: 245px;
+    border: none; }
+    #store-content-editable #store-info-inner .upload-button label {
+      color: #ff7373; }
+
+#store-content-editable #menu-edit-controls {
+  text-align: center; }
+  #store-content-editable #menu-edit-controls button {
+    margin: 20px; }
 
 .tabcontrol {
   width: 100%; }
@@ -1164,9 +1191,9 @@ div.upload input {
   .page-auth button[type="submit"] {
     width: 100%;
     margin-top: 20px; }
-  .page-auth .button-1, .page-auth .button-2, .page-auth div.upload, .page-auth .button-3 {
+  .page-auth .button-1, .page-auth .button-2, .page-auth .upload-button, .page-auth .button-3 {
     margin-top: 10px; }
-  .page-auth .button-2, .page-auth div.upload {
+  .page-auth .button-2, .page-auth .upload-button {
     margin-top: 20px;
     vertical-align: top;
     display: block;
@@ -1263,7 +1290,7 @@ div.upload input {
     padding-top: 20px; }
     .page-auth #page-login-form-container #form-login-container {
       z-index: 100; }
-      .page-auth #page-login-form-container #form-login-container .button-2, .page-auth #page-login-form-container #form-login-container div.upload {
+      .page-auth #page-login-form-container #form-login-container .button-2, .page-auth #page-login-form-container #form-login-container .upload-button {
         margin-top: 10px; }
       .page-auth #page-login-form-container #form-login-container #login-goto-register {
         margin-top: 10px; }
@@ -1273,7 +1300,7 @@ div.upload input {
         pointer-events: none; }
         .page-auth #page-login-form-container #form-login-container.hidden .form-container-inner {
           left: 0px; }
-    .page-auth #page-login-form-container #form-store-login-container .button-2, .page-auth #page-login-form-container #form-store-login-container div.upload {
+    .page-auth #page-login-form-container #form-store-login-container .button-2, .page-auth #page-login-form-container #form-store-login-container .upload-button {
       margin-top: 10px; }
     .page-auth #page-login-form-container #form-store-login-container #login-store-goto-login {
       margin-top: 10px; }
@@ -1304,7 +1331,7 @@ div.upload input {
       text-align: right;
       margin-top: 10px;
       margin-bottom: 10px; }
-    .page-auth #page-login-form-container #form-store-application-container .button-2, .page-auth #page-login-form-container #form-store-application-container div.upload {
+    .page-auth #page-login-form-container #form-store-application-container .button-2, .page-auth #page-login-form-container #form-store-application-container .upload-button {
       margin-top: 10px; }
     .page-auth #page-login-form-container #form-store-application-container > p {
       padding-bottom: 10px;
@@ -1323,7 +1350,7 @@ div.upload input {
         top: -20px; }
     .page-auth #page-login-form-container #form-store-application-container.hidden-other {
       left: 10%; }
-    .page-auth #page-login-form-container #form-forgot-password-container .button-2, .page-auth #page-login-form-container #form-forgot-password-container div.upload {
+    .page-auth #page-login-form-container #form-forgot-password-container .button-2, .page-auth #page-login-form-container #form-forgot-password-container .upload-button {
       margin-top: 10px; }
     .page-auth #page-login-form-container #form-forgot-password-container .label-input {
       width: auto; }

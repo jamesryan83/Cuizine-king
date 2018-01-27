@@ -64,7 +64,7 @@
     // Navbar icon
     .navbar-heading {
         .navbar-icon {
-            @include svgicon(70px, 35px, 70px, 35px,
+            @include svgicon(90px, 45px, 90px, 45px,
                 url(/res/images/ck-logo.png));
         }
     }
