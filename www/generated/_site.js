@@ -1100,7 +1100,6 @@ app.routerBase = {
         // get data for route
         var routeData = this.getCurrentRouteData(route, section);
 
-//console.log(routeData)
         // load html into page
         $("#page-container").empty();
         $("#page-container").append(routeData.html);

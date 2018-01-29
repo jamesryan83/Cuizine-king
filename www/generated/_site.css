@@ -1461,10 +1461,10 @@ input, textarea {
       margin-bottom: 10px; }
     .page-auth #page-login-form-container #form-store-application-container .button-2, .page-auth #page-login-form-container #form-store-application-container .upload-button {
       margin-top: 10px; }
-    .page-auth #page-login-form-container #form-store-application-container > p {
+    .page-auth #page-login-form-container #form-store-application-container p {
       padding-bottom: 10px;
       max-width: 450px; }
-      .page-auth #page-login-form-container #form-store-application-container > p span {
+      .page-auth #page-login-form-container #form-store-application-container p span {
         font-weight: bold;
         color: #5595d8; }
     .page-auth #page-login-form-container #form-store-application-container textarea {
@@ -1514,7 +1514,7 @@ input, textarea {
     .page-auth h2 {
       padding-bottom: 0; }
     .page-auth #page-login-form-container form, .page-auth #page-login-form-container #registration-success-container {
-      padding: 10px 10px; } }
+      padding: 10px 15px; } }
 
 #page-store {
   position: relative; }
