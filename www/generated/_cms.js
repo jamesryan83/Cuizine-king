@@ -189,7 +189,7 @@ app.cms.menu = {
             var data = app.storeContent.getDataFromPage();
             console.log(data)
         });
-        
+
 
         // Sidebar close
         $("#store-menu-edit-sidebar-close").on("click", function () {
@@ -516,10 +516,12 @@ app.routerBase = {
         // get data for route
         var routeData = this.getCurrentRouteData(route, section);
 
-console.log(routeData)
+//console.log(routeData)
         // load html into page
         $("#page-container").empty();
         $("#page-container").append(routeData.html);
+
+        $("html, body").animate({ "scrollTop": 100 }, 200);
 
 
         // start js
