@@ -54,7 +54,7 @@ app.routerBase = {
         $("#page-container").empty();
         $("#page-container").append(routeData.html);
 
-        $("html, body").animate({ "scrollTop": 100 }, 200);
+        $("html, body").animate({ "scrollTop": 0 }, 200);
 
 
         // start js
