@@ -4,6 +4,7 @@
 @import "shared/rating-control";
 @import "shared/store-content";
 @import "shared/toasts";
+@import "shared/typeahead";
 @import "cms/business";
 @import "cms/dashboard";
 @import "cms/delivery-suburbs";
@@ -37,6 +38,7 @@
 
         .page-cms-header-controls {
             float: right;
+            height: 40px;
 
             button {
                 margin-right: 20px;
@@ -45,6 +47,14 @@
                 &.active {
                     background-color: $colorBlue1;
                 }
+            }
+        }
+
+        @media (max-width: $mediaMobileWidth1) {
+            text-align: center;
+
+            .page-cms-header-controls {
+                display: none;
             }
         }
 

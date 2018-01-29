@@ -6,7 +6,7 @@ var jwt = require("jsonwebtoken");
 
 var config = require("../server/config");
 
-jwt.sign({ email: "james4171@hotmail.com" }, config.secret, { expiresIn: "1y" }, function (err, jwToken) {
+jwt.sign({ sub: "james4171@hotmail.com", shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: "10y" }, function (err, jwToken) {
     console.log(jwToken);
 });
 

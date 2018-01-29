@@ -5,15 +5,11 @@
 #page-cms-menu {
 
 
-    // header
-    .page-cms-header {
-
-
-        #cms-menu-save {
-            background-color: $colorGreen1;
+    #store-content-mobile-buttons {
+        @media (max-width: $mediaMobileWidth1) {
+            display: block;
         }
     }
-
 
 
     // preview border
@@ -44,7 +40,6 @@
     // Store content
     #store-content-editable {
 
-
         // content editable
         &:not(.edit-mode) {
             [contenteditable=true]:empty:before {
@@ -67,14 +62,74 @@
         .upload-button {
             position: absolute;
             left: 85px;
-            top: 245px;
+            top: 260px;
             border: none;
 
             label {
                 color: $colorRed1;
+                white-space: nowrap;
+            }
 
+            @media (max-width: $mediaWidth3) {
+                top: 235px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            @media (max-width: $mediaMobileWidth1) {
+                top: 210px;
             }
         }
+
+
+
+        // Store info
+        #store-info {
+            text-align: center;
+
+            #store-info-inner {
+                text-align: left;
+            }
+
+            // edit address
+            #store-info-edit-address {
+                text-align: center;
+                display: block;
+
+                #store-info-edit-address-inner {
+                    display: inline-block;
+                    padding-top: 20px;
+                    text-align: left;
+                    width: 350px;
+
+                    .label-input {
+                        width: auto;
+                    }
+
+                    label {
+                        width: 120px;
+                    }
+
+                    input {
+                        width: 350px;
+                        float: none;
+                    }
+
+                    .typeahead {
+                        margin-top: 10px;
+                    }
+
+                    @media (max-width: $mediaMobileWidth1) {
+                        width: 300px;
+
+                        input {
+                            width: 300px;
+                        }
+                    }
+                }
+            }
+        }
+
 
 
         // Edit menu controls
@@ -85,43 +140,7 @@
                 margin: 20px;
             }
         }
+
     }
-
-
-//    // Edit menu sidebar
-//    #store-menu-edit-sidebar {
-//        position: fixed;
-//        top: 0;
-//        right: -340px;
-//        width: 340px;
-//        height: 100%;
-//        background-color: $colorGray14;
-//        z-index: $zIndexSidebar;
-//        border-left: 1px solid $colorBlue3;
-//
-//        #store-menu-edit-sidebar-header {
-//            padding: 20px;
-//
-//            > label {
-//                font-size: 24px;
-//                font-weight: bold;
-//                margin-top: 2px;
-//                display: inline-block;
-//            }
-//
-//            // close button
-//            #store-menu-edit-sidebar-close {
-//                position: absolute;
-//                top: 20px;
-//                right: 20px;
-//
-//                @include svgicon($navbarPopupIconSize, $navbarPopupIconSize, 20px, 20px,
-//                    url(/res/svg/icon-close.svg), url(/res/svg/icon-close-hover.svg));
-//            }
-//
-//        }
-//
-//
-//    }
 
 }

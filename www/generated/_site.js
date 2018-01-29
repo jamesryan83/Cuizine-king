@@ -26,7 +26,14 @@ app.site = {
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
 
+        // setup router
         app.routerBase.init();
+
+
+        // setup dialogs
+        app.dialogs.description.init();
+        app.dialogs.businessHours.init();
+        app.dialogs.reviews.init();
 
 
         // Load the html json file
@@ -195,55 +202,6 @@ app.dialogs.addToOrder = {
 
 }
 
-// Business hours dialog
-app.dialogs.businessHours = {
-
-    dialogEl: "#dialog-store-hours",
-    hoursLeftEl: "#dialog-store-hours-left",
-    hoursRightEl: "#dialog-store-hours-right",
-    dialogCloseEl: "#dialog-store-hours-close",
-
-    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
-
-    init: function (storeHours) {
-        var self = this;
-
-
-        this.addHoursToList(storeHours.slice(0, 7), this.hoursLeftEl);
-        this.addHoursToList(storeHours.slice(7, 14), this.hoursRightEl);
-
-        $(this.dialogCloseEl).off().on("click", function () {
-            self.hide();
-        });
-    },
-
-    addHoursToList: function (hours, hoursEl) {
-        var text = "";
-        var frag = document.createDocumentFragment();
-        for (var i = 0; i < 7; i++) {
-            if (hours[i].opens === "c") {
-                text = "closed";
-            } else {
-                text = hours[i].opens + " to " + hours[i].closes;
-            }
-
-            frag.append($("<li><span>" + this.days[i] + "</span> " + text + "</li>")[0]);
-        }
-        $(hoursEl).empty().append(frag);
-    },
-
-    show: function () {
-        $("#dialog-container").show();
-        $(this.dialogEl).show();
-    },
-
-    hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
-    },
-
-}
-
 // Checkout dialog
 app.dialogs.checkout = {
 
@@ -254,95 +212,6 @@ app.dialogs.checkout = {
 
     show: function () {
         $("#dialog-container").show();
-    },
-
-    hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
-    },
-
-}
-
-// Description dialog
-app.dialogs.description = {
-
-    dialogEl: "#dialog-store-description",
-    dialogHeading: "#dialog-store-description-heading",
-    dialogText: "#dialog-store-description-text",
-    dialogCloseEl: "#dialog-store-description-close",
-
-    init: function (name, description) {
-        var self = this;
-
-        $(this.dialogHeading).text(name);
-        $(this.dialogText).text(description);
-
-        $(this.dialogCloseEl).off().on("click", function () {
-            self.hide();
-        });
-    },
-
-    show: function () {
-        $("#dialog-container").show();
-        $(this.dialogEl).show();
-    },
-
-    hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
-    },
-
-}
-
-// Reviews dialog
-app.dialogs.reviews = {
-
-    dialogEl: "#dialog-store-reviews",
-    dialogCloseEl: "#dialog-store-reviews-close",
-    reviewCountEl: "#dialog-store-reviews-count",
-
-    init: function (data) {
-        var self = this;
-
-        $(this.reviewCountEl).text("( " + data.review_count + " )");
-        app.ratingControls.setValue("#dialog-store-reviews-rating-control", Math.round(data.rating));
-
-        var frag = document.createDocumentFragment();
-        for (var i = 0; i < data.reviews.length; i++) {
-
-            var ratingStars =
-                "<li class='rating-control-star " + (data.reviews[i].rating > 0.5 ? "active" : "") + "'></li>" +
-                "<li class='rating-control-star " + (data.reviews[i].rating > 1.5 ? "active" : "") + "'></li>" +
-                "<li class='rating-control-star " + (data.reviews[i].rating > 2.5 ? "active" : "") + "'></li>" +
-                "<li class='rating-control-star " + (data.reviews[i].rating > 3.5 ? "active" : "") + "'></li>" +
-                "<li class='rating-control-star " + (data.reviews[i].rating > 4.5 ? "active" : "") + "'></li>";
-
-            frag.append($(
-                "<div class='store-reviews-list-item'>" +
-                    "<div class='store-reviews-list-item-header'>" +
-                        "<ul class='rating-control inactive'>" +
-                            ratingStars +
-                        "</ul>" +
-                        "<label>" + data.reviews[i].title + "</label>" +
-                    "</div>" +
-                    "<p>" + data.reviews[i].review + "</p>" +
-                "</div>")[0]);
-        }
-        $("#dialog-store-reviews-list").append(frag);
-
-
-        $("#dialog-store-reviews-add-review").on("click", function () {
-            app.util.showToast("not working yet")
-        });
-
-        $(this.dialogCloseEl).off().on("click", function () {
-            self.hide();
-        });
-    },
-
-    show: function () {
-        $("#dialog-container").show();
-        $(this.dialogEl).show();
     },
 
     hide: function () {
@@ -948,6 +817,146 @@ app.site.verifyAccount = {
 
 
 
+// Business hours dialog
+app.dialogs.businessHours = {
+
+    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+
+
+    init: function (storeHours) {
+        var self = this;
+
+        $("#dialog-store-hours-close").on("click", function () {
+            self.hide();
+        });
+    },
+
+
+    update: function (hours, hoursEl) {
+        this.addHoursToList(storeHours.slice(0, 7), "#dialog-store-hours-left");
+        this.addHoursToList(storeHours.slice(7, 14), "#dialog-store-hours-right");
+
+        var text = "";
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < 7; i++) {
+            if (hours[i].opens === "c") {
+                text = "closed";
+            } else {
+                text = hours[i].opens + " to " + hours[i].closes;
+            }
+
+            frag.append($("<li><span>" + this.days[i] + "</span> " + text + "</li>")[0]);
+        }
+        $(hoursEl).empty().append(frag);
+    },
+
+
+    show: function () {
+        $("#dialog-container").show();
+        $("#dialog-store-hours").show();
+    },
+
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+// Description dialog
+app.dialogs.description = {
+
+
+    init: function () {
+        var self = this;
+
+        $("#dialog-store-description-close").on("click", function () {
+            self.hide();
+        });
+    },
+
+
+    update: function (name, description) {
+        $("#dialog-store-description-heading").text(name);
+        $("#dialog-store-description-text").text(description);
+    },
+
+
+    show: function () {
+        $("#dialog-container").show();
+        $("#dialog-store-description").show();
+    },
+
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
+// Reviews dialog
+app.dialogs.reviews = {
+
+
+    init: function (data) {
+        var self = this;
+
+        $("#dialog-store-reviews-add-review").on("click", function () {
+            app.util.showToast("not working yet")
+        });
+
+        $("#dialog-store-reviews-close").on("click", function () {
+            self.hide();
+        });
+    },
+
+
+    update: function () {
+        $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
+
+        app.ratingControls.setValue("#dialog-store-reviews-rating-control",
+            Math.round(data.rating));
+
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < data.reviews.length; i++) {
+
+            var ratingStars =
+                "<li class='rating-control-star " + (data.reviews[i].rating > 0.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 1.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 2.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 3.5 ? "active" : "") + "'></li>" +
+                "<li class='rating-control-star " + (data.reviews[i].rating > 4.5 ? "active" : "") + "'></li>";
+
+            frag.append($(
+                "<div class='store-reviews-list-item'>" +
+                    "<div class='store-reviews-list-item-header'>" +
+                        "<ul class='rating-control inactive'>" +
+                            ratingStars +
+                        "</ul>" +
+                        "<label>" + data.reviews[i].title + "</label>" +
+                    "</div>" +
+                    "<p>" + data.reviews[i].review + "</p>" +
+                "</div>")[0]);
+        }
+        $("#dialog-store-reviews-list").empty().append(frag);
+    },
+
+
+    show: function () {
+        $("#dialog-container").show();
+        $("#dialog-store-reviews").show();
+    },
+
+
+    hide: function () {
+        $("#dialog-container").hide();
+        $("#dialog-container > div").hide();
+    },
+
+}
+
 app.navbar = {
 
 
@@ -996,7 +1005,7 @@ app.navbar = {
         });
 
         $(".navbar-links-popup-close").on("click", function () {
-            $(".navbar-links-popup").animate({ right: -200 }, 200);
+            $(".navbar-links-popup").animate({ right: -250 }, 200);
         });
 
 
@@ -1091,7 +1100,7 @@ app.routerBase = {
         // get data for route
         var routeData = this.getCurrentRouteData(route, section);
 
-
+console.log(routeData)
         // load html into page
         $("#page-container").empty();
         $("#page-container").append(routeData.html);
@@ -1194,26 +1203,32 @@ app.storeContent = {
     init: function (routeData) {
         var self = this;
 
-        this.descriptionEl = $("#store-info-description");
-        this.storeMenuNavEl = $("#store-menu-nav");
+
+        this.$description = $("#store-info-description");
+        this.$address = $("#store-info-address");
+
+        this.$storeMenuNav = $("#store-menu-nav");
+
+
+
 
         // store id from url
         var storeId = routeData.route.split("/");
         storeId = storeId[storeId.length - 1];
 
 
-        // Get store data
-        app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
-        }, function (err, result) {
-            if (err) return;
-
-            if (Object.keys(result).length > 0) {
-                self.addDataToPage(result.data[0]);
-            } else {
-                app.util.showToast("Error loading store data");
-            }
-        });
+//        // Get store data
+//        app.util.ajaxRequest({
+//            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
+//        }, function (err, result) {
+//            if (err) return;
+//
+//            if (Object.keys(result).length > 0) {
+//                self.addDataToPage(result.data[0]);
+//            } else {
+//                app.util.showToast("Error loading store data");
+//            }
+//        });
 
 
         // Other events
@@ -1226,9 +1241,9 @@ app.storeContent = {
             // position of menu category navigation thing
             var rect = document.getElementById("store-menu").getBoundingClientRect();
             if (rect.top < 0) {
-                self.storeMenuNavEl.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
+                self.$storeMenuNav.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
             } else {
-                self.storeMenuNavEl.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
+                self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
             }
         });
 
@@ -1251,11 +1266,25 @@ app.storeContent = {
 
     // Show hide more button when description text changes height
     resizeDescription: function () {
-        if (this.descriptionEl[0].scrollHeight > this.descriptionEl.innerHeight()) {
+        if (this.$description[0].scrollHeight > this.$description.innerHeight()) {
             $("#store-info-button-description").show();
         } else {
             $("#store-info-button-description").hide();
         }
+    },
+
+
+
+    // Returns the data from the page
+    getDataFromPage: function () {
+        var data = {
+            description: this.$description[0].innerText,
+            postcodeSuburb: this.$address.attr("data-postcode-suburb"),
+            addr1: this.$address.attr("data-addr1"),
+            addr2: this.$address.attr("data-addr2")
+        };
+
+        return data;
     },
 
 
@@ -1344,8 +1373,8 @@ console.log(data)
 
 
         // Setup dialogs
-        app.dialogs.description.init(data.name, data.description);
-        app.dialogs.businessHours.init(data.hours);
+//        app.dialogs.description.init(data.name, data.description);
+//        app.dialogs.businessHours.init(data.hours);
         //app.dialogs.reviews.init(data);
 
         $("#store-info-button-hours").show();

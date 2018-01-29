@@ -26,7 +26,14 @@ app.site = {
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
 
+        // setup router
         app.routerBase.init();
+
+
+        // setup dialogs
+        app.dialogs.description.init();
+        app.dialogs.businessHours.init();
+        app.dialogs.reviews.init();
 
 
         // Load the html json file

@@ -3,15 +3,25 @@
 // Reviews dialog
 app.dialogs.reviews = {
 
-    dialogEl: "#dialog-store-reviews",
-    dialogCloseEl: "#dialog-store-reviews-close",
-    reviewCountEl: "#dialog-store-reviews-count",
 
     init: function (data) {
         var self = this;
 
-        $(this.reviewCountEl).text("( " + data.review_count + " )");
-        app.ratingControls.setValue("#dialog-store-reviews-rating-control", Math.round(data.rating));
+        $("#dialog-store-reviews-add-review").on("click", function () {
+            app.util.showToast("not working yet")
+        });
+
+        $("#dialog-store-reviews-close").on("click", function () {
+            self.hide();
+        });
+    },
+
+
+    update: function () {
+        $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
+
+        app.ratingControls.setValue("#dialog-store-reviews-rating-control",
+            Math.round(data.rating));
 
         var frag = document.createDocumentFragment();
         for (var i = 0; i < data.reviews.length; i++) {
@@ -34,22 +44,15 @@ app.dialogs.reviews = {
                     "<p>" + data.reviews[i].review + "</p>" +
                 "</div>")[0]);
         }
-        $("#dialog-store-reviews-list").append(frag);
-
-
-        $("#dialog-store-reviews-add-review").on("click", function () {
-            app.util.showToast("not working yet")
-        });
-
-        $(this.dialogCloseEl).off().on("click", function () {
-            self.hide();
-        });
+        $("#dialog-store-reviews-list").empty().append(frag);
     },
+
 
     show: function () {
         $("#dialog-container").show();
-        $(this.dialogEl).show();
+        $("#dialog-store-reviews").show();
     },
+
 
     hide: function () {
         $("#dialog-container").hide();

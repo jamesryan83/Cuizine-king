@@ -1,5 +1,7 @@
 "use strict";
 
+var fs = require("fs");
+var os = require("os");
 var assert = require("assert");
 
 var resultHandler = require("../../server/database/result-handler");
@@ -36,7 +38,58 @@ var mssqlTestError = {
 describe("DATABASE RESULT HANDLER", function () {
 
 
-    // result handler
+    it("result-handler file contains all stored procedures", function (done) {
+        var proceduresApp = require("../../server/procedures/_App");
+        var proceduresStore = require("../../server/procedures/_Store");
+
+        // get all procedure function names
+        var procedures =
+            Object.keys(proceduresApp)
+            .concat(Object.keys(proceduresStore));
+
+
+        // get all handled procedures
+        var handledProcedures = [];
+        var caseRegex = /^\s*case\s*(.*)\s*$/gmi;
+        var resultHandlerText = fs.readFileSync("../server/database/result-handler.js", "utf-8");
+        resultHandlerText.replace(caseRegex, function(match, captureGroup1) {
+            handledProcedures.push(captureGroup1.substr(1, captureGroup1.length - 3));
+        });
+
+
+        // remove handled test procedures
+        handledProcedures = handledProcedures.filter(x => x.indexOf("test") !== 0);
+
+
+        // compare arrays, they should have the same elements, might be different order though
+        function compareArrays(ar1, ar2, errMessage) {
+            var match = false;
+            for (var i = 0; i < ar1.length; i++) {
+                match = false;
+                for (var j = 0; j < ar2.length; j++) {
+                    if (ar1[i] === ar2[j]) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                if (!match) throw new Error(errMessage + ar1[i]);
+            }
+        }
+
+        compareArrays(procedures, handledProcedures, "Procedure missing from result-handler: ");
+        compareArrays(handledProcedures, procedures, "Extra procedure in result-handler: ");
+
+        // check arrays are the same length, just incase
+        if (procedures.length !== handledProcedures.length) {
+            return done(new Error("procedures.length !== handledProcedures.length"));
+        }
+
+        done();
+    });
+
+
+
     it("#handle handles null err and result", function (done) {
         resultHandler.handle("test_null_err_result", null, null, function (err) {
             if (err) return done(new Error(err));

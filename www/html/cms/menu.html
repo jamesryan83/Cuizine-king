@@ -9,9 +9,9 @@
         <h2 class="cms-page-heading">Edit Menu</h2>
 
         <div class="page-cms-header-controls">
-            <button id="cms-menu-edit" class="button-3">EDIT</button>
-            <button id="cms-menu-preview" class="button-3">PREVIEW</button>
-            <button id="cms-menu-return" class="button-3" style="display: none;">RETURN</button>
+            <button class="cms-menu-preview button-3">PREVIEW</button>
+            <button class="cms-menu-save button-3" style="display: none;">SAVE</button>
+            <button class="cms-menu-return button-3" style="display: none;">RETURN</button>
         </div>
     </div>
 
@@ -20,9 +20,12 @@
     <!-- store content -->
     <div id="store-content-editable">
 
+
         <!-- Info -->
         <div id="store-info">
+
             <div id="store-info-inner" class="clearfix">
+
 
                 <!-- image -->
                 <div id="store-info-image-container">
@@ -65,15 +68,45 @@
                         <label id="store-info-button-reviews" class="label-link">show all reviews</label>
                     </div>
 
-                    <div>
+                    <div id="store-info-contact-controls">
                         <label>Contact</label>
-                        <label>Ph:</label>
-                        <label id="store-info-phone-number" class="menu-edit-control" contenteditable="true" placeholder="Enter a phone number..."></label>
-                        <label>Email:</label>
-                        <label id="store-info-email" class="menu-edit-control" contenteditable="true" placeholder="Enter an email..."></label>
+                        <div>
+                            <div>
+                                <label>Ph:</label>
+                                <label id="store-info-phone-number" class="menu-edit-control" contenteditable="true" placeholder="Enter a phone number..."></label>
+                            </div>
+                            <div>
+                                <label>Email:</label>
+                                <label id="store-info-email" class="menu-edit-control" contenteditable="true" placeholder="Enter an email..."></label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
+            <!-- Edit address -->
+            <div id="store-info-edit-address">
+                <div id="store-info-edit-address-inner">
+                    <h3>Edit Address</h3>
+                    <div class="label-input">
+                        <label>Address Line 1</label>
+                        <input class="input-1" name="line1" value="18 Bilyana St" />
+                    </div>
+
+                    <div class="label-input">
+                        <label>Address Line 2</label>
+                        <input class="input-1" name="line2" value="" />
+                    </div>
+
+                    <div id="sysadmin-suburb-search" class="typeahead">
+                        <label>Suburb</label>
+                        <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
+                        <ul id="suburb-search-list" class="typeahead-list" style="display: none;"></ul>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
 
@@ -101,6 +134,7 @@
         <div id="store-footer">
             <p id="store-disclaimer"></p>
         </div>
+
     </div>
 
 
@@ -108,17 +142,6 @@
     <div id="preview-mode-border" style="display: none;">
         <label>PREVIEW</label>
     </div>
-
-
-<!--
-     edit menu sidebar
-    <div id="store-menu-edit-sidebar">
-        <div id="store-menu-edit-sidebar-header">
-            <label>Edit Store Menu</label>
-            <div id="store-menu-edit-sidebar-close"></div>
-        </div>
-    </div>
--->
 
 
 </div>

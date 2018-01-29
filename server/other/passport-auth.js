@@ -49,15 +49,27 @@ exports = module.exports = {
 
 
         // check jwt against secret
-        passport.authenticate("jwt", { session: false }, function (err, jwTokenObject, info) {
-            console.log(err)
-            console.log(jwTokenObject)
-            var d = Date.now() / 1000;
-            console.log(d)
-            console.log("iat: " + (d - jwTokenObject.iat))
-            console.log("exp: " + (d - jwTokenObject.exp))
+        passport.authenticate("jwt", function (err, jwTokenObject, errInfo) {
             if (err) return sendErrorResponse(err);
+
+            // check if jwt has expired
+            if (errInfo) {
+                if (errInfo.name == "TokenExpiredError") {
+                    return sendErrorResponse({ message: "Token has expired", status: 401 });
+                } else {
+                    console.log("Unknown jwt errInfo occured", errInfo);
+                    jwTokenObject = null;
+                }
+            }
+
+            // invalid or missing jwt
             if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
+
+            // check jwt short expiry
+//            console.log(jwTokenObject)
+//            var d = Date.now() / 1000;
+//            console.log("iat: " + (d - jwTokenObject.iat))
+//            console.log("exp: " + (d - jwTokenObject.exp))
 
             // TODO : jwt should fail if signature algorithm is set to none
 
@@ -81,7 +93,7 @@ exports = module.exports = {
 
                 // save person to the response for other functions
                 res.locals.person = person;
-
+console.log(res.locals.person)
                 return next();
             });
         })(req, res, next);

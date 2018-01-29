@@ -50,21 +50,21 @@ app.sysadmin = {
             title: "SysAdmin - Create Store",
             file: "create-store",
             initFunction: function (routeData) {
-                app.sysadmin.createStore.init();
+                app.sysadmin.createStore.init(routeData);
             },
         },
         "/sysadmin/edit-store": {
             title: "SysAdmin - Edit Store",
             file: "edit-store",
             initFunction: function (routeData) {
-                app.sysadmin.editStore.init();
+                app.sysadmin.editStore.init(routeData);
             },
         },
         "/sysadmin/database": {
             title: "SysAdmin - Database",
             file: "database",
             initFunction: function (routeData) {
-                app.sysadmin.database.init();
+                app.sysadmin.database.init(routeData);
             },
         },
     }

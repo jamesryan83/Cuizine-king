@@ -24,8 +24,14 @@ app.cms = {
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
-
+        // setup router
         app.routerBase.init();
+
+
+        // setup dialogs
+        app.dialogs.description.init();
+        app.dialogs.businessHours.init();
+        app.dialogs.reviews.init();
 
 
         // Load the html json file
@@ -52,50 +58,50 @@ app.cms = {
         "/store-admin/:id/business": {
             title: "Business",
             file: "business",
-            initFunction: function () {
-                app.cms.business.init();
+            initFunction: function (routeData) {
+                app.cms.business.init(routeData);
             },
         },
         "/store-admin/:id/dashboard": {
             title: "Dashboard",
             file: "dashboard",
-            initFunction: function () {
-                app.cms.dashboard.init();
+            initFunction: function (routeData) {
+                app.cms.dashboard.init(routeData);
             },
         },
         "/store-admin/:id/delivery-suburbs": {
             title: "Delivery Suburbs",
             file: "delivery-suburbs",
-            initFunction: function () {
-                app.cms.deliverySuburbs.init();
+            initFunction: function (routeData) {
+                app.cms.deliverySuburbs.init(routeData);
             },
         },
         "/store-admin/:id/menu": {
             title: "Menu",
             file: "menu",
-            initFunction: function () {
-                app.cms.menu.init();
+            initFunction: function (routeData) {
+                app.cms.menu.init(routeData);
             },
         },
         "/store-admin/:id/orders": {
             title: "Orders",
             file: "orders",
-            initFunction: function () {
-                app.cms.orders.init();
+            initFunction: function (routeData) {
+                app.cms.orders.init(routeData);
             },
         },
         "/store-admin/:id/settings": {
             title: "Settings",
             file: "settings",
-            initFunction: function () {
-                app.cms.settings.init();
+            initFunction: function (routeData) {
+                app.cms.settings.init(routeData);
             },
         },
         "/store-admin/:id/transactions": {
             title: "Transactions",
             file: "transactions",
-            initFunction: function () {
-                app.cms.transactions.init();
+            initFunction: function (routeData) {
+                app.cms.transactions.init(routeData);
             },
         },
     }

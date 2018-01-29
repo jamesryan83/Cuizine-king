@@ -121,7 +121,12 @@ describe("DATABASE", function () {
     });
 
 
-    it.skip("#runBatchFileSync does something", function () {
+    it.skip("#runSqlScriptSync works", function () {
+
+    });
+
+
+    it.skip("#runBatchFileSync works", function () {
 
     });
 

@@ -3,6 +3,7 @@
 var fs = require("fs");
 var path = require("path");
 var assert = require("assert");
+var jwt = require("jsonwebtoken");
 var supertest = require("supertest");
 var superagent = require("superagent");
 var execSync = require("child_process").execSync;
@@ -71,6 +72,19 @@ exports = module.exports = {
     },
 
 
+    // create a jwt synchronously
+    createJwtSync: function (email, shortExp, longExp) {
+        if (!email) email = this.fakeUser.email;
+
+        return jwt.sign({
+            sub: email,
+            shortExp: shortExp || config.jwtExpiryShort
+        }, config.secret, {
+            expiresIn: longExp || config.jwtExpiryLong
+        });
+    },
+
+
     // test if page has valid html and other stuff
     testValidPage: function (route, done, status, jwt) {
         var self = this;
@@ -99,12 +113,8 @@ exports = module.exports = {
             .set("Content-Type", "text/html")
             .set("Accept", "text/html")
             .expect("Content-Type", "text/html; charset=utf-8")
-//            .expect("location", "/login")
-            .end(function (err, res) {
-                console.log(err)
-                console.log(res.body)
-            })
-
+            .expect("location", "/login")
+            .expect(302, done);
     },
 
 
@@ -142,10 +152,10 @@ exports = module.exports = {
             .end(function (err, res) {
                 if (err) throw Error("error creating user");
 
-                // add admin users
-                database.runSqlScriptSync(
-                    path.join(__dirname, "../", "sql", "other", "seed-admin.sql"),
-                    config.mssql.database);
+//                // add admin users
+//                database.runSqlScriptSync(
+//                    path.join(__dirname, "../", "sql", "other", "seed-admin.sql"),
+//                    config.mssql.database);
 
                 return callback(res.body.data)
             });

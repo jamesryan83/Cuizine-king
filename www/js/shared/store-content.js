@@ -6,26 +6,32 @@ app.storeContent = {
     init: function (routeData) {
         var self = this;
 
-        this.descriptionEl = $("#store-info-description");
-        this.storeMenuNavEl = $("#store-menu-nav");
+
+        this.$description = $("#store-info-description");
+        this.$address = $("#store-info-address");
+
+        this.$storeMenuNav = $("#store-menu-nav");
+
+
+
 
         // store id from url
         var storeId = routeData.route.split("/");
         storeId = storeId[storeId.length - 1];
 
 
-        // Get store data
-        app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
-        }, function (err, result) {
-            if (err) return;
-
-            if (Object.keys(result).length > 0) {
-                self.addDataToPage(result.data[0]);
-            } else {
-                app.util.showToast("Error loading store data");
-            }
-        });
+//        // Get store data
+//        app.util.ajaxRequest({
+//            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
+//        }, function (err, result) {
+//            if (err) return;
+//
+//            if (Object.keys(result).length > 0) {
+//                self.addDataToPage(result.data[0]);
+//            } else {
+//                app.util.showToast("Error loading store data");
+//            }
+//        });
 
 
         // Other events
@@ -38,9 +44,9 @@ app.storeContent = {
             // position of menu category navigation thing
             var rect = document.getElementById("store-menu").getBoundingClientRect();
             if (rect.top < 0) {
-                self.storeMenuNavEl.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
+                self.$storeMenuNav.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
             } else {
-                self.storeMenuNavEl.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
+                self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
             }
         });
 
@@ -63,11 +69,25 @@ app.storeContent = {
 
     // Show hide more button when description text changes height
     resizeDescription: function () {
-        if (this.descriptionEl[0].scrollHeight > this.descriptionEl.innerHeight()) {
+        if (this.$description[0].scrollHeight > this.$description.innerHeight()) {
             $("#store-info-button-description").show();
         } else {
             $("#store-info-button-description").hide();
         }
+    },
+
+
+
+    // Returns the data from the page
+    getDataFromPage: function () {
+        var data = {
+            description: this.$description[0].innerText,
+            postcodeSuburb: this.$address.attr("data-postcode-suburb"),
+            addr1: this.$address.attr("data-addr1"),
+            addr2: this.$address.attr("data-addr2")
+        };
+
+        return data;
     },
 
 
@@ -156,8 +176,8 @@ console.log(data)
 
 
         // Setup dialogs
-        app.dialogs.description.init(data.name, data.description);
-        app.dialogs.businessHours.init(data.hours);
+//        app.dialogs.description.init(data.name, data.description);
+//        app.dialogs.businessHours.init(data.hours);
         //app.dialogs.reviews.init(data);
 
         $("#store-info-button-hours").show();

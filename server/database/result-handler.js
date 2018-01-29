@@ -7,9 +7,7 @@ exports = module.exports = {
 
     // Handles results for specific stored procedures
     handle: function (procedure, err, result, callback, inputs) {
-        if (err) {
-            return this.returnError(err, callback);
-        }
+        if (err) return this.returnError(err, callback);
 
         switch (procedure) {
             case "people_create_web_user":
@@ -27,18 +25,6 @@ exports = module.exports = {
                 return callback(null, result.rowsAffected)
                 break;
 
-
-            case "reviews_get":
-                return callback(null);
-                break;
-
-            case "stores_create":
-                return callback(null);
-                break;
-
-            case "stores_delete":
-                return callback(null);
-                break;
 
             case "stores_get":
                 this.returnResult(result, 400, "Store not found", callback, true);
@@ -59,9 +45,13 @@ exports = module.exports = {
                 break;
 
 
+            // these procedures don't return anything
             case "people_update_password":
             case "people_update_is_verified":
             case "people_update_reset_password_token":
+            case "reviews_get":
+            case "stores_create":
+            case "stores_delete":
             default:
                 return callback(null);
         }
@@ -73,13 +63,14 @@ exports = module.exports = {
 
         // Data result
         if (result.recordset && result.recordset.length > 0) {
-console.log("resulst !")
+
             // regular data result
             var data = result.recordset[0];
 
             // parse json result
             if (isJsonResult) {
-                data = result.recordset[0]["JSON_F52E2B61-18A1-11d1-B105-00805F49916B"]
+                // get data from sql server json result, the weird JSON GUID thing is constant
+                data = result.recordset[0]["JSON_F52E2B61-18A1-11d1-B105-00805F49916B"];
 
                 if (data.length === 0) {
                     return callback({ status: errStatus || 500, message: errMessage || "No Data" });
@@ -97,11 +88,11 @@ console.log("resulst !")
                     return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
                 }
             }
-console.log("data ok")
-            // data ok
+
+            // return data
             return callback(null, data);
         }
-console.log("not ok !!")
+
         // Data is missing
         return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
     },
@@ -110,9 +101,7 @@ console.log("not ok !!")
 
     // Returns an output parameter
     returnOutput: function (outputName, result, callback) {
-        if (result.output) {
-            return callback(null, result.output[outputName]);
-        }
+        if (result.output) return callback(null, result.output[outputName]);
 
         return callback({ status: 500, message: "Output missing" });
     },
@@ -136,34 +125,4 @@ console.log("not ok !!")
     }
 
 }
-
-
-
-
-// This is what the mssql error object looks like
-//{
-//    "code": "EREQUEST",
-//    "number": 201,
-//    "lineNumber": 0,
-//    "state": 4,
-//    "class": 16,
-//    "serverName": "JAMES-LAPTOP\\SQLEXPRESS",
-//    "procName": "users_pending_add",
-//    "originalError": {
-//        "info": {
-//            "number": 201,
-//            "state": 4,
-//            "class": 16,
-//            "message": "Procedure or function 'users_pending_add' expects parameter '@type', which was not supplied.",
-//            "serverName": "JAMES-LAPTOP\\SQLEXPRESS",
-//            "procName": "users_pending_add",
-//            "lineNumber": 0,
-//            "name": "ERROR",
-//            "event": "errorMessage"
-//        }
-//    },
-//    "name": "RequestError",
-//    "precedingErrors": []
-//}
-
 

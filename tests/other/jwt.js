@@ -30,12 +30,13 @@ describe("JWT", function () {
 
 
     it("#people_get_by_jwt returns message for wrong email", function (done) {
-        testutil.getApiToken(function (jwt) {
+        var fakeEmail = "james4444@hotmail.com";
 
-            dbApp.people_get_by_jwt({ email: "james4444@hotmail.com", jwt: jwt }, function (err, person) {
-                assert.equal(err.message, "Account not found");
-                done();
-            });
+        var jwt = testutil.createJwtSync(fakeEmail);
+
+        dbApp.people_get_by_jwt({ email: fakeEmail, jwt: jwt }, function (err, person) {
+            assert.equal(err.message, "Account not found");
+            done();
         });
     });
 
@@ -78,10 +79,10 @@ describe("JWT", function () {
     it("#people_update_jwt updates the jwt", function (done) {
         testutil.getApiToken(function (jwt) {
 
-            dbApp.people_update_jwt({ email: testutil.fakeUser.email, jwt: testutil.fakeUser.jwt }, function (err, id_person) {
+            dbApp.people_update_jwt({ email: testutil.fakeUser.email, jwt: testutil.fakeUser.jwt }, function (err, result) {
                 if (err) return done(new Error(JSON.stringify(err)));
 
-                assert.equal(id_person, 1);
+                assert.equal(result.id_person, 1);
                 done();
             });
         });

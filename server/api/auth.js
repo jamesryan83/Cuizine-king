@@ -256,7 +256,7 @@ exports = module.exports = {
     createJwt: function (email, callback) {
 
         // create jwt for user
-        jwt.sign({ sub: email }, config.secret, { expiresIn: config.jwtExpiryLong }, function (err, jwToken) {
+        jwt.sign({ sub: email, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong }, function (err, jwToken) {
             if (err) return callback(err);
 
             // update jwt in db

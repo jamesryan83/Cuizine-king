@@ -48,7 +48,7 @@ app.navbar = {
         });
 
         $(".navbar-links-popup-close").on("click", function () {
-            $(".navbar-links-popup").animate({ right: -200 }, 200);
+            $(".navbar-links-popup").animate({ right: -250 }, 200);
         });
 
 

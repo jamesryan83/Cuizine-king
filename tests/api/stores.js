@@ -5,9 +5,7 @@ var supertest = require("supertest");
 
 var testutil = require("../test-util");
 var config = require("../../server/config");
-var users = require("../../server/database/users");
 var database = require("../../server/database/database");
-var companiesApi = require("../../server/api/auth");
 
 
 

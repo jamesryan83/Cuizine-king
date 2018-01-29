@@ -42,10 +42,12 @@ describe("API - AUTH", function () {
 
 
     it("#logout returns message for no user", function (done) {
+        var jwt = testutil.createJwtSync();
+
         supertest(testutil.supertestUrl)
             .get("/api/v1/logout")
             .set("Content-Type", "application/json")
-            .set("authorization", "Bearer " + testutil.fakeUser.jwt)
+            .set("authorization", "Bearer " + jwt)
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {

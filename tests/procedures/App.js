@@ -10,8 +10,6 @@ var dbApp = require("../../server/procedures/_App");
 var fakeResetPasswordToken = "1234567891234567891234567891234567891234567891234567891234567891";
 
 
-// TODO : this and test-database might be able to be moved to sql
-
 describe("DATABASE - APP", function () {
 
 
@@ -25,23 +23,18 @@ describe("DATABASE - APP", function () {
 
 
     it("#people_create_web_user creates a user", function (done) {
-        var tempUser = JSON.parse(JSON.stringify(testutil.fakeUser));
-        delete tempUser.jwt;
-
-        dbApp.people_create_web_user(tempUser, function (err, newPersonId) {
+        dbApp.people_create_web_user(testutil.fakeUser, function (err, newPersonId) {
             if (err) return done(new Error(JSON.stringify(err)));
 
             assert.equal(newPersonId, 1);
+            // TODO : check data in db
             done();
         });
     });
 
 
     it("#people_create_web_user error message account already exists", function (done) {
-        var tempUser = JSON.parse(JSON.stringify(testutil.fakeUser));
-        delete tempUser.jwt;
-
-        dbApp.people_create_web_user(tempUser, function (err, result) {
+        dbApp.people_create_web_user(testutil.fakeUser, function (err, result) {
             assert.equal(err.status, 409);
             assert.equal(err.message, "Account already taken");
             done();
@@ -49,8 +42,42 @@ describe("DATABASE - APP", function () {
     });
 
 
-    it("#people_get_by_id returns error if id is missing", function (done) {
+    it("#people_get_by_email returns error from invalid email", function (done) {
+        dbApp.people_get_by_email({ }, function (err, id_person) {
+            assert.equal(err.message, "Account not found");
+            done();
+        });
+    });
+
+
+    it("#people_get_by_email returns error from invalid email 2", function (done) {
+        dbApp.people_get_by_email({ email: "123123@lkajsdf.com" }, function (err, id_person) {
+            assert.equal(err.message, "Account not found");
+            done();
+        });
+    });
+
+
+    it("#people_get_by_email returns person from email", function (done) {
+        dbApp.people_get_by_email({ email: testutil.fakeUser.email }, function (err, person) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            assert.equal(person.id_person, 1);
+            done();
+        });
+    });
+
+
+    it("#people_get_by_id returns error from invalid id", function (done) {
         dbApp.people_get_by_id({ }, function (err, id_person) {
+            assert.equal(err.message, "Account not found");
+            done();
+        });
+    });
+
+
+    it("#people_get_by_id returns error from invalid id 2", function (done) {
+        dbApp.people_get_by_id({ id: 2000000 }, function (err, id_person) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -67,16 +94,24 @@ describe("DATABASE - APP", function () {
     });
 
 
-    it("#people_get_by_email returns person from email", function (done) {
-        dbApp.people_get_by_email({ }, function (err, id_person) {
-            assert.equal(err.message, "Account not found");
+    it("#people_get_by_jwt returns error from invalid jwt", function (done) {
+        dbApp.people_get_by_jwt({ }, function (err, id_person) {
+            assert.equal(err.message, "Bad token");
             done();
         });
     });
 
 
-    it("#people_get_by_email returns person from email", function (done) {
-        dbApp.people_get_by_email({ email: testutil.fakeUser.email }, function (err, person) {
+    it("#people_get_by_jwt returns error from invalid jwt 2", function (done) {
+        dbApp.people_get_by_jwt({ jwt: "Account not found" }, function (err, id_person) {
+            assert.equal(err.message, "Bad token");
+            done();
+        });
+    });
+
+
+    it("#people_get_by_jwt returns person from jwt", function (done) {
+        dbApp.people_get_by_jwt({ jwt: testutil.fakeUser.jwt, email: testutil.fakeUser.email }, function (err, person) {
             if (err) return done(new Error(JSON.stringify(err)));
 
             assert.equal(person.id_person, 1);

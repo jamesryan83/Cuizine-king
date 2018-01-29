@@ -13,14 +13,42 @@
     }
 
 
-    // mobile
-    @media (max-width: 870px) {
+    @media (max-width: $mediaWidth3) {
+        a {
+            font-size: 12px;
+        }
+    }
+
+
+    @media (max-width: $mediaWidth2) {
         .navbar-links {
             display: none;
         }
 
         .navbar-links-popup-button {
             display: block;
+        }
+
+        a {
+            font-size: 14px;
+        }
+    }
+
+
+    // Mobile buttons
+    #store-content-mobile-buttons {
+        display: none;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: $colorBlue3;
+
+
+        button {
+            width: 100px;
         }
     }
 

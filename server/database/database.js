@@ -47,7 +47,7 @@ exports = module.exports = {
 
         this.pool.on("error", function (err) {
             self.isConnected = false;
-            console.log("pool error");
+            console.log("database pool error");
             ee.emit("errorPool", err);
         });
     },
@@ -59,7 +59,7 @@ exports = module.exports = {
         if (!query) return callback("query missing");
 
         this.pool.request().query(query, function (err, result) {
-            if (err) return callback(err.message); // TODO : check err msg isn't jibberish
+            if (err) return callback(err.message);
 
             return callback(null, result);
         });
@@ -80,8 +80,8 @@ exports = module.exports = {
     // Runs an sql script in another process and waits for result
     runSqlScriptSync: function (scriptPath, databaseName) {
         try {
-            var command = "Sqlcmd -S localhost -d " + (databaseName || config.mssql.database) + " -i " + scriptPath;
             console.log("executing: " + command);
+            var command = "Sqlcmd -S localhost -d " + (databaseName || config.mssql.database) + " -i " + scriptPath;
 
             var result = execSync(command);
 
@@ -96,8 +96,13 @@ exports = module.exports = {
 
     // Runs a batch file
     runBatchFileSync: function (batchFileName, cwd) {
-        var result = execSync(batchFileName, { cwd: cwd, encoding: "utf-8" });
-        console.log(result);
+        try {
+            console.log("executing: " + batchFileName);
+            var result = execSync(batchFileName, { cwd: cwd, encoding: "utf-8" });
+            console.log(result);
+        } catch (ex) {
+            console.log(ex.message);
+        }
     }
 
 }

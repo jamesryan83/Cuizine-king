@@ -431,8 +431,8 @@ input, textarea {
   .navbar .navbar-links-popup {
     position: fixed;
     top: 0;
-    right: -200px;
-    width: 200px;
+    right: -250px;
+    width: 250px;
     height: 100%;
     margin-bottom: 10px;
     background-color: #111111;
@@ -443,8 +443,8 @@ input, textarea {
     backface-visibility: hidden; }
     .navbar .navbar-links-popup .navbar-links-popup-close {
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 30px;
+      right: 30px;
       background-repeat: no-repeat;
       background-position: center;
       background-size: 20px 20px;
@@ -468,11 +468,11 @@ input, textarea {
       .navbar .navbar-links-popup a:hover {
         background-color: #222222; }
     .navbar .navbar-links-popup a:first-of-type {
-      margin-top: 70px; }
+      margin-top: 90px; }
   .navbar .navbar-links-popup-button {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 30px;
+    right: 30px;
     height: 40px;
     width: 40px;
     background-color: #111111;
@@ -593,17 +593,130 @@ input, textarea {
     line-height: 25px;
     pointer-events: none; }
 
+#dialog-store-hours.dialog {
+  height: 340px;
+  width: auto; }
+  #dialog-store-hours.dialog h3 {
+    margin-bottom: 10px;
+    padding-top: 3px; }
+  #dialog-store-hours.dialog div:not(#dialog-store-hours-close) {
+    width: 100%;
+    white-space: nowrap; }
+  #dialog-store-hours.dialog label {
+    width: 180px;
+    text-align: center;
+    font-weight: bold;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block; }
+  #dialog-store-hours.dialog #dialog-store-hours-left, #dialog-store-hours.dialog #dialog-store-hours-right {
+    float: left;
+    width: 180px;
+    list-style: none;
+    padding: 5px 14px;
+    display: inline-block; }
+    #dialog-store-hours.dialog #dialog-store-hours-left li, #dialog-store-hours.dialog #dialog-store-hours-right li {
+      padding: 5px; }
+      #dialog-store-hours.dialog #dialog-store-hours-left li span, #dialog-store-hours.dialog #dialog-store-hours-right li span {
+        width: 40px;
+        font-weight: bold;
+        display: inline-block; }
+
+#dialog-store-description.dialog {
+  height: auto; }
+  #dialog-store-description.dialog h3:first-of-type {
+    color: #f4f4f4; }
+  #dialog-store-description.dialog > div:last-of-type {
+    padding: 10px;
+    color: #f4f4f4; }
+    #dialog-store-description.dialog > div:last-of-type p {
+      text-align: justify; }
+
+#dialog-store-reviews.dialog {
+  width: auto;
+  height: 500px;
+  max-height: 70%;
+  overflow: hidden; }
+  #dialog-store-reviews.dialog #dialog-store-reviews-header {
+    height: 40px; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type {
+      height: 40px;
+      display: inline-block; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type h3 {
+        display: inline-block;
+        margin-right: 20px;
+        color: #5595d8; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type .rating-control {
+        height: 26px; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:first-of-type label {
+        margin-left: 10px;
+        height: 40px;
+        line-height: 40px;
+        display: inline-block;
+        vertical-align: middle; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-header > div:last-of-type {
+      height: 40px;
+      float: right;
+      vertical-align: top; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header > div:last-of-type > label {
+        height: 40px;
+        line-height: 40px;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 16px;
+        color: #5595d8;
+        margin-right: 20px; }
+        #dialog-store-reviews.dialog #dialog-store-reviews-header > div:last-of-type > label:hover {
+          color: #1f58c6; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-header #dialog-store-reviews-close {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 20px 20px;
+      height: 40px;
+      width: 40px;
+      background-image: url(/res/svg/icon-close.svg);
+      display: inline-block; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-header #dialog-store-reviews-close:hover {
+        cursor: pointer;
+        background-image: url(/res/svg/icon-close-hover.svg); }
+  #dialog-store-reviews.dialog .hr-1 {
+    background-color: #373748;
+    padding: 0 20px; }
+  #dialog-store-reviews.dialog #dialog-store-reviews-list {
+    height: calc(100% - 50px);
+    overflow-y: scroll;
+    width: 600px;
+    margin-top: 10px; }
+    #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item {
+      padding: 10px 20px;
+      width: 100%; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item .store-reviews-list-item-header .rating-control {
+        margin-right: 20px; }
+      #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item .store-reviews-list-item-header label {
+        font-weight: bold; }
+
 #store-content, #store-content-editable {
   padding: 0 50px; }
+  @media (max-width: 490px) {
+    #store-content, #store-content-editable {
+      padding: 0 10px; }
+      #store-content #store-info, #store-content-editable #store-info {
+        padding: 40px 0 20px 0; } }
   #store-content #store-info, #store-content-editable #store-info {
-    padding: 40px 20px; }
+    padding: 40px 20px 20px 20px; }
     #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
       position: relative;
-      height: 240px; }
-      #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
-        height: 240px;
-        width: 340px;
+      height: 290px; }
+      #store-content #store-info #store-info-inner #store-info-image-container, #store-content-editable #store-info #store-info-inner #store-info-image-container {
         float: left; }
+        #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
+          margin-top: 25px;
+          height: 240px;
+          width: 340px; }
+          @media (max-width: 490px) {
+            #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
+              width: 300px;
+              height: 210px; } }
       #store-content #store-info #store-info-inner #store-info-details, #store-content-editable #store-info #store-info-inner #store-info-details {
         float: right;
         width: calc(100% - 340px);
@@ -611,9 +724,11 @@ input, textarea {
         min-width: 500px; }
         #store-content #store-info #store-info-inner #store-info-details label, #store-content-editable #store-info #store-info-inner #store-info-details label {
           display: inline-block; }
-        #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link), #store-content-editable #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
-          font-weight: bold;
-          width: 90px; }
+        #store-content #store-info #store-info-inner #store-info-details > div, #store-content-editable #store-info #store-info-inner #store-info-details > div {
+          margin-top: 5px; }
+          #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link), #store-content-editable #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
+            font-weight: bold;
+            width: 90px; }
         #store-content #store-info #store-info-inner #store-info-details #store-info-description-container, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container {
           min-height: 120px; }
           #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
@@ -635,13 +750,51 @@ input, textarea {
         #store-content #store-info #store-info-inner #store-info-details .rating-control, #store-content-editable #store-info #store-info-inner #store-info-details .rating-control {
           padding: 2px;
           margin-left: -5px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-phone-number, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-phone-number {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > label, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls > label {
+          height: 54px;
+          line-height: 54px;
+          vertical-align: top; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > div, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls > div {
+          display: inline-block; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-phone-number, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-phone-number {
           margin: 0 10px;
           color: #5595d8;
-          min-width: 90px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-email, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-email {
+          min-width: 90px;
+          max-width: 130px;
+          white-space: nowrap; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-email, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-email {
           margin-left: 10px;
-          color: #5595d8; }
+          color: #5595d8;
+          max-width: 250px;
+          white-space: nowrap; }
+    @media (max-width: 1000px) {
+      #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
+        text-align: center !important;
+        height: auto; }
+        #store-content #store-info #store-info-inner #store-info-image-container, #store-content-editable #store-info #store-info-inner #store-info-image-container {
+          float: none;
+          height: auto;
+          display: block; }
+          #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
+            margin-top: 0 !important; }
+        #store-content #store-info #store-info-inner #store-info-details, #store-content-editable #store-info #store-info-inner #store-info-details {
+          float: none;
+          min-width: 360px;
+          width: 80%;
+          display: inline-block;
+          text-align: left;
+          padding: 40px 0 0 10px; } }
+    @media (max-width: 770px) {
+      #store-content #store-info #store-info-inner #store-info-details > div > label:first-of-type, #store-content-editable #store-info #store-info-inner #store-info-details > div > label:first-of-type {
+        display: block;
+        margin-left: -5px; }
+      #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > label, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls > label {
+        height: 27px;
+        line-height: 27px;
+        vertical-align: inherit; } }
+    @media (max-width: 490px) {
+      #store-content #store-info, #store-content-editable #store-info {
+        padding-top: 0; } }
   #store-content #store-menu #store-menu-list, #store-content-editable #store-menu #store-menu-list {
     float: left;
     height: 100%;
@@ -717,8 +870,60 @@ input, textarea {
     margin-bottom: 10px;
     bottom: -50px; }
 
-#page-cms-menu .page-cms-header #cms-menu-save {
-  background-color: #3bcd3b; }
+.typeahead {
+  display: inline-block;
+  position: relative; }
+  .typeahead label {
+    width: 80px;
+    display: inline-block;
+    line-height: 25px;
+    height: 25px; }
+  .typeahead input {
+    width: 300px; }
+  .typeahead .typeahead-list {
+    display: none;
+    position: absolute;
+    width: 300px;
+    list-style: none;
+    right: 0;
+    top: 35px;
+    border-left: 1px solid #e3e3e3;
+    border-right: 1px solid #e3e3e3;
+    border-bottom: 1px solid #e3e3e3;
+    background-color: #222222;
+    z-index: 500; }
+    .typeahead .typeahead-list .typeahead-item {
+      height: 40px;
+      line-height: 40px;
+      padding-left: 20px;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap; }
+      .typeahead .typeahead-list .typeahead-item.active {
+        background-color: #060606; }
+      .typeahead .typeahead-list .typeahead-item:hover {
+        background-color: #060606; }
+      .typeahead .typeahead-list .typeahead-item label, .typeahead .typeahead-list .typeahead-item span {
+        height: 40px;
+        line-height: 40px;
+        pointer-events: none;
+        vertical-align: top; }
+      .typeahead .typeahead-list .typeahead-item label:first-of-type {
+        width: 34px; }
+      .typeahead .typeahead-list .typeahead-item span {
+        padding: 0 7px; }
+  @media (max-width: 490px) {
+    .typeahead .typeahead-list {
+      width: 210px;
+      top: auto; }
+      .typeahead .typeahead-list .typeahead-item {
+        font-size: 13px;
+        padding-left: 12px; } }
+
+@media (max-width: 490px) {
+  #page-cms-menu #store-content-mobile-buttons {
+    display: block; } }
 
 #page-cms-menu #preview-mode-border {
   height: 100%;
@@ -754,10 +959,47 @@ input, textarea {
 #page-cms-menu #store-content-editable .upload-button {
   position: absolute;
   left: 85px;
-  top: 245px;
+  top: 260px;
   border: none; }
   #page-cms-menu #store-content-editable .upload-button label {
-    color: #ff7373; }
+    color: #ff7373;
+    white-space: nowrap; }
+  @media (max-width: 1000px) {
+    #page-cms-menu #store-content-editable .upload-button {
+      top: 235px;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%); } }
+  @media (max-width: 490px) {
+    #page-cms-menu #store-content-editable .upload-button {
+      top: 210px; } }
+
+#page-cms-menu #store-content-editable #store-info {
+  text-align: center; }
+  #page-cms-menu #store-content-editable #store-info #store-info-inner {
+    text-align: left; }
+  #page-cms-menu #store-content-editable #store-info #store-info-edit-address {
+    text-align: center;
+    display: block; }
+    #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner {
+      display: inline-block;
+      padding-top: 20px;
+      text-align: left;
+      width: 350px; }
+      #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner .label-input {
+        width: auto; }
+      #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner label {
+        width: 120px; }
+      #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner input {
+        width: 350px;
+        float: none; }
+      #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner .typeahead {
+        margin-top: 10px; }
+      @media (max-width: 490px) {
+        #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner {
+          width: 300px; }
+          #page-cms-menu #store-content-editable #store-info #store-info-edit-address #store-info-edit-address-inner input {
+            width: 300px; } }
 
 #page-cms-menu #store-content-editable #menu-edit-controls {
   text-align: center; }
@@ -774,11 +1016,27 @@ input, textarea {
     width: 90px;
     background-image: url(/res/images/ck-logo.png);
     display: inline-block; }
-  @media (max-width: 870px) {
+  @media (max-width: 1000px) {
+    #navbar-cms a {
+      font-size: 12px; } }
+  @media (max-width: 890px) {
     #navbar-cms .navbar-links {
       display: none; }
     #navbar-cms .navbar-links-popup-button {
-      display: block; } }
+      display: block; }
+    #navbar-cms a {
+      font-size: 14px; } }
+  #navbar-cms #store-content-mobile-buttons {
+    display: none;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #373748; }
+    #navbar-cms #store-content-mobile-buttons button {
+      width: 100px; }
 
 #page-container {
   height: 100%; }
@@ -793,9 +1051,15 @@ input, textarea {
       line-height: 40px;
       vertical-align: top; }
     #page-container .page-cms-header .page-cms-header-controls {
-      float: right; }
+      float: right;
+      height: 40px; }
       #page-container .page-cms-header .page-cms-header-controls button {
         margin-right: 20px;
         width: 120px; }
         #page-container .page-cms-header .page-cms-header-controls button.active {
           background-color: #1f58c6; }
+    @media (max-width: 490px) {
+      #page-container .page-cms-header {
+        text-align: center; }
+        #page-container .page-cms-header .page-cms-header-controls {
+          display: none; } }
