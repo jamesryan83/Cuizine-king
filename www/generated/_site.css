@@ -1388,6 +1388,7 @@ input, textarea {
     backface-visibility: hidden;
     position: absolute; }
   .page-auth .form-container-outer {
+    will-change: transform;
     transition: left 0.2s, opacity 0.2s;
     position: absolute;
     left: 50%;
