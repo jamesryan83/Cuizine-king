@@ -102,6 +102,8 @@
 
     // mobile
     @media (max-width: $mediaMobileWidth1) {
+        text-align: left;
+
         .navbar-heading {
             .navbar-icon {
                 @include svgicon(180px, 90px, 180px, 90px,

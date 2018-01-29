@@ -1599,11 +1599,13 @@ input, textarea {
         margin-top: 10px;
         height: 30px; } }
   @media (max-width: 490px) {
-    #navbar-site .navbar-heading .navbar-icon {
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 180px 90px;
-      height: 90px;
-      width: 180px;
-      background-image: url(/res/images/ck-logo.png);
-      display: inline-block; } }
+    #navbar-site {
+      text-align: left; }
+      #navbar-site .navbar-heading .navbar-icon {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 180px 90px;
+        height: 90px;
+        width: 180px;
+        background-image: url(/res/images/ck-logo.png);
+        display: inline-block; } }
