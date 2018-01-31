@@ -10,7 +10,6 @@
 
         <div class="page-cms-header-controls">
             <button class="cms-menu-preview button-3">PREVIEW</button>
-            <button class="cms-menu-save button-3" style="display: none;">SAVE</button>
             <button class="cms-menu-return button-3" style="display: none;">RETURN</button>
         </div>
     </div>
@@ -30,7 +29,7 @@
                 <!-- image -->
                 <div id="store-info-image-container">
                     <img id="store-info-image" />
-                    <div class="upload-button">
+                    <div class="upload-button store-editmode-control">
                         <label>Click here to add a logo</label>
                         <input id="fileupload" class="fileupload" type="file" name="logo">
                     </div>
@@ -39,13 +38,16 @@
                 <!-- details -->
                 <div id="store-info-details">
                     <div id="store-info-description-container">
-                        <p id="store-info-description" class="menu-edit-control" contenteditable="true" placeholder="Enter a description..."></p>
+                        <p id="store-info-description" class="store-editable-control" contenteditable="true" placeholder="Enter a description..."></p>
                         <label id="store-info-button-description" class="label-link">more...</label>
                     </div>
 
-                    <div>
+                    <div id="store-info-address-container">
                         <label>Location</label>
-                        <label id="store-info-address" class="menu-edit-control">Click here to add an address...</label>
+                        <div>
+                            <label id="store-info-address" class="store-editable-control">No Address</label>
+                            <label id="store-info-address-edit" class="store-editmode-control">Click here to edit address</label>
+                        </div>
                     </div>
 
                     <div>
@@ -73,36 +75,13 @@
                         <div>
                             <div>
                                 <label>Ph:</label>
-                                <label id="store-info-phone-number" class="menu-edit-control" contenteditable="true" placeholder="Enter a phone number..."></label>
+                                <label id="store-info-phone-number" class="store-editable-control" contenteditable="true" placeholder="Enter a phone number..."></label>
                             </div>
                             <div>
                                 <label>Email:</label>
-                                <label id="store-info-email" class="menu-edit-control" contenteditable="true" placeholder="Enter an email..."></label>
+                                <label id="store-info-email" class="store-editable-control" contenteditable="true" placeholder="Enter an email..."></label>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Edit address -->
-            <div id="store-info-edit-address">
-                <div id="store-info-edit-address-inner">
-                    <h3>Edit Address</h3>
-                    <div class="label-input">
-                        <label>Address Line 1</label>
-                        <input class="input-1" name="line1" value="18 Bilyana St" />
-                    </div>
-
-                    <div class="label-input">
-                        <label>Address Line 2</label>
-                        <input class="input-1" name="line2" value="" />
-                    </div>
-
-                    <div id="sysadmin-suburb-search" class="typeahead">
-                        <label>Suburb</label>
-                        <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
-                        <ul id="suburb-search-list" class="typeahead-list" style="display: none;"></ul>
                     </div>
                 </div>
             </div>
@@ -111,7 +90,7 @@
 
 
         <!-- Controls to add menu items and stuff -->
-        <div id="menu-edit-controls">
+        <div id="menu-edit-controls" class="store-editmode-control">
             <button class="button-3">Add a category</button>
             <button class="button-3">Add a menu item</button>
         </div>
@@ -136,6 +115,36 @@
         </div>
 
     </div>
+
+
+    <!-- Edit address -->
+    <div id="store-info-edit-address">
+        <div>
+            <h3>Edit Address</h3>
+            <div>
+                <button id="store-info-edit-address-cancel" class="button-3">CANCEL</button>
+                <button id="store-info-edit-address-save" class="button-3">SAVE</button>
+            </div>
+        </div>
+        <div>
+            <div class="label-input">
+                <label>Address Line 1</label>
+                <input class="input-1" name="line1" />
+            </div>
+
+            <div class="label-input">
+                <label>Address Line 2</label>
+                <input class="input-1" name="line2" value="" />
+            </div>
+
+            <div id="sysadmin-suburb-search" class="typeahead">
+                <label>Suburb</label>
+                <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
+                <ul id="suburb-search-list" class="typeahead-list opens-upwards" style="display: none;"></ul>
+            </div>
+        </div>
+    </div>
+
 
 
     <!-- preview border -->

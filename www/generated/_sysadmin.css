@@ -543,6 +543,11 @@ input, textarea {
         width: 34px; }
       .typeahead .typeahead-list .typeahead-item span {
         padding: 0 7px; }
+    .typeahead .typeahead-list.opens-upwards {
+      border-bottom: none;
+      border-top: 1px solid #e3e3e3;
+      top: auto;
+      bottom: 35px; }
   @media (max-width: 490px) {
     .typeahead .typeahead-list {
       width: 210px;

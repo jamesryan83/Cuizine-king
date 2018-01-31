@@ -706,7 +706,7 @@ input, textarea {
     padding: 40px 20px 20px 20px; }
     #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
       position: relative;
-      height: 290px; }
+      height: 320px; }
       #store-content #store-info #store-info-inner #store-info-image-container, #store-content-editable #store-info #store-info-inner #store-info-image-container {
         float: left; }
         #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
@@ -936,6 +936,11 @@ input, textarea {
         width: 34px; }
       .typeahead .typeahead-list .typeahead-item span {
         padding: 0 7px; }
+    .typeahead .typeahead-list.opens-upwards {
+      border-bottom: none;
+      border-top: 1px solid #e3e3e3;
+      top: auto;
+      bottom: 35px; }
   @media (max-width: 490px) {
     .typeahead .typeahead-list {
       width: 210px;

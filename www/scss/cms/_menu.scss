@@ -5,13 +5,6 @@
 #page-cms-menu {
 
 
-    #store-content-mobile-buttons {
-        @media (max-width: $mediaMobileWidth1) {
-            display: block;
-        }
-    }
-
-
     // preview border
     #preview-mode-border {
         height: 100%;
@@ -69,16 +62,6 @@
                 color: $colorRed1;
                 white-space: nowrap;
             }
-
-            @media (max-width: $mediaWidth3) {
-                top: 235px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-
-            @media (max-width: $mediaMobileWidth1) {
-                top: 210px;
-            }
         }
 
 
@@ -89,42 +72,30 @@
 
             #store-info-inner {
                 text-align: left;
-            }
 
-            // edit address
-            #store-info-edit-address {
-                text-align: center;
-                display: block;
+                // expandable address container
+                #store-info-address-container {
 
-                #store-info-edit-address-inner {
-                    display: inline-block;
-                    padding-top: 20px;
-                    text-align: left;
-                    width: 350px;
-
-                    .label-input {
-                        width: auto;
+                    > label {
+                        vertical-align: middle;
                     }
 
-                    label {
-                        width: 120px;
-                    }
+                    > div {
+                        display: inline-block;
+                        vertical-align: middle;
 
-                    input {
-                        width: 350px;
-                        float: none;
-                    }
-
-                    .typeahead {
-                        margin-top: 10px;
-                    }
-
-                    @media (max-width: $mediaMobileWidth1) {
-                        width: 300px;
-
-                        input {
-                            width: 300px;
+                        label {
+                            display: block;
+                            height: 25px;
+                            line-height: 25px;
                         }
+                    }
+
+                    // open edit address button
+                    #store-info-address-edit {
+                        color: $colorRed1;
+                        font-weight: bold;
+                        cursor: pointer;
                     }
                 }
             }
@@ -143,4 +114,108 @@
 
     }
 
+
+    // edit address
+    #store-info-edit-address {
+        position: fixed;
+        bottom: -400px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 30px 50px;
+        background-color: $colorGray14;
+        transition: bottom 0.2s;
+
+        &.active {
+            bottom: 0;
+        }
+
+        > div:first-of-type {
+            padding-bottom: 20px;
+
+            h3 {
+                display: inline-block;
+            }
+            > div {
+                float: right;
+
+                button {
+                    margin-left: 10px;
+                    width: 80px;
+                }
+            }
+        }
+
+        .label-input {
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        div > div > label {
+            width: 120px;
+        }
+
+        input {
+            width: 350px;
+            float: none;
+        }
+
+        .typeahead {
+            margin-top: 10px;
+
+            .typeahead-list {
+                width: 350px;
+            }
+        }
+    }
+
+
+
+    @media (max-width: $mediaWidth3) {
+        #store-content-editable {
+            .upload-button {
+                top: 235px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    }
+
+
+    @media (max-width: $mediaWidth1) {
+        #store-info-edit-address {
+            div > div > label {
+                display: block;
+            }
+        }
+    }
+
+
+    @media (max-width: $mediaMobileWidth1) {
+        #store-content-editable {
+            .upload-button {
+                top: 210px;
+            }
+        }
+
+        #store-info-edit-address {
+            width: 340px;
+            padding: 30px 20px;
+
+            input {
+                width: 100%;
+            }
+
+            .typeahead {
+                display: block;
+
+                .typeahead-list {
+                    width: 100%;
+                }
+            }
+        }
+
+        #store-content-mobile-buttons {
+            display: block;
+        }
+    }
 }

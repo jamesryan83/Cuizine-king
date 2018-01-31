@@ -62,7 +62,17 @@
                 padding: 0 7px;
             }
         }
+
+
+        &.opens-upwards {
+            border-bottom: none;
+            border-top: 1px solid $colorGray2;
+            top: auto;
+            bottom: 35px;
+        }
     }
+
+
 
     @media (max-width: $mediaMobileWidth1) {
         .typeahead-list {
