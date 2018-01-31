@@ -203,7 +203,7 @@ app.util = {
             cache: options.cache || false,
             beforeSend: function(request) {
                 if (options.auth) {
-                    request.setRequestHeader("Authorization", "Bearer " + app.util.getJwtFromStorage());
+                    request.setRequestHeader("authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
             success: function (result) {

@@ -88,7 +88,7 @@ database.once("connected", function () {
 
     // override serve-static to stop it sending index.html
     server.use(function (req, res, next) {
-        if (req.url == "/") return router.renderPage(req, res, "site");
+        if (req.url == "/") return router.handlePrimaryPageRequest(req, res);
 
         next();
     });

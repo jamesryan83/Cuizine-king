@@ -102,10 +102,10 @@ END
  -- Drop Tables
 
 DROP TABLE IF EXISTS App.addresses
-DROP TABLE IF EXISTS App.order_types
-DROP TABLE IF EXISTS App.payment_methods
+
+
 DROP TABLE IF EXISTS App.people
-DROP TABLE IF EXISTS App.person_types
+
 
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_extras')
 BEGIN
@@ -170,9 +170,9 @@ GO
 ALTER SEQUENCE Sequences.id_person RESTART WITH 1
 ALTER SEQUENCE Sequences.id_address RESTART WITH 1
 
-ALTER SEQUENCE Sequences.id_order_type RESTART WITH 1
-ALTER SEQUENCE Sequences.id_person_type RESTART WITH 1
-ALTER SEQUENCE Sequences.id_payment_method RESTART WITH 1
+
+
+
 ALTER SEQUENCE Sequences.id_store RESTART WITH 1
 ALTER SEQUENCE Sequences.id_business_hour RESTART WITH 1
 ALTER SEQUENCE Sequences.id_review RESTART WITH 1
@@ -204,29 +204,6 @@ CREATE TABLE App.addresses
 )
 
 
-CREATE TABLE App.order_types
-(
-    id_order_type TINYINT NOT NULL CONSTRAINT DF_app_order_types_id_order_type DEFAULT (NEXT VALUE FOR Sequences.id_order_type),
-    name NVARCHAR(16) NOT NULL,
-    updated_by INT NOT NULL DEFAULT 1,
-    created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-    CONSTRAINT PK_app_order_types PRIMARY KEY CLUSTERED (id_order_type)
-)
-
-
-CREATE TABLE App.payment_methods
-(
-    id_payment_method TINYINT NOT NULL CONSTRAINT DF_app_payment_methods_id_payment_method DEFAULT (NEXT VALUE FOR Sequences.id_payment_method),
-    name NVARCHAR(16) NOT NULL,
-    updated_by INT NOT NULL DEFAULT 1,
-    created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-    CONSTRAINT PK_app_payment_methods PRIMARY KEY CLUSTERED (id_payment_method)
-)
-
-
--- Website users (customers), store owners/employees, and us
 CREATE TABLE App.people
 (
 	id_person INT NOT NULL CONSTRAINT DF_app_people_id_person DEFAULT (NEXT VALUE FOR Sequences.id_person),
@@ -249,17 +226,6 @@ CREATE TABLE App.people
     created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
 	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
     CONSTRAINT PK_app_people PRIMARY KEY CLUSTERED (id_person)
-)
-
-
-CREATE TABLE App.person_types
-(
-    id_person_type TINYINT NOT NULL CONSTRAINT DF_app_person_types_id_person_type DEFAULT (NEXT VALUE FOR Sequences.id_person_type),
-    name NVARCHAR(16) NOT NULL,
-    updated_by INT NOT NULL DEFAULT 1,
-    created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-    CONSTRAINT PK_app_person_types PRIMARY KEY CLUSTERED (id_person_type)
 )
 
 

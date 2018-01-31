@@ -6,8 +6,8 @@ var config = {
     "host": "",
     "port": 1337,
     "secret": "fallout3isprettygood",
-    "jwtExpiryShort": "15m", // 2s 2m 2h 2d
-    "jwtExpiryLong": "7d",
+    "jwtExpiryShort": 300000, // 5 minutes
+    "jwtExpiryLong": "7d",  // 2s 2m 2h 2d
     "showLogPaths": true,
     "logSQLerrors": true,
     "logRequestRoute": true,

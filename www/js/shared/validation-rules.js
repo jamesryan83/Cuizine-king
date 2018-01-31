@@ -217,6 +217,8 @@ app.vr.storeApplication = {
 }
 
 
+
+
 // alias
 app.validationRules = app.vr;
 

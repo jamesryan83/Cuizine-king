@@ -26,7 +26,7 @@ exports = module.exports = {
             var pathParts = path.parse(sqlProcedureFilePaths[i]).dir.split(path.sep);
             var folderName = pathParts[pathParts.length - 1];
 
-            if(folderName == "procedures") continue;
+            if (folderName == "procedures") continue;
 
             if (!procedurePathsObject[folderName]) procedurePathsObject[folderName] = [];
             procedurePathsObject[folderName].push(sqlProcedureFilePaths[i]);
@@ -75,7 +75,6 @@ exports = module.exports = {
                         case "MONEY": sqlType = "Money"; break;
                         case "SMALLMONEY": sqlType = "SmallMoney"; break;
                         case "TINYINT": sqlType = "TinyInt"; break;
-
                         case "NVARCHAR": sqlType = "NVarChar"; break;
                         case "DATETIME2": sqlType = "DateTime2"; break;
                         case "GEOGRAPHY": sqlType = "Geography"; break;

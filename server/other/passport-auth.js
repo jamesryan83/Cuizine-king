@@ -66,10 +66,13 @@ exports = module.exports = {
             if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
 
             // check jwt short expiry
-//            console.log(jwTokenObject)
-//            var d = Date.now() / 1000;
-//            console.log("iat: " + (d - jwTokenObject.iat))
-//            console.log("exp: " + (d - jwTokenObject.exp))
+            console.log(jwTokenObject)
+            var d = Date.now() / 1000;
+            var shortExp = jwTokenObject.shortExp * 1000;
+            console.log(d)
+            console.log("iat: " + (jwTokenObject.iat - d))
+            console.log("short expiry shortExp: " + (jwTokenObject.shortExp - d))
+            console.log("long expiry exp: " + (jwTokenObject.exp - d))
 
             // TODO : jwt should fail if signature algorithm is set to none
 
@@ -93,7 +96,7 @@ exports = module.exports = {
 
                 // save person to the response for other functions
                 res.locals.person = person;
-console.log(res.locals.person)
+
                 return next();
             });
         })(req, res, next);

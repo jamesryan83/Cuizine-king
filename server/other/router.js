@@ -16,20 +16,15 @@ var storesApi = require("../api/stores");
 var locationApi = require("../api/location");
 var sysadminApi = require("../api/sysadmin");
 
-
-var config = require("../config");
 var routerCms = require("../../www/js/cms");
-var passportAuth = require("./passport-auth");
 var routerSite = require("../../www/js/site");
 var routerSysadmin = require("../../www/js/sysadmin");
 
-
-var upload = multer();
+var config = require("../config");
+var passportAuth = require("./passport-auth");
+var urlUtil = require("../../www/js/shared/url-util");
 
 var wwwFolder = path.join(__dirname, "../", "../", "www");
-
-
-// TODO : csrf tokens if using cookies
 
 
 exports = module.exports = {
@@ -39,10 +34,17 @@ exports = module.exports = {
 
     // Setup router
     init: function (expressServer) {
-		var self = this;
         this.server = expressServer;
 
+        this.reloadFilesSync();
+
+        var upload = multer();
+
+
+        // auth middleware
         passportAuth.init(this);
+        var authenticate = passportAuth.authenticate.bind(passportAuth);
+
 
         authApi.init(this);
         locationApi.init(this);
@@ -50,37 +52,23 @@ exports = module.exports = {
         storesApi.init(this);
         sysadminApi.init(this);
 
-        var authenticate = passportAuth.authenticate.bind(passportAuth);
 
-        // index html files
-        this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
-        this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
-        this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
-        this.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
-        this.adminLogin = fs.readFileSync(path.join(wwwFolder, "sysadmin-login.html"), "utf8");
+        // create available routes array
+        var availableRoutes = routerSite.routesList
+            .concat(routerCms.routesList)
+            .concat(routerSysadmin.routesList);
 
 
         // log the requested route & headers
-        router.use(function (req, res, next) {
-            if (global.devMode) {
-                // Change db when called from tests
-                if (req.headers["user-agent"] && req.headers["user-agent"].indexOf("node-superagent") !== -1) {
-                    config.mssql.database = "menuthingTest";
-                } else {
-                    config.mssql.database = "menuthing";
-                }
-            }
-
-            if (config.logRequestRoute) console.log("requested url: " + req.url);
-            if (config.logRequestHeaders) console.log(req.headers);
-            next();
-        });
+        router.use(this.beforeRequest.bind(this));
 
 
-        // site, cms and sysadmin pages
-        router.get(routerSite.routesList, function (req, res) { self.renderPage(req, res, "site"); });
-        router.get(routerCms.routesList, function (req, res) { self.renderPage(req, res, "cms"); });
-        router.get(routerSysadmin.routesList, function (req, res) { self.renderPage(req, res, "sysadmin"); });
+        // handle page requests
+        router.get(availableRoutes, this.handlePrimaryPageRequest.bind(this));
+
+
+        // handles second part of page requests
+        router.post("/page-request", this.handleSecondaryPageRequest.bind(this));
 
 
         // api
@@ -88,7 +76,6 @@ exports = module.exports = {
         router.get( "/api/v1/store", storesApi.get.bind(storesApi));
         router.get( "/api/v1/location", locationApi.get.bind(locationApi));
         router.post("/api/v1/store-application", storesApi.requestStoreApplication.bind(storesApi));
-
 
         // auth api
         router.post("/api/v1/login", authApi.websiteLogin.bind(authApi));
@@ -100,24 +87,41 @@ exports = module.exports = {
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
         router.post("/api/v1/verify-account", authApi.verifyAccount.bind(authApi));
 
-
-
-        // sysadmin TODO : ip authentication or something
-        router.get("/admin-login", this.sysadminLoginPage.bind(this));
+        // sysadmin
+        router.get( "/admin-login", this.sysadminLoginPage.bind(this));
         router.post("/admin-login", authApi.systemLogin.bind(authApi));
         router.post("/api/sysadmin/create-store", storesApi.create.bind(storesApi));
         router.get( "/api/sysadmin/recreate-database", sysadminApi.recreateDatabase.bind(sysadminApi));
 
-
-
-
         router.post("/api/v1/upload-logo", upload.single("logo"), storesApi.uploadLogo.bind(storesApi));
 
-
+        // catch all
         router.use(this.catchAll.bind(this));
 
         this.server.use("/", router);
     },
+
+
+
+    // Runs before evrey request
+    beforeRequest: function (req, res, next) {
+        if (global.devMode) {
+            // Change db when called from tests
+            if (req.headers["user-agent"] && req.headers["user-agent"].indexOf("node-superagent") !== -1) {
+                config.mssql.database = "menuthingTest";
+            } else {
+                config.mssql.database = "menuthing";
+            }
+
+            this.reloadFilesSync();
+        }
+
+        if (config.logRequestRoute) console.log("requested url: " + req.url);
+        if (config.logRequestHeaders) console.log(req.headers);
+
+        next();
+    },
+
 
 
     // Validate route inputs.  send error if there's an error
@@ -136,42 +140,94 @@ exports = module.exports = {
     },
 
 
-    // Render page
-    renderPage: function (req, res, section) {
-        var route = url.parse(req.url).pathname;
 
+    // Handles the initial request for a page
+    handlePrimaryPageRequest: function (req, res) {
         if (global.devMode) { // no cache
-            this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
-            this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
-            this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
+            this.reloadFilesSync();
         }
 
-        var currentPage = null;
-        if (section === "cms") currentPage = this.indexCms;
-        if (section === "site") currentPage = this.indexSite;
-        if (section === "sysadmin") currentPage = this.indexSysadmin;
-
-        var pageData = {};
-        if (route == "/verify-account") {
-            pageData.verification_token = !req.query ? null : req.query.t;
-        }
-
-        if (route == "/reset-password") {
-            pageData.reset_password_token = !req.query ? null : req.query.t;
-        }
-
-        return res.send(ejs.render(currentPage, pageData));
+        return res.send(this.files.indexMain);
     },
+
+
+
+    // Handles the second part of a reqest for a page
+    handleSecondaryPageRequest: function (req, res) {
+        var self = this;
+        var jwt = req.headers["authorization"];
+        var route = decodeURI(req.body.encodedUrl);
+        var normalizedRoute = urlUtil.normalizeRoute(route);
+
+        var routeData = {};
+
+        // site
+        if (routerSite.routes[normalizedRoute]) {
+            return res.send({
+                section: "site",
+                html: self.files.siteHtml,
+                css: "/generated/_site.css",
+                js: "/generated/_site.js"
+            });
+
+        // cms
+        } else if (routerCms.routes[normalizedRoute]) {
+            passportAuth.authenticate(req, res, function () {
+                return res.send({
+                    section: "cms",
+                    html: self.files.cmsHtml,
+                    css: "/generated/_cms.css",
+                    js: "/generated/_cms.js",
+                    jwt: res.locals.person.jwt
+                });
+            });
+
+        // system admin
+        } else if (routerSysadmin.routes[normalizedRoute]) {
+            passportAuth.authenticate(req, res, function () {
+                return res.send({
+                    section: "sysadmin",
+                    html: self.files.sysadminHtml,
+                    css: "/generated/_sysadmin.css",
+                    js: "/generated/_sysadmin.js",
+                    jwt: res.locals.person.jwt
+                });
+            });
+        }
+    },
+
+
+
+//    // Render page
+//    renderPage: function (req, res, section) {
+//        var route = url.parse(req.url).pathname;
+//
+//
+//        var pageData = { section: section };
+//        if (route == "/verify-account") {
+//            pageData.verification_token = !req.query ? null : req.query.t;
+//        }
+//
+//        if (route == "/reset-password") {
+//            pageData.reset_password_token = !req.query ? null : req.query.t;
+//        }
+//
+////        return res.send(ejs.render(currentPage, pageData));
+//        var tempIndex = fs.readFileSync(path.join(wwwFolder, "index-main.html"), "utf8");
+//        return res.send(ejs.render(tempIndex, pageData));
+//    },
+
 
 
     // System admin login page
     sysadminLoginPage: function (req, res) {
         if (global.devMode) { // no cache
-            this.adminLogin = fs.readFileSync(path.join(wwwFolder, "sysadmin-login.html"), "utf8");
+            this.reloadFilesSync();
         }
 
-        return res.send(ejs.render(this.adminLogin));
+        return res.send(this.files.indexAdmin);
     },
+
 
 
     // send Json response
@@ -185,6 +241,7 @@ exports = module.exports = {
     },
 
 
+
     // Returns true if the request is an ajax request
     isRequestAjax: function (req) {
         if (req.xhr) return true;
@@ -193,6 +250,7 @@ exports = module.exports = {
 
         return false;
     },
+
 
 
     // Catch all
@@ -209,6 +267,7 @@ exports = module.exports = {
     },
 
 
+
     // Render the error page
     renderErrorPage: function (req, res, err, status) {
         var pageData = {
@@ -218,10 +277,51 @@ exports = module.exports = {
         }
 
         if (global.devMode) { // no cache
-            this.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
+            this.reloadFilesSync();
         }
 
-        return res.status(pageData.status).send(ejs.render(this.indexError, pageData));
+        return res.status(pageData.status).send(ejs.render(this.files.indexError, pageData));
+    },
+
+
+    // reload all the static files
+    reloadFilesSync: function () {
+        this.files = {};
+        var genFolder = path.join(wwwFolder, "generated");
+
+        this.files.indexMain = fs.readFileSync(path.join(wwwFolder, "index-main.html"), "utf8");
+        this.files.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
+        this.files.indexAdmin = fs.readFileSync(path.join(wwwFolder, "index-admin.html"), "utf8");
+
+        this.files.siteHtml = fs.readFileSync(path.join(genFolder, "_site.json"), "utf8");
+        this.files.cmsHtml = fs.readFileSync(path.join(genFolder, "_cms.json"), "utf8");
+        this.files.sysadminHtml = fs.readFileSync(path.join(genFolder, "_sysadmin.json"), "utf8");
     },
 
 }
+
+
+
+
+
+
+
+
+// index html files
+//        this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
+//        this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
+//        this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
+
+
+
+
+//        if (global.devMode) { // no cache
+//            this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
+//            this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
+//            this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
+//        }
+//
+//        var currentPage = null;
+//        if (section === "cms") currentPage = this.indexCms;
+//        if (section === "site") currentPage = this.indexSite;
+//        if (section === "sysadmin") currentPage = this.indexSysadmin;

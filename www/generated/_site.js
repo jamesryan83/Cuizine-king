@@ -5,11 +5,12 @@ app.controls = app.controls || {};
 app.dialogs = app.dialogs || {};
 
 
-if (typeof window != "undefined") {
-    $(document).ready(function () {
-        app.site.init();
-    });
-}
+//if (typeof window != "undefined") {
+//    $(document).ready(function () {
+//        console.log("kkdkkdkdk")
+//        app.site.init();
+//    });
+//}
 
 
 // Site pages
@@ -19,12 +20,13 @@ app.site = {
     htmlFiles: {}, // cached html
 
 
-    init: function () {
+    init: function (html) {
         var self = this;
-
+console.log("initttt")
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
+        this.htmlFiles = html;
 
         // setup router
         app.routerBase.init();
@@ -35,16 +37,17 @@ app.site = {
         app.dialogs.businessHours.init();
         app.dialogs.reviews.init();
 
+        app.routerBase.loadPageForRoute(null, "site");
 
-        // Load the html json file
-        $.getJSON("/generated/_site.json", function (data) {
-            self.htmlFiles = data;
-
-            var routeData = app.routerBase.loadPageForRoute(null, "site");
-
-        }).fail(function (err) {
-            // TODO : error msg
-        });
+//        // Load the html json file
+//        $.getJSON("/generated/_site.json", function (data) {
+//            self.htmlFiles = data;
+//
+//            var routeData = app.routerBase.loadPageForRoute(null, "site");
+//
+//        }).fail(function (err) {
+//            // TODO : error msg
+//        });
     },
 
 
@@ -1050,19 +1053,12 @@ app.navbar = {
 
 
 }
-
 // Base client side router
 app.routerBase = {
 
 
-    // url regexes
-    regexUrlStore: /\/store\/\d*/,
-    regexUrlAccount: /\/account\/\d*/,
-    regexUrlLocation: /\/location\/[\w\d%-]*-\d*/,
-    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
-
     firstLoad: true,
-    lastSection: "",
+    lastLoadedSection: "",
 
 
     // Init
@@ -1073,8 +1069,6 @@ app.routerBase = {
         document.addEventListener("deviceready", function () {
             app.cordova.init();
         }, false);
-
-
     },
 
 
@@ -1083,7 +1077,7 @@ app.routerBase = {
     // section is site, cms or sysadmin
     loadPageForRoute: function (route, section, isAfterPopState) {
         var self = this;
-        this.lastSection = section;
+        this.lastLoadedSection = section;
 
 
         // reset window events // TODO : test is working
@@ -1093,7 +1087,7 @@ app.routerBase = {
 
         // for back button after pushstate
         window.onpopstate = function () {
-            self.loadPageForRoute(window.location.pathname, self.lastSection, true);
+            self.loadPageForRoute(window.location.pathname, self.lastLoadedSection, true);
         };
 
 
@@ -1146,28 +1140,18 @@ app.routerBase = {
             if (route == "/index-cordova") route = "/";
         }
 
-        // replace variables with placeholders
-        if (this.regexUrlStoreAdmin.exec(route)) {
-            var temp = route.split("/");
-            route = "/store-admin/:id/" + temp[temp.length - 1];
-        } else if (this.regexUrlStore.exec(route)) {
-            route = "/store/:id";
-        } else if (this.regexUrlLocation.exec(route)) {
-            route = "/location/:suburb";
-        } else if (this.regexUrlAccount.exec(route)) {
-            route = "/account/:id";
-        }
 
-        routeData.normalizedRoute = route;
+        routeData.normalizedRoute = app.urlUtil.normalizeRoute(route);
         routeData.section = section;
 
         // Add html and other route data
-        if (app[section].routesList.indexOf(route) !== -1) {
-            routeData.html = app[section].htmlFiles[route];
-            $.extend(routeData, app[section].routes[route]);
+        if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
+            routeData.html = app[section].htmlFiles[routeData.normalizedRoute];
+            $.extend(routeData, app[section].routes[routeData.normalizedRoute]);
 
         // unknown route
         } else {
+            debugger;
             window.location.href = "/login";
             return;
         }
@@ -1196,6 +1180,8 @@ app.routerBase = {
     },
 
 }
+
+
 
 
 // Store content
@@ -1385,6 +1371,41 @@ console.log(data)
     },
 
 }
+if (typeof app === "undefined") {
+    var app = {};
+}
+
+// Parses urls that have variables
+app.urlUtil = {
+
+    // url regexes
+    regexUrlAccount: /\/account\/\d*/,
+    regexUrlLocation: /\/location\/[\w\d%-]*-\d*/,
+    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
+    regexUrlStore: /\/store\/\d*/,
+
+
+    // replace url variables with url placeholders
+    normalizeRoute: function (route) {
+
+        if (this.regexUrlStoreAdmin.exec(route)) {
+            var temp = route.split("/");
+            route = "/store-admin/:id/" + temp[temp.length - 1];
+        } else if (this.regexUrlStore.exec(route)) {
+            route = "/store/:id";
+        } else if (this.regexUrlLocation.exec(route)) {
+            route = "/location/:suburb";
+        } else if (this.regexUrlAccount.exec(route)) {
+            route = "/account/:id";
+        }
+
+        return route;
+    },
+
+}
+
+
+
 
 app.util = {
 
@@ -1589,7 +1610,7 @@ app.util = {
             cache: options.cache || false,
             beforeSend: function(request) {
                 if (options.auth) {
-                    request.setRequestHeader("Authorization", "Bearer " + app.util.getJwtFromStorage());
+                    request.setRequestHeader("authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
             success: function (result) {
@@ -1835,6 +1856,8 @@ app.vr.storeApplication = {
     email: app.vr._email,
     message: { length: { maximum: 256 }}
 }
+
+
 
 
 // alias

@@ -15,7 +15,7 @@ describe("API - AUTH", function () {
 
 
     before(function (done) {
-        this.timeout(5000);
+        this.timeout(10000);
 
         testutil.startDatabase(function () {
             done();

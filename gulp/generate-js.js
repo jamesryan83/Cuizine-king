@@ -2,10 +2,11 @@
 
 var fs = require("fs");
 var path = require("path");
-var uglify = require("uglify-js");
+var uglify = require("uglify-js"); // TODO : setup uglify
 var recursiveReadSync = require("recursive-readdir-sync");
 
 var wwwFolder = path.join(__dirname, "../", "www");
+
 
 exports = module.exports = {
 

@@ -3,10 +3,13 @@
 var fs = require("fs");
 var ejs = require("ejs");
 var path = require("path");
-var minify = require('html-minifier').minify;
+var minify = require('html-minifier').minify; // TODO : setup minify
 var recursiveReadSync = require("recursive-readdir-sync");
 
 var config = require("../server/config");
+var cmsRouter = require("../www/js/cms");
+var siteRouter = require("../www/js/site");
+var sysadminRouter = require("../www/js/sysadmin");
 
 var wwwFolder = path.join(__dirname, "../", "www");
 var htmlFolder = path.join(__dirname, "../", "www", "html");
@@ -25,10 +28,6 @@ exports = module.exports = {
         this.htmlFilePaths = recursiveReadSync(htmlFolder);
 
         // create json files with html pages
-        var cmsRouter = require("../www/js/cms");
-        var siteRouter = require("../www/js/site");
-        var sysadminRouter = require("../www/js/sysadmin");
-
         var htmlOutputCms = this.compileHtmlList(
             cmsRouter.routesList, cmsRouter.routes);
 
@@ -41,13 +40,6 @@ exports = module.exports = {
         fs.writeFileSync(path.join(outputsPath, "_cms.json"), JSON.stringify(htmlOutputCms));
         fs.writeFileSync(path.join(outputsPath, "_site.json"), JSON.stringify(htmlOutputSite));
         fs.writeFileSync(path.join(outputsPath, "_sysadmin.json"), JSON.stringify(htmlOutputSysadmin));
-
-
-        // index files
-        this.compileIndexFile("cms.html", "_index-cms.html");
-        this.compileIndexFile("site.html", "_index-site.html");
-        this.compileIndexFile("sysadmin.html", "_index-sysadmin.html");
-        this.compileIndexFile("cordova.html", "_index-cordova.html");
     },
 
 
@@ -101,13 +93,6 @@ exports = module.exports = {
         }
 
         return htmlOutput;
-    },
-
-
-    // Compiles an index file
-    compileIndexFile: function (inputFileName, outputFileName) {
-        fs.writeFileSync(path.join(wwwFolder, outputFileName),
-            this.compileHtml(path.join(htmlFolder, inputFileName)));
     },
 
 }

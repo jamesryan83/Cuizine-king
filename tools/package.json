@@ -1,0 +1,19 @@
+{
+  "name": "MenuthingTools",
+  "main": "index.html",
+  "window": {
+    "title": "MenuthingTools",
+    "toolbar": true,
+    "frame": true,
+    "width": 900,
+    "height": 500,
+    "min_width": 640,
+    "min_height": 480,
+    "position": "mouse",
+    "chromium-args": "--allow-file-access-from-files --allow-file-access"
+  },
+  "devDependencies": {
+
+  },
+  "dependencies": {}
+}
