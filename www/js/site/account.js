@@ -7,14 +7,7 @@ app.site.account = {
     init: function (routeData) {
         var self = this;
 
-        app.util.checkToken(function (err) {
-            if (err) {
-                window.location.href = "/login";
-            }
-
-            self.afterInit();
-        });
-
+        // get account data
     },
 
 

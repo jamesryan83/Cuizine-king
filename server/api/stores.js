@@ -29,10 +29,10 @@ exports = module.exports = {
 
     // Get a store
     getStore: function (req, res) {
-        var b = req.body;
+        var b = req.query || req.body;
         var self = this;
 
-        if (this.router.validateInputs(req, res, req.body, global.validationRules.getStore))
+        if (this.router.validateInputs(req, res, b, global.validationRules.getStore))
             return;
 
         storeDB.stores_get({ id_store: b.id_store }, function (err, result) {

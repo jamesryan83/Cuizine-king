@@ -216,15 +216,12 @@ exports = module.exports = {
         outputSql = outputSql.replace("DROP TABLE IF EXISTS App.postcodes", "");
         outputSql = outputSql.replace("DROP TABLE IF EXISTS App.order_types", "");
         outputSql = outputSql.replace("DROP TABLE IF EXISTS App.payment_methods", "");
-//        outputSql = outputSql.replace("DROP TABLE IF EXISTS App.person_types", "");
         outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_postcode RESTART WITH 1", "");
         outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_order_type RESTART WITH 1", "");
         outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_payment_method RESTART WITH 1", "");
-//        outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_person_type RESTART WITH 1", "");
         outputSql = outputSql.replace(/CREATE TABLE App\.postcodes[^]*?CREATE/, "CREATE");
         outputSql = outputSql.replace(/CREATE TABLE App\.order_types[^]*?CREATE/, "CREATE");
         outputSql = outputSql.replace(/CREATE TABLE App\.payment_methods[^]*?CREATE/, "CREATE");
-        outputSql = outputSql.replace(/CREATE TABLE App\.person_types[^]*?CREATE/, "CREATE");
 
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-keep-constants.sql"), outputSql);
 

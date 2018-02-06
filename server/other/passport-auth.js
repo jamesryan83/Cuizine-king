@@ -74,6 +74,8 @@ exports = module.exports = {
                 } else {
                     if (errInfo.message == "jwt malformed") {
                         console.log("Error: Malformed jwt");
+                    } else if (errInfo.message == "invalid token") {
+                        console.log("Error: Invalid token");
                     } else {
                         console.log("Unknown jwt errInfo occured", errInfo);
                     }

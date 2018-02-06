@@ -143,14 +143,7 @@ app.site.account = {
     init: function (routeData) {
         var self = this;
 
-        app.util.checkToken(function (err) {
-            if (err) {
-                window.location.href = "/login";
-            }
-
-            self.afterInit();
-        });
-
+        // get account data
     },
 
 
@@ -1198,22 +1191,22 @@ app.storeContent = {
 
 
         // store id from url
-        var storeId = routeData.route.split("/");
-        storeId = storeId[storeId.length - 1];
+//        var storeId = routeData.route.split("/");
+//        storeId = storeId[storeId.length - 1];
+        var storeId = app.util.getStoreIdFromStorage();
 
-
-//        // Get store data
-//        app.util.ajaxRequest({
-//            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
-//        }, function (err, result) {
-//            if (err) return;
-//
+        // Get store data
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
+        }, function (err, result) {
+            if (err) return;
+console.log(result)
 //            if (Object.keys(result).length > 0) {
 //                self.addDataToPage(result.data[0]);
 //            } else {
 //                app.util.showToast("Error loading store data");
 //            }
-//        });
+        });
 
 
         // Other events
@@ -1515,7 +1508,7 @@ app.util = {
 
     // Returns person id from storage
     getPersonIdFromStorage: function () {
-        return localStorage.getItem("pid");
+        return Number(localStorage.getItem("pid"));
     },
 
 
@@ -1527,7 +1520,7 @@ app.util = {
 
     // Returns store id from storage
     getStoreIdFromStorage: function () {
-        return localStorage.getItem("sid");
+        return Number(localStorage.getItem("sid"));
     },
 
 
@@ -1651,7 +1644,6 @@ app.util = {
                 }
             },
             success: function (result) {
-                console.log(result)
                 return callback(null, result);
             },
             error: function (err) {

@@ -5,7 +5,6 @@ Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-postcodes.sql
 Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-addresses.sql
 Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-payment-methods.sql
 Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-order-types.sql
-Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-person-types.sql
 Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-stores.sql
 Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-people.sql
 Sqlcmd -S localhost -d menuthing -i ../generated/seed/_seed-reviews.sql

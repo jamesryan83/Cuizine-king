@@ -87,7 +87,7 @@ exports = module.exports = {
                 }
 
                 try {
-                    data = JSON.parse(data);
+                    data = JSON.parse(data)[0];
                 } catch (e) {
                     console.log("Error parsing json result");
                     return ({ status: 500, message: "Server error" });

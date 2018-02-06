@@ -47,11 +47,6 @@ var config = {
             "cash": 2,
             "paypal": 3
         },
-        "personTypes": {
-            "webuser": 1,
-            "storeuser": 2,
-            "systemuser": 3
-        },
         "adminUsers": {
             "website": 1,
             "store": 2,

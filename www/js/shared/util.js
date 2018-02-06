@@ -110,7 +110,7 @@ app.util = {
 
     // Returns person id from storage
     getPersonIdFromStorage: function () {
-        return localStorage.getItem("pid");
+        return Number(localStorage.getItem("pid"));
     },
 
 
@@ -122,7 +122,7 @@ app.util = {
 
     // Returns store id from storage
     getStoreIdFromStorage: function () {
-        return localStorage.getItem("sid");
+        return Number(localStorage.getItem("sid"));
     },
 
 
@@ -246,7 +246,6 @@ app.util = {
                 }
             },
             success: function (result) {
-                console.log(result)
                 return callback(null, result);
             },
             error: function (err) {

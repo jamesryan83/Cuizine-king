@@ -105,7 +105,6 @@ DROP TABLE IF EXISTS App.addresses
 DROP TABLE IF EXISTS App.order_types
 DROP TABLE IF EXISTS App.payment_methods
 DROP TABLE IF EXISTS App.people
-DROP TABLE IF EXISTS App.person_types
 DROP TABLE IF EXISTS App.postcodes
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_extras')
 BEGIN
@@ -236,16 +235,6 @@ CREATE TABLE App.people
     created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
 	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
     CONSTRAINT PK_app_people PRIMARY KEY CLUSTERED (id_person)
-)
-
-
-CREATE TABLE App.person_types
-(
-    id_person_type TINYINT PRIMARY KEY NOT NULL,
-    name NVARCHAR(16) NOT NULL,
-    updated_by INT NOT NULL DEFAULT 1,
-    created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
-	updated DateTime2 NOT NULL DEFAULT GETUTCDATE()
 )
 
 

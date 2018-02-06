@@ -16,22 +16,22 @@ app.storeContent = {
 
 
         // store id from url
-        var storeId = routeData.route.split("/");
-        storeId = storeId[storeId.length - 1];
+//        var storeId = routeData.route.split("/");
+//        storeId = storeId[storeId.length - 1];
+        var storeId = app.util.getStoreIdFromStorage();
 
-
-//        // Get store data
-//        app.util.ajaxRequest({
-//            method: "GET", url: "/api/v1/store", data: { id_store: storeId }
-//        }, function (err, result) {
-//            if (err) return;
-//
+        // Get store data
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
+        }, function (err, result) {
+            if (err) return;
+console.log(result)
 //            if (Object.keys(result).length > 0) {
 //                self.addDataToPage(result.data[0]);
 //            } else {
 //                app.util.showToast("Error loading store data");
 //            }
-//        });
+        });
 
 
         // Other events
