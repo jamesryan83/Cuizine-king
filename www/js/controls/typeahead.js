@@ -1,10 +1,12 @@
 
 // Creates a typeahead control
-app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
+app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl) {
+    var self = this;
     var typeaheadList = $(listEl);
 
     var typeaheadTimeout = null;
 
+    this.baseUrl = baseUrl || "/api/v1/location?q=";
 
     // when a dropdown item is selected
     function selectItem (el) {
@@ -84,7 +86,7 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
             }
 
             // get locations from server
-            var url = "/api/v1/location?q=" + value;
+            var url = self.baseUrl + value;
             app.util.ajaxRequest({
                 method: "GET", url: url
             }, function (err, result) {

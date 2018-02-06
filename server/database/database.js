@@ -55,6 +55,7 @@ exports = module.exports = {
 
     // TODO : parameterized inputs
     // Execute an sql query
+    // Updates return undefined
     executeQuery: function (query, callback) {
         if (!query) return callback("query missing");
 

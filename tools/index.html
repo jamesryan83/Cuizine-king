@@ -1,44 +1,159 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <link rel="stylesheet" href="index.css" />
+        <link rel="stylesheet" href="file:///C:/Code/projects/Menuthing/website/www/generated/_tools.css" />
 	</head>
 
 	<body>
+        <script>
+            var app = { controls: {} };
+        </script>
 
-        <div id="content-container">
-            <h2>Generated Files</h2>
-            <div>
-                <button id="delete-generated-files">Delete generated files</button>
-                <button id="recreate-generated-files">Recreate generated files</button>
+
+        <div id="page-container">
+
+            <div id="page-content" class="clearfix">
+
+                <!-- sidebar -->
+                <div id="sidebar"></div>
+
+
+                <div id="content-container">
+
+                    <!-- Generated files -->
+                    <h3 id="heading-generated-files">Generated Files</h3>
+                    <hr class="hr-1" />
+                    <p>These are the files in the server/procedures, sql/generated and www/generated folders</p>
+                    <div>
+                        <button id="delete-generated-files" class="button-3">Delete all generated files</button>
+                        <button id="recreate-generated-files" class="button-3">Recreate all generated files</button>
+                    </div>
+
+                    <!-- Batch files -->
+                    <h3 id="heading-batch-files">Database Batch Files</h3>
+                    <hr class="hr-1" />
+                    <div id="database-batch-files">
+
+                    </div>
+
+                    <!-- Create store -->
+                    <h3 id="heading-create-store">Create a store</h3>
+                    <hr class="hr-1" />
+                    <form id="form-create-store">
+                        <div>
+                            <label class="input-label">Store Name</label>
+                            <input name="name" class="input-1" value="test store" />
+                        </div>
+                        <div>
+                            <label class="input-label">ABN</label>
+                            <input name="abn" class="input-1" value="123123123123" />
+                        </div>
+                        <div>
+                            <label class="input-label">Store Internal Notes</label>
+                            <input name="internal_notes_store" class="input-1" value="this is a test store" />
+                        </div>
+                        <div>
+                            <label class="input-label">User First Name</label>
+                            <input name="first_name" class="input-1" value="james" />
+                        </div>
+                        <div>
+                            <label class="input-label">User Last Name</label>
+                            <input name="last_name" class="input-1" value="ryan" />
+                        </div>
+                        <div>
+                            <label class="input-label">Phone Number</label>
+                            <input name="phone_number_user" class="input-1" value="32144321" />
+                        </div>
+                        <div>
+                            <label class="input-label">Email</label>
+                            <input name="email_user" class="input-1" value="james4165@hotmail.com" />
+                        </div>
+                        <div>
+                            <label class="input-label">Password</label>
+                            <input name="password" class="input-1" value="password" />
+                        </div>
+
+                        <div>
+                            <label class="input-label">Address line 1</label>
+                            <input name="address_line_1" class="input-1" value="18 Bilyana St Balmoral" />
+                        </div>
+                        <div>
+                            <label class="input-label">Address line 2</label>
+                            <input name="address_line_2" class="input-1" />
+                        </div>
+                        <div id="home-suburb-search" class="typeahead">
+                            <label class="input-label">Suburb</label>
+                            <input id="suburb-search" name="postcode" class="input-1" placeholder="enter a suburb..." value="4014 - Banyo" />
+                            <ul id="suburb-search-list" class="typeahead-list opens-upwards" style="display: none;"></ul>
+                        </div>
+
+                        <button type="submit" class="button-3">Create Store</button>
+                    </form>
+
+                    <!-- Delete store -->
+                    <h3 id="heading-delete-store">Delete a store</h3>
+                    <hr class="hr-1" />
+                    <form id="form-delete-store" method="POST" url="/api/sysadmin/delete-store">
+                        <label class="input-label">Store ID</label>
+                        <input name="id_store" class="input-1" />
+                        <button type="submit" class="button-3">Delete Store</button>
+                    </form>
+
+                    <!-- Create jwt -->
+                    <h3 id="heading-create-jwt">Create a jwt</h3>
+                    <hr class="hr-1" />
+                    <div id="create-jwt-container">
+                        <label class="input-label">id_person:</label>
+                        <input id="create-jwt-id-person" class="input-1" value="1" />
+                        <label class="input-label">short exp:</label>
+                        <input id="create-jwt-short-exp" class="input-1" value="300000" />
+                        <label class="input-label">long exp:</label>
+                        <input id="create-jwt-long-exp" class="input-1" value="7d" />
+                        <button id="create-jwt" class="button-3">Create jwt</button>
+                    </div>
+
+                    <!-- Encrypt a password -->
+                    <h3 id="heading-encrypt-password">Encrypt a password</h3>
+                    <hr class="hr-1" />
+                    <div id="encrypt-password-container">
+                        <label class="input-label">Password:</label>
+                        <input id="encrypt-password-input" class="input-1" value="password" />
+                        <button id="encrypt-password" class="button-3">Encrypt Password</button>
+                    </div>
+
+
+                    <!-- Other tokens -->
+                    <h3 id="heading-encrypt-password">Other tokens</h3>
+                    <hr class="hr-1" />
+                    <div id="other-tokens-container">
+                        <p>This token is used for email verification and resetting a password</p>
+                        <button id="create-other-token" class="button-3">Create Token</button>
+                    </div>
+                </div>
             </div>
 
-            <h2>Database Batch Files</h2>
-            <div id="database-batch-files">
-
+            <div id="messages-container">
+                <div>
+                    <button id="clear-messages" class="button-3">Clear messages</button>
+                    <button id="hide-show-messages" class="button-3">Hide/Show Messages</button>
+                </div>
+                <textarea id="messages" class="textarea-1"></textarea>
             </div>
-
-            <h2>Create a jwt</h2>
-            <div id="create-jwt-container">
-                <button id="create-jwt">Create jwt</button>
-                <label>Email:</label>
-                <input id="create-jwt-email" value="james4165@hotmail.com" />
-            </div>
-
-            <div>
-                <button id="clear-messages">Clear messages</button>
-            </div>
-        </div>
-
-        <div id="messages-container">
-            <textarea id="messages"></textarea>
         </div>
 
         <div id="loading-screen" style="display: none;">
             <label>Please wait...</label>
         </div>
 
+        <div id="toasts">
+
+        </div>
+
         <script src="file:///C:/Code/projects/Menuthing/website/www/lib/jquery-3.0.js"></script>
+        <script src="file:///C:/Code/projects/Menuthing/website/www/lib/validate.min.js"></script>
+        <script src="file:///C:/Code/projects/Menuthing/website/www/js/shared/util.js"></script>
+        <script src="file:///C:/Code/projects/Menuthing/website/www/js/shared/validation-rules.js"></script>
+        <script src="file:///C:/Code/projects/Menuthing/website/www/js/controls/typeahead.js"></script>
         <script src="index.js"></script>
 	</body>
 

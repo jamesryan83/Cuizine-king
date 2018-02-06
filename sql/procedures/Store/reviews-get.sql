@@ -1,5 +1,5 @@
 -- Get reviews for a store
-CREATE PROCEDURE reviews_get
+CREATE OR ALTER PROCEDURE reviews_get
     @id_store INT AS
 
 	SET NOCOUNT ON

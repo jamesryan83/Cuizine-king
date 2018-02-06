@@ -5,12 +5,6 @@ app.controls = app.controls || {};
 app.dialogs = app.dialogs || {};
 
 
-if (typeof window != "undefined") {
-    $(document).ready(function () {
-        app.cms.init();
-    });
-}
-
 
 // CMS pages
 app.cms = {
@@ -18,11 +12,13 @@ app.cms = {
     htmlFiles: {}, // cached html
 
 
-    init: function () {
+    init: function (html) {
         var self = this;
 
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
+
+        this.htmlFiles = html;
 
         // setup router
         app.routerBase.init();
@@ -33,17 +29,7 @@ app.cms = {
         app.dialogs.businessHours.init();
         app.dialogs.reviews.init();
 
-
-        // Load the html json file
-        $.getJSON("/generated/_cms.json", function (data) {
-            self.htmlFiles = data;
-
-            app.routerBase.loadPageForRoute(null, "cms");
-        }).fail(function (err) {
-            // TODO : error msg
-        });
-
-
+        app.routerBase.loadPageForRoute(null, "cms");
     },
 
 

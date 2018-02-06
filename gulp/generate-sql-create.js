@@ -22,11 +22,9 @@ exports = module.exports = {
         var sqlTableFilePaths = recursiveReadSync(path.join(sqlFolderPath, "tables"));
         var sequencesFile = fs.readFileSync(path.join(sqlFolderPath, "other", "sequences.sql"), "utf-8");
         var schemasFile = fs.readFileSync(path.join(sqlFolderPath, "other", "schemas.sql"), "utf-8");
+        var constantsFile = JSON.parse(fs.readFileSync(path.join(sqlFolderPath, "other", "constants.js"), "utf-8"));
         var procedureFilePaths = recursiveReadSync(path.join(sqlFolderPath, "procedures"));
-
-
-
-
+        var functionsFile = fs.readFileSync(path.join(sqlFolderPath, "other", "functions.sql"), "utf-8");
 
         // ---------------------- _recreate-db.sql ----------------------
 
@@ -83,7 +81,6 @@ exports = module.exports = {
         // parts that make up the _recreate.sql output
         var dropConstraints = [];
         var dropTables = [];
-        var dropProcedures = [];
         var resetSequences = [];
         var tables = [];
         var tableConstraints = [];
@@ -174,12 +171,6 @@ exports = module.exports = {
         for (var i = 0; i < procedureFilePaths.length; i++) {
             var sp = fs.readFileSync(procedureFilePaths[i], "utf-8");
             storedProcedures.push(sp.trim());
-
-            // create drop procedure statements
-            var match = regexExtractProcedure.exec(sp);
-            if (match) {
-                dropProcedures.push("DROP PROCEDURE IF EXISTS " + match[4]);
-            }
         }
 
 
@@ -191,18 +182,27 @@ exports = module.exports = {
         outputSql += "\n\n\n -- Drop Tables\n\n";
         outputSql += dropTables.join("\n");
         outputSql += "\nGO";
-        outputSql += "\n\n\n -- Drop Procedures\n\n";
-        outputSql += dropProcedures.join("\n");
-        outputSql += "\nGO";
         outputSql += "\n\n\n -- Reset Sequences\n\n";
         outputSql += resetSequences.join("\n");
+        outputSql += "\nGO";
         outputSql += "\n\n\n -- Create Tables\n\n";
         outputSql += tables.join("\n\n\n");
         outputSql += "\n\n\n -- Create Constraints\n\n";
         outputSql += tableConstraints.join("\n");
         outputSql += "\nGO";
+        outputSql += "\n\n\n -- Create Functions\n\n";
+        outputSql += functionsFile;
         outputSql += "\n\n\n -- Create Stored Procedures\n\n";
         outputSql += storedProcedures.join("\n\n\n");
+
+
+        // replace placeholders with constants
+        for (var i = 0; i < Object.keys(constantsFile).length; i++) {
+            var placeholder = Object.keys(constantsFile)[i];
+            var value = constantsFile[placeholder];
+            var re = new RegExp(placeholder, "gi");
+            outputSql = outputSql.replace(re, value);
+        }
 
 
         // save
@@ -216,11 +216,11 @@ exports = module.exports = {
         outputSql = outputSql.replace("DROP TABLE IF EXISTS App.postcodes", "");
         outputSql = outputSql.replace("DROP TABLE IF EXISTS App.order_types", "");
         outputSql = outputSql.replace("DROP TABLE IF EXISTS App.payment_methods", "");
-        outputSql = outputSql.replace("DROP TABLE IF EXISTS App.person_types", "");
+//        outputSql = outputSql.replace("DROP TABLE IF EXISTS App.person_types", "");
         outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_postcode RESTART WITH 1", "");
         outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_order_type RESTART WITH 1", "");
         outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_payment_method RESTART WITH 1", "");
-        outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_person_type RESTART WITH 1", "");
+//        outputSql = outputSql.replace("ALTER SEQUENCE Sequences.id_person_type RESTART WITH 1", "");
         outputSql = outputSql.replace(/CREATE TABLE App\.postcodes[^]*?CREATE/, "CREATE");
         outputSql = outputSql.replace(/CREATE TABLE App\.order_types[^]*?CREATE/, "CREATE");
         outputSql = outputSql.replace(/CREATE TABLE App\.payment_methods[^]*?CREATE/, "CREATE");
@@ -235,11 +235,16 @@ exports = module.exports = {
         // ---------------------- _recreate-procedures.sql ----------------------
 
         outputSql = "-- GENERATED FILE\n\n";
-        outputSql += "\n\n\n -- Drop Stored Procedures\n\n";
-        outputSql += dropProcedures.join("\n");
-        outputSql += "\nGO";
         outputSql += "\n\n\n -- Create Stored Procedures\n\n";
         outputSql += storedProcedures.join("\n\n\n");
+
+        // replace placeholders with constants
+        for (var i = 0; i < Object.keys(constantsFile).length; i++) {
+            var placeholder = Object.keys(constantsFile)[i];
+            var value = constantsFile[placeholder];
+            var re = new RegExp(placeholder, "gi");
+            outputSql = outputSql.replace(re, value);
+        }
 
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-procedures.sql"), outputSql);
 

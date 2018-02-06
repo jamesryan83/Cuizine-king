@@ -35,9 +35,24 @@ exports = module.exports = {
     },
 
 
-    // Checks jwt and gets person from database
+
     authenticate: function (req, res, next) {
+        this._authenticate("web", req, res, next);
+    },
+
+    authenticateStore: function (req, res, next) {
+        this._authenticate("store", req, res, next);
+    },
+
+    authenticateSystem: function (req, res, next) {
+        this._authenticate("system", req, res, next);
+    },
+
+
+    // Checks jwt and gets person from database
+    _authenticate: function (section, req, res, next) {
         var self = this;
+
 
         // Returns an error response if there's an error during authentication
         function sendErrorResponse(err) {
@@ -57,10 +72,15 @@ exports = module.exports = {
                 if (errInfo.name == "TokenExpiredError") {
                     return sendErrorResponse({ message: "Token has expired", status: 401 });
                 } else {
-                    console.log("Unknown jwt errInfo occured", errInfo);
+                    if (errInfo.message == "jwt malformed") {
+                        console.log("Error: Malformed jwt");
+                    } else {
+                        console.log("Unknown jwt errInfo occured", errInfo);
+                    }
                     jwTokenObject = null;
                 }
             }
+
 
             // invalid or missing jwt
             if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
@@ -74,7 +94,7 @@ exports = module.exports = {
             console.log("short expiry shortExp: " + (jwTokenObject.shortExp - d))
             console.log("long expiry exp: " + (jwTokenObject.exp - d))
 
-            // TODO : jwt should fail if signature algorithm is set to none
+            // TODO : jwt should also fail if signature algorithm is set to none
 
             // TODO: refresh token on short expiry
 //            console.log(jwTokenObject.iat) // created
@@ -83,21 +103,19 @@ exports = module.exports = {
 
             var jwt = self.getJwtFromHeader(req, res);
 
-            // get person from database by their jwt and email
-            appDB.people_get_by_jwt({
-                jwt: jwt,
-                email: jwTokenObject.sub
-            }, function (err, person) {
+            // get person from database by their jwt
+            appDB.people_get_by_jwt({ jwt: jwt, id_person: jwTokenObject.sub }, function (err, person) {
                 res.locals.person = null;
-
                 if (err) return sendErrorResponse(err);
 
-                // TODO: check id_person_type agains requested resource
-
-                // save person to the response for other functions
-                res.locals.person = person;
-
-                return next();
+                if (!person.is_system_user && !person.is_store_user && section === "store") {
+                    return sendErrorResponse({ message: "Not Authorized", status: 401 });
+                } else if (!person.is_system_user && section === "system") {
+                    return sendErrorResponse({ message: "Not Authorized", status: 401 });
+                } else {
+                    res.locals.person = person;
+                    return next();
+                }
             });
         })(req, res, next);
     },
@@ -109,18 +127,29 @@ exports = module.exports = {
 
 
     // Check the users password
-    checkUsersPassword: function (res, email, password, id_person_type, callback) {
+    // accessProperty = is_web_user, is_store_user or is_system_user
+    checkUsersPassword: function (accessProperty, res, email, password, callback) {
         var self = this;
 
+        var alsoGetStoreId = accessProperty === "is_store_user";
+
         // get the current user
-        appDB.people_get_by_email({ email: email, id_person_type: id_person_type }, function (err, user) {
+        appDB.people_get_by_email({ email: email, alsoGetStoreId: alsoGetStoreId }, function (err, person) {
             if (err) return callback(err);
 
+            // check access
+            if (accessProperty) {
+                var hasAccess = person[accessProperty];
+                if (!hasAccess) {
+                    return callback({ message: "Not Authorized", status: 401 });
+                }
+            }
+
             // check password
-            self.comparePassword(password, user.password, function (err) {
+            self.comparePassword(password, person.password, function (err) {
                 if (err) return callback(err);
 
-                res.locals.user = user;
+                res.locals.person = person;
                 return callback(null);
             });
         });

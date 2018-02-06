@@ -11,7 +11,6 @@ var validate = require("validate.js");
 var router = require("express").Router();
 
 var authApi = require("../api/auth");
-var peopleApi = require("../api/people");
 var storesApi = require("../api/stores");
 var locationApi = require("../api/location");
 var sysadminApi = require("../api/sysadmin");
@@ -44,11 +43,12 @@ exports = module.exports = {
         // auth middleware
         passportAuth.init(this);
         var authenticate = passportAuth.authenticate.bind(passportAuth);
+        var authenticateStore = passportAuth.authenticateStore.bind(passportAuth);
+        var authenticateSystem = passportAuth.authenticateSystem.bind(passportAuth);
 
 
         authApi.init(this);
         locationApi.init(this);
-        peopleApi.init(this);
         storesApi.init(this);
         sysadminApi.init(this);
 
@@ -72,28 +72,28 @@ exports = module.exports = {
 
 
         // api
-        router.get( "/api/v1/people", peopleApi.get.bind(peopleApi));
-        router.get( "/api/v1/store", storesApi.get.bind(storesApi));
-        router.get( "/api/v1/location", locationApi.get.bind(locationApi));
-        router.post("/api/v1/store-application", storesApi.requestStoreApplication.bind(storesApi));
+        router.get( "/api/v1/store", storesApi.getStore.bind(storesApi));
+        router.get( "/api/v1/location", locationApi.getLocation.bind(locationApi));
+        router.post("/api/v1/store-application", storesApi.createStoreApplication.bind(storesApi));
 
         // auth api
         router.post("/api/v1/login", authApi.websiteLogin.bind(authApi));
         router.post("/api/v1/store-login", authApi.storeLogin.bind(authApi));
-        router.post("/api/v1/register", authApi.createUser.bind(authApi));
-        router.get( "/api/v1/logout", authenticate, authApi.logout.bind(authApi));
-        router.post("/api/v1/check-token", authenticate, authApi.checkJwt.bind(authApi)); // returns a new jwt from a user email
-        router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi));
+        router.post("/api/v1/create-user", authApi.websiteCreateUser.bind(authApi));
+        router.post("/api/v1/reset-password", authApi.resetPassword.bind(authApi)); // TODO : authenticate ?
         router.post("/api/v1/forgot-password", authApi.forgotPassword.bind(authApi));
         router.post("/api/v1/verify-account", authApi.verifyAccount.bind(authApi));
+        router.get( "/api/v1/logout", authenticate, authApi.logout.bind(authApi));
+        router.post("/api/v1/check-token", authenticate, authApi.checkJwt.bind(authApi)); // returns a new jwt from a user email
+        router.post("/api/v1/create-store-user", authenticateStore, authApi.storeCreateUser.bind(authApi));
 
         // sysadmin
         router.get( "/admin-login", this.sysadminLoginPage.bind(this));
-        router.post("/admin-login", authApi.systemLogin.bind(authApi));
-        router.post("/api/sysadmin/create-store", storesApi.create.bind(storesApi));
-        router.get( "/api/sysadmin/recreate-database", sysadminApi.recreateDatabase.bind(sysadminApi));
+        router.post("/api/v1/admin-login", authApi.systemLogin.bind(authApi));
+        router.post("/api/sysadmin/create-store", authenticateSystem, storesApi.createStore.bind(storesApi));
+        router.post("/api/sysadmin/create-system-user", authenticateSystem, authApi.systemCreateUser.bind(authApi));
 
-        router.post("/api/v1/upload-logo", upload.single("logo"), storesApi.uploadLogo.bind(storesApi));
+        router.post("/api/v1/store-update-logo", authenticateStore, upload.single("logo"), storesApi.updateLogo.bind(storesApi));
 
         // catch all
         router.use(this.catchAll.bind(this));
@@ -142,6 +142,7 @@ exports = module.exports = {
 
 
     // Handles the initial request for a page
+    // Returns small html page that makes an request with a jwt
     handlePrimaryPageRequest: function (req, res) {
         if (global.devMode) { // no cache
             this.reloadFilesSync();
@@ -153,6 +154,7 @@ exports = module.exports = {
 
 
     // Handles the second part of a reqest for a page
+    // The response is the content for the page
     handleSecondaryPageRequest: function (req, res) {
         var self = this;
         var jwt = req.headers["authorization"];
@@ -172,7 +174,7 @@ exports = module.exports = {
 
         // cms
         } else if (routerCms.routes[normalizedRoute]) {
-            passportAuth.authenticate(req, res, function () {
+            passportAuth.authenticateStore(req, res, function () {
                 return res.send({
                     section: "cms",
                     html: self.files.cmsHtml,
@@ -184,7 +186,7 @@ exports = module.exports = {
 
         // system admin
         } else if (routerSysadmin.routes[normalizedRoute]) {
-            passportAuth.authenticate(req, res, function () {
+            passportAuth.authenticateSystem(req, res, function () {
                 return res.send({
                     section: "sysadmin",
                     html: self.files.sysadminHtml,
@@ -300,28 +302,3 @@ exports = module.exports = {
 
 }
 
-
-
-
-
-
-
-
-// index html files
-//        this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
-//        this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
-//        this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
-
-
-
-
-//        if (global.devMode) { // no cache
-//            this.indexCms = fs.readFileSync(path.join(wwwFolder, "_index-cms.html"), "utf8");
-//            this.indexSite = fs.readFileSync(path.join(wwwFolder, "_index-site.html"), "utf8");
-//            this.indexSysadmin = fs.readFileSync(path.join(wwwFolder, "_index-sysadmin.html"), "utf8");
-//        }
-//
-//        var currentPage = null;
-//        if (section === "cms") currentPage = this.indexCms;
-//        if (section === "site") currentPage = this.indexSite;
-//        if (section === "sysadmin") currentPage = this.indexSysadmin;

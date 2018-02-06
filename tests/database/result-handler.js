@@ -158,10 +158,10 @@ describe("DATABASE RESULT HANDLER", function () {
     it("#handle handles output", function (done) {
         var result = { output: { id_test: "22" }};
 
-        resultHandler.handle("test_output", null, result, function (err, output) {
+        resultHandler.handle("test_output", null, result, function (err, outputs) {
             if (err) return done(new Error(err));
 
-            assert.equal(output, 22);
+            assert.equal(outputs.id_test, 22);
             done();
         });
     });
@@ -170,24 +170,13 @@ describe("DATABASE RESULT HANDLER", function () {
     it("#handle handles missing output", function (done) {
         var result = { output: null };
 
-        resultHandler.handle("test_output", null, result, function (err, output) {
+        resultHandler.handle("test_output", null, result, function (err, outputs) {
             assert.equal(err.status, 500);
-            assert.equal(err.message, "Output missing");
-            assert.ok(output == undefined);
+            assert.equal(err.message, "Database output missing");
+            assert.ok(outputs == undefined);
             done();
         });
     });
 
-
-    it("#handle handles null output", function (done) {
-        var result = { output: { id_test: null }};
-
-        resultHandler.handle("test_output", null, result, function (err, output) {
-            if (err) return done(new Error(err));
-
-            assert.ok(output == null);
-            done();
-        });
-    });
 
 });

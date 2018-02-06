@@ -30,6 +30,7 @@
     "html-minifier": "^3.5.8",
     "mocha": "^5.0.0",
     "recursive-readdir-sync": "^1.0.6",
+    "sinon": "^4.2.2",
     "supertest": "^3.0.0",
     "uglify-js": "^3.3.8"
   },

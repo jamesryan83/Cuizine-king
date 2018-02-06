@@ -156,26 +156,36 @@ app.vr.createStore = {
 
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
-    email_user: app.vr._email,
     phone_number_user: app.vr._phone_number,
+    email_user: app.vr._email,
     password: app.vr._people_password,
-    internal_notes_user: app.vr._notes_optional,
 
-    logo: app.vr._stores_logo,
     name: app.vr._stores_name,
-    description: app.vr._stores_description_optional,
-    email_store: app.vr._email,
-    phone_number_store: app.vr._phone_number,
-    website: app.vr._url_link_optional,
-    facebook: app.vr._url_link_optional,
-    twitter: app.vr._url_link_optional,
     abn: app.vr._stores_abn,
-    internal_notes_store: app.vr._notes_optional,
+    internal_notes_store: app.vr._notes_optional
+}
+
+
+app.vr.updateStore = {
+    first_name: app.vr._people_first_name,
+    last_name: app.vr._people_last_name,
+    email_user: app.vr._email,
+}
+
+
+app.vr.deleteStore = {
+	id_store: app.vr._sequence_id
+}
+
+
+app.vr.storeUpdateBankDetails = {
     bank_name: app.vr._stores_bank_name,
     bank_bsb: app.vr._stores_bank_bsb,
     bank_account_name: app.vr._stores_bank_account_name,
-    bank_account_number: app.vr._stores_bank_account_number,
+    bank_account_number: app.vr._stores_bank_account_number
+}
 
+app.vr.storeUpdateHours = {
     hours_mon_dinein_open: app.vr._stores_hours,
     hours_tue_dinein_open: app.vr._stores_hours,
     hours_wed_dinein_open: app.vr._stores_hours,
@@ -223,5 +233,5 @@ app.vr.storeApplication = {
 app.validationRules = app.vr;
 
 if (typeof module !== 'undefined' && this.module !== module) {
-    exports = module.exports = app.validationRules
+    exports = module.exports = app.validationRules;
 }

@@ -47,6 +47,8 @@ exports = module.exports = {
     sendThanksForVerifyingEmail: function (email, callback) {
         var body = "<p>Thanks for verifying your account</p>";
 
+        if (global.devMode) console.log("Thanks for verifying email sent");
+
         this.sendEmail(email, config.title + " - Thanks for verifying your account", body, callback);
     },
 
@@ -54,6 +56,8 @@ exports = module.exports = {
     // Sends a store application form
     sendStoreApplicationEmail: function (name, email, callback) {
         var body = "<p>Hi " + name + ".  Thanks for your enquiry.  Attached is a store application form for you to complete.</p>";
+
+        if (global.devMode) console.log("Store application email sent");
 
         this.sendEmail(email, config.title + " - Thanks for your enquiry", body, callback);
     },

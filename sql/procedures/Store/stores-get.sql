@@ -1,5 +1,5 @@
 -- Get a store
-CREATE PROCEDURE stores_get
+CREATE OR ALTER PROCEDURE stores_get
     @id_store INT AS
 
     SELECT id_store, name, description, phone_number, email, logo,

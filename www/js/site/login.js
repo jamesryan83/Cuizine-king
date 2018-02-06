@@ -71,7 +71,7 @@ app.site.login = {
                 return false;
 
             app.util.ajaxRequest({
-                method: "POST", url: "/api/v1/register", data: data
+                method: "POST", url: "/api/v1/create-user", data: data
             }, function (err, result) {
                 if (err) return;
 

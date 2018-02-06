@@ -11,7 +11,7 @@ var execSync = require("child_process").execSync;
 var config = require("../server/config");
 var database = require("../server/database/database");
 
-var sqlCwd = path.join(__dirname, "../", "sql");
+var sqlCwd = path.join(__dirname, "../", "sql", "batchfiles");
 
 
 
@@ -31,9 +31,9 @@ exports = module.exports = {
 
     validationRules: require("../www/js/shared/validation-rules.js"),
 
-    fakeUser: require("../fakedata/tests/fakeuser"),
+    fakeUsers: require("./fixtures/fakeusers"),
 
-    fakeStore: require("../fakedata/tests/fakestore"),
+    fakeStores: require("./fixtures/fakestores"),
 
 
     // empty database and connect
@@ -64,20 +64,32 @@ exports = module.exports = {
     getApiToken: function (callback, email, password, url) {
         superagent
             .post(this.supertestUrl + (url || "/api/v1/login"))
-            .send({ email: (email || this.fakeUser.email), password: (password || this.fakeUser.password) })
+            .send({ email: (email || this.fakeUsers.website.email), password: (password || this.fakeUsers.website.password) })
             .set("accept", "json")
             .end(function (err, res) {
+                if (err) throw new Error(err);
+
                 return callback(res.body.data.jwt);
             });
     },
 
 
+    // Get a users jwt
+    getJwt: function (id_person, done, callback) {
+        database.executeQuery("SELECT jwt from App.people WHERE id_person = " + id_person, function (err, result) {
+            if (err) return done(new Error(err));
+
+            callback(result.recordset[0].jwt);
+        });
+    },
+
+
     // create a jwt synchronously
-    createJwtSync: function (email, shortExp, longExp) {
-        if (!email) email = this.fakeUser.email;
+    createJwtSync: function (id_person, shortExp, longExp) {
+        if (!id_person) id_person = 1;
 
         return jwt.sign({
-            sub: email,
+            sub: id_person,
             shortExp: shortExp || config.jwtExpiryShort
         }, config.secret, {
             expiresIn: longExp || config.jwtExpiryLong
@@ -86,7 +98,7 @@ exports = module.exports = {
 
 
     // test if page has valid html and other stuff
-    testValidPage: function (route, done, status, jwt) {
+    testValidPage: function (route, done, status, jwt, isErrorPage) {
         var self = this;
         if (!status) status = 200;
 
@@ -99,6 +111,10 @@ exports = module.exports = {
             .expect(status)
             .end(function (err, res) {
                 if (err) return done(new Error(err));
+
+                if (!isErrorPage) {
+                    assert.ok(res.text.indexOf("id=\"page-error\"") === -1);
+                }
 
                 assert(res.text.match(self.regexValidHtml), "Invalid html");
                 done();
@@ -134,39 +150,5 @@ exports = module.exports = {
             return callback(null, output);
         });
     },
-
-
-    // Create some test users TODO: more test users
-    createTestUsers: function (callback) {
-        supertest(this.supertestUrl)
-            .post("/api/v1/register")
-            .set("Content-Type", "application/json")
-            .send({
-                first_name: this.fakeUser.first_name,
-                last_name: this.fakeUser.last_name,
-                email: this.fakeUser.email,
-                password: this.fakeUser.password,
-                confirmPassword: this.fakeUser.password })
-            .expect("Content-Type", "application/json; charset=utf-8")
-            .expect(200)
-            .end(function (err, res) {
-                if (err) throw Error("error creating user");
-
-//                // add admin users
-//                database.runSqlScriptSync(
-//                    path.join(__dirname, "../", "sql", "other", "seed-admin.sql"),
-//                    config.mssql.database);
-
-                return callback(res.body.data)
-            });
-    },
-
-
-    // Empty the test database and add system users
-    createSystemUsers: function () {
-        database.runBatchFileSync("empty-test-db.bat", sqlCwd);
-
-    },
-
 
 }

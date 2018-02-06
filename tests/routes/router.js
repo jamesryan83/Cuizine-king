@@ -12,6 +12,11 @@ var router = require("../../server/other/router");
 describe("ROUTER", function () {
 
 
+    it.skip("#beforeRequest does stuff", function () {
+
+    });
+
+
     it("#validateInputs works with valid inputs", function () {
 
         // test using the login validation object
@@ -51,7 +56,12 @@ describe("ROUTER", function () {
     });
 
 
-    it.skip("#renderPage", function () {
+    it.skip("#handlePrimaryPageRequest", function () {
+
+    });
+
+
+    it.skip("#handleSecondaryPageRequest", function () {
 
     });
 
@@ -88,6 +98,11 @@ describe("ROUTER", function () {
 
 
     it.skip("#renderErrorPage", function () {
+
+    });
+
+
+    it.skip("#reloadFilesSync", function () {
 
     });
 

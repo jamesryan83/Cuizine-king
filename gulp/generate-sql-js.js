@@ -11,7 +11,7 @@ var recursiveReadSync = require("recursive-readdir-sync");
 exports = module.exports = {
 
     start: function () {
-        var regexProcedure = /(\s*)CREATE PROCEDURE(\s*)(.*)/mi;
+        var regexProcedure = /(\s*)CREATE OR ALTER PROCEDURE(\s*)(.*)/mi;
         var regexProcedureInput = /(\s*)@(\w*)(\s*)(\w*)\(?(\w*)\)?/mi;
 
         var sqlPath = path.join(__dirname, "../", "sql");
@@ -57,7 +57,7 @@ exports = module.exports = {
                 functionName = functionName.join("_");
 
                 // get procedure inputs
-                var procedureInputs = sqlProcedure.substr(sqlProcedure.indexOf("CREATE PROCEDURE"), sqlProcedure.length);
+                var procedureInputs = sqlProcedure.substr(sqlProcedure.indexOf("CREATE OR ALTER PROCEDURE"), sqlProcedure.length);
                 procedureInputs = procedureInputs.replace(regexProcedure, "").trim();
                 procedureInputs = procedureInputs.split(os.EOL);
                 var procedureInputsOutput = "";

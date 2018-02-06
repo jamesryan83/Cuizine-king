@@ -7,7 +7,6 @@
         "drawing.svg",
 		"IISNode.yml",
         "nodemon.json",
-        "web.config",
-		"app"
+        "web.config"
     ]
 }

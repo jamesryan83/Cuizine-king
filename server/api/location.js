@@ -24,7 +24,7 @@ exports = module.exports = {
 
 
     // Get location
-    get: function (req, res) {
+    getLocation: function (req, res) {
         if (!req.query || !req.query.q) {
             return this.router.sendJson(res, null, "Search term missing", 400);
         }

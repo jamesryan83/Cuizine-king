@@ -1,0 +1,38 @@
+{
+    "website": {
+        "id_person": 4,
+        "is_web_user": 1,
+        "is_store_user": 0,
+        "is_system_user": 0,
+        "first_name": "Fake",
+        "last_name": "McUser",
+        "email": "fake@thing.com",
+        "password": "$2a$10$T8j185XR0qjNoRwjJUy3XOgsPDPm5FGLcSt2rxsjk3q6.H0HQmF.y",
+        "verification_token": "YOTJiLINIoqoRl2KcnJ0xjdUgGKjv7adBLvVIdLzFiP9bDOArBks1o64oTOjSdlT"
+    },
+
+    "store": {
+        "id_store": 2,
+        "id_person": 5,
+        "is_web_user": 1,
+        "is_store_user": 1,
+        "is_system_user": 0,
+        "first_name": "FakeStore",
+        "last_name": "McStoreUser",
+        "email": "fake2@thing.com",
+        "password": "$2a$10$q0Bo3YK.C92E8WdH9zGPLuOIxj.8K97yQlNZPTNMhLnjQQMkDGCDm",
+        "verification_token": "gdD0AoWI8cX8hj5tskh2VHfcbvz1vliPi20VZDwhAIpM1Fe6LKS6JEZimfcImcwy"
+    },
+
+    "system": {
+        "id_person": 6,
+        "is_web_user": 1,
+        "is_store_user": 1,
+        "is_system_user": 1,
+        "first_name": "na",
+        "last_name": "na",
+        "email": "fake3@thing.com",
+        "password": "$2a$10$jVMN1sXM32qjnm0NUU/fUO7PaPWn8wF8mq/zCddE03GSvsyVNNzWK",
+        "verification_token": "6E4h486o1MM0GPa3UmirJMCZl9EwcNFsq9vQhEloD3cTnX6BAcGg5cuC2PRzuG9M"
+    }
+}

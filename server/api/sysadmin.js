@@ -23,7 +23,7 @@ exports = module.exports = {
     sendPage: function (req, res) {
         var self = this;
 
-        if (res.locals.person && res.locals.person.id_person_type === config.dbConstants.personTypes.systemuser) {
+        if (res.locals.person) {
             var person = res.locals.person;
 
             fs.readFile(path.join(__dirname, "../", "../", "www", "generated", "_sysadmin.js"), "utf-8", function (err, js) {

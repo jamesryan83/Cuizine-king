@@ -51,6 +51,11 @@ var config = {
             "webuser": 1,
             "storeuser": 2,
             "systemuser": 3
+        },
+        "adminUsers": {
+            "website": 1,
+            "store": 2,
+            "system": 3
         }
     }
 }

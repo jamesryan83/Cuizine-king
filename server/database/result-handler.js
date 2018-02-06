@@ -11,7 +11,9 @@ exports = module.exports = {
 
         switch (procedure) {
             case "people_create_web_user":
-                return this.returnOutput("newPersonId", result, callback);
+            case "people_create_store_user":
+            case "people_create_system_user":
+                return this.returnOutput(["newPersonId"], result, callback);
                 break;
 
             case "people_get_by_id":
@@ -25,12 +27,20 @@ exports = module.exports = {
                 return callback(null, result.rowsAffected)
                 break;
 
+            case "store_applications_create":
+                return this.returnOutput(["newStoreApplicationId"], result, callback);
+                break;
+
+            case "stores_create":
+                return this.returnOutput(["newStoreId", "newPersonId"], result, callback);
+                break;
 
             case "stores_get":
                 this.returnResult(result, 400, "Store not found", callback, true);
                 break;
 
 
+            // These are for tests
             case "test_result":
                 this.returnResult(result, null, null, callback);
                 break;
@@ -41,7 +51,7 @@ exports = module.exports = {
                 return callback(null);
                 break;
             case "test_output":
-                return this.returnOutput("id_test", result, callback);
+                return this.returnOutput(["id_test"], result, callback);
                 break;
 
 
@@ -50,8 +60,8 @@ exports = module.exports = {
             case "people_update_is_verified":
             case "people_update_reset_password_token":
             case "reviews_get":
-            case "stores_create":
             case "stores_delete":
+            case "stores_undelete":
             default:
                 return callback(null);
         }
@@ -100,10 +110,17 @@ exports = module.exports = {
 
 
     // Returns an output parameter
-    returnOutput: function (outputName, result, callback) {
-        if (result.output) return callback(null, result.output[outputName]);
+    returnOutput: function (outputNames, result, callback) {
+        if (result.output) {
+            var outputs = {};
+            for (var i = 0; i < outputNames.length; i++) {
+                outputs[outputNames[i]] = result.output[outputNames[i]];
+            }
 
-        return callback({ status: 500, message: "Output missing" });
+            return callback(null, outputs);
+        }
+
+        return callback({ status: 500, message: "Database output missing" });
     },
 
 

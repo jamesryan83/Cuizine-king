@@ -1,7 +1,7 @@
 CREATE TABLE Store.stores
 (
 	id_store INT NOT NULL CONSTRAINT DF_store_stores_id_store DEFAULT (NEXT VALUE FOR Sequences.id_store),
-    id_address INT,
+    id_address INT NOT NULL,
     logo NVARCHAR(256),
     name NVARCHAR(128) NOT NULL,
     description NVARCHAR(1024),
@@ -10,7 +10,7 @@ CREATE TABLE Store.stores
     website NVARCHAR(256),
     facebook NVARCHAR(256),
     twitter NVARCHAR(256),
-    abn NVARCHAR(16),
+    abn NVARCHAR(16) NOT NULL,
     bank_name NVARCHAR(128),
     bank_bsb NVARCHAR(16),
     bank_account_name NVARCHAR(128),

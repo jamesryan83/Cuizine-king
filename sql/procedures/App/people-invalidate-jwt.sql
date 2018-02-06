@@ -1,5 +1,5 @@
 -- Invalidate a jwt
-CREATE PROCEDURE people_invalidate_jwt
+CREATE OR ALTER PROCEDURE people_invalidate_jwt
 	@jwt NVARCHAR(512) AS
 
     UPDATE App.people SET jwt = '' WHERE jwt = @jwt

@@ -11,15 +11,7 @@ ALTER TABLE App.addresses DROP CONSTRAINT FK_app_addresses_app_postcodes
 END
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'App' AND TABLE_NAME = 'people')
 BEGIN
-ALTER TABLE App.people DROP CONSTRAINT FK_app_people_app_person_types
-END
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'App' AND TABLE_NAME = 'people')
-BEGIN
 ALTER TABLE App.people DROP CONSTRAINT FK_app_people_app_addresses
-END
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'App' AND TABLE_NAME = 'people')
-BEGIN
-ALTER TABLE App.people DROP CONSTRAINT FK_app_people_store_stores
 END
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_extras')
 BEGIN
@@ -93,6 +85,14 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' 
 BEGIN
 ALTER TABLE Store.reviews DROP CONSTRAINT FK_store_reviews_app_people
 END
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' AND TABLE_NAME = 'stores_people')
+BEGIN
+ALTER TABLE Store.stores_people DROP CONSTRAINT FK_store_stores_people_store_stores
+END
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' AND TABLE_NAME = 'stores_people')
+BEGIN
+ALTER TABLE Store.stores_people DROP CONSTRAINT FK_store_stores_people_app_people
+END
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' AND TABLE_NAME = 'stores')
 BEGIN
 ALTER TABLE Store.stores DROP CONSTRAINT FK_store_stores_app_addresses
@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS App.addresses
 
 
 DROP TABLE IF EXISTS App.people
-
+DROP TABLE IF EXISTS App.person_types
 
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_extras')
 BEGIN
@@ -139,6 +139,12 @@ DROP TABLE IF EXISTS Sales.transactions
 DROP TABLE IF EXISTS sessions
 DROP TABLE IF EXISTS Store.business_hours
 DROP TABLE IF EXISTS Store.reviews
+DROP TABLE IF EXISTS Store.store_applications
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' AND TABLE_NAME = 'stores_people')
+BEGIN
+ALTER TABLE Store.stores_people SET (SYSTEM_VERSIONING = OFF)
+END
+DROP TABLE IF EXISTS Store.stores_people
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' AND TABLE_NAME = 'stores')
 BEGIN
 ALTER TABLE Store.stores SET (SYSTEM_VERSIONING = OFF)
@@ -147,44 +153,26 @@ DROP TABLE IF EXISTS Store.stores
 GO
 
 
- -- Drop Procedures
-
-DROP PROCEDURE IF EXISTS people_create_web_user
-DROP PROCEDURE IF EXISTS people_get_by_email
-DROP PROCEDURE IF EXISTS people_get_by_id
-DROP PROCEDURE IF EXISTS people_get_by_jwt
-DROP PROCEDURE IF EXISTS people_invalidate_jwt
-DROP PROCEDURE IF EXISTS people_update_is_verified
-DROP PROCEDURE IF EXISTS people_update_jwt
-DROP PROCEDURE IF EXISTS people_update_password
-DROP PROCEDURE IF EXISTS people_update_reset_password_token
-DROP PROCEDURE IF EXISTS reviews_get
-DROP PROCEDURE IF EXISTS stores_create
-DROP PROCEDURE IF EXISTS stores_delete
-DROP PROCEDURE IF EXISTS stores_get
-GO
-
-
  -- Reset Sequences
 
-ALTER SEQUENCE Sequences.id_person RESTART WITH 1
 ALTER SEQUENCE Sequences.id_address RESTART WITH 1
+ALTER SEQUENCE Sequences.id_person RESTART WITH 1
 
-
-
-
-ALTER SEQUENCE Sequences.id_store RESTART WITH 1
-ALTER SEQUENCE Sequences.id_business_hour RESTART WITH 1
-ALTER SEQUENCE Sequences.id_review RESTART WITH 1
-ALTER SEQUENCE Sequences.id_product RESTART WITH 1
+ALTER SEQUENCE Sequences.id_product_extra RESTART WITH 1
 ALTER SEQUENCE Sequences.id_product_heading RESTART WITH 1
 ALTER SEQUENCE Sequences.id_product_option RESTART WITH 1
-ALTER SEQUENCE Sequences.id_product_extra RESTART WITH 1
+ALTER SEQUENCE Sequences.id_product RESTART WITH 1
 ALTER SEQUENCE Sequences.id_product_product_extra RESTART WITH 1
-ALTER SEQUENCE Sequences.id_transaction RESTART WITH 1
-ALTER SEQUENCE Sequences.id_order RESTART WITH 1
 ALTER SEQUENCE Sequences.id_order_product RESTART WITH 1
 ALTER SEQUENCE Sequences.id_order_product_extra RESTART WITH 1
+ALTER SEQUENCE Sequences.id_order RESTART WITH 1
+ALTER SEQUENCE Sequences.id_transaction RESTART WITH 1
+ALTER SEQUENCE Sequences.id_business_hour RESTART WITH 1
+ALTER SEQUENCE Sequences.id_review RESTART WITH 1
+ALTER SEQUENCE Sequences.id_store_application RESTART WITH 1
+ALTER SEQUENCE Sequences.id_store RESTART WITH 1
+ALTER SEQUENCE Sequences.id_store_person RESTART WITH 1
+GO
 
 
  -- Create Tables
@@ -207,8 +195,10 @@ CREATE TABLE App.addresses
 CREATE TABLE App.people
 (
 	id_person INT NOT NULL CONSTRAINT DF_app_people_id_person DEFAULT (NEXT VALUE FOR Sequences.id_person),
-	id_person_type TINYINT NOT NULL DEFAULT 0,
     id_address INT,
+    is_web_user BIT NOT NULL DEFAULT 1,
+    is_store_user BIT NOT NULL DEFAULT 0,
+    is_system_user BIT NOT NULL DEFAULT 0,
     first_name NVARCHAR(64) NOT NULL,
     last_name NVARCHAR(64) NOT NULL,
     email NVARCHAR(256) NOT NULL UNIQUE,
@@ -218,7 +208,6 @@ CREATE TABLE App.people
     jwt NVARCHAR(512),
     is_verified BIT NOT NULL DEFAULT 0,
     verification_token NVARCHAR(64) NOT NULL,
-    id_store INT,
     is_deleted BIT NOT NULL DEFAULT 0,
     is_deleted_email NVARCHAR(256),
     internal_notes NVARCHAR(256) SPARSE NULL,
@@ -259,8 +248,7 @@ CREATE TABLE Product.product_headings
     id_store INT NOT NULL,
 	title NVARCHAR(128) NOT NULL,
     subtitle NVARCHAR(256),
-    position_id_previous INT,
-    position_id_next INT,
+    above_product_id INT,
     updated_by INT NOT NULL,
 	SysStartTime DateTime2 GENERATED ALWAYS AS ROW START,
 	SysEndTime DateTime2 GENERATED ALWAYS AS ROW END,
@@ -442,10 +430,43 @@ CREATE TABLE Store.reviews
 )
 
 
+CREATE TABLE Store.store_applications
+(
+	id_store_application INT NOT NULL CONSTRAINT DF_store_applications_id_store_application DEFAULT (NEXT VALUE FOR Sequences.id_store_application),
+    name NVARCHAR(128),
+    email NVARCHAR(256),
+    message NVARCHAR(256),
+    is_completed BIT NOT NULL DEFAULT 0,
+    is_cancelled BIT NOT NULL DEFAULT 0,
+    internal_notes NVARCHAR(256),
+    updated_by INT NOT NULL,
+	created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
+	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
+    CONSTRAINT id_store_application PRIMARY KEY CLUSTERED (id_store_application)
+)
+
+
+CREATE TABLE Store.stores_people
+(
+	id_store_person INT NOT NULL CONSTRAINT DF_store_stores_people_id_store_person DEFAULT (NEXT VALUE FOR Sequences.id_store_person),
+    id_store INT NOT NULL,
+	id_person INT NOT NULL,
+	updated_by INT NOT NULL,
+	SysStartTime DateTime2 GENERATED ALWAYS AS ROW START,
+	SysEndTime DateTime2 GENERATED ALWAYS AS ROW END,
+    PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime),
+    CONSTRAINT PK_store_stores_people PRIMARY KEY CLUSTERED (id_store_person)
+)
+WITH
+(
+    SYSTEM_VERSIONING = ON (HISTORY_TABLE = Store.stores_people_history)
+)
+
+
 CREATE TABLE Store.stores
 (
 	id_store INT NOT NULL CONSTRAINT DF_store_stores_id_store DEFAULT (NEXT VALUE FOR Sequences.id_store),
-    id_address INT,
+    id_address INT NOT NULL,
     logo NVARCHAR(256),
     name NVARCHAR(128) NOT NULL,
     description NVARCHAR(1024),
@@ -454,7 +475,7 @@ CREATE TABLE Store.stores
     website NVARCHAR(256),
     facebook NVARCHAR(256),
     twitter NVARCHAR(256),
-    abn NVARCHAR(16),
+    abn NVARCHAR(16) NOT NULL,
     bank_name NVARCHAR(128),
     bank_bsb NVARCHAR(16),
     bank_account_name NVARCHAR(128),
@@ -477,9 +498,7 @@ WITH
  -- Create Constraints
 
 ALTER TABLE App.addresses ADD CONSTRAINT FK_app_addresses_app_postcodes FOREIGN KEY (id_postcode) REFERENCES App.postcodes (id_postcode)
-ALTER TABLE App.people ADD CONSTRAINT FK_app_people_app_person_types FOREIGN KEY (id_person_type) REFERENCES App.person_types (id_person_type)
 ALTER TABLE App.people ADD CONSTRAINT FK_app_people_app_addresses FOREIGN KEY (id_address) REFERENCES App.addresses (id_address)
-ALTER TABLE App.people ADD CONSTRAINT FK_app_people_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
 ALTER TABLE Product.product_extras ADD CONSTRAINT FK_product_product_extras_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
 ALTER TABLE Product.product_headings ADD CONSTRAINT FK_product_product_headings_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
 ALTER TABLE Product.product_options ADD CONSTRAINT FK_product_product_optionss_product_products FOREIGN KEY (id_product) REFERENCES Product.products (id_product)
@@ -498,19 +517,35 @@ ALTER TABLE Sales.transactions ADD CONSTRAINT FK_sales_transactions_app_payment_
 ALTER TABLE Store.business_hours ADD CONSTRAINT FK_store_business_hours_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
 ALTER TABLE Store.reviews ADD CONSTRAINT FK_store_reviews_storestore_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
 ALTER TABLE Store.reviews ADD CONSTRAINT FK_store_reviews_app_people FOREIGN KEY (id_person) REFERENCES App.people (id_person)
+ALTER TABLE Store.stores_people ADD CONSTRAINT FK_store_stores_people_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)
+ALTER TABLE Store.stores_people ADD CONSTRAINT FK_store_stores_people_app_people FOREIGN KEY (id_person) REFERENCES App.people (id_person)
 ALTER TABLE Store.stores ADD CONSTRAINT FK_store_stores_app_addresses FOREIGN KEY (id_address) REFERENCES App.addresses (id_address)
 GO
 
 
+ -- Create Functions
+
+
+-- Returns the current sequence id value
+CREATE OR ALTER FUNCTION get_sequence_value(@name AS NVARCHAR(128))
+RETURNS INT AS
+BEGIN
+    RETURN (SELECT CAST(current_value AS INT) FROM sys.sequences WHERE name = @name)
+END
+GO
+
+
+
+
  -- Create Stored Procedures
 
--- Create a web user
-CREATE PROCEDURE people_create_web_user
+-- Create a store user
+CREATE OR ALTER PROCEDURE people_create_store_user
+    @id_store INT,
 	@first_name NVARCHAR(64),
     @last_name NVARCHAR(64),
     @email NVARCHAR(256),
 	@password NVARCHAR(64),
-    @jwt NVARCHAR(512),
     @verification_token NVARCHAR(64),
     @id_user_doing_update INT,
     @newPersonId INT OUTPUT AS
@@ -520,72 +555,160 @@ CREATE PROCEDURE people_create_web_user
 
     BEGIN TRANSACTION
 
-        -- check if email already exists
+        DECLARE @is_web_user BIT
+        DECLARE @is_store_user BIT
+        DECLARE @is_system_user BIT
+
+
+        SELECT @is_store_user = is_store_user, @is_system_user = is_system_user FROM App.people
+            WHERE id_person = @id_user_doing_update AND is_deleted = 0
+
+
+        -- not a store or system user
+        IF (@is_store_user = 0) THROW 50401, 'Not authorized', 1
+
+
+        -- does the store exist
+        IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store AND is_deleted = 0) IS NULL
+            THROW 50400, 'Store not found', 1
+
+
+        -- if a store_user, check if user doing update is member of the store
+        IF (@is_system_user = 0)
+        BEGIN
+            IF (SELECT TOP 1 id_person FROM Store.stores_people WHERE id_store = @id_store AND id_person = @id_user_doing_update) IS NULL
+                THROW 50401, 'Not authorized', 1
+        END
+
+
+        -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-	       THROW 50409, 'Account already taken', 1
+            THROW 50409, 'Account already taken', 1
 
 
-        -- Get the person type
-        DECLARE @id_person_type INT
-        SET @id_person_type = (SELECT id_person_type FROM App.person_types WHERE name = 'web user')
-        IF @id_person_type IS NULL THROW 50400, 'Invalid person type', 1
-
-
-        -- create a user
+        -- create user
         INSERT INTO App.people
-            (id_person_type, first_name, last_name, email, password, jwt, verification_token, updated_by)
+            (is_web_user, is_store_user, is_system_user, first_name, last_name, email, password, verification_token, updated_by)
             VALUES
-            (@id_person_type, @first_name, @last_name, @email, @password, @jwt, @verification_token, @id_user_doing_update)
+            (1, 1, 0, @first_name, @last_name, @email, @password, @verification_token, @id_user_doing_update)
 
 
         -- output value
-        SET @newPersonId = (SELECT CAST(current_value AS INT) FROM sys.sequences WHERE name = 'id_person')
+        SET @newPersonId = dbo.get_sequence_value('id_person')
+
+
+        -- create link to store
+        INSERT INTO Store.stores_people (id_store, id_person, updated_by) VALUES (@id_store, @newPersonId, @id_user_doing_update)
+
+    COMMIT
+GO
+
+
+-- Create a system user
+CREATE OR ALTER PROCEDURE people_create_system_user
+    @email NVARCHAR(256),
+	@password NVARCHAR(64),
+    @verification_token NVARCHAR(64),
+    @id_user_doing_update INT,
+    @newPersonId INT OUTPUT AS
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    BEGIN TRANSACTION
+
+        -- check if user doing update is a system user
+        IF (SELECT TOP 1 id_person FROM App.people
+            WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
+            THROW 50401, 'Not authorized', 1
+
+        -- check account isn't already taken
+        IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
+            THROW 50409, 'Account already taken', 1
+
+        -- create a user
+        INSERT INTO App.people
+            (is_web_user, is_store_user, is_system_user, first_name, last_name,
+             verification_token, email, password, updated_by)
+            VALUES
+            (1, 1, 1, 'na', 'na',
+             @verification_token, @email, @password, @id_user_doing_update)
+
+        -- output value
+        SET @newPersonId = dbo.get_sequence_value('id_person')
+
+    COMMIT
+GO
+
+
+-- Create a web user
+CREATE OR ALTER PROCEDURE people_create_web_user
+	@first_name NVARCHAR(64),
+    @last_name NVARCHAR(64),
+    @email NVARCHAR(256),
+	@password NVARCHAR(64),
+    @verification_token NVARCHAR(64),
+    @newPersonId INT OUTPUT AS
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    BEGIN TRANSACTION
+
+        IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
+            THROW 50409, 'Account already taken', 1
+
+        -- create a user
+        INSERT INTO App.people
+            (is_web_user, is_store_user, is_system_user, first_name, last_name, email, password, verification_token, updated_by)
+            VALUES
+            (1, 0, 0, @first_name, @last_name, @email, @password, @verification_token, 3)
+
+        -- output value
+        SET @newPersonId = dbo.get_sequence_value('id_person')
 
     COMMIT
 GO
 
 
 -- Get a person by email
-CREATE PROCEDURE people_get_by_email
+CREATE OR ALTER PROCEDURE people_get_by_email
 	@email NVARCHAR(256),
-    @id_person_type TINYINT AS
+    @alsoGetStoreId BIT = 0 AS
 
-    IF @id_person_type IS NULL SET @id_person_type = 1
-
-    SELECT * FROM App.people
-    WHERE email = @email AND id_person_type = @id_person_type AND is_deleted = 0
+    IF @alsoGetStoreId = 1
+        SELECT App.people.*, Store.stores_people.id_store FROM App.people
+        JOIN Store.stores_people ON App.people.id_person = Store.stores_people.id_person
+        WHERE App.people.email = @email AND App.people.is_deleted = 0
+    ELSE
+        SELECT * FROM App.people
+        WHERE email = @email AND is_deleted = 0
 GO
 
 
 -- Get a person by id
-CREATE PROCEDURE people_get_by_id
-	@id INT,
-    @id_person_type TINYINT AS
-
-    IF @id_person_type IS NULL SET @id_person_type = 1
+CREATE OR ALTER PROCEDURE people_get_by_id
+	@id INT AS
 
     SELECT * FROM App.people
-    WHERE id_person = @id AND id_person_type = @id_person_type AND is_deleted = 0
+    WHERE id_person = @id AND is_deleted = 0
 GO
 
 
 -- Get a person by jwt
-CREATE PROCEDURE people_get_by_jwt
+CREATE OR ALTER PROCEDURE people_get_by_jwt
 	@jwt NVARCHAR(512),
-	@email NVARCHAR(256)AS
+	@id_person INT AS
 
     IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'Bad token', 1
 
 	SET NOCOUNT ON
 
     DECLARE @jwt_person AS NVARCHAR(512)
-    DECLARE @id_person AS INT
 
-	SELECT @id_person = id_person, @jwt_person = jwt
+	SELECT @jwt_person = jwt
     FROM App.people
-	WHERE @email = email AND is_deleted = 0
-
-    IF @id_person IS NULL THROW 50400, 'Account not found', 1
+	WHERE id_person = @id_person AND is_deleted = 0
 
     IF @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
 
@@ -595,7 +718,7 @@ GO
 
 
 -- Invalidate a jwt
-CREATE PROCEDURE people_invalidate_jwt
+CREATE OR ALTER PROCEDURE people_invalidate_jwt
 	@jwt NVARCHAR(512) AS
 
     UPDATE App.people SET jwt = '' WHERE jwt = @jwt
@@ -605,7 +728,7 @@ GO
 
 
 -- Update is verified
-CREATE PROCEDURE people_update_is_verified
+CREATE OR ALTER PROCEDURE people_update_is_verified
 	@email NVARCHAR(256),
 	@verification_token NVARCHAR(64) AS
 
@@ -621,7 +744,7 @@ CREATE PROCEDURE people_update_is_verified
         -- find person id
         SELECT @id_person = id_person, @token = verification_token, @is_verified = is_verified
         FROM App.people
-        WHERE (email = @email OR email = @email) AND is_deleted = 0
+        WHERE email = @email AND is_deleted = 0
 
         IF @id_person IS NULL THROW 50400, 'Account not found', 1
 
@@ -640,30 +763,26 @@ GO
 
 
 -- Update a persons jwt
-CREATE PROCEDURE people_update_jwt
-	@email NVARCHAR(255),
+CREATE OR ALTER PROCEDURE people_update_jwt
+	@id_person INT,
     @jwt NVARCHAR(512) AS
 
     SET NOCOUNT ON
 
-    DECLARE @id_person INT
-
-    SELECT @id_person = id_person
-    FROM App.people
-	WHERE @email = email AND is_deleted = 0
-
-    IF @id_person IS NULL THROW 50400, 'Account not found', 1
+    IF (SELECT TOP 1 id_person FROM App.people
+       WHERE id_person = @id_person AND is_deleted = 0) IS NULL
+       THROW 50400, 'Account not found', 1
 
 	UPDATE App.people SET jwt = @jwt
 	WHERE id_person = @id_person
 
-    SELECT id_person, id_store, id_person_type FROM App.people
+    SELECT id_person, is_web_user, is_store_user, is_system_user FROM App.people
     WHERE id_person = @id_person
 GO
 
 
 -- Update password
-CREATE PROCEDURE people_update_password
+CREATE OR ALTER PROCEDURE people_update_password
 	@email NVARCHAR(256),
 	@reset_password_token NVARCHAR(64),
     @password NVARCHAR (64) AS
@@ -685,7 +804,7 @@ GO
 
 
 -- Update reset password token
-CREATE PROCEDURE people_update_reset_password_token
+CREATE OR ALTER PROCEDURE people_update_reset_password_token
 	@email NVARCHAR(512),
     @reset_password_token NVARCHAR(64) AS
 
@@ -707,7 +826,7 @@ GO
 
 
 -- Get reviews for a store
-CREATE PROCEDURE reviews_get
+CREATE OR ALTER PROCEDURE reviews_get
     @id_store INT AS
 
 	SET NOCOUNT ON
@@ -720,85 +839,77 @@ GO
 
 -- Create a store
 -- creates an address, user and store
-CREATE PROCEDURE stores_create
+CREATE OR ALTER PROCEDURE store_applications_create
+    @name NVARCHAR(128),
+    @email NVARCHAR(256),
+    @message NVARCHAR(256),
+    @id_user_doing_update INT,
+    @newStoreApplicationId INT OUTPUT AS
+
+	SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    BEGIN TRANSACTION
+
+        -- only system users can create store applications
+        IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
+            THROW 50401, 'Not authorized', 1
+
+
+        -- create store application
+        INSERT INTO Store.store_applications
+            (name, email, message, updated_by)
+            VALUES
+            (@name, @email, @message, @id_user_doing_update)
+
+
+        SET @newStoreApplicationId = dbo.get_sequence_value('id_store_application')
+    COMMIT
+
+GO
+
+
+-- Create a store
+-- creates an address, user and store
+CREATE OR ALTER PROCEDURE stores_create
     @postcode NVARCHAR(6),
     @suburb NVARCHAR(64),
 
     @address_line_1 NVARCHAR(128),
 	@address_line_2 NVARCHAR(128),
-	@address_latitude DECIMAL(9,4),
-    @address_longitude DECIMAL(9,4),
 
     @first_name NVARCHAR(64),
     @last_name NVARCHAR(64),
-    @email NVARCHAR(256),
     @phone_number_user NVARCHAR(32),
+    @email_user NVARCHAR(256),
 	@password NVARCHAR(64),
-    @jwt NVARCHAR(512),
-    @internal_notes_user NVARCHAR(256),
+    @verification_token NVARCHAR(64),
 
-    @logo NVARCHAR(255),
     @name NVARCHAR(128),
-    @description NVARCHAR(1024),
-	@phone_number_store NVARCHAR(32),
-    @website NVARCHAR(256),
-    @facebook NVARCHAR(256),
-    @twitter NVARCHAR(256),
     @abn NVARCHAR(16),
     @internal_notes_store NVARCHAR(256),
-    @bank_name NVARCHAR(128),
-    @bank_bsb NVARCHAR(16),
-    @bank_account_name NVARCHAR(128),
-    @bank_account_number NVARCHAR(32),
 
-    @hours_mon_dinein_open NVARCHAR(8),
-    @hours_tue_dinein_open NVARCHAR(8),
-    @hours_wed_dinein_open NVARCHAR(8),
-    @hours_thu_dinein_open NVARCHAR(8),
-    @hours_fri_dinein_open NVARCHAR(8),
-    @hours_sat_dinein_open NVARCHAR(8),
-    @hours_sun_dinein_open NVARCHAR(8),
-    @hours_mon_dinein_close NVARCHAR(8),
-    @hours_tue_dinein_close NVARCHAR(8),
-    @hours_wed_dinein_close NVARCHAR(8),
-    @hours_thu_dinein_close NVARCHAR(8),
-    @hours_fri_dinein_close NVARCHAR(8),
-    @hours_sat_dinein_close NVARCHAR(8),
-    @hours_sun_dinein_close NVARCHAR(8),
-    @hours_mon_delivery_open NVARCHAR(8),
-    @hours_tue_delivery_open NVARCHAR(8),
-    @hours_wed_delivery_open NVARCHAR(8),
-    @hours_thu_delivery_open NVARCHAR(8),
-    @hours_fri_delivery_open NVARCHAR(8),
-    @hours_sat_delivery_open NVARCHAR(8),
-    @hours_sun_delivery_open NVARCHAR(8),
-    @hours_mon_delivery_close NVARCHAR(8),
-    @hours_tue_delivery_close NVARCHAR(8),
-    @hours_wed_delivery_close NVARCHAR(8),
-    @hours_thu_delivery_close NVARCHAR(8),
-    @hours_fri_delivery_close NVARCHAR(8),
-    @hours_sat_delivery_close NVARCHAR(8),
-    @hours_sun_delivery_close NVARCHAR(8),
-
-    @id_user_doing_update INT AS
+    @id_user_doing_update INT,
+    @newStoreId INT OUTPUT,
+    @newPersonId INT OUTPUT AS
 
 	SET NOCOUNT ON
     SET XACT_ABORT ON
 
     DECLARE @id_postcode INT
     DECLARE @newAddressId INT
-    DECLARE @newPersonId INT
-    DECLARE @newStoreId INT
 
 
     BEGIN TRANSACTION
 
-        -- stores need their own account, check if email already exists
-        IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-	       THROW 50409, 'Invalid Email. Account already exists', 1
+        -- only system users can create stores
+        IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
+            THROW 50401, 'Not authorized', 1
 
-        IF (SELECT TOP 1 email FROM Store.stores WHERE email = @email AND is_deleted = 0) IS NOT NULL
-	       THROW 50409, 'Invalid Email. Store Account already exists', 1
+
+        -- stores need an initial user account, check if email already exists
+        IF (SELECT TOP 1 email FROM App.people WHERE email = @email_user AND is_deleted = 0) IS NOT NULL
+            THROW 50409, 'Account already taken', 1
 
 
         -- Get postcode id
@@ -810,77 +921,67 @@ CREATE PROCEDURE stores_create
 
         -- create store address
         INSERT INTO App.addresses
-            (id_postcode, line1, line2, latitude, longitude, updated_by)
+            (id_postcode, line1, line2, updated_by)
             VALUES
-            (@id_postcode, @address_line_1, @address_line_2, @address_latitude, @address_longitude, @id_user_doing_update)
+            (@id_postcode, @address_line_1, @address_line_2, @id_user_doing_update)
 
-        SET @newAddressId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_address')
-
-
-        -- Get the person type
-        DECLARE @id_person_type INT
-        SET @id_person_type = (SELECT id_person_type FROM App.person_types WHERE name = 'store user')
-        IF @id_person_type IS NULL THROW 50400, 'Invalid person type', 1
+        SET @newAddressId = dbo.get_sequence_value('id_address')
 
 
         -- create a store user
         INSERT INTO App.people
-            (id_person_type, id_address, first_name, last_name, email, phone_number, password,
-            jwt, verification_token, is_verified, internal_notes, updated_by)
+            (is_web_user, is_store_user, is_system_user, id_address, first_name, last_name,
+             email, phone_number, password, verification_token, updated_by)
             VALUES
-            (@id_person_type, null, @first_name, @last_name, @email, @phone_number_user, @password,
-             @jwt, 'na', 1, @internal_notes_user, @id_user_doing_update)
+            (1, 1, 0, null, @first_name, @last_name,
+             @email_user, @phone_number_user, @password, @verification_token, @id_user_doing_update)
 
-        SET @newPersonId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_person')
+        SET @newPersonId = dbo.get_sequence_value('id_person')
 
 
         -- Create store
         INSERT INTO Store.stores
-            (id_address, logo, name, description, email, phone_number, website,
-             facebook, twitter, abn, bank_name, bank_bsb,
-             bank_account_name, bank_account_number, internal_notes, updated_by)
+            (id_address, name, email, abn, internal_notes, updated_by)
             VALUES
-            (@newAddressId, @logo, @name, @description, @email, @phone_number_store, @website,
-             @facebook, @twitter, @abn, @bank_name, @bank_bsb,
-             @bank_account_name, @bank_account_number, @internal_notes_store, @id_user_doing_update)
+            (@newAddressId, @name, @email_user, @abn, @internal_notes_store, @id_user_doing_update)
 
-        SET @newStoreId = (SELECT CONVERT(INT, current_value) FROM sys.sequences WHERE name = 'id_store')
+        SET @newStoreId = dbo.get_sequence_value('id_store')
 
 
-        -- Add the store id to the user that was created
-        UPDATE App.people SET id_store = @newStoreId WHERE id_person = @newPersonId
+        -- Link new user to new store
+        INSERT INTO Store.stores_people (id_store, id_person, updated_by) VALUES (@newStoreID, @newPersonId, @id_user_doing_update)
 
 
-        -- create store business hours
+        -- create default store business hours
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 1, @hours_mon_dinein_open, @hours_mon_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 1, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 2, @hours_tue_dinein_open, @hours_tue_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 2, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 3, @hours_wed_dinein_open, @hours_wed_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 3, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 4, @hours_thu_dinein_open, @hours_thu_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 4, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 5, @hours_fri_dinein_open, @hours_fri_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 5, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 6, @hours_sat_dinein_open, @hours_sat_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 6, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 7, @hours_sun_dinein_open, @hours_sun_dinein_close, @id_user_doing_update)
+            VALUES (@newStoreId, 1, 7, '10:00', '22:00', @id_user_doing_update)
 
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 1, @hours_mon_delivery_open, @hours_mon_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 1, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 2, @hours_tue_delivery_open, @hours_tue_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 2, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 3, @hours_wed_delivery_open, @hours_wed_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 3, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 4, @hours_thu_delivery_open, @hours_thu_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 4, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 5, @hours_fri_delivery_open, @hours_fri_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 5, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 6, @hours_sat_delivery_open, @hours_sat_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 6, '10:00', '22:00', @id_user_doing_update)
         INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 7, @hours_sun_delivery_open, @hours_sun_delivery_close, @id_user_doing_update)
+            VALUES (@newStoreId, 0, 7, '10:00', '22:00', @id_user_doing_update)
 
     COMMIT
 
@@ -888,23 +989,41 @@ GO
 
 
 -- Soft deletes a store
-CREATE PROCEDURE stores_delete
+CREATE OR ALTER PROCEDURE stores_delete
     @id_store INT,
     @id_user_doing_update INT AS
 
-    -- Get store email
-    DECLARE @email NVARCHAR(256)
-    SELECT @email = email FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
-    IF @email IS NULL THROW 50400, 'Store not found', 1
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
 
-    -- Set store deleted
-    UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
-        WHERE id_store = @id_store
+    DECLARE @email NVARCHAR(255)
+
+    BEGIN TRANSACTION
+
+        -- only system users can delete stores
+        IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
+            THROW 50401, 'Not authorized', 1
+
+        -- Get store email
+        SELECT @email = email FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
+
+        IF @email IS NULL THROW 50400, 'Store not found', 1
+
+        -- Set store deleted
+        UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
+            WHERE id_store = @id_store
+
+        -- TODO : delete users too
+        -- Set user deleted
+        -- UPDATE App.people SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
+            -- WHERE id_store = @id_store
+
+    COMMIT
 GO
 
 
 -- Get a store
-CREATE PROCEDURE stores_get
+CREATE OR ALTER PROCEDURE stores_get
     @id_store INT AS
 
     SELECT id_store, name, description, phone_number, email, logo,
@@ -946,4 +1065,34 @@ CREATE PROCEDURE stores_get
     WHERE s.id_store = @id_store AND is_deleted = 0
     FOR JSON PATH
 
+GO
+
+
+-- Undeletes a deleted store
+CREATE OR ALTER PROCEDURE stores_undelete
+    @id_store INT,
+    @id_user_doing_update INT AS
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    DECLARE @email NVARCHAR(256)
+
+    BEGIN TRANSACTION
+
+        -- Get store email
+        SELECT @email = email FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
+
+        IF @email IS NULL THROW 50400, 'Store not found', 1
+
+        -- Set store deleted
+        UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
+            WHERE id_store = @id_store
+
+        -- TODO : undelete users too
+        -- Set user deleted
+        -- UPDATE App.people SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
+            -- WHERE id_store = @id_store
+
+    COMMIT
 GO

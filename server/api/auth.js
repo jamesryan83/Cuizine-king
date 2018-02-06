@@ -6,16 +6,16 @@ var bcrypt = require("bcryptjs");
 var jwt = require('jsonwebtoken');
 
 var config = require("../config");
-var mail = require("../other/mail");
+var appDB = require("../procedures/_App");
 var database = require("../database/database");
 var passportAuth = require("../other/passport-auth");
-
-var appDB = require("../procedures/_App");
 
 
 exports = module.exports = {
 
     router: null,
+
+    mail: require("../other/mail"), // is here for testing
 
 
     init: function (router) {
@@ -23,48 +23,49 @@ exports = module.exports = {
     },
 
 
+    // Website login
+    websiteLogin: function (req, res) {
+        this._login("is_web_user", req, res);
+    },
+
+
+    // Store (CMS) login
+    storeLogin: function (req, res) {
+        this._login("is_store_user", req, res);
+    },
+
+
+    // System login
+    systemLogin: function (req, res) {
+        this._login("is_system_user", req, res);
+    },
+
 
     // Login
-    websiteLogin: function (req, res) {
-        this.login(config.dbConstants.personTypes.webuser, req, res);
-    },
-
-
-    // Store Login
-    storeLogin: function (req, res) {
-        this.login(config.dbConstants.personTypes.storeuser, req, res);
-    },
-
-
-    // System Login
-    systemLogin: function (req, res) {
-        this.login(config.dbConstants.personTypes.systemuser, req, res);
-    },
-
-
-    // Login called by functions above
-    login: function (id_person_type, req, res) {
+    _login: function (accessProperty, req, res) {
         var self = this;
         var b = req.body;
-
-        // Check person type is correct for the route
-        if (
-            (id_person_type === config.dbConstants.personTypes.webuser && req.url !== "/api/v1/login") ||
-            (id_person_type === config.dbConstants.personTypes.storeuser && req.url !== "/api/v1/store-login") ||
-            (id_person_type === config.dbConstants.personTypes.systemuser && req.url !== "/admin-login")) {
-            return this.router.sendJson(res, null, "Bad inputs", 400);
-        }
 
         if (this.router.validateInputs(req, res, b, global.validationRules.login))
             return;
 
         // check password
-        passportAuth.checkUsersPassword(res, b.email, b.password, id_person_type, function (err) {
+        passportAuth.checkUsersPassword(accessProperty, res, b.email, b.password, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
+            // system users aren't tied to a store id and should update stores using backend stuff
+            if (accessProperty == "is_store_user" && res.locals.person.is_system_user) {
+                return self.router.sendJson(res, null, "System users can't log into stores", 401);
+            }
+
             // create a jwt and send to user
-            self.createJwt(b.email, function (err, result) {
+            self.createJwt(res.locals.person.id_person, function (err, result) {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                // add id_store to result if logging into cms
+                if (accessProperty == "is_store_user") {
+                    result.id_store = res.locals.person.id_store;
+                }
 
                 return self.router.sendJson(res, result);
             });
@@ -73,15 +74,32 @@ exports = module.exports = {
 
 
 
-    // Register a user
-    createUser: function (req, res) {
+    // Website create user
+    websiteCreateUser: function (req, res) {
+        this._createUser("people_create_web_user", req, res);
+    },
+
+
+    // Store create user
+    storeCreateUser: function (req, res) {
+        this._createUser("people_create_store_user", req, res);
+    },
+
+
+    // System create user
+    systemCreateUser: function (req, res) {
+        this._createUser("people_create_system_user", req, res);
+    },
+
+
+
+    // Create a user
+    _createUser: function (procedure, req, res) {
         var self = this;
         var b = req.body;
 
         if (this.router.validateInputs(req, res, b, global.validationRules.createUser))
             return;
-
-        b.id_user_doing_update = 1; // system user
 
         // encrypt password
         bcrypt.hash(b.password, 10, function (err, encryptedPassword) {
@@ -91,18 +109,26 @@ exports = module.exports = {
             b.verification_token = self.makeid();
             b.password = encryptedPassword;
 
+            if (res.locals.person) {
+                b.id_user_doing_update = res.locals.person.id_person;
+            } else {
+                b.id_user_doing_update = config.dbConstants.adminUsers.system;
+            }
+
             // create person in db
-            appDB.people_create_web_user(b, function (err, newPersonId) {
+            appDB[procedure](b, function (err, outputs) {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                 // create a jwt
-                self.createJwt(b.email, function (err, result) {
+                self.createJwt(outputs.newPersonId, function (err, result) {
                     if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                     // send user verification email
-                    mail.sendUserRegistrationEmail(b.first_name, b.email, b.verification_token, function (err) {
-                        if (err) console.log(err);
-                    });
+                    if (procedure != "people_create_system_user") {
+                        self.mail.sendUserRegistrationEmail(b.first_name, b.email, b.verification_token, function (err) {
+                            if (err) console.log(err);
+                        });
+                    }
 
                     return self.router.sendJson(res, result);
                 });
@@ -121,7 +147,7 @@ exports = module.exports = {
             return;
 
         // check persons password
-        passportAuth.checkUsersPassword(res, b.email, b.password, null, function (err) {
+        passportAuth.checkUsersPassword(null, res, b.email, b.password, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             delete b.password;
@@ -131,12 +157,12 @@ exports = module.exports = {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                 // send thanks for verifying email
-                mail.sendThanksForVerifyingEmail(b.email, function (err) {
+                self.mail.sendThanksForVerifyingEmail(b.email, function (err) {
                     if (err) console.log(err);
                 });
 
                 // create a jwt and send to user
-                self.createJwt(b.email, function (err, result) {
+                self.createJwt(res.locals.person.id_person, function (err, result) {
                     if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                     return self.router.sendJson(res, result);
@@ -185,7 +211,7 @@ exports = module.exports = {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             // send reset link
-            mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err) {
+            self.mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err) {
                 if (err) return self.router.sendJson(res, null, err.message, err.status);
 
                 return self.router.sendJson(res, {
@@ -231,7 +257,7 @@ exports = module.exports = {
             var person = res.locals.person;
             var result = { id_person: person.id_person, jwt: person.jwt };
 
-            if (person.id_store && person.id_store > 0 && person.id_person_type === config.dbConstants.personTypes.storeuser) {
+            if (person.id_store && person.id_store > 0) {
                 result.id_store = person.id_store;
             }
 
@@ -253,21 +279,17 @@ exports = module.exports = {
 
 
     // create a jwt for a user
-    createJwt: function (email, callback) {
+    createJwt: function (id_person, callback) {
 
         // create jwt for user
-        jwt.sign({ sub: email, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong }, function (err, jwToken) {
+        jwt.sign({ sub: id_person, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong }, function (err, jwToken) {
             if (err) return callback(err);
 
             // update jwt in db
-            appDB.people_update_jwt({ email: email, jwt: jwToken }, function (err, person) {
+            appDB.people_update_jwt({ id_person: id_person, jwt: jwToken }, function (err, person) {
                 if (err) return callback(err);
 
                 var result = { jwt: jwToken, id_person: person.id_person };
-
-                if (person.id_store && person.id_store > 0 && person.id_person_type === config.dbConstants.personTypes.storeuser) {
-                    result.id_store = person.id_store;
-                }
 
                 return callback(null, result);
             });

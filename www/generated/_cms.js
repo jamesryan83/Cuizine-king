@@ -5,12 +5,6 @@ app.controls = app.controls || {};
 app.dialogs = app.dialogs || {};
 
 
-if (typeof window != "undefined") {
-    $(document).ready(function () {
-        app.cms.init();
-    });
-}
-
 
 // CMS pages
 app.cms = {
@@ -18,11 +12,13 @@ app.cms = {
     htmlFiles: {}, // cached html
 
 
-    init: function () {
+    init: function (html) {
         var self = this;
 
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
+
+        this.htmlFiles = html;
 
         // setup router
         app.routerBase.init();
@@ -33,17 +29,7 @@ app.cms = {
         app.dialogs.businessHours.init();
         app.dialogs.reviews.init();
 
-
-        // Load the html json file
-        $.getJSON("/generated/_cms.json", function (data) {
-            self.htmlFiles = data;
-
-            app.routerBase.loadPageForRoute(null, "cms");
-        }).fail(function (err) {
-            // TODO : error msg
-        });
-
-
+        app.routerBase.loadPageForRoute(null, "cms");
     },
 
 
@@ -190,21 +176,34 @@ app.cms.menu = {
 
         // Edit button
         $("#cms-menu-edit").on("click", function () {
-            var data = app.storeContent.getDataFromPage();
-            console.log(data)
+//            var data = app.storeContent.getDataFromPage();
+//            console.log(data)
         });
 
 
+
+
+        // Logo file changed
+        $(".fileupload").on("change", function (e) {
+            app.util.uploadImage(e.target.files);
+        });
+
+
+
+
+        // address save
         $("#store-info-edit-address-save").on("click", function () {
             self.$storeInfoEditAddress.removeClass("active");
         });
 
 
+        // address cancel
         $("#store-info-edit-address-cancel").on("click", function () {
             self.$storeInfoEditAddress.removeClass("active");
         });
 
 
+        // address show/hide
         $("#store-info-address-edit").on("click", function () {
             self.$storeInfoEditAddress.toggleClass("active");
         });
@@ -385,6 +384,22 @@ app.dialogs.reviews = {
     },
 
 }
+if (typeof app === "undefined") {
+    var app = {};
+}
+
+app.i18n = {};
+
+// english
+app.i18n.en = {
+    storeIdMissing: "Store Id missing",
+    imageFileMissing: "Image file missing",
+    imageFileWrongType: "Incorrect image type.  Only Jpg is supported",
+    imageFileTooBig: "Image file size too big.  Must be < 250kB",
+}
+
+
+
 
 app.navbar = {
 
@@ -1023,10 +1038,47 @@ app.util = {
     },
 
 
+    // Upload an image
+    uploadImage: function (files) {
+        if (files && files.length > 0) {
+            var file = files[0];
+            if (file.size > 250000) {
+                this.showToast("Image file size too big.  Must be < 250kB");
+                return;
+            }
+
+            var formdata = new FormData();
+            formdata.append("logo", files[0]);
+
+            this.ajaxRequest({
+                method: "POST", url: "/api/v1/store-update-logo", auth: true,
+                isImage: true, data: formdata
+            }, function (err, result) {
+
+            });
+
+
+//            var imgEl = document.getElementById(imageEl);
+//            var file = files[0];
+//            console.log(imgEl, file)
+//            var reader = new FileReader();
+//            reader.onload = function (e) {
+//                imgEl.src = e.target.result;
+//            };
+//            reader.readAsDataURL(file);
+        } else {
+            this.showToast("Invalid Image");
+        }
+    },
+
+
     // Generic ajax request
     // options are { method, url, data, auth, datatype, cache }, returns (err, data)
     ajaxRequest: function (options, callback) {
         var self = this;
+
+        var contentType = "application/x-www-form-urlencoded; charser=UTF-8";
+        if (options.isImage) contentType = false;
 
         // setup options
         var ajaxOptions = {
@@ -1034,15 +1086,19 @@ app.util = {
             url: options.url,
             data: options.data,
             cache: options.cache || false,
+            processData: !options.isImage,
+            contentType: contentType,
             beforeSend: function(request) {
                 if (options.auth) {
                     request.setRequestHeader("authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
             success: function (result) {
+                console.log(result)
                 return callback(null, result);
             },
             error: function (err) {
+                console.log(err)
                 if (err) {
                     if (err.responseJSON && err.responseJSON.err) {
                         self.showToast(err.responseJSON.err, 4000);
@@ -1223,26 +1279,36 @@ app.vr.createStore = {
 
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
-    email_user: app.vr._email,
     phone_number_user: app.vr._phone_number,
+    email_user: app.vr._email,
     password: app.vr._people_password,
-    internal_notes_user: app.vr._notes_optional,
 
-    logo: app.vr._stores_logo,
     name: app.vr._stores_name,
-    description: app.vr._stores_description_optional,
-    email_store: app.vr._email,
-    phone_number_store: app.vr._phone_number,
-    website: app.vr._url_link_optional,
-    facebook: app.vr._url_link_optional,
-    twitter: app.vr._url_link_optional,
     abn: app.vr._stores_abn,
-    internal_notes_store: app.vr._notes_optional,
+    internal_notes_store: app.vr._notes_optional
+}
+
+
+app.vr.updateStore = {
+    first_name: app.vr._people_first_name,
+    last_name: app.vr._people_last_name,
+    email_user: app.vr._email,
+}
+
+
+app.vr.deleteStore = {
+	id_store: app.vr._sequence_id
+}
+
+
+app.vr.storeUpdateBankDetails = {
     bank_name: app.vr._stores_bank_name,
     bank_bsb: app.vr._stores_bank_bsb,
     bank_account_name: app.vr._stores_bank_account_name,
-    bank_account_number: app.vr._stores_bank_account_number,
+    bank_account_number: app.vr._stores_bank_account_number
+}
 
+app.vr.storeUpdateHours = {
     hours_mon_dinein_open: app.vr._stores_hours,
     hours_tue_dinein_open: app.vr._stores_hours,
     hours_wed_dinein_open: app.vr._stores_hours,
@@ -1462,11 +1528,13 @@ app.controls.TabControl = function (tabcontrolEL, clickCallback) {
 
 }
 // Creates a typeahead control
-app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
+app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl) {
+    var self = this;
     var typeaheadList = $(listEl);
 
     var typeaheadTimeout = null;
 
+    this.baseUrl = baseUrl || "/api/v1/location?q=";
 
     // when a dropdown item is selected
     function selectItem (el) {
@@ -1546,7 +1614,7 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback) {
             }
 
             // get locations from server
-            var url = "/api/v1/location?q=" + value;
+            var url = self.baseUrl + value;
             app.util.ajaxRequest({
                 method: "GET", url: url
             }, function (err, result) {

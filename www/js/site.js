@@ -5,24 +5,16 @@ app.controls = app.controls || {};
 app.dialogs = app.dialogs || {};
 
 
-//if (typeof window != "undefined") {
-//    $(document).ready(function () {
-//        console.log("kkdkkdkdk")
-//        app.site.init();
-//    });
-//}
-
 
 // Site pages
 app.site = {
-
 
     htmlFiles: {}, // cached html
 
 
     init: function (html) {
         var self = this;
-console.log("initttt")
+
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
@@ -38,16 +30,6 @@ console.log("initttt")
         app.dialogs.reviews.init();
 
         app.routerBase.loadPageForRoute(null, "site");
-
-//        // Load the html json file
-//        $.getJSON("/generated/_site.json", function (data) {
-//            self.htmlFiles = data;
-//
-//            var routeData = app.routerBase.loadPageForRoute(null, "site");
-//
-//        }).fail(function (err) {
-//            // TODO : error msg
-//        });
     },
 
 

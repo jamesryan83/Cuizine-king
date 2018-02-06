@@ -17,9 +17,7 @@ describe("ROUTES - PAGES", function () {
         this.timeout(10000);
 
         testutil.startDatabase(function () {
-            testutil.createTestUsers(function (data) {
-                done();
-            });
+            done();
         });
     });
 
@@ -98,7 +96,7 @@ describe("ROUTES - PAGES", function () {
 
 
     it("Invalid route returns valid html with 404", function (done) {
-        testutil.testValidPage("/blahblah", done, 404);
+        testutil.testValidPage("/blahblah", done, 404, null, true);
     });
 
 

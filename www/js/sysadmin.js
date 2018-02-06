@@ -5,12 +5,6 @@ app.controls = app.controls || {};
 app.dialogs = app.dialogs || {};
 
 
-if (typeof window != "undefined") {
-    $(document).ready(function () {
-        app.sysadmin.init();
-    });
-}
-
 
 // Sysadmin
 app.sysadmin = {
@@ -18,19 +12,15 @@ app.sysadmin = {
     htmlFiles: {}, // cached html
 
 
-    init: function (routeData) {
+    init: function (html) {
         var self = this;
 
+        this.htmlFiles = html;
+
+        // setup router
         app.routerBase.init();
 
-        // Load the html json file
-        $.getJSON("/generated/_sysadmin.json", function (data) {
-            self.htmlFiles = data;
-
-            app.routerBase.loadPageForRoute(null, "sysadmin");
-        }).fail(function (err) {
-            // TODO : error msg
-        });
+        app.routerBase.loadPageForRoute(null, "sysadmin");
     },
 
 

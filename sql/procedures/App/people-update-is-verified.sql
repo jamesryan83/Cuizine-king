@@ -1,5 +1,5 @@
 -- Update is verified
-CREATE PROCEDURE people_update_is_verified
+CREATE OR ALTER PROCEDURE people_update_is_verified
 	@email NVARCHAR(256),
 	@verification_token NVARCHAR(64) AS
 
@@ -15,7 +15,7 @@ CREATE PROCEDURE people_update_is_verified
         -- find person id
         SELECT @id_person = id_person, @token = verification_token, @is_verified = is_verified
         FROM App.people
-        WHERE (email = @email OR email = @email) AND is_deleted = 0
+        WHERE email = @email AND is_deleted = 0
 
         IF @id_person IS NULL THROW 50400, 'Account not found', 1
 

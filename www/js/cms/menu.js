@@ -47,21 +47,34 @@ app.cms.menu = {
 
         // Edit button
         $("#cms-menu-edit").on("click", function () {
-            var data = app.storeContent.getDataFromPage();
-            console.log(data)
+//            var data = app.storeContent.getDataFromPage();
+//            console.log(data)
         });
 
 
+
+
+        // Logo file changed
+        $(".fileupload").on("change", function (e) {
+            app.util.uploadImage(e.target.files);
+        });
+
+
+
+
+        // address save
         $("#store-info-edit-address-save").on("click", function () {
             self.$storeInfoEditAddress.removeClass("active");
         });
 
 
+        // address cancel
         $("#store-info-edit-address-cancel").on("click", function () {
             self.$storeInfoEditAddress.removeClass("active");
         });
 
 
+        // address show/hide
         $("#store-info-address-edit").on("click", function () {
             self.$storeInfoEditAddress.toggleClass("active");
         });

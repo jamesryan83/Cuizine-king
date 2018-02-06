@@ -190,10 +190,47 @@ app.util = {
     },
 
 
+    // Upload an image
+    uploadImage: function (files) {
+        if (files && files.length > 0) {
+            var file = files[0];
+            if (file.size > 250000) {
+                this.showToast("Image file size too big.  Must be < 250kB");
+                return;
+            }
+
+            var formdata = new FormData();
+            formdata.append("logo", files[0]);
+
+            this.ajaxRequest({
+                method: "POST", url: "/api/v1/store-update-logo", auth: true,
+                isImage: true, data: formdata
+            }, function (err, result) {
+
+            });
+
+
+//            var imgEl = document.getElementById(imageEl);
+//            var file = files[0];
+//            console.log(imgEl, file)
+//            var reader = new FileReader();
+//            reader.onload = function (e) {
+//                imgEl.src = e.target.result;
+//            };
+//            reader.readAsDataURL(file);
+        } else {
+            this.showToast("Invalid Image");
+        }
+    },
+
+
     // Generic ajax request
     // options are { method, url, data, auth, datatype, cache }, returns (err, data)
     ajaxRequest: function (options, callback) {
         var self = this;
+
+        var contentType = "application/x-www-form-urlencoded; charser=UTF-8";
+        if (options.isImage) contentType = false;
 
         // setup options
         var ajaxOptions = {
@@ -201,15 +238,19 @@ app.util = {
             url: options.url,
             data: options.data,
             cache: options.cache || false,
+            processData: !options.isImage,
+            contentType: contentType,
             beforeSend: function(request) {
                 if (options.auth) {
                     request.setRequestHeader("authorization", "Bearer " + app.util.getJwtFromStorage());
                 }
             },
             success: function (result) {
+                console.log(result)
                 return callback(null, result);
             },
             error: function (err) {
+                console.log(err)
                 if (err) {
                     if (err.responseJSON && err.responseJSON.err) {
                         self.showToast(err.responseJSON.err, 4000);

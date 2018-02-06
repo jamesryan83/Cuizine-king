@@ -2,8 +2,10 @@
 CREATE TABLE App.people
 (
 	id_person INT NOT NULL CONSTRAINT DF_app_people_id_person DEFAULT (NEXT VALUE FOR Sequences.id_person),
-	id_person_type TINYINT NOT NULL DEFAULT 0,
     id_address INT,
+    is_web_user BIT NOT NULL DEFAULT 1,
+    is_store_user BIT NOT NULL DEFAULT 0,
+    is_system_user BIT NOT NULL DEFAULT 0,
     first_name NVARCHAR(64) NOT NULL,
     last_name NVARCHAR(64) NOT NULL,
     email NVARCHAR(256) NOT NULL UNIQUE,
@@ -13,7 +15,6 @@ CREATE TABLE App.people
     jwt NVARCHAR(512),
     is_verified BIT NOT NULL DEFAULT 0,
     verification_token NVARCHAR(64) NOT NULL,
-    id_store INT,
     is_deleted BIT NOT NULL DEFAULT 0,
     is_deleted_email NVARCHAR(256),
     internal_notes NVARCHAR(256) SPARSE NULL,
@@ -24,6 +25,4 @@ CREATE TABLE App.people
 )
 GO
 
-ALTER TABLE App.people ADD CONSTRAINT FK_app_people_app_person_types FOREIGN KEY (id_person_type) REFERENCES App.person_types (id_person_type)
 ALTER TABLE App.people ADD CONSTRAINT FK_app_people_app_addresses FOREIGN KEY (id_address) REFERENCES App.addresses (id_address)
-ALTER TABLE App.people ADD CONSTRAINT FK_app_people_store_stores FOREIGN KEY (id_store) REFERENCES Store.stores (id_store)

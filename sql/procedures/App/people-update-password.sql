@@ -1,5 +1,5 @@
 -- Update password
-CREATE PROCEDURE people_update_password
+CREATE OR ALTER PROCEDURE people_update_password
 	@email NVARCHAR(256),
 	@reset_password_token NVARCHAR(64),
     @password NVARCHAR (64) AS
