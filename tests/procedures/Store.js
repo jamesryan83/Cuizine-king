@@ -149,15 +149,22 @@ describe("PROCEDURES - STORE", function () {
 
 
     it("#stores_get returns store", function (done) {
-        storesDB.stores_get({ "id_store": 1 }, function (err, result) {
+        storesDB.stores_get({ "id_store": 1 }, function (err, store) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            assert.ok(result[0])
-            assert.equal(result[0].id_store, 1)
-            assert.ok(result[0].name)
-            assert.ok(result[0].email)
-            assert.ok(result[0].address.length > 0)
-            assert.ok(result[0].hours.length > 0)
+            assert.ok(store);
+            assert.equal(store.id_store, 1);
+            assert.ok(store.name);
+            assert.ok(store.description);
+            assert.ok(store.email);
+            assert.ok(store.phone_number);
+            assert.ok(store.address.length > 0);
+            assert.ok(store.hours.length > 0);
+            assert.ok(store.review_count > 0);
+            assert.ok(store.products.length > 0);
+            assert.ok(store.products[0].options.length > 0);
+            assert.ok(store.product_extras.length > 0);
+            assert.ok(store.product_headings.length > 0);
 
             done();
         });

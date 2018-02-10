@@ -11,6 +11,8 @@ app.cms = {
 
     htmlFiles: {}, // cached html
 
+    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
+
 
     init: function (html) {
         var self = this;
@@ -35,19 +37,26 @@ app.cms = {
 
     // Called whenever the page is changed
     onPageChanged: function (routeData) {
-        app.navbar.init(routeData);
+        app.cms.navbar.init(routeData);
+    },
+
+
+    // Remove user specific parts of a url
+    normalizeRoute: function (route) {
+        var match = false;
+
+        if (this.regexUrlStoreAdmin.exec(route)) {
+            var temp = route.split("/");
+            route = "/store-admin/:id/" + temp[temp.length - 1];
+            match = true;
+        }
+
+        return { route: route, match: match };
     },
 
 
     // CMS routes
     routes: {
-        "/store-admin/:id/business": {
-            title: "Business",
-            file: "business",
-            initFunction: function (routeData) {
-                app.cms.business.init(routeData);
-            },
-        },
         "/store-admin/:id/dashboard": {
             title: "Dashboard",
             file: "dashboard",
@@ -83,6 +92,13 @@ app.cms = {
                 app.cms.settings.init(routeData);
             },
         },
+        "/store-admin/:id/details": {
+            title: "Details",
+            file: "details",
+            initFunction: function (routeData) {
+                app.cms.details.init(routeData);
+            },
+        },
         "/store-admin/:id/transactions": {
             title: "Transactions",
             file: "transactions",
@@ -100,16 +116,6 @@ app.cms = {
 app.cms.routesList = Object.keys(app.cms.routes);
 
 
-
-// Business page
-app.cms.business = {
-
-    init: function () {
-        var self = this;
-
-    },
-
-}
 
 // Dashboard page
 app.cms.dashboard = {
@@ -129,23 +135,42 @@ app.cms.deliverySuburbs = {
 
 }
 
+// Details page
+app.cms.details = {
+
+    init: function () {
+        var self = this;
+
+    },
+
+}
+
 // Menu page
 app.cms.menu = {
 
     init: function (routeData) {
         var self = this;
 
-        app.storeContent.init(routeData);
-
         this.$storeInfoEditAddress = $("#store-info-edit-address");
+
+        var storeId = app.util.getStoreIdFromStorage();
+
+
+        // get store data
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store?id_store=" + storeId, cache: true
+        }, function (err, result) {
+            if (err) return;
+
+            app.storeContent.init(routeData, true);
+            app.storeContent.addMenuDataToPage(result.data);
+        })
 
 
         // Show Edit mode
         $(".cms-menu-return").on("click", function () {
-            $("#store-content-editable").removeClass("edit-mode");
-            $("#store-content-preview-container").hide();
-            $("#store-content-edit-container").show();
-            $(".store-editmode-control").show();
+            $("#store-info-inner").hide();
+            $("#store-info-edit").show();
 
             $("#preview-mode-border").hide();
             $(".cms-menu-preview").show();
@@ -155,12 +180,8 @@ app.cms.menu = {
 
         // Show Preview
         $(".cms-menu-preview").on("click", function () {
-            $("#store-content-editable").addClass("edit-mode");
-            $("#store-content-preview-container").show();
-            $("#store-content-edit-container").hide();
-            $(".store-editmode-control").hide();
-
-            $("#store-info-edit-address").removeClass("active");
+            $("#store-info-edit").hide();
+            $("#store-info-inner").show();
 
             $("#preview-mode-border").show();
             $(".cms-menu-preview").hide();
@@ -170,7 +191,7 @@ app.cms.menu = {
 
         // content editable lose focus
         $(".store-editable-control").on("blur", function (e) {
-            console.log(this.innerText)
+            console.log(this.innerText);
         });
 
 
@@ -181,14 +202,19 @@ app.cms.menu = {
         });
 
 
-
-
         // Logo file changed
         $(".fileupload").on("change", function (e) {
-            app.util.uploadImage(e.target.files);
+            if (e.target.files.length > 0) {
+                app.util.uploadImage(e.target.files, function (err, imgPath) {
+                    if (err) {
+                        app.util.showToast(err);
+                        return;
+                    }
+
+                    $("#store-info-image").attr("src", imgPath);
+                });
+            }
         });
-
-
 
 
         // address save
@@ -214,6 +240,29 @@ app.cms.menu = {
             console.log(data)
         });
 
+    },
+
+}
+// Cms navbar
+app.cms.navbar = {
+
+    init: function (routeData) {
+        var navbar = new app.controls.Navbar(routeData);
+
+        $(".navbar-links a").removeClass("active");
+        $(".navbar-link-" + (routeData.file)).addClass("active");
+
+        var storeId = app.util.getStoreIdFromStorage();
+        $("#navbar-cms a").each(function (index, el) {
+            var href = $(this).attr("href");
+            $(this).attr("href", href.replace(":storeId", storeId));
+        });
+
+        // link clicked
+        navbar.linkClicked = function (e, route) {
+            app.routerBase.loadPageForRoute(route, "cms");
+            return false;
+        }
     },
 
 }
@@ -344,7 +393,7 @@ app.dialogs.reviews = {
     update: function () {
         $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
 
-        app.ratingControls.setValue("#dialog-store-reviews-rating-control",
+        app.controls.RatingControls.setValue("#dialog-store-reviews-rating-control",
             Math.round(data.rating));
 
         var frag = document.createDocumentFragment();
@@ -400,100 +449,6 @@ app.i18n.en = {
 
 
 
-
-app.navbar = {
-
-
-    // Init
-    init: function (routeData) {
-        var self = this;
-
-        // Item clicked.  // TODO : security
-        $(".navbar a").on("click", function (e) {
-            var isCms = window.location.pathname.indexOf("/store-admin") === 0;
-
-            if (this.innerText.toLowerCase() == "blog") {
-                app.util.showToast("Not working yet");
-                return false;
-            }
-
-            if (this.innerText.toLowerCase() == "account") {
-                if (!isCms) {
-                    app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
-                }
-                return false;
-            }
-
-            if (this.innerText.toLowerCase() == "logout") {
-                app.routerBase.logUserOut();
-                return false;
-            }
-
-
-            var route = this.href.replace(window.location.origin, "");
-            var section = "site";
-            if (window.location.pathname.indexOf("/store-admin") === 0) {
-                section = "cms";
-                route = "/store-admin/" + app.util.getStoreIdFromStorage() + e.target.pathname;
-            }
-
-            var routeData = app.routerBase.loadPageForRoute(route, section);
-
-            return false;
-        });
-
-
-        // Popup icon to show/hide
-        $(".navbar-links-popup-button").on("click", function () {
-            $(".navbar-links-popup").animate({ right: 0 }, 200);
-        });
-
-        $(".navbar-links-popup-close").on("click", function () {
-            $(".navbar-links-popup").animate({ right: -250 }, 200);
-        });
-
-
-        // TODO : remove in production
-        // Debug - go to sysadmin page when click on the icon
-        $(".navbar-icon").on("click", function (e) {
-            if (e.ctrlKey) {
-                window.location.href = "/admin-login";
-            } else {
-                window.location.href = "/location/Balmoral-4171";
-            }
-        });
-
-        this.updateNavbar(routeData);
-    },
-
-
-    // Update the navbar when the route changes
-    updateNavbar: function (routeData) {
-        var r = routeData.route;
-
-        $(".navbar-links a").removeClass("active");
-
-        if (r.indexOf("/location/") === 0 || r == "/register" ||
-            r == "/register-store" || r == "/store-login") {
-            // ignore
-        } else {
-            $(".navbar-link-" + (routeData.file)).addClass("active");
-        }
-
-        // if logged in
-        if (app.routerBase.isUserLoggedIn()) {
-            $(".navbar-link-logout").show();
-            $(".navbar-link-account").show();
-            $(".navbar-link-login").hide();
-        } else {
-            $(".navbar-link-login").show();
-            $(".navbar-link-logout").hide();
-            $(".navbar-link-account").hide();
-        }
-    }
-
-
-}
 // Base client side router
 app.routerBase = {
 
@@ -528,12 +483,14 @@ app.routerBase = {
 
         // for back button after pushstate
         window.onpopstate = function () {
+            console.log("on popstate " + window.location.pathname)
             self.loadPageForRoute(window.location.pathname, self.lastLoadedSection, true);
         };
 
 
         // get data for route
         var routeData = this.getCurrentRouteData(route, section);
+
 
         // load html into page
         $("#page-container").empty();
@@ -581,8 +538,7 @@ app.routerBase = {
             if (route == "/index-cordova") route = "/";
         }
 
-
-        routeData.normalizedRoute = app.urlUtil.normalizeRoute(route);
+        routeData.normalizedRoute = app[section].normalizeRoute(route).route;
         routeData.section = section;
 
         // Add html and other route data
@@ -628,35 +584,31 @@ app.routerBase = {
 // Store content
 app.storeContent = {
 
-    init: function (routeData) {
+    init: function (routeData, dataLoaded) {
         var self = this;
 
-
-        this.$description = $("#store-info-description");
         this.$address = $("#store-info-address");
-
         this.$storeMenuNav = $("#store-menu-nav");
+        this.$description = $("#store-info-description");
 
 
+        // called from site section
+        if (!dataLoaded) {
+            // store id from url
+            var storeId = routeData.route.split("/");
+            storeId = storeId[storeId.length - 1];
 
-
-        // store id from url
-//        var storeId = routeData.route.split("/");
-//        storeId = storeId[storeId.length - 1];
-        var storeId = app.util.getStoreIdFromStorage();
-
-        // Get store data
-        app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
-        }, function (err, result) {
-            if (err) return;
-console.log(result)
-//            if (Object.keys(result).length > 0) {
-//                self.addDataToPage(result.data[0]);
-//            } else {
-//                app.util.showToast("Error loading store data");
-//            }
-        });
+            // Get store data
+            app.util.ajaxRequest({
+                method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
+            }, function (err, result) {
+                if (err) return;
+                console.log(result)
+                result.data.id_store = storeId;
+                self.addStoreDetailsDataToPage(result.data);
+                self.addMenuDataToPage(result.data);
+            });
+        }
 
 
         // Other events
@@ -669,13 +621,14 @@ console.log(result)
             // position of menu category navigation thing
             var rect = document.getElementById("store-menu").getBoundingClientRect();
             if (rect.top < 0) {
-                self.$storeMenuNav.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
+                self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
             } else {
                 self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
             }
         });
 
 
+        // Open dialog buttons
         $("#store-info-button-description").on("click", function () {
             app.dialogs.description.show();
         });
@@ -687,7 +640,6 @@ console.log(result)
         $("#store-info-button-reviews").on("click", function () {
             app.dialogs.reviews.show();
         });
-
 
     },
 
@@ -719,15 +671,29 @@ console.log(result)
 
     // add data to the page
     addDataToPage: function (data) {
-console.log(data)
+        console.log(data);
 
+        $("#store-info-button-hours").show();
+        $("#store-info-button-reviews").show();
+
+        this.resizeDescription();
+    },
+
+
+
+    // Add store details data
+    addStoreDetailsDataToPage: function (data) {
+
+        // Format address to a single string
         var address = data.address[0];
         address = address.line1 + ", " +
             (address.line2 ? (address.line2 + ", ") : "") +
-            address.suburb + " " + address.postcode
+            address.suburb + " " + address.postcode;
 
+
+        // add store details
         $("#store-header-name").text(data.name);
-        $("#store-info-image").attr("src", data.logo);
+        $("#store-info-image").attr("src", "/res/storelogos/store" + data.id_store + ".jpg");
         $("#store-info-description").text(data.description);
         $("#store-info-address").text(address);
         $("#store-info-phone-number").text(data.phone_number);
@@ -735,29 +701,29 @@ console.log(data)
         $("#store-disclaimer").text(data.disclaimer);
         $("#store-info-review-count").text("( " + data.review_count + " )");
 
-        app.controls.ratingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+        // rating control
+        app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+    },
+
+
+
+    // Add menu data
+    addMenuDataToPage: function (data) {
 
         // products
         var item = null;
         var itemProperties = "";
         var frag = document.createDocumentFragment();
+
         if (data.products) {
+
+            // create product items
             for (var i = 0; i < data.products.length; i++) {
 
-//                // product category heading
-//                frag.append(
-//                    $("<div class='store-menu-list-item heading'>" +
-//                        "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
-//                        "<hr class='hr-1' />" +
-//                    "</div>")[0]);
-
-                // product items
-//                for (var j = 0; j < data.products[i].items.length; j++) {
-//                    item = data.products[i].items[j];
-
                 item = data.products[i];
-
                 itemProperties = "";
+
                 if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
                 if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
                 if (!item.delivery_available) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
@@ -765,7 +731,7 @@ console.log(data)
                 if (!itemProperties) itemProperties = "<br />";
 
                 frag.append(
-                    $("<div class='store-menu-list-item clearfix'>" +
+                    $("<div class='store-menu-list-item clearfix' data-id-product='" + item.id_product + "'>" +
                         "<div>" +
                             "<h4>" + item.name + "</h4>" +
                             "<p>" + item.description + "</p>" +
@@ -773,25 +739,64 @@ console.log(data)
                         "</div>" +
                         "<label>Add to order</label>" +
                     "</div>")[0]);
-//                }
             }
 
+
+            // create product heading items
+            if (data.product_headings) {
+                for (var i = 0; i < data.product_headings.length; i++) {
+                    var heading = data.product_headings[i];
+
+                    var el = $(frag).find(".store-menu-list-item[data-id-product='" +
+                                 heading.above_product_id + "']");
+
+                    if (el) {
+                        $("<div class='store-menu-list-item heading' data-id-heading='" + heading.id_product_heading + "'>" +
+                            "<h4 class='store-menu-list-item-group-heading'>" + heading.title + "</h4>" +
+                            "<hr class='hr-1' />" +
+                        "</div>").insertBefore(el);
+                    }
+                }
+            }
+
+            // add products and headings to page
             $("#store-menu-list").append(frag);
 
 
-//            // Category nav
-//            frag = document.createDocumentFragment();
-//            for (var i = 0; i < data.products.length; i++) {
-//                frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
-//            }
-//            $("#store-menu-nav-list").append(frag);
-//
-//            $(".store-menu-nav-list-item").on("click", function (e) {
-//                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-//
-//                $("html").animate({ scrollTop: el[0].offsetTop }, 500);
-//            });
+            // Category nav
+            frag = document.createDocumentFragment();
+            for (var i = 0; i < data.product_headings.length; i++) {
+                frag.append($("<li class='store-menu-nav-list-item'>" + data.product_headings[i].title + "</li>")[0])
+            }
+            $("#store-menu-nav-list").append(frag);
+
+            $(".store-menu-nav-list-item").on("click", function (e) {
+                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+                if (el[0]) {
+                    $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
+                }
+            });
+
+
+
+        } else {
+            $("#store-menu-list").append("No Products");
         }
+    },
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -804,49 +809,6 @@ console.log(data)
 //        app.dialogs.description.init(data.name, data.description);
 //        app.dialogs.businessHours.init(data.hours);
         //app.dialogs.reviews.init(data);
-
-        $("#store-info-button-hours").show();
-        $("#store-info-button-reviews").show();
-
-        this.resizeDescription();
-    },
-
-}
-if (typeof app === "undefined") {
-    var app = {};
-}
-
-// Parses urls that have variables
-app.urlUtil = {
-
-    // url regexes
-    regexUrlAccount: /\/account\/\d*/,
-    regexUrlLocation: /\/location\/[\w\d%-]*-\d*/,
-    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
-    regexUrlStore: /\/store\/\d*/,
-
-
-    // replace url variables with url placeholders
-    normalizeRoute: function (route) {
-
-        if (this.regexUrlStoreAdmin.exec(route)) {
-            var temp = route.split("/");
-            route = "/store-admin/:id/" + temp[temp.length - 1];
-        } else if (this.regexUrlStore.exec(route)) {
-            route = "/store/:id";
-        } else if (this.regexUrlLocation.exec(route)) {
-            route = "/location/:suburb";
-        } else if (this.regexUrlAccount.exec(route)) {
-            route = "/account/:id";
-        }
-
-        return route;
-    },
-
-}
-
-
-
 
 app.util = {
 
@@ -1039,7 +1001,9 @@ app.util = {
 
 
     // Upload an image
-    uploadImage: function (files) {
+    uploadImage: function (files, callback) {
+        var self = this;
+
         if (files && files.length > 0) {
             var file = files[0];
             if (file.size > 250000) {
@@ -1049,12 +1013,18 @@ app.util = {
 
             var formdata = new FormData();
             formdata.append("logo", files[0]);
+            formdata.append("id_store", this.getStoreIdFromStorage());
 
             this.ajaxRequest({
                 method: "POST", url: "/api/v1/store-update-logo", auth: true,
                 isImage: true, data: formdata
             }, function (err, result) {
+                if (err || !result || !result.data || !result.data.url) {
+                    console.log(err)
+                    return callback("Error uploading image");
+                }
 
+                return callback(null, result.data.url);
             });
 
 
@@ -1183,7 +1153,6 @@ app.vr._reviews_title =           { presence: true, length: { minimum: 2, maximu
 app.vr._reviews_review_optional = { length: { maximum: 512 }};
 app.vr._reviews_rating =          { presence: true, numericality: { onlyInteger: true, greaterThan: 0, lessThan: 6 }};
 
-app.vr._stores_logo =                 { presence: true, length: { maximum: 256 }};
 app.vr._stores_name =                 { presence: true, length: { maximum: 512 }};
 app.vr._stores_description_optional = { length: { maximum: 1024 }};
 app.vr._stores_abn =                  { presence: true, length: { minimum: 10, maximum: 32 }};
@@ -1294,6 +1263,9 @@ app.vr.updateStore = {
     email_user: app.vr._email,
 }
 
+app.vr.updateLogo = {
+    id_store: app.vr._sequence_id
+}
 
 app.vr.deleteStore = {
 	id_store: app.vr._sequence_id
@@ -1355,8 +1327,51 @@ app.vr.storeApplication = {
 app.validationRules = app.vr;
 
 
+// Navbar
 
-app.controls.ratingControls = {
+app.controls.Navbar = function (routeData) {
+    var self = this;
+
+
+    // Item clicked
+    $(".navbar a").on("click", function (e) {
+        if (this.innerText.toLowerCase() == "logout") {
+            app.routerBase.logUserOut();
+            return false;
+        }
+
+        var route = this.href.replace(window.location.origin, "");
+        self.linkClicked(e, route);
+
+        return false;
+    });
+
+
+    // Popup icon to show/hide
+    $(".navbar-links-popup-button").on("click", function () {
+        $(".navbar-links-popup").animate({ right: 0 }, 200);
+    });
+
+    $(".navbar-links-popup-close").on("click", function () {
+        $(".navbar-links-popup").animate({ right: -250 }, 200);
+    });
+
+
+    // TODO : remove in production
+    // Debug - go to sysadmin page when click on the icon
+    $(".navbar-icon").on("click", function (e) {
+        if (e.ctrlKey) {
+            window.location.href = "/admin-login";
+        } else {
+            window.location.href = "/location/Balmoral-4171";
+        }
+    });
+}
+
+app.controls.Navbar.prototype.linkClicked = function () { }
+
+// Sets up multiple rating controls
+app.controls.RatingControls = {
 
 
     // Sets the value of a rating control
@@ -1414,7 +1429,7 @@ app.controls.ratingControls = {
             $(this).prevAll().addClass("active");
         });
 
-
+// TODO : what's this ??
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
 //            this.allowUserStarUpdate = false;

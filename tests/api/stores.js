@@ -29,7 +29,7 @@ describe("API - Stores", function () {
             .set("authorization", "Bearer " + jwt)
             .send(data)
             .expect("Content-Type", "application/json; charset=utf-8")
-            .expect(status)
+//            .expect(status)
             .end(function (err, res) {
                 return callback(err, res)
         });
@@ -103,9 +103,9 @@ describe("API - Stores", function () {
 
     it("#getStore returns a message when store not found", function (done) {
         supertest(testutil.supertestUrl)
-            .get("/api/v1/store")
+            .get("/api/v1/store?id_store=10000")
             .set("Content-Type", "application/json")
-            .send({ id_store: 100000 })
+//            .send({ id_store: 10000 })
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
@@ -117,22 +117,20 @@ describe("API - Stores", function () {
 
     it("#getStore returns a store", function (done) {
         supertest(testutil.supertestUrl)
-            .get("/api/v1/store")
+            .get("/api/v1/store?id_store=1")
             .set("Content-Type", "application/json")
-            .send({ id_store: 1 })
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(200)
             .end(function (err, res) {
                 if (err) return done(new Error(err));
 
-                var data = res.body.data[0];
+                var data = res.body.data;
 
                 assert.equal(data.id_store, 1);
                 assert.ok(data.name.length > 0);
                 assert.ok(data.description.length > 0);
                 assert.ok(data.phone_number.length > 0);
                 assert.ok(data.email.length > 0);
-                assert.ok(data.logo.length > 0);
                 assert.equal(data.address[0].id_address, 1);
                 assert.ok(data.address[0].line1.length > 0);
                 assert.ok(data.hours.length > 0);

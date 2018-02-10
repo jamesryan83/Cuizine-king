@@ -5,6 +5,82 @@
 #page-cms-menu {
 
 
+    // Store content
+    #store-content {
+
+        #store-info-inner {
+            display: none;
+        }
+
+
+        // info edit
+        #store-info-edit {
+            background-clip: pink;
+
+            #store-info-image-container {
+                float: left;
+                background-color: green;
+                text-align: center;
+
+                #store-info-image {
+                    margin-top: 20px;
+                    height: 240px;
+                    width: 340px;
+                    display: block;
+
+                    @media (max-width: $mediaMobileWidth1) {
+                        width: 300px;
+                        height: 210px;
+                    }
+                }
+
+                .upload-button {
+                    margin-top: 10px;
+                }
+            }
+
+            #store-info-details-container {
+                background-color: blue;
+                float: left;
+
+                .label-textarea {
+                    text-align: left;
+                }
+
+                .typeahead {
+                    margin: 10px 0;
+
+                    > label{
+                        width: 150px;
+                    }
+
+                    .typeahead-list {
+                        width: 350px;
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Edit menu controls
+    #menu-edit-controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: $colorGray14;
+        border: 5px solid $colorGray14;
+        text-align: center;
+
+        button {
+            margin: 10px 20px;
+            width: 160px;
+            white-space: nowrap;
+        }
+    }
+
+
     // preview border
     #preview-mode-border {
         height: 100%;
@@ -29,158 +105,6 @@
     }
 
 
-
-    // Store content
-    #store-content-editable {
-
-        // content editable
-        &:not(.edit-mode) {
-            [contenteditable=true]:empty:before {
-                content: attr(placeholder);
-                display: block; /* For Firefox */
-                color: $colorRed1;
-                font-weight: bold;
-            }
-
-            [contenteditable=true] {
-                cursor: text;
-                font-size: 14px;
-                font-weight: 400;
-            }
-        }
-
-
-
-        // Upload button
-        .upload-button {
-            position: absolute;
-            left: 85px;
-            top: 260px;
-            border: none;
-
-            label {
-                color: $colorRed1;
-                white-space: nowrap;
-            }
-        }
-
-
-
-        // Store info
-        #store-info {
-            text-align: center;
-
-            #store-info-inner {
-                text-align: left;
-
-                // expandable address container
-                #store-info-address-container {
-
-                    > label {
-                        vertical-align: middle;
-                    }
-
-                    > div {
-                        display: inline-block;
-                        vertical-align: middle;
-
-                        label {
-                            display: block;
-                            height: 25px;
-                            line-height: 25px;
-                        }
-                    }
-
-                    // open edit address button
-                    #store-info-address-edit {
-                        color: $colorRed1;
-                        font-weight: bold;
-                        cursor: pointer;
-                    }
-                }
-            }
-        }
-
-
-
-        // Edit menu controls
-        #menu-edit-controls {
-            text-align: center;
-
-            button {
-                margin: 20px;
-            }
-        }
-
-    }
-
-
-    // edit address
-    #store-info-edit-address {
-        position: fixed;
-        bottom: -400px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 30px 50px;
-        background-color: $colorGray14;
-        transition: bottom 0.2s;
-
-        &.active {
-            bottom: 0;
-        }
-
-        > div:first-of-type {
-            padding-bottom: 20px;
-
-            h3 {
-                display: inline-block;
-            }
-            > div {
-                float: right;
-
-                button {
-                    margin-left: 10px;
-                    width: 80px;
-                }
-            }
-        }
-
-        .label-input {
-            width: 100%;
-            white-space: nowrap;
-        }
-
-        div > div > label {
-            width: 120px;
-        }
-
-        input {
-            width: 350px;
-            float: none;
-        }
-
-        .typeahead {
-            margin-top: 10px;
-
-            .typeahead-list {
-                width: 350px;
-            }
-        }
-    }
-
-
-
-    @media (max-width: $mediaWidth3) {
-        #store-content-editable {
-            .upload-button {
-                top: 235px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        }
-    }
-
-
     @media (max-width: $mediaWidth1) {
         #store-info-edit-address {
             div > div > label {
@@ -191,12 +115,6 @@
 
 
     @media (max-width: $mediaMobileWidth1) {
-        #store-content-editable {
-            .upload-button {
-                top: 210px;
-            }
-        }
-
         #store-info-edit-address {
             width: 340px;
             padding: 30px 20px;
@@ -219,3 +137,55 @@
         }
     }
 }
+
+
+
+//        // Upload button
+//        .upload-button {
+//            position: absolute;
+//            left: 85px;
+//            top: 260px;
+//            border: none;
+//
+//            label {
+//                color: $colorRed1;
+//                white-space: nowrap;
+//            }
+//        }
+
+
+
+//        // Store info
+//        #store-info {
+//            text-align: center;
+//
+//            #store-info-inner {
+//                text-align: left;
+//
+//                // expandable address container
+//                #store-info-address-container {
+//
+//                    > label {
+//                        vertical-align: middle;
+//                    }
+//
+//                    > div {
+//                        display: inline-block;
+//                        vertical-align: middle;
+//
+//                        label {
+//                            display: block;
+//                            height: 25px;
+//                            line-height: 25px;
+//                        }
+//                    }
+//
+//                    // open edit address button
+//                    #store-info-address-edit {
+//                        color: $colorRed1;
+//                        font-weight: bold;
+//                        cursor: pointer;
+//                    }
+//                }
+//            }
+//        }

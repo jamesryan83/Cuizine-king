@@ -3,35 +3,31 @@
 // Store content
 app.storeContent = {
 
-    init: function (routeData) {
+    init: function (routeData, dataLoaded) {
         var self = this;
 
-
-        this.$description = $("#store-info-description");
         this.$address = $("#store-info-address");
-
         this.$storeMenuNav = $("#store-menu-nav");
+        this.$description = $("#store-info-description");
 
 
+        // called from site section
+        if (!dataLoaded) {
+            // store id from url
+            var storeId = routeData.route.split("/");
+            storeId = storeId[storeId.length - 1];
 
-
-        // store id from url
-//        var storeId = routeData.route.split("/");
-//        storeId = storeId[storeId.length - 1];
-        var storeId = app.util.getStoreIdFromStorage();
-
-        // Get store data
-        app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
-        }, function (err, result) {
-            if (err) return;
-console.log(result)
-//            if (Object.keys(result).length > 0) {
-//                self.addDataToPage(result.data[0]);
-//            } else {
-//                app.util.showToast("Error loading store data");
-//            }
-        });
+            // Get store data
+            app.util.ajaxRequest({
+                method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
+            }, function (err, result) {
+                if (err) return;
+                console.log(result)
+                result.data.id_store = storeId;
+                self.addStoreDetailsDataToPage(result.data);
+                self.addMenuDataToPage(result.data);
+            });
+        }
 
 
         // Other events
@@ -44,13 +40,14 @@ console.log(result)
             // position of menu category navigation thing
             var rect = document.getElementById("store-menu").getBoundingClientRect();
             if (rect.top < 0) {
-                self.$storeMenuNav.css({ "position": "fixed", "right": 70, "top": 0, "float": "none" });
+                self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
             } else {
                 self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
             }
         });
 
 
+        // Open dialog buttons
         $("#store-info-button-description").on("click", function () {
             app.dialogs.description.show();
         });
@@ -62,7 +59,6 @@ console.log(result)
         $("#store-info-button-reviews").on("click", function () {
             app.dialogs.reviews.show();
         });
-
 
     },
 
@@ -94,15 +90,29 @@ console.log(result)
 
     // add data to the page
     addDataToPage: function (data) {
-console.log(data)
+        console.log(data);
 
+        $("#store-info-button-hours").show();
+        $("#store-info-button-reviews").show();
+
+        this.resizeDescription();
+    },
+
+
+
+    // Add store details data
+    addStoreDetailsDataToPage: function (data) {
+
+        // Format address to a single string
         var address = data.address[0];
         address = address.line1 + ", " +
             (address.line2 ? (address.line2 + ", ") : "") +
-            address.suburb + " " + address.postcode
+            address.suburb + " " + address.postcode;
 
+
+        // add store details
         $("#store-header-name").text(data.name);
-        $("#store-info-image").attr("src", data.logo);
+        $("#store-info-image").attr("src", "/res/storelogos/store" + data.id_store + ".jpg");
         $("#store-info-description").text(data.description);
         $("#store-info-address").text(address);
         $("#store-info-phone-number").text(data.phone_number);
@@ -110,29 +120,29 @@ console.log(data)
         $("#store-disclaimer").text(data.disclaimer);
         $("#store-info-review-count").text("( " + data.review_count + " )");
 
-        app.controls.ratingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+        // rating control
+        app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+    },
+
+
+
+    // Add menu data
+    addMenuDataToPage: function (data) {
 
         // products
         var item = null;
         var itemProperties = "";
         var frag = document.createDocumentFragment();
+
         if (data.products) {
+
+            // create product items
             for (var i = 0; i < data.products.length; i++) {
 
-//                // product category heading
-//                frag.append(
-//                    $("<div class='store-menu-list-item heading'>" +
-//                        "<h4 class='store-menu-list-item-group-heading'>" + data.products[i].name + "</h4>" +
-//                        "<hr class='hr-1' />" +
-//                    "</div>")[0]);
-
-                // product items
-//                for (var j = 0; j < data.products[i].items.length; j++) {
-//                    item = data.products[i].items[j];
-
                 item = data.products[i];
-
                 itemProperties = "";
+
                 if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
                 if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
                 if (!item.delivery_available) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
@@ -140,7 +150,7 @@ console.log(data)
                 if (!itemProperties) itemProperties = "<br />";
 
                 frag.append(
-                    $("<div class='store-menu-list-item clearfix'>" +
+                    $("<div class='store-menu-list-item clearfix' data-id-product='" + item.id_product + "'>" +
                         "<div>" +
                             "<h4>" + item.name + "</h4>" +
                             "<p>" + item.description + "</p>" +
@@ -148,25 +158,64 @@ console.log(data)
                         "</div>" +
                         "<label>Add to order</label>" +
                     "</div>")[0]);
-//                }
             }
 
+
+            // create product heading items
+            if (data.product_headings) {
+                for (var i = 0; i < data.product_headings.length; i++) {
+                    var heading = data.product_headings[i];
+
+                    var el = $(frag).find(".store-menu-list-item[data-id-product='" +
+                                 heading.above_product_id + "']");
+
+                    if (el) {
+                        $("<div class='store-menu-list-item heading' data-id-heading='" + heading.id_product_heading + "'>" +
+                            "<h4 class='store-menu-list-item-group-heading'>" + heading.title + "</h4>" +
+                            "<hr class='hr-1' />" +
+                        "</div>").insertBefore(el);
+                    }
+                }
+            }
+
+            // add products and headings to page
             $("#store-menu-list").append(frag);
 
 
-//            // Category nav
-//            frag = document.createDocumentFragment();
-//            for (var i = 0; i < data.products.length; i++) {
-//                frag.append($("<li class='store-menu-nav-list-item'>" + data.products[i].name + "</li>")[0])
-//            }
-//            $("#store-menu-nav-list").append(frag);
-//
-//            $(".store-menu-nav-list-item").on("click", function (e) {
-//                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-//
-//                $("html").animate({ scrollTop: el[0].offsetTop }, 500);
-//            });
+            // Category nav
+            frag = document.createDocumentFragment();
+            for (var i = 0; i < data.product_headings.length; i++) {
+                frag.append($("<li class='store-menu-nav-list-item'>" + data.product_headings[i].title + "</li>")[0])
+            }
+            $("#store-menu-nav-list").append(frag);
+
+            $(".store-menu-nav-list-item").on("click", function (e) {
+                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+                if (el[0]) {
+                    $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
+                }
+            });
+
+
+
+        } else {
+            $("#store-menu-list").append("No Products");
         }
+    },
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -179,11 +228,3 @@ console.log(data)
 //        app.dialogs.description.init(data.name, data.description);
 //        app.dialogs.businessHours.init(data.hours);
         //app.dialogs.reviews.init(data);
-
-        $("#store-info-button-hours").show();
-        $("#store-info-button-reviews").show();
-
-        this.resizeDescription();
-    },
-
-}

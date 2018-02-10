@@ -191,7 +191,9 @@ app.util = {
 
 
     // Upload an image
-    uploadImage: function (files) {
+    uploadImage: function (files, callback) {
+        var self = this;
+
         if (files && files.length > 0) {
             var file = files[0];
             if (file.size > 250000) {
@@ -201,12 +203,18 @@ app.util = {
 
             var formdata = new FormData();
             formdata.append("logo", files[0]);
+            formdata.append("id_store", this.getStoreIdFromStorage());
 
             this.ajaxRequest({
                 method: "POST", url: "/api/v1/store-update-logo", auth: true,
                 isImage: true, data: formdata
             }, function (err, result) {
+                if (err || !result || !result.data || !result.data.url) {
+                    console.log(err)
+                    return callback("Error uploading image");
+                }
 
+                return callback(null, result.data.url);
             });
 
 

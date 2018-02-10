@@ -1,6 +1,6 @@
 
-
-app.controls.ratingControls = {
+// Sets up multiple rating controls
+app.controls.RatingControls = {
 
 
     // Sets the value of a rating control
@@ -58,7 +58,7 @@ app.controls.ratingControls = {
             $(this).prevAll().addClass("active");
         });
 
-
+// TODO : what's this ??
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
 //            this.allowUserStarUpdate = false;

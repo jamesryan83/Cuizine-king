@@ -281,7 +281,6 @@ exports = module.exports = {
     // create a jwt for a user
     createJwt: function (id_person, callback) {
 
-        // create jwt for user
         jwt.sign({ sub: id_person, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong }, function (err, jwToken) {
             if (err) return callback(err);
 

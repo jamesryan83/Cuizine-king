@@ -20,7 +20,7 @@ app.dialogs.reviews = {
     update: function () {
         $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
 
-        app.ratingControls.setValue("#dialog-store-reviews-rating-control",
+        app.controls.RatingControls.setValue("#dialog-store-reviews-rating-control",
             Math.round(data.rating));
 
         var frag = document.createDocumentFragment();

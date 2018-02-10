@@ -1,0 +1,1 @@
+Sqlcmd -S tcp:sqljames.database.windows.net -U james -P Budza123 -t 60000 -i ../other/azure-recreate-db.sql

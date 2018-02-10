@@ -6,17 +6,26 @@ app.cms.menu = {
     init: function (routeData) {
         var self = this;
 
-        app.storeContent.init(routeData);
-
         this.$storeInfoEditAddress = $("#store-info-edit-address");
+
+        var storeId = app.util.getStoreIdFromStorage();
+
+
+        // get store data
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store?id_store=" + storeId, cache: true
+        }, function (err, result) {
+            if (err) return;
+
+            app.storeContent.init(routeData, true);
+            app.storeContent.addMenuDataToPage(result.data);
+        })
 
 
         // Show Edit mode
         $(".cms-menu-return").on("click", function () {
-            $("#store-content-editable").removeClass("edit-mode");
-            $("#store-content-preview-container").hide();
-            $("#store-content-edit-container").show();
-            $(".store-editmode-control").show();
+            $("#store-info-inner").hide();
+            $("#store-info-edit").show();
 
             $("#preview-mode-border").hide();
             $(".cms-menu-preview").show();
@@ -26,12 +35,8 @@ app.cms.menu = {
 
         // Show Preview
         $(".cms-menu-preview").on("click", function () {
-            $("#store-content-editable").addClass("edit-mode");
-            $("#store-content-preview-container").show();
-            $("#store-content-edit-container").hide();
-            $(".store-editmode-control").hide();
-
-            $("#store-info-edit-address").removeClass("active");
+            $("#store-info-edit").hide();
+            $("#store-info-inner").show();
 
             $("#preview-mode-border").show();
             $(".cms-menu-preview").hide();
@@ -41,7 +46,7 @@ app.cms.menu = {
 
         // content editable lose focus
         $(".store-editable-control").on("blur", function (e) {
-            console.log(this.innerText)
+            console.log(this.innerText);
         });
 
 
@@ -52,14 +57,19 @@ app.cms.menu = {
         });
 
 
-
-
         // Logo file changed
         $(".fileupload").on("change", function (e) {
-            app.util.uploadImage(e.target.files);
+            if (e.target.files.length > 0) {
+                app.util.uploadImage(e.target.files, function (err, imgPath) {
+                    if (err) {
+                        app.util.showToast(err);
+                        return;
+                    }
+
+                    $("#store-info-image").attr("src", imgPath);
+                });
+            }
         });
-
-
 
 
         // address save

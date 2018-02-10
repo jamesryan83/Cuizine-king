@@ -33,12 +33,14 @@ app.routerBase = {
 
         // for back button after pushstate
         window.onpopstate = function () {
+            console.log("on popstate " + window.location.pathname)
             self.loadPageForRoute(window.location.pathname, self.lastLoadedSection, true);
         };
 
 
         // get data for route
         var routeData = this.getCurrentRouteData(route, section);
+
 
         // load html into page
         $("#page-container").empty();
@@ -86,8 +88,7 @@ app.routerBase = {
             if (route == "/index-cordova") route = "/";
         }
 
-
-        routeData.normalizedRoute = app.urlUtil.normalizeRoute(route);
+        routeData.normalizedRoute = app[section].normalizeRoute(route).route;
         routeData.section = section;
 
         // Add html and other route data

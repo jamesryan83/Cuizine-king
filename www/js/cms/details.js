@@ -1,7 +1,7 @@
 
 
-// Business page
-app.cms.business = {
+// Details page
+app.cms.details = {
 
     init: function () {
         var self = this;

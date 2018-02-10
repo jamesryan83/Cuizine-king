@@ -21,7 +21,6 @@ var routerSysadmin = require("../../www/js/sysadmin");
 
 var config = require("../config");
 var passportAuth = require("./passport-auth");
-var urlUtil = require("../../www/js/shared/url-util");
 
 var wwwFolder = path.join(__dirname, "../", "../", "www");
 
@@ -159,12 +158,19 @@ exports = module.exports = {
         var self = this;
         var jwt = req.headers["authorization"];
         var route = decodeURI(req.body.encodedUrl);
-        var normalizedRoute = urlUtil.normalizeRoute(route);
+
+
+        // Remove user specific numbers and stuff from route
+        var normalized = routerCms.normalizeRoute(route);
+        if (!normalized.match) {
+            normalized = routerSite.normalizeRoute(route);
+        }
+
 
         var routeData = {};
 
         // site
-        if (routerSite.routes[normalizedRoute]) {
+        if (routerSite.routes[normalized.route]) {
             return res.send({
                 section: "site",
                 html: self.files.siteHtml,
@@ -173,7 +179,7 @@ exports = module.exports = {
             });
 
         // cms
-        } else if (routerCms.routes[normalizedRoute]) {
+        } else if (routerCms.routes[normalized.route]) {
             passportAuth.authenticateStore(req, res, function () {
                 return res.send({
                     section: "cms",
@@ -185,7 +191,7 @@ exports = module.exports = {
             });
 
         // system admin
-        } else if (routerSysadmin.routes[normalizedRoute]) {
+        } else if (routerSysadmin.routes[normalized.route]) {
             passportAuth.authenticateSystem(req, res, function () {
                 return res.send({
                     section: "sysadmin",

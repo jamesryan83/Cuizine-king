@@ -503,7 +503,6 @@ CREATE TABLE Store.stores
 (
 	id_store INT NOT NULL CONSTRAINT DF_store_stores_id_store DEFAULT (NEXT VALUE FOR Sequences.id_store),
     id_address INT NOT NULL,
-    logo NVARCHAR(256),
     name NVARCHAR(128) NOT NULL,
     description NVARCHAR(1024),
     email NVARCHAR(256),
@@ -1062,7 +1061,7 @@ GO
 CREATE OR ALTER PROCEDURE stores_get
     @id_store INT AS
 
-    SELECT id_store, name, description, phone_number, email, logo,
+    SELECT id_store, name, description, phone_number, email,
 
         -- addresses
         (SELECT a.id_address, a.line1, a.line2, a.latitude AS address_latitude, a.longitude AS address_longitude,
@@ -1095,11 +1094,16 @@ CREATE OR ALTER PROCEDURE stores_get
         (SELECT pe.id_product_extra, pe.name, pe.price, pe.store_notes, pe.limit_per_product,
          pe.in_stock, pe.position_id_previous, pe.position_id_next
          FROM Product.product_extras pe
-         WHERE pe.id_store = @id_store AND pe.active = 1 FOR JSON PATH) AS 'product_extras'
+         WHERE pe.id_store = @id_store AND pe.active = 1 FOR JSON PATH) AS 'product_extras',
+
+         -- product headings
+        (SELECT ph.id_product_heading, ph.title, ph.subtitle, ph.above_product_id
+         FROM Product.product_headings ph
+         WHERE ph.id_store = @id_store FOR JSON PATH) AS 'product_headings'
 
     FROM Store.stores AS s
     WHERE s.id_store = @id_store AND is_deleted = 0
-    FOR JSON PATH
+    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 
 GO
 

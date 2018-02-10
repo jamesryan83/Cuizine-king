@@ -7,35 +7,74 @@
 
     <div class="page-cms-header">
         <h2 class="cms-page-heading">Edit Menu</h2>
-
-        <div class="page-cms-header-controls">
-            <button class="cms-menu-preview button-3">PREVIEW</button>
-            <button class="cms-menu-return button-3" style="display: none;">RETURN</button>
-        </div>
     </div>
 
 
 
     <!-- store content -->
-    <div id="store-content-editable">
+    <div id="store-content">
 
 
-        <!-- Info -->
-        <div id="store-info">
 
+
+
+        <!-- Menu -->
+        <div id="store-menu" class="clearfix">
+            <div id="store-menu-list"></div>
+
+            <div id="store-menu-nav">
+                <ul id="store-menu-nav-list">
+
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <div id="store-footer">
+            <p id="store-disclaimer"></p>
+        </div>
+
+    </div>
+
+
+    <div id="menu-edit-controls">
+        <button class="button-3">ADD MENU CATEGORY</button>
+        <button class="button-3">ADD MENU ITEM</button>
+        <button class="cms-menu-preview button-3">PREVIEW</button>
+        <button class="cms-menu-return button-3" style="display: none;">RETURN</button>
+    </div>
+
+
+    <!-- preview border -->
+    <div id="preview-mode-border" style="display: none;">
+        <label>PREVIEW</label>
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!--
             <div id="store-info-inner" class="clearfix">
 
-
-                <!-- image -->
                 <div id="store-info-image-container">
                     <img id="store-info-image" />
-                    <div class="upload-button store-editmode-control">
+                    <div class="upload-button">
                         <label>Click here to add a logo</label>
                         <input id="fileupload" class="fileupload" type="file" name="logo">
                     </div>
                 </div>
 
-                <!-- details -->
                 <div id="store-info-details">
                     <div id="store-info-description-container">
                         <p id="store-info-description" class="store-editable-control" contenteditable="true" placeholder="Enter a description..."></p>
@@ -85,76 +124,7 @@
                     </div>
                 </div>
             </div>
-
-        </div>
-
-
-        <!-- Controls to add menu items and stuff -->
-        <div id="menu-edit-controls" class="store-editmode-control">
-            <button class="button-3">Add a category</button>
-            <button class="button-3">Add a menu item</button>
-        </div>
-
-
-
-        <!-- Menu -->
-        <div id="store-menu" class="clearfix">
-            <div id="store-menu-list"></div>
-
-            <div id="store-menu-nav">
-                <ul id="store-menu-nav-list">
-
-                </ul>
-            </div>
-        </div>
-
-
-        <!-- Footer -->
-        <div id="store-footer">
-            <p id="store-disclaimer"></p>
-        </div>
-
-    </div>
-
-
-    <!-- Edit address -->
-    <div id="store-info-edit-address">
-        <div>
-            <h3>Edit Address</h3>
-            <div>
-                <button id="store-info-edit-address-cancel" class="button-3">CANCEL</button>
-                <button id="store-info-edit-address-save" class="button-3">SAVE</button>
-            </div>
-        </div>
-        <div>
-            <div class="label-input">
-                <label>Address Line 1</label>
-                <input class="input-1" name="line1" />
-            </div>
-
-            <div class="label-input">
-                <label>Address Line 2</label>
-                <input class="input-1" name="line2" value="" />
-            </div>
-
-            <div id="sysadmin-suburb-search" class="typeahead">
-                <label>Suburb</label>
-                <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
-                <ul id="suburb-search-list" class="typeahead-list opens-upwards" style="display: none;"></ul>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- preview border -->
-    <div id="preview-mode-border" style="display: none;">
-        <label>PREVIEW</label>
-    </div>
-
-
-</div>
-
+-->
 
 
 <!--

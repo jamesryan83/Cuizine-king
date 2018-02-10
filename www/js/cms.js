@@ -11,6 +11,8 @@ app.cms = {
 
     htmlFiles: {}, // cached html
 
+    regexUrlStoreAdmin: /\/store-admin\/\d*\/([\w-]*)/,
+
 
     init: function (html) {
         var self = this;
@@ -35,19 +37,26 @@ app.cms = {
 
     // Called whenever the page is changed
     onPageChanged: function (routeData) {
-        app.navbar.init(routeData);
+        app.cms.navbar.init(routeData);
+    },
+
+
+    // Remove user specific parts of a url
+    normalizeRoute: function (route) {
+        var match = false;
+
+        if (this.regexUrlStoreAdmin.exec(route)) {
+            var temp = route.split("/");
+            route = "/store-admin/:id/" + temp[temp.length - 1];
+            match = true;
+        }
+
+        return { route: route, match: match };
     },
 
 
     // CMS routes
     routes: {
-        "/store-admin/:id/business": {
-            title: "Business",
-            file: "business",
-            initFunction: function (routeData) {
-                app.cms.business.init(routeData);
-            },
-        },
         "/store-admin/:id/dashboard": {
             title: "Dashboard",
             file: "dashboard",
@@ -81,6 +90,13 @@ app.cms = {
             file: "settings",
             initFunction: function (routeData) {
                 app.cms.settings.init(routeData);
+            },
+        },
+        "/store-admin/:id/details": {
+            title: "Details",
+            file: "details",
+            initFunction: function (routeData) {
+                app.cms.details.init(routeData);
             },
         },
         "/store-admin/:id/transactions": {

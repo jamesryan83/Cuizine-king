@@ -695,49 +695,43 @@ input, textarea {
       #dialog-store-reviews.dialog #dialog-store-reviews-list .store-reviews-list-item .store-reviews-list-item-header label {
         font-weight: bold; }
 
-#store-content, #store-content-editable {
+#store-content {
   padding: 0 50px; }
   @media (max-width: 490px) {
-    #store-content, #store-content-editable {
-      padding: 0 10px; }
-      #store-content #store-info, #store-content-editable #store-info {
-        padding: 40px 0 20px 0; } }
-  #store-content #store-info, #store-content-editable #store-info {
+    #store-content {
+      padding: 0 10px; } }
+  #store-content #store-info {
     padding: 40px 20px 20px 20px; }
-    #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
+    #store-content #store-info #store-info-inner {
       position: relative;
       height: 320px; }
-      #store-content #store-info #store-info-inner #store-info-image-container, #store-content-editable #store-info #store-info-inner #store-info-image-container {
+      #store-content #store-info #store-info-inner #store-info-image-container {
         float: left; }
-        #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
-          margin-top: 25px;
+        #store-content #store-info #store-info-inner #store-info-image-container #store-info-image {
+          margin-top: 18px;
           height: 240px;
           width: 340px; }
-          @media (max-width: 490px) {
-            #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
-              width: 300px;
-              height: 210px; } }
-      #store-content #store-info #store-info-inner #store-info-details, #store-content-editable #store-info #store-info-inner #store-info-details {
+      #store-content #store-info #store-info-inner #store-info-details {
         float: right;
         width: calc(100% - 340px);
         padding: 10px 20px 0 30px;
         min-width: 500px; }
-        #store-content #store-info #store-info-inner #store-info-details label, #store-content-editable #store-info #store-info-inner #store-info-details label {
+        #store-content #store-info #store-info-inner #store-info-details label {
           display: inline-block; }
-        #store-content #store-info #store-info-inner #store-info-details > div, #store-content-editable #store-info #store-info-inner #store-info-details > div {
+        #store-content #store-info #store-info-inner #store-info-details > div {
           margin-top: 5px; }
-          #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link), #store-content-editable #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
+          #store-content #store-info #store-info-inner #store-info-details > div label:first-of-type:not(.label-link) {
             font-weight: bold;
             width: 90px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-description-container, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-description-container {
           min-height: 120px; }
-          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
+          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-description {
             overflow: hidden;
             text-align: justify;
             max-height: 92px; }
-          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
+          #store-content #store-info #store-info-inner #store-info-details #store-info-description-container #store-info-button-description {
             margin-left: 5px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-is-open, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-is-open {
           color: #5595d8;
           margin-right: 10px;
           font-weight: bold;
@@ -745,39 +739,38 @@ input, textarea {
           height: 20px;
           line-height: 20px;
           vertical-align: middle; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
+        #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
           color: #3bcd3b; }
-        #store-content #store-info #store-info-inner #store-info-details .rating-control, #store-content-editable #store-info #store-info-inner #store-info-details .rating-control {
+        #store-content #store-info #store-info-inner #store-info-details .rating-control {
           padding: 2px;
           margin-left: -5px; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > label, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls > label {
-          height: 54px;
-          line-height: 54px;
-          vertical-align: top; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > div, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls > div {
-          display: inline-block; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-phone-number, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-phone-number {
-          margin: 0 10px;
-          color: #5595d8;
-          min-width: 90px;
-          max-width: 130px;
-          white-space: nowrap; }
-        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-email, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-email {
-          margin-left: 10px;
-          color: #5595d8;
-          max-width: 250px;
-          white-space: nowrap; }
+        #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls {
+          padding-top: 5px; }
+          #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-phone-number {
+            margin: 0 10px;
+            color: #5595d8;
+            min-width: 90px;
+            max-width: 130px;
+            white-space: nowrap;
+            font-weight: bold; }
+          #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls #store-info-email {
+            margin-left: 10px;
+            color: #5595d8;
+            min-width: 90px;
+            max-width: 250px;
+            white-space: nowrap;
+            font-weight: bold; }
     @media (max-width: 1000px) {
-      #store-content #store-info #store-info-inner, #store-content-editable #store-info #store-info-inner {
+      #store-content #store-info #store-info-inner {
         text-align: center !important;
         height: auto; }
-        #store-content #store-info #store-info-inner #store-info-image-container, #store-content-editable #store-info #store-info-inner #store-info-image-container {
+        #store-content #store-info #store-info-inner #store-info-image-container {
           float: none;
           height: auto;
           display: block; }
-          #store-content #store-info #store-info-inner #store-info-image-container #store-info-image, #store-content-editable #store-info #store-info-inner #store-info-image-container #store-info-image {
+          #store-content #store-info #store-info-inner #store-info-image-container #store-info-image {
             margin-top: 0 !important; }
-        #store-content #store-info #store-info-inner #store-info-details, #store-content-editable #store-info #store-info-inner #store-info-details {
+        #store-content #store-info #store-info-inner #store-info-details {
           float: none;
           min-width: 360px;
           width: 80%;
@@ -785,40 +778,44 @@ input, textarea {
           text-align: left;
           padding: 40px 0 0 10px; } }
     @media (max-width: 770px) {
-      #store-content #store-info #store-info-inner #store-info-details > div > label:first-of-type, #store-content-editable #store-info #store-info-inner #store-info-details > div > label:first-of-type {
+      #store-content #store-info #store-info-inner #store-info-details > div > label:first-of-type {
         display: block;
         margin-left: -5px; }
-      #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > label, #store-content-editable #store-info #store-info-inner #store-info-details #store-info-contact-controls > label {
+      #store-content #store-info #store-info-inner #store-info-details #store-info-contact-controls > label {
         height: 27px;
         line-height: 27px;
         vertical-align: inherit; } }
     @media (max-width: 490px) {
-      #store-content #store-info, #store-content-editable #store-info {
+      #store-content #store-info {
         padding-top: 0; } }
-  #store-content #store-menu #store-menu-list, #store-content-editable #store-menu #store-menu-list {
+  @media (max-width: 490px) and (max-width: 490px) {
+    #store-content #store-info #store-info-inner #store-info-image-container #store-info-image {
+      width: 300px;
+      height: 210px; } }
+  #store-content #store-menu #store-menu-list {
     float: left;
     height: 100%;
     width: calc(100% - 200px); }
-    #store-content #store-menu #store-menu-list .store-menu-list-item.heading, #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading {
+    #store-content #store-menu #store-menu-list .store-menu-list-item.heading {
       margin: 20px 0; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4, #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading h4 {
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4 {
         font-size: 30px;
         line-height: 30px;
         height: 30px;
         color: #5595d8; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr, #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading > hr {
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr {
         margin-bottom: 10px;
         background-color: #373748; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type), #store-content-editable #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
+    #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
       margin: 20px 0; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item > div, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > div {
+    #store-content #store-menu #store-menu-list .store-menu-list-item > div {
       float: left;
       width: calc(100% - 100px);
       padding: 5px 20px; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item > div > p, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > div > p {
+      #store-content #store-menu #store-menu-list .store-menu-list-item > div > p {
         max-height: 46px;
         overflow: hidden; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item > label, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > label {
+    #store-content #store-menu #store-menu-list .store-menu-list-item > label {
       float: right;
       height: 100%;
       width: 100px;
@@ -828,23 +825,23 @@ input, textarea {
       margin-top: 20px;
       text-decoration: underline;
       cursor: pointer; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover, #store-content-editable #store-menu #store-menu-list .store-menu-list-item > label:hover {
+      #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
         color: #1f58c6; }
-  #store-content #store-menu #store-menu-nav, #store-content-editable #store-menu #store-menu-nav {
+  #store-content #store-menu #store-menu-nav {
     float: left;
     width: 200px; }
-    #store-content #store-menu #store-menu-nav ul, #store-content-editable #store-menu #store-menu-nav ul {
+    #store-content #store-menu #store-menu-nav ul {
       list-style: none;
       margin-top: 30px; }
-      #store-content #store-menu #store-menu-nav ul li, #store-content-editable #store-menu #store-menu-nav ul li {
+      #store-content #store-menu #store-menu-nav ul li {
         padding: 10px 10px 10px 50px;
         font-weight: bold; }
-        #store-content #store-menu #store-menu-nav ul li:hover, #store-content-editable #store-menu #store-menu-nav ul li:hover {
+        #store-content #store-menu #store-menu-nav ul li:hover {
           cursor: pointer;
           color: #5595d8; }
-  #store-content #store-footer, #store-content-editable #store-footer {
+  #store-content #store-footer {
     padding: 30px 10px; }
-    #store-content #store-footer > p, #store-content-editable #store-footer > p {
+    #store-content #store-footer > p {
       font-size: 10px; }
 
 .tabcontrol {

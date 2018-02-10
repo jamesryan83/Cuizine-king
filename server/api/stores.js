@@ -2,7 +2,8 @@
 
 // Stores api
 
-var azure = require("azure-storage");
+var fs = require("fs");
+var path = require("path");
 
 var config = require("../config");
 var storeDB = require("../procedures/_Store");
@@ -18,12 +19,6 @@ exports = module.exports = {
 
     init: function (router) {
         this.router = router;
-
-        // https://docs.microsoft.com/en-gb/azure/storage/common/storage-use-emulator#authenticate-with-shared-key-credentials
-        var devName = "devstoreaccount1";
-        var devKey = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
-
-        this.blobService = azure.createBlobService(devName, devKey);
     },
 
 
@@ -110,33 +105,47 @@ exports = module.exports = {
         if (this.router.validateInputs(req, res, b, global.validationRules.deleteStore))
             return;
 
+        // delete store from db
         storeDB.stores_delete(b, function (err, result) {
 			if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            return self.router.sendJson(res, result);
+            // delete azure container
+            self.blobService.deleteContainerIfExists("store" + b.id_store, function (err) {
+                if (err) return self.router.sendJson(res, null, err.message, err.status);
+
+                return self.router.sendJson(res, result);
+            });
         });
 	},
 
 
     // upload a store logo
     updateLogo: function (req, res) {
+        var self = this;
+        var b = req.body;
         var imageFile = req.file
+
+        if (this.router.validateInputs(req, res, b, global.validationRules.updateLogo))
+            return;
 
         // check image properties
         if (!imageFile) {
-            return self.router.sendJson(res, null, strings.imageFileMissing, 400);
+            return this.router.sendJson(res, null, strings.imageFileMissing, 400);
         } else if (imageFile.mimetype !== "image/jpeg") {
-            return self.router.sendJson(res, null, strings.imageFileWrongType, 400);
+            return this.router.sendJson(res, null, strings.imageFileWrongType, 400);
         } else if (imageFile.size > 250000) {
-            return self.router.sendJson(res, null, strings.imageFileTooBig, 400);
+            return this.router.sendJson(res, null, strings.imageFileTooBig, 400);
         }
 
+        if (!req.file.buffer) {
+            return this.router.sendJson(res, null, "Image missing", 400);
+        }
 
-//        req.file.buffer
-        console.log("done")
-        res.sendStatus(200);
+        var imgPath = "/res/storelogos/store" + b.id_store + ".jpg";
 
-//        this.blobService.createContainerIfNotExists("")
+        fs.writeFile(path.join(__dirname, "../", "../", "www", imgPath), req.file.buffer, function (err) {
+            self.router.sendJson(res, { url: imgPath });
+        });
     },
 
 }

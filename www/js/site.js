@@ -11,6 +11,10 @@ app.site = {
 
     htmlFiles: {}, // cached html
 
+    regexUrlAccount: /\/account\/\d*/,
+    regexUrlLocation: /\/location\/[\w\d%-]*-\d*/,
+    regexUrlStore: /\/store\/\d*/,
+
 
     init: function (html) {
         var self = this;
@@ -35,7 +39,26 @@ app.site = {
 
     // Called whenever the page is changed
     onPageChanged: function (routeData) {
-        app.navbar.init(routeData);
+        app.site.navbar.init(routeData);
+    },
+
+
+    // Remove user specific parts of a url
+    normalizeRoute: function (route) {
+        var match = false;
+
+        if (this.regexUrlStore.exec(route)) {
+            route = "/store/:id";
+            match = true;
+        } else if (this.regexUrlLocation.exec(route)) {
+            route = "/location/:suburb";
+            match = true;
+        } else if (this.regexUrlAccount.exec(route)) {
+            route = "/account/:id";
+            match = true;
+        }
+
+        return { route: route, match: match };
     },
 
 

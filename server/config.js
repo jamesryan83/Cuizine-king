@@ -36,6 +36,12 @@ var config = {
             "cancelTimeout": 5000
         }
     },
+
+    "blobStorage": {
+        "host": "http://127.0.0.1:10000/devstoreaccount1",
+        "hostDev": "http://127.0.0.1:10000/devstoreaccount1",
+    },
+
     "dbConstants": {
         "orderTypes": {
             "delivery": 1,

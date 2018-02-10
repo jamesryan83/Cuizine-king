@@ -61,7 +61,6 @@ app.vr._reviews_title =           { presence: true, length: { minimum: 2, maximu
 app.vr._reviews_review_optional = { length: { maximum: 512 }};
 app.vr._reviews_rating =          { presence: true, numericality: { onlyInteger: true, greaterThan: 0, lessThan: 6 }};
 
-app.vr._stores_logo =                 { presence: true, length: { maximum: 256 }};
 app.vr._stores_name =                 { presence: true, length: { maximum: 512 }};
 app.vr._stores_description_optional = { length: { maximum: 1024 }};
 app.vr._stores_abn =                  { presence: true, length: { minimum: 10, maximum: 32 }};
@@ -172,6 +171,9 @@ app.vr.updateStore = {
     email_user: app.vr._email,
 }
 
+app.vr.updateLogo = {
+    id_store: app.vr._sequence_id
+}
 
 app.vr.deleteStore = {
 	id_store: app.vr._sequence_id
