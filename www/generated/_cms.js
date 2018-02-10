@@ -938,12 +938,9 @@ app.util = {
 
     // Replace current id and jwt with invalid ones
     invalidateCredentials: function () {
-        localStorage.setItem("jwt", "invalidToken");
-        localStorage.setItem("pid", "");
-
-        if (localStorage.getItem("sid") || localStorage.getItem("sid") === null) {
-            localStorage.setItem("sid", "");
-        }
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("pid");
+        localStorage.removeItem("sid");
     },
 
 

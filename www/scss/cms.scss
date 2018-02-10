@@ -15,6 +15,10 @@
 @import "cms/transactions";
 
 
+body {
+    overflow-y: scroll;
+}
+
 
 // make page stay 100% height
 #page-container {

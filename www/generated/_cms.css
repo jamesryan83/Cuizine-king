@@ -1036,6 +1036,9 @@ input, textarea {
     #navbar-cms #store-content-mobile-buttons button {
       width: 100px; }
 
+body {
+  overflow-y: scroll; }
+
 #page-container {
   height: 100%; }
   #page-container .page-cms-header {
