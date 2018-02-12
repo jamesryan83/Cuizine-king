@@ -29,6 +29,12 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
     });
 
 
+    // input focused
+    $(inputEl).on("focus", function () {
+        this.setSelectionRange(0, this.value.length);
+    });
+
+
     // when typing, generate dropdown list
     $(inputEl).on("keyup", function (e) {
         var value = $(this).val().toLowerCase();

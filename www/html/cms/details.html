@@ -33,15 +33,15 @@
                     </div>
                 </div>
 
-                <div id="store-info-edit-controls">
+                <form id="store-info-edit-controls" action="#" autocomplete="nope">
                     <div class="label-textarea">
                         <label>Description</label>
-                        <textarea class="textarea-1" name="description"></textarea>
+                        <textarea class="textarea-1" name="description" placeholder="Store description..."></textarea>
                     </div>
 
                     <div class="label-input">
                         <label>Street Address</label>
-                        <input class="input-1" name="street_address" />
+                        <input class="input-1" name="street_address" placeholder="Store street address..." />
                     </div>
 
                     <div id="sysadmin-suburb-search" class="typeahead">
@@ -52,19 +52,23 @@
 
                     <div class="label-input">
                         <label>Phone Number</label>
-                        <input class="input-1" name="phone-number" value="" />
+                        <input class="input-1" name="phone-number" placeholder="Store phone number..." />
                     </div>
 
                     <div class="label-input">
                         <label>Email</label>
-                        <input class="input-1" name="email" value="" />
+                        <input class="input-1" name="email" placeholder="Store email..." />
                     </div>
-                </div>
+
+                    <button id="store-info-edit-controls-submit" type="submit" style="display: none;"></button>
+                </form>
             </div>
         </div>
     </div>
 
     <div class="page-cms-floating-buttons">
+        <label class="label-button page-cms-details-save"
+               for="store-info-edit-controls-submit">SAVE</label>
         <button class="button-3 page-cms-details-preview">PREVIEW</button>
         <button class="button-3 page-cms-details-return" style="display: none;">RETURN</button>
     </div>

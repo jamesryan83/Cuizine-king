@@ -143,12 +143,19 @@ app.cms.details = {
 
         app.storeContent.init(routeData, true);
 
-        this.$storeInfoEditAddress = $("#store-info-edit-address");
+
+        this.$saveDetailsForm = $("#store-info-edit-controls");
 
 
         // Get the store details data
         app.storeContent.getStoreData(function (storeData) {
             self.setupPage(storeData);
+        });
+
+
+        // address suburb typeahead
+        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
+            console.log(data);
         });
 
 
@@ -174,12 +181,6 @@ app.cms.details = {
         });
 
 
-        // address suburb typeahead
-        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
-            console.log(data);
-        });
-
-
         // Logo file changed
         $(".fileupload").on("change", function (e) {
             if (e.target.files.length > 0) {
@@ -189,8 +190,6 @@ app.cms.details = {
 
                 // send image to server
                 app.util.uploadImage(e.target.files, function (err, imgPath) {
-                    $(".store-info-image-loading").hide();
-
                     if (err) {
                         app.util.showToast(err);
                         return;
@@ -207,11 +206,22 @@ app.cms.details = {
                         $(".store-info-image-loading").hide();
                     }, false);
 
+                    reader.addEventListener("error", function () {
+                        $(".store-info-image-empty").hide();
+                        $(".store-info-image-loading").hide();
+                    }, false);
+
                     if (file) {
                         reader.readAsDataURL(file);
                     }
                 });
             }
+        });
+
+
+        // Save store details form
+        this.$saveDetailsForm.on("submit", function () {
+            return false;
         });
 
     },
@@ -220,7 +230,17 @@ app.cms.details = {
     // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
+            console.log(storeData)
+
             app.storeContent.addStoreDetailsDataToPage(storeData);
+
+            var address = storeData.address[0];
+
+            this.$saveDetailsForm[0][0].value = storeData.description;
+            this.$saveDetailsForm[0][1].value = address.street_address;
+            this.$saveDetailsForm[0][2].value = address.postcode + " - " + address.suburb;
+            this.$saveDetailsForm[0][3].value = storeData.phone_number;
+            this.$saveDetailsForm[0][4].value = storeData.email;
         }
     },
 
@@ -1580,6 +1600,12 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
     // list item clicked
     $(listEl).on("click", function (e) {
         selectItem(e.target);
+    });
+
+
+    // input focused
+    $(inputEl).on("focus", function () {
+        this.setSelectionRange(0, this.value.length);
     });
 
 

@@ -54,7 +54,7 @@ input, textarea {
   input:read-only, textarea:read-only {
     background-color: rgba(0, 0, 0, 0.3); }
 
-.noselect, .link-button {
+.noselect, .link-button, .label-button {
   -webkit-user-select: none;
   user-select: none; }
 
@@ -83,7 +83,7 @@ input, textarea {
 .input-1, .select-1, .textarea-1 {
   background-color: transparent;
   border: none;
-  border: 1px solid #f4f4f4;
+  border: 1px solid #d9d9d9;
   height: 35px;
   width: 300px;
   outline: none;
@@ -91,17 +91,17 @@ input, textarea {
   color: #d9d9d9;
   resize: vertical; }
   .input-1:hover, .select-1:hover, .textarea-1:hover {
-    border: 1px solid #e3e3e3; }
+    border: 1px solid #b9b9b9; }
   .input-1:focus, .select-1:focus, .textarea-1:focus {
-    border: 1px solid #d9d9d9; }
+    border: 1px solid #9d9d9d; }
   .input-1::-webkit-input-placeholder, .select-1::-webkit-input-placeholder, .textarea-1::-webkit-input-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
   .input-1:-moz-placeholder, .select-1:-moz-placeholder, .textarea-1:-moz-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
   .input-1::-moz-placeholder, .select-1::-moz-placeholder, .textarea-1::-moz-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
   .input-1:-ms-input-placeholder, .select-1:-ms-input-placeholder, .textarea-1:-ms-input-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
 
 .textarea-1 {
   height: 80px;
@@ -143,7 +143,7 @@ input, textarea {
     border: 1px solid #5595d8;
     background-color: transparent; }
 
-.link-button {
+.link-button, .label-button {
   text-decoration: none;
   color: #9d9d9d;
   display: inline-block;
@@ -153,11 +153,17 @@ input, textarea {
   line-height: 30px;
   text-align: center;
   cursor: pointer; }
-  .link-button:hover {
+  .link-button:hover, .label-button:hover {
     background-color: #f4f4f4; }
-  .link-button:active {
+  .link-button:active, .label-button:active {
     -webkit-transform: scale(0.95);
     transform: scale(0.95); }
+
+.label-button {
+  height: 35px;
+  line-height: 35px;
+  font-weight: bold;
+  font-size: 12px; }
 
 .label-input {
   text-align: left;
@@ -710,7 +716,7 @@ input, textarea {
   #store-content .label-gluten-free {
     color: #e8a443; }
   #store-content .label-vegetarian {
-    color: #3bcd3b; }
+    color: #31ac31; }
   #store-content .store-info-image-container {
     float: left;
     position: relative;
@@ -743,7 +749,7 @@ input, textarea {
         -webkit-animation: loadingScreenAnimation 1s infinite;
         animation: loadingScreenAnimation 1s infinite; }
   #store-content #store-info {
-    padding: 40px 20px 20px 20px;
+    padding: 20px;
     text-align: center; }
     #store-content #store-info #store-info-inner {
       display: inline-block;
@@ -778,7 +784,7 @@ input, textarea {
           line-height: 20px;
           vertical-align: middle; }
         #store-content #store-info #store-info-inner #store-info-details #store-info-hours-opens-at {
-          color: #3bcd3b; }
+          color: #31ac31; }
         #store-content #store-info #store-info-inner #store-info-details .rating-control {
           padding: 2px;
           margin-left: -5px; }
@@ -825,56 +831,58 @@ input, textarea {
         vertical-align: inherit; } }
     @media (max-width: 490px) {
       #store-content #store-info {
-        padding: 40px 0 20px 0; } }
-  #store-content #store-menu #store-menu-list {
-    float: left;
-    height: 100%;
-    width: calc(100% - 200px); }
-    #store-content #store-menu #store-menu-list .store-menu-list-item.heading {
-      margin: 20px 0; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4 {
-        font-size: 30px;
-        line-height: 30px;
-        height: 30px;
-        color: #5595d8; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr {
-        margin-bottom: 10px;
-        background-color: #373748; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
-      margin: 20px 0; }
-    #store-content #store-menu #store-menu-list .store-menu-list-item {
-      border: 1px solid transparent; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item > div {
-        float: left;
-        width: calc(100% - 100px);
-        padding: 5px 20px; }
-        #store-content #store-menu #store-menu-list .store-menu-list-item > div > p {
-          max-height: 46px;
-          overflow: hidden; }
-      #store-content #store-menu #store-menu-list .store-menu-list-item > label {
-        float: right;
-        height: 100%;
-        width: 100px;
-        color: #5595d8;
-        font-size: 14px;
-        display: block;
-        margin-top: 20px;
-        text-decoration: underline;
-        cursor: pointer; }
-        #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
-          color: #1f58c6; }
-  #store-content #store-menu #store-menu-nav {
-    float: left;
-    width: 200px; }
-    #store-content #store-menu #store-menu-nav ul {
-      list-style: none;
-      margin-top: 30px; }
-      #store-content #store-menu #store-menu-nav ul li {
-        padding: 10px 10px 10px 50px;
-        font-weight: bold; }
-        #store-content #store-menu #store-menu-nav ul li:hover {
-          cursor: pointer;
+        padding: 20px 0; } }
+  #store-content #store-menu {
+    padding-top: 30px; }
+    #store-content #store-menu #store-menu-list {
+      float: left;
+      height: 100%;
+      width: calc(100% - 200px); }
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading {
+        margin: 20px 0; }
+        #store-content #store-menu #store-menu-list .store-menu-list-item.heading h4 {
+          font-size: 30px;
+          line-height: 30px;
+          height: 30px;
           color: #5595d8; }
+        #store-content #store-menu #store-menu-list .store-menu-list-item.heading > hr {
+          margin-bottom: 10px;
+          background-color: #373748; }
+      #store-content #store-menu #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
+        margin: 20px 0; }
+      #store-content #store-menu #store-menu-list .store-menu-list-item {
+        border: 1px solid transparent; }
+        #store-content #store-menu #store-menu-list .store-menu-list-item > div {
+          float: left;
+          width: calc(100% - 100px);
+          padding: 5px 20px; }
+          #store-content #store-menu #store-menu-list .store-menu-list-item > div > p {
+            max-height: 46px;
+            overflow: hidden; }
+        #store-content #store-menu #store-menu-list .store-menu-list-item > label {
+          float: right;
+          height: 100%;
+          width: 100px;
+          color: #5595d8;
+          font-size: 14px;
+          display: block;
+          margin-top: 20px;
+          text-decoration: underline;
+          cursor: pointer; }
+          #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
+            color: #1f58c6; }
+    #store-content #store-menu #store-menu-nav {
+      float: left;
+      width: 200px; }
+      #store-content #store-menu #store-menu-nav ul {
+        list-style: none;
+        margin-top: 30px; }
+        #store-content #store-menu #store-menu-nav ul li {
+          padding: 10px 10px 10px 50px;
+          font-weight: bold; }
+          #store-content #store-menu #store-menu-nav ul li:hover {
+            cursor: pointer;
+            color: #5595d8; }
   #store-content #store-footer {
     padding: 30px 10px; }
     #store-content #store-footer > p {
@@ -969,7 +977,7 @@ input, textarea {
   #page-cms-details #store-info {
     display: none; }
   #page-cms-details #store-info-edit {
-    padding: 40px 20px 20px 20px;
+    padding: 20px;
     text-align: center; }
     #page-cms-details #store-info-edit #store-info-edit-inner {
       display: inline-block;
@@ -986,16 +994,22 @@ input, textarea {
         text-align: left;
         padding-left: 30px; }
         #page-cms-details #store-info-edit #store-info-edit-inner #store-info-edit-controls textarea {
-          height: 120px;
+          height: 142px;
           resize: none;
-          width: 370px; }
+          width: 370px;
+          font-size: 13px; }
         #page-cms-details #store-info-edit #store-info-edit-inner #store-info-edit-controls input {
-          width: 370px; }
+          width: 370px;
+          font-size: 13px; }
         #page-cms-details #store-info-edit #store-info-edit-inner #store-info-edit-controls .typeahead > label {
           width: 140px; }
         #page-cms-details #store-info-edit #store-info-edit-inner #store-info-edit-controls #suburb-search-list {
           top: 45px;
           width: 370px; }
+  #page-cms-details .page-cms-floating-buttons .label-button {
+    width: 130px;
+    background-color: #31ac31;
+    color: white; }
   @media (max-width: 1050px) {
     #page-cms-details #store-info-edit .store-info-image-container {
       float: none;
@@ -1019,7 +1033,7 @@ input, textarea {
     #page-cms-details .page-header button {
       display: none; }
     #page-cms-details #store-info-edit {
-      padding: 40px 0 20px 0; }
+      padding: 20px 0; }
       #page-cms-details #store-info-edit #store-info-edit-inner #store-info-edit-controls {
         width: 100%; }
         #page-cms-details #store-info-edit #store-info-edit-inner #store-info-edit-controls > div {
@@ -1116,5 +1130,5 @@ body {
     border-top: 1px solid #373748;
     text-align: center; }
     #page-container .page-cms-floating-buttons button {
-      margin: 0 15px;
+      margin: 0 20px;
       width: 130px; }

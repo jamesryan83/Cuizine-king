@@ -75,7 +75,7 @@ $colorBlue3: #373748;
 $colorBlue4: #000115;
 $colorRed1: #ff7373;
 $colorOrange1: #e8a443;
-$colorGreen1: #3bcd3b;
+$colorGreen1: #31ac31;
 
 $inputReadOnly: rgba(0, 0, 0, 0.3);
 
@@ -242,7 +242,7 @@ input, textarea {
 .input-1, .select-1, .textarea-1 {
     background-color: transparent;
     border: none;
-    border: 1px solid $colorGray1;
+    border: 1px solid $colorGray3;
     height: $elementHeight;
     width: 300px;
     outline: none;
@@ -251,14 +251,14 @@ input, textarea {
     resize: vertical;
 
     &:hover {
-        border: 1px solid $colorGray2;
+        border: 1px solid $colorGray4;
     }
 
     &:focus {
-        border: 1px solid $colorGray3;
+        border: 1px solid $colorGray5;
     }
 
-    @include placeholder($colorGray3);
+    @include placeholder($colorGray6);
 }
 
 
@@ -344,6 +344,16 @@ input, textarea {
     &:active {
         transform: scale(0.95);
     }
+}
+
+
+.label-button {
+    @extend .link-button;
+
+    height: 35px;
+    line-height: 35px;
+    font-weight: bold;
+    font-size: 12px;
 }
 
 

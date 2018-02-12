@@ -54,7 +54,7 @@ input, textarea {
   input:read-only, textarea:read-only {
     background-color: rgba(0, 0, 0, 0.3); }
 
-.noselect, .link-button {
+.noselect, .link-button, .label-button {
   -webkit-user-select: none;
   user-select: none; }
 
@@ -83,7 +83,7 @@ input, textarea {
 .input-1, .select-1, .textarea-1 {
   background-color: transparent;
   border: none;
-  border: 1px solid #f4f4f4;
+  border: 1px solid #d9d9d9;
   height: 35px;
   width: 300px;
   outline: none;
@@ -91,17 +91,17 @@ input, textarea {
   color: #d9d9d9;
   resize: vertical; }
   .input-1:hover, .select-1:hover, .textarea-1:hover {
-    border: 1px solid #e3e3e3; }
+    border: 1px solid #b9b9b9; }
   .input-1:focus, .select-1:focus, .textarea-1:focus {
-    border: 1px solid #d9d9d9; }
+    border: 1px solid #9d9d9d; }
   .input-1::-webkit-input-placeholder, .select-1::-webkit-input-placeholder, .textarea-1::-webkit-input-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
   .input-1:-moz-placeholder, .select-1:-moz-placeholder, .textarea-1:-moz-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
   .input-1::-moz-placeholder, .select-1::-moz-placeholder, .textarea-1::-moz-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
   .input-1:-ms-input-placeholder, .select-1:-ms-input-placeholder, .textarea-1:-ms-input-placeholder {
-    color: #d9d9d9; }
+    color: #777777; }
 
 .textarea-1 {
   height: 80px;
@@ -143,7 +143,7 @@ input, textarea {
     border: 1px solid #5595d8;
     background-color: transparent; }
 
-.link-button {
+.link-button, .label-button {
   text-decoration: none;
   color: #9d9d9d;
   display: inline-block;
@@ -153,11 +153,17 @@ input, textarea {
   line-height: 30px;
   text-align: center;
   cursor: pointer; }
-  .link-button:hover {
+  .link-button:hover, .label-button:hover {
     background-color: #f4f4f4; }
-  .link-button:active {
+  .link-button:active, .label-button:active {
     -webkit-transform: scale(0.95);
     transform: scale(0.95); }
+
+.label-button {
+  height: 35px;
+  line-height: 35px;
+  font-weight: bold;
+  font-size: 12px; }
 
 .label-input {
   text-align: left;

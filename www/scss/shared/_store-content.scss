@@ -86,7 +86,7 @@
 
     // Info
     #store-info {
-        padding: 40px 20px 20px 20px;
+        padding: 20px;
         text-align: center;
 
         #store-info-inner {
@@ -238,13 +238,14 @@
         }
 
         @media (max-width: $mediaMobileWidth1) {
-            padding: 40px 0 20px 0;
+            padding: 20px 0;
         }
     }
 
 
     // Menu
     #store-menu {
+        padding-top: 30px;
 
         // list of menu items
         #store-menu-list {
