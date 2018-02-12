@@ -28,14 +28,18 @@
 
         #store-info-edit-inner {
             display: inline-block;
-            text-align: left;
             position: relative;
 
 
             .upload-button {
                 position: absolute;
+                width: 180px;
                 left: 80px;
                 top: 270px;
+
+                label {
+                    font-size: 12px;
+                }
             }
 
 
@@ -71,10 +75,11 @@
 
     @media (max-width: $mediaWidth4) {
         #store-info-edit {
-            background-color: purple;
+
             .store-info-image-container {
                 float: none;
                 text-align: center;
+                display: inline-block;
 
                 .store-info-image, .store-info-image-loading, .store-info-image-empty {
                     display: inline-block;
@@ -110,7 +115,6 @@
         }
 
         #store-info-edit {
-            background-color: green;
             padding: 40px 0 20px 0;
 
             #store-info-edit-inner {

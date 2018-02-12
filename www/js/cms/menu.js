@@ -6,16 +6,11 @@ app.cms.menu = {
     init: function (routeData) {
         var self = this;
 
-
         app.storeContent.init(routeData, true);
 
 
-        // Store id
-        var id_store = app.util.getStoreIdFromStorage();
-
-
-        // Get the store data
-        app.storeContent.getStoreData(id_store, function (storeData) {
+        // Get the store menu data
+        app.storeContent.getStoreData(function (storeData) {
             self.setupPage(storeData);
         });
 
@@ -44,6 +39,7 @@ app.cms.menu = {
     },
 
 
+    // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
             app.storeContent.addMenuDataToPage(storeData);

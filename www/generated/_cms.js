@@ -138,38 +138,21 @@ app.cms.deliverySuburbs = {
 // Details page
 app.cms.details = {
 
-    init: function () {
+    init: function (routeData) {
         var self = this;
 
-        this.storeId = app.util.getStoreIdFromStorage();
+        app.storeContent.init(routeData, true);
 
-        this.$logo = $(".store-info-image");
         this.$storeInfoEditAddress = $("#store-info-edit-address");
 
 
-        // logo
-        var logo = new Image();
-        logo.src = "/res/storelogos/store" + this.storeId + ".jpg";
-        logo.onload = function () {
-            self.$logo.attr("src", logo.src);
-        }
-        logo.onerror = function () {
-
-        }
-
-
-        // preview button
-        $(".page-cms-details-preview").on("click", function () {
-            $(this).hide();
-            $(".page-cms-details-return").show();
-            $(".page-cms-details-save").hide();
-
-            $("#store-info-edit").hide();
-            $("#store-info").show();
+        // Get the store details data
+        app.storeContent.getStoreData(function (storeData) {
+            self.setupPage(storeData);
         });
 
 
-        // return button
+        // Show Edit mode
         $(".page-cms-details-return").on("click", function () {
             $(this).hide();
             $(".page-cms-details-preview").show();
@@ -177,6 +160,17 @@ app.cms.details = {
 
             $("#store-info").hide();
             $("#store-info-edit").show();
+        });
+
+
+        // Show Preview
+        $(".page-cms-details-preview").on("click", function () {
+            $(this).hide();
+            $(".page-cms-details-return").show();
+            $(".page-cms-details-save").hide();
+
+            $("#store-info-edit").hide();
+            $("#store-info").show();
         });
 
 
@@ -189,18 +183,47 @@ app.cms.details = {
         // Logo file changed
         $(".fileupload").on("change", function (e) {
             if (e.target.files.length > 0) {
+
+                $(".store-info-image-empty").hide();
+                $(".store-info-image-loading").show();
+
+                // send image to server
                 app.util.uploadImage(e.target.files, function (err, imgPath) {
+                    $(".store-info-image-loading").hide();
+
                     if (err) {
                         app.util.showToast(err);
                         return;
                     }
 
-                    self.$logo.attr("src", imgPath);
+                    // add base64 image to image element
+                    var file = e.target.files[0];
+                    var reader  = new FileReader();
+                    reader.addEventListener("load", function () {
+                        app.storeContent.$logo.each(function (index, el) {
+                            el.src = reader.result;
+                        });
+                        $(".store-info-image-empty").hide();
+                        $(".store-info-image-loading").hide();
+                    }, false);
+
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
                 });
             }
         });
 
     },
+
+
+    // Add data to page
+    setupPage: function (storeData) {
+        if (storeData) {
+            app.storeContent.addStoreDetailsDataToPage(storeData);
+        }
+    },
+
 
 }
 
@@ -210,16 +233,11 @@ app.cms.menu = {
     init: function (routeData) {
         var self = this;
 
-
         app.storeContent.init(routeData, true);
 
 
-        // Store id
-        var id_store = app.util.getStoreIdFromStorage();
-
-
-        // Get the store data
-        app.storeContent.getStoreData(id_store, function (storeData) {
+        // Get the store menu data
+        app.storeContent.getStoreData(function (storeData) {
             self.setupPage(storeData);
         });
 
@@ -248,6 +266,7 @@ app.cms.menu = {
     },
 
 
+    // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
             app.storeContent.addMenuDataToPage(storeData);
@@ -610,9 +629,16 @@ app.storeContent = {
     init: function (routeData, dataLoaded) {
         var self = this;
 
+        this.$logo = $(".store-info-image");
         this.$address = $("#store-info-address");
         this.$storeMenuNav = $("#store-menu-nav");
         this.$description = $("#store-info-description");
+
+        $(".store-info-image-empty").hide();
+        $(".store-info-image-loading").show();
+
+
+        this.id_store = app.util.getStoreIdFromStorage();
 
 
         // Open dialog buttons
@@ -659,6 +685,21 @@ app.storeContent = {
     addStoreDetailsDataToPage: function (data) {
         var self = this;
 
+
+        // logo
+        var logo = new Image();
+        logo.src = "/res/storelogos/store" + this.id_store + ".jpg";
+        logo.onload = function () {
+            $(".store-info-image-empty").hide();
+            self.$logo.attr("src", logo.src);
+            $(".store-info-image-loading").hide();
+        }
+        logo.onerror = function () {
+            $(".store-info-image-loading").hide();
+            $(".store-info-image-empty").show();
+        }
+
+
         // Format address to a single string
         var address = data.address[0];
         address = address.street_address + " " +
@@ -667,7 +708,6 @@ app.storeContent = {
 
         // add store details
         $("#store-header-name").text(data.name);
-        $("#store-info-image").attr("src", "/res/storelogos/store" + data.id_store + ".jpg");
         $("#store-info-description").text(data.description);
         $("#store-info-address").text(address);
         $("#store-info-phone-number").text(data.phone_number);
@@ -785,7 +825,7 @@ app.storeContent = {
 
 
     // Gets the store data and caches it for a little while
-    getStoreData: function (id_store, callback) {
+    getStoreData: function (callback) {
         var self = this;
         if (this.storeDataRequestNotAllowed) {
             return callback(this.storeData);
@@ -797,7 +837,7 @@ app.storeContent = {
         }, 2000);
 
         app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store?id_store=" + id_store, cache: true
+            method: "GET", url: "/api/v1/store?id_store=" + this.id_store, cache: true
         }, function (err, result) {
             if (err) return;
 
@@ -806,6 +846,7 @@ app.storeContent = {
             return callback(self.storeData);
         });
     },
+
 
 }
 

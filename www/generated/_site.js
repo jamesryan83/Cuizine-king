@@ -1203,9 +1203,16 @@ app.storeContent = {
     init: function (routeData, dataLoaded) {
         var self = this;
 
+        this.$logo = $(".store-info-image");
         this.$address = $("#store-info-address");
         this.$storeMenuNav = $("#store-menu-nav");
         this.$description = $("#store-info-description");
+
+        $(".store-info-image-empty").hide();
+        $(".store-info-image-loading").show();
+
+
+        this.id_store = app.util.getStoreIdFromStorage();
 
 
         // Open dialog buttons
@@ -1252,6 +1259,21 @@ app.storeContent = {
     addStoreDetailsDataToPage: function (data) {
         var self = this;
 
+
+        // logo
+        var logo = new Image();
+        logo.src = "/res/storelogos/store" + this.id_store + ".jpg";
+        logo.onload = function () {
+            $(".store-info-image-empty").hide();
+            self.$logo.attr("src", logo.src);
+            $(".store-info-image-loading").hide();
+        }
+        logo.onerror = function () {
+            $(".store-info-image-loading").hide();
+            $(".store-info-image-empty").show();
+        }
+
+
         // Format address to a single string
         var address = data.address[0];
         address = address.street_address + " " +
@@ -1260,7 +1282,6 @@ app.storeContent = {
 
         // add store details
         $("#store-header-name").text(data.name);
-        $("#store-info-image").attr("src", "/res/storelogos/store" + data.id_store + ".jpg");
         $("#store-info-description").text(data.description);
         $("#store-info-address").text(address);
         $("#store-info-phone-number").text(data.phone_number);
@@ -1378,7 +1399,7 @@ app.storeContent = {
 
 
     // Gets the store data and caches it for a little while
-    getStoreData: function (id_store, callback) {
+    getStoreData: function (callback) {
         var self = this;
         if (this.storeDataRequestNotAllowed) {
             return callback(this.storeData);
@@ -1390,7 +1411,7 @@ app.storeContent = {
         }, 2000);
 
         app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store?id_store=" + id_store, cache: true
+            method: "GET", url: "/api/v1/store?id_store=" + this.id_store, cache: true
         }, function (err, result) {
             if (err) return;
 
@@ -1399,6 +1420,7 @@ app.storeContent = {
             return callback(self.storeData);
         });
     },
+
 
 }
 

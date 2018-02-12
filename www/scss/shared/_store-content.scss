@@ -3,6 +3,9 @@
 @import "dialogs/reviews";
 
 
+// Shared by website store page and cms details/menu pages
+
+
 // Store content
 #store-content {
     padding: 0 50px;
@@ -34,38 +37,51 @@
     }
 
 
+
     // Image
     .store-info-image-container {
         float: left;
         position: relative;
+        width: 340px;
+        height: 240px;
 
-        .store-info-image, .store-info-image-loading, .store-info-image-empty {
-            height: 240px;
-            width: 340px;
-            margin-top: 20px;
-
-            @media (max-width: $mediaMobileWidth1) {
-                width: 300px !important;
-                height: 220px !important;
-            }
+        @media (max-width: $mediaMobileWidth1) {
+            width: 300px !important;
+            height: 220px !important;
         }
 
+        .store-info-image, .store-info-image-loading, .store-info-image-empty {
+            height: 100%;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        // loading and empty overlay things
         .store-info-image-loading, .store-info-image-empty {
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            background-color: blue;
+            background-color: $colorGray13;
 
             label {
-                height: 100%;
-                line-height: 100%;
+                font-size: 16px;
+                white-space: nowrap;
                 font-weight: bold;
-                color: $colorGray2;
+                color: $colorBlue2;
+            }
+        }
+
+        .store-info-image-loading {
+            display: none;
+
+            label {
+                animation: loadingScreenAnimation 1s infinite;
             }
         }
     }
+
 
 
     // Info
@@ -75,12 +91,12 @@
 
         #store-info-inner {
             display: inline-block;
-            text-align: left;
             position: relative;
 
 
             // Details
             #store-info-details {
+                text-align: left;
                 float: right;
                 width: calc(100% - 340px);
                 padding: 10px 20px 0 30px;
@@ -180,8 +196,7 @@
 
                 .store-info-image-container {
                     float: none;
-                    height: auto;
-                    display: block;
+                    display: inline-block;
 
                     .store-info-image, .store-info-image-loading, .store-info-image-empty {
                         display: inline-block;
@@ -191,11 +206,11 @@
 
                 #store-info-details {
                     float: none;
-                    min-width: 360px;
-                    width: 80%;
+                    width: 90%;
                     display: inline-block;
                     text-align: left;
                     padding: 40px 0 0 10px;
+                    min-width: auto;
                 }
             }
         }
@@ -220,6 +235,10 @@
                     }
                 }
             }
+        }
+
+        @media (max-width: $mediaMobileWidth1) {
+            padding: 40px 0 20px 0;
         }
     }
 
