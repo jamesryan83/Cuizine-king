@@ -19,11 +19,12 @@ app.site.store = {
         var id_store = routeData.route.split("/");
         id_store = id_store[id_store.length - 1];
 
+        app.storeContent.id_store = id_store;
 
         // Get the store data
-        app.storeContent.getStoreData(id_store, function (storeData) {
+        app.storeContent.getStoreData(function (storeData) {
             if (storeData) {
-                storeData.id_store = id_store;
+                storeData.id_store = app.storeContent.id_store;
                 app.storeContent.addStoreDetailsDataToPage(storeData);
                 app.storeContent.addMenuDataToPage(storeData);
             }
