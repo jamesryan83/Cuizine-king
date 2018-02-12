@@ -88,13 +88,13 @@ exports = module.exports = {
             if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
 
             // check jwt short expiry
-            console.log(jwTokenObject);
-            var d = Date.now() / 1000;
-            var shortExp = jwTokenObject.shortExp * 1000;
-            console.log(d);
-            console.log("iat: " + (jwTokenObject.iat - d));
-            console.log("short expiry shortExp: " + (jwTokenObject.shortExp - d));
-            console.log("long expiry exp: " + (jwTokenObject.exp - d));
+//            console.log(jwTokenObject);
+//            var d = Date.now() / 1000;
+//            var shortExp = jwTokenObject.shortExp * 1000;
+//            console.log(d);
+//            console.log("iat: " + (jwTokenObject.iat - d));
+//            console.log("short expiry shortExp: " + (jwTokenObject.shortExp - d));
+//            console.log("long expiry exp: " + (jwTokenObject.exp - d));
 
             // TODO : jwt should also fail if signature algorithm is set to none
 

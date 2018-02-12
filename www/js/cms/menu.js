@@ -48,8 +48,6 @@ app.cms.menu = {
         if (storeData) {
             app.storeContent.addMenuDataToPage(storeData);
         }
-
-
     },
 
 }

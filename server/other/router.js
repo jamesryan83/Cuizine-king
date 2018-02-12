@@ -73,11 +73,13 @@ exports = module.exports = {
 
 
         // api
-        router.get( "/api/v1/store", storesApi.getStore.bind(storesApi));
         router.get( "/api/v1/location", locationApi.getLocation.bind(locationApi));
+        router.get( "/api/v1/store", storesApi.getStore.bind(storesApi));
         router.post("/api/v1/store-application", storesApi.createStoreApplication.bind(storesApi));
+        router.post("/api/v1/store-update-logo", authenticateStore, upload.single("logo"), storesApi.updateLogo.bind(storesApi));
         router.get( "/api/v1/account", authenticate, peopleApi.getPerson.bind(peopleApi))
         router.get( "/api/v1/delete-user", authenticate, peopleApi.deletePerson.bind(peopleApi));
+
 
         // auth api
         router.post("/api/v1/login", authApi.websiteLogin.bind(authApi));
@@ -90,13 +92,13 @@ exports = module.exports = {
         router.post("/api/v1/check-token", authenticate, authApi.checkJwt.bind(authApi)); // returns a new jwt from a user email
         router.post("/api/v1/create-store-user", authenticateStore, authApi.storeCreateUser.bind(authApi));
 
+
         // sysadmin
         router.get( "/admin-login", this.sysadminLoginPage.bind(this));
         router.post("/api/v1/admin-login", authApi.systemLogin.bind(authApi));
         router.post("/api/sysadmin/create-store", authenticateSystem, storesApi.createStore.bind(storesApi));
         router.post("/api/sysadmin/create-system-user", authenticateSystem, authApi.systemCreateUser.bind(authApi));
 
-        router.post("/api/v1/store-update-logo", authenticateStore, upload.single("logo"), storesApi.updateLogo.bind(storesApi));
 
 
         // catch all

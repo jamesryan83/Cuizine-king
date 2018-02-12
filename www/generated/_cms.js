@@ -141,8 +141,21 @@ app.cms.details = {
     init: function () {
         var self = this;
 
+        this.storeId = app.util.getStoreIdFromStorage();
 
+        this.$logo = $(".store-info-image");
         this.$storeInfoEditAddress = $("#store-info-edit-address");
+
+
+        // logo
+        var logo = new Image();
+        logo.src = "/res/storelogos/store" + this.storeId + ".jpg";
+        logo.onload = function () {
+            self.$logo.attr("src", logo.src);
+        }
+        logo.onerror = function () {
+
+        }
 
 
         // preview button
@@ -169,7 +182,7 @@ app.cms.details = {
 
         // address suburb typeahead
         new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
-            console.log(data)
+            console.log(data);
         });
 
 
@@ -182,7 +195,7 @@ app.cms.details = {
                         return;
                     }
 
-                    $("#store-info-image").attr("src", imgPath);
+                    self.$logo.attr("src", imgPath);
                 });
             }
         });
@@ -239,8 +252,6 @@ app.cms.menu = {
         if (storeData) {
             app.storeContent.addMenuDataToPage(storeData);
         }
-
-
     },
 
 }

@@ -7,7 +7,7 @@
 #store-content {
     padding: 0 50px;
 
-    @media (max-width: $mediaMobileWidth1) {
+    @media (max-width: $mediaWidth0) {
         padding: 0 10px;
     }
 
@@ -37,11 +37,33 @@
     // Image
     .store-info-image-container {
         float: left;
+        position: relative;
 
-        .store-info-image {
-            margin-top: 18px;
+        .store-info-image, .store-info-image-loading, .store-info-image-empty {
             height: 240px;
             width: 340px;
+            margin-top: 20px;
+
+            @media (max-width: $mediaMobileWidth1) {
+                width: 300px !important;
+                height: 220px !important;
+            }
+        }
+
+        .store-info-image-loading, .store-info-image-empty {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background-color: blue;
+
+            label {
+                height: 100%;
+                line-height: 100%;
+                font-weight: bold;
+                color: $colorGray2;
+            }
         }
     }
 
@@ -54,6 +76,8 @@
         #store-info-inner {
             display: inline-block;
             text-align: left;
+            position: relative;
+
 
             // Details
             #store-info-details {
@@ -149,7 +173,7 @@
         }
 
 
-        @media (max-width: $mediaWidth3) {
+        @media (max-width: $mediaWidth4) {
             #store-info-inner {
                 text-align: center !important;
                 height: auto;
@@ -159,9 +183,9 @@
                     height: auto;
                     display: block;
 
-                    .store-info-image {
+                    .store-info-image, .store-info-image-loading, .store-info-image-empty {
                         display: inline-block;
-                        margin-top: 0 !important;
+                        margin-top: 0;
                     }
                 }
 
@@ -177,7 +201,7 @@
         }
 
 
-        @media (max-width: $mediaWidth1) {
+        @media (max-width: $mediaWidth0) {
             #store-info-inner {
                 #store-info-details {
                     > div {
@@ -197,7 +221,6 @@
                 }
             }
         }
-
     }
 
 

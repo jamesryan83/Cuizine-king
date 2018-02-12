@@ -696,7 +696,7 @@ input, textarea {
 
 #store-content {
   padding: 0 50px; }
-  @media (max-width: 490px) {
+  @media (max-width: 670px) {
     #store-content {
       padding: 0 10px; } }
   #store-content .label-takeaway, #store-content .label-gluten-free, #store-content .label-vegetarian {
@@ -712,17 +712,36 @@ input, textarea {
   #store-content .label-vegetarian {
     color: #3bcd3b; }
   #store-content .store-info-image-container {
-    float: left; }
-    #store-content .store-info-image-container .store-info-image {
-      margin-top: 18px;
+    float: left;
+    position: relative; }
+    #store-content .store-info-image-container .store-info-image, #store-content .store-info-image-container .store-info-image-loading, #store-content .store-info-image-container .store-info-image-empty {
       height: 240px;
-      width: 340px; }
+      width: 340px;
+      margin-top: 20px; }
+      @media (max-width: 490px) {
+        #store-content .store-info-image-container .store-info-image, #store-content .store-info-image-container .store-info-image-loading, #store-content .store-info-image-container .store-info-image-empty {
+          width: 300px !important;
+          height: 220px !important; } }
+    #store-content .store-info-image-container .store-info-image-loading, #store-content .store-info-image-container .store-info-image-empty {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      z-index: 10;
+      background-color: blue; }
+      #store-content .store-info-image-container .store-info-image-loading label, #store-content .store-info-image-container .store-info-image-empty label {
+        height: 100%;
+        line-height: 100%;
+        font-weight: bold;
+        color: #e3e3e3; }
   #store-content #store-info {
     padding: 40px 20px 20px 20px;
     text-align: center; }
     #store-content #store-info #store-info-inner {
       display: inline-block;
-      text-align: left; }
+      text-align: left;
+      position: relative; }
       #store-content #store-info #store-info-inner #store-info-details {
         float: right;
         width: calc(100% - 340px);
@@ -772,7 +791,7 @@ input, textarea {
             max-width: 250px;
             white-space: nowrap;
             font-weight: bold; }
-    @media (max-width: 1000px) {
+    @media (max-width: 1050px) {
       #store-content #store-info #store-info-inner {
         text-align: center !important;
         height: auto; }
@@ -780,9 +799,9 @@ input, textarea {
           float: none;
           height: auto;
           display: block; }
-          #store-content #store-info #store-info-inner .store-info-image-container .store-info-image {
+          #store-content #store-info #store-info-inner .store-info-image-container .store-info-image, #store-content #store-info #store-info-inner .store-info-image-container .store-info-image-loading, #store-content #store-info #store-info-inner .store-info-image-container .store-info-image-empty {
             display: inline-block;
-            margin-top: 0 !important; }
+            margin-top: 0; }
         #store-content #store-info #store-info-inner #store-info-details {
           float: none;
           min-width: 360px;
@@ -790,7 +809,7 @@ input, textarea {
           display: inline-block;
           text-align: left;
           padding: 40px 0 0 10px; } }
-    @media (max-width: 770px) {
+    @media (max-width: 670px) {
       #store-content #store-info #store-info-inner #store-info-details > div > label:first-of-type {
         display: block;
         margin-left: -5px; }
@@ -1519,7 +1538,7 @@ input, textarea {
     width: 240px;
     background-image: url(/res/images/ck-logo.png);
     display: inline-block; }
-  @media (max-width: 890px) {
+  @media (max-width: 900px) {
     #navbar-site {
       text-align: center; }
       #navbar-site .navbar-heading .navbar-icon {

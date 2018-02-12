@@ -23,6 +23,7 @@
 
     // Store info editing
     #store-info-edit {
+        padding: 40px 20px 20px 20px;
         text-align: center;
 
         #store-info-edit-inner {
@@ -30,15 +31,13 @@
             text-align: left;
             position: relative;
 
-            img {
-                margin-top: 30px;
-            }
 
             .upload-button {
                 position: absolute;
                 left: 80px;
-                top: 300px;
+                top: 270px;
             }
+
 
             #store-info-edit-controls {
                 float: left;
@@ -70,18 +69,24 @@
     }
 
 
-    @media (max-width: $mediaWidth3) {
+    @media (max-width: $mediaWidth4) {
         #store-info-edit {
+            background-color: purple;
             .store-info-image-container {
                 float: none;
                 text-align: center;
+
+                .store-info-image, .store-info-image-loading, .store-info-image-empty {
+                    display: inline-block;
+                    margin-top: 0;
+                }
             }
 
             #store-info-edit-inner {
 
                 .upload-button {
                     position: absolute;
-                    top: 280px;
+                    top: 250px;
                     left: 50%;
                     transform: translateX(-50%);
                 }
@@ -90,14 +95,14 @@
                     float: none;
                     margin-top: 50px;
                     padding-left: 0;
-                    width: 370px;
+                    width: 100%;
                 }
             }
         }
     }
 
 
-    @media (max-width: 650px) {
+    @media (max-width: $mediaWidth0) {
         .page-header {
             button {
                 display: none;
@@ -105,6 +110,24 @@
         }
 
         #store-info-edit {
+            background-color: green;
+            padding: 40px 0 20px 0;
+
+            #store-info-edit-inner {
+
+                #store-info-edit-controls {
+                    width: 100%;
+
+                    > div {
+                        width: 100%;
+
+                        input, textarea {
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+
             #store-info-mobile-buttons {
                 display: block;
             }
@@ -112,27 +135,11 @@
     }
 
 
-    @media (max-width: 410px) {
+    @media (max-width: $mediaMobileWidth1) {
         #store-info-edit {
             #store-info-edit-inner {
-
                 .upload-button {
-                    top: 260px;
-                }
-
-                .store-info-image-container {
-                    .store-info-image {
-                        width: 320px;
-                        height: 220px;
-                    }
-                }
-
-                #store-info-edit-controls {
-                    width: 320px;
-
-                    input, textarea {
-                        width: 320px;
-                    }
+                    top: 230px;
                 }
             }
         }
