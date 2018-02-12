@@ -8,6 +8,10 @@
     apikey (saas1): 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
     some other username: azure_a9ba7dec061269d4c607af76306fc99b@azure.com
 
+my gmail account is currently the main test account.  There's a trick that lets you
+have multiple email addresses per single gmail account
+http://www.techverse.net/create-multiple-custom-email-address-one-gmail-account/
+
 
 ** MSSQL Database **
 Local

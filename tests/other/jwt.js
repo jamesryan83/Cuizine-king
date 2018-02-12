@@ -164,7 +164,7 @@ describe("JWT", function () {
                     assert.equal(res.body.err, "Not Authorized");
                     done();
                 });
-        }, "james4165@hotmail.com", "password");
+        }, "jamesryan4171@gmail.com", "password");
     });
 
 
@@ -224,7 +224,7 @@ describe("JWT", function () {
                             done();
                         });
                 });
-        }, "james4165@hotmail.com", "password");
+        }, "jamesryan4171@gmail.com", "password");
     });
 
 });

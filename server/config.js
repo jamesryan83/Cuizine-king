@@ -14,7 +14,7 @@ var config = {
     "logRequestHeaders": false,
 
     "mail": {
-        "serverEmail": "no-reply@menuthing.com",
+        "serverEmail": "jamesryan4171@gmail.com",
         "apikey": "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"
     },
 

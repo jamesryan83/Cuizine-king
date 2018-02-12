@@ -4,6 +4,10 @@
 // https://github.com/sendgrid/sendgrid-nodejs/blob/master/packages/mail/USE_CASES.md
 
 
+// TODO: look into these
+// https://sendgrid.com/docs/Classroom/Troubleshooting/Delivery_Issues/safely_test_your_sending_speed.html
+
+
 // Emails
 var sendgrid = require("@sendgrid/mail");
 
