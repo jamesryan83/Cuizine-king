@@ -106,7 +106,7 @@ app.cms = {
                 app.cms.transactions.init(routeData);
             },
         },
-    }
+    },
 
 }
 

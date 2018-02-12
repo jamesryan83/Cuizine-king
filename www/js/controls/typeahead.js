@@ -15,7 +15,8 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
             postcode: $(el).find(".typeahead-item-postcode").text()
         };
 
-        $(listEl).prev().val(result.postcode + " - " + result.suburb); // put selected item into input
+        // put selected item into input
+        $(listEl).prev().val(result.postcode + " - " + result.suburb);
         $(listEl).hide();
 
         return callback(result);

@@ -24,6 +24,7 @@ CREATE OR ALTER PROCEDURE store_applications_create
             (@name, @email, @message, @id_user_doing_update)
 
 
+        -- output new store application id
         SET @newStoreApplicationId = dbo.get_sequence_value('id_store_application')
     COMMIT
 

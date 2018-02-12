@@ -35,8 +35,7 @@ app.vr._longitude_optional =    { numericality: { greaterThanOrEqualTo: 0 }};
 // these groups of validation things match the values in the sql tables
 // values not here are using the generic values above
 
-app.vr._addresses_line1 =          { presence: true, length: { maximum: 128 }};
-app.vr._addresses_line2_optional = { length: { maximum: 128 }};
+app.vr._addresses_street_address =          { presence: true, length: { maximum: 256 }};
 
 app.vr._people_first_name =                    { presence: true, length: { minimum: 2, maximum: 45 }};
 app.vr._people_first_name_optional =           { length: { minimum: 2, maximum: 45 }};
@@ -149,9 +148,7 @@ app.vr.checkJwt = {
 app.vr.createStore = {
     postcode: app.vr._postcodes_postcode,
     suburb: app.vr._postcodes_suburb,
-
-    address_line_1: app.vr._addresses_line1,
-    address_line_2: app.vr._addresses_line2_optional,
+    street_address: app.vr._addresses_street_address,
 
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,

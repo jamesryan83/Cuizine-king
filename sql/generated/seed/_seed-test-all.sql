@@ -4,7 +4,7 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 
 BEGIN TRANSACTION
-	INSERT INTO App.addresses(id_postcode,line1,line2,latitude,longitude,updated_by) VALUES (9177,'2 Hythe St',NULL,-37.7885161869,153.444458,3)
+	INSERT INTO App.addresses(id_postcode,street_address,latitude,longitude,updated_by) VALUES (9177,'2 Hythe St',-37.7885161869,153.444458,3)
 COMMIT
 
 GO
@@ -39,7 +39,7 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 
 BEGIN TRANSACTION
-	INSERT INTO Store.stores_people(id_store,id_person,updated_by) VALUES (1,2,3)
+	INSERT INTO Store.stores_people(id_store,id_person,is_store_owner,updated_by) VALUES (1,2,1,3)
 COMMIT
 
 GO
@@ -50,17 +50,17 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 
 BEGIN TRANSACTION
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Ham and Cheese','Ham, cheese and tomato sauce','is good',1,0,0,1,1,NULL,2,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Pepperoni','Ham, onion, capsicum and pepperoni',NULL,1,0,0,1,1,1,3,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Supreme','Ham, onion, pepperoni, capsicum, bacon, olives, mushroom and anchovies',NULL,0,1,0,1,1,2,4,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Vegetarian','Onion, capsicum, olives, pineapple and mushroom',NULL,1,1,1,1,1,3,5,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Cheese Burger','Char grilled beef patties, tasty cheese, tomato ketchup and spanish onions','Make it heaps cheesey',1,0,0,1,1,4,6,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Beef BLT Burger','Char grilled beef patties, crispy bacon, fresh lettuce, ripe tomato and house made tomato relish',NULL,1,1,0,1,1,5,7,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Our Classic Burger','Char grilled beef patties, spanish onions, beetroot, lettuce, our own herb mayo, tasty cheese',NULL,0,1,0,1,1,6,8,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Chicken Pesto','Creamy pesto sauce, chicken breast medallions, semi dried tomatos, and pine nuts with tagliatelle','10% off with coupon',1,0,0,1,1,7,9,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Carbonara Fettuccine','Double smoked bacon and onion, cooked in a creamy garlic and parmesan sauce topped with crispy pancetta',NULL,1,1,0,1,1,8,10,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Napoli','Garlic, onions, capers and black olices, in a herby tomato sauce',NULL,1,1,1,1,1,9,11,3)
-	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Portobello Mushroom and Sage','In a creamy sauce with fettuccine',NULL,0,1,1,1,1,10,12,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Ham and Cheese','Ham, cheese and tomato sauce','is good',1,0,0,1,NULL,2,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Pepperoni','Ham, onion, capsicum and pepperoni',NULL,1,0,0,1,1,3,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Supreme','Ham, onion, pepperoni, capsicum, bacon, olives, mushroom and anchovies',NULL,0,1,0,1,2,4,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Vegetarian','Onion, capsicum, olives, pineapple and mushroom',NULL,1,1,1,1,3,5,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Cheese Burger','Char grilled beef patties, tasty cheese, tomato ketchup and spanish onions','Make it heaps cheesey',1,0,0,1,4,6,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Beef BLT Burger','Char grilled beef patties, crispy bacon, fresh lettuce, ripe tomato and house made tomato relish',NULL,1,1,0,1,5,7,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Our Classic Burger','Char grilled beef patties, spanish onions, beetroot, lettuce, our own herb mayo, tasty cheese',NULL,0,1,0,1,6,8,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Chicken Pesto','Creamy pesto sauce, chicken breast medallions, semi dried tomatos, and pine nuts with tagliatelle','10% off with coupon',1,0,0,1,7,9,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Carbonara Fettuccine','Double smoked bacon and onion, cooked in a creamy garlic and parmesan sauce topped with crispy pancetta',NULL,1,1,0,1,8,10,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Napoli','Garlic, onions, capers and black olices, in a herby tomato sauce',NULL,1,1,1,1,9,11,3)
+	INSERT INTO Product.products(id_store,name,description,store_notes,delivery_available,gluten_free,vegetarian,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Portobello Mushroom and Sage','In a creamy sauce with fettuccine',NULL,0,1,1,1,10,12,3)
 COMMIT
 
 GO
@@ -71,12 +71,12 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 
 BEGIN TRANSACTION
-	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Pineapple',0.45,NULL,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Extra Cheese',1,NULL,10,1,1,1,3,3)
-	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Extra Sauce',0,'Don''t use too much',10,1,1,2,4,3)
-	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Olives',0.5,NULL,10,1,1,3,5,3)
-	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Pepperoni',0.95,NULL,10,1,1,4,6,3)
-	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Salami',0.95,NULL,5,1,1,5,NULL,3)
+	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Pineapple',0.45,NULL,10,1,NULL,2,3)
+	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Extra Cheese',1,NULL,10,1,1,3,3)
+	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Extra Sauce',0,'Don''t use too much',10,1,2,4,3)
+	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Olives',0.5,NULL,10,1,3,5,3)
+	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Pepperoni',0.95,NULL,10,1,4,6,3)
+	INSERT INTO Product.product_extras(id_store,name,price,store_notes,limit_per_product,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Salami',0.95,NULL,5,1,5,NULL,3)
 COMMIT
 
 GO
@@ -87,30 +87,30 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 
 BEGIN TRANSACTION
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Small',NULL,7.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Regular',NULL,9,10,1,1,1,3,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Large',NULL,12.5,10,1,1,2,4,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Family','test comment',15.95,10,1,1,3,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (2,'Small',NULL,7.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (2,'Regular',NULL,9,10,1,1,1,3,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (2,'Large',NULL,12.5,10,1,1,2,4,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (3,'Small',NULL,7.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (3,'Regular',NULL,9,10,1,1,1,3,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (3,'Large',NULL,12.5,10,1,1,2,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Small',NULL,7.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Regular',NULL,9,10,1,1,1,3,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Large',NULL,12.5,10,1,1,2,4,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Family',NULL,15.95,10,1,1,3,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (5,'Regular',NULL,8.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (5,'Large',NULL,12.95,10,1,1,1,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (6,'Regular',NULL,8.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (6,'Large',NULL,12.95,10,1,1,1,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (7,'Regular',NULL,8.95,10,1,1,NULL,2,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (7,'Large',NULL,12.95,10,1,1,1,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (8,'Main',NULL,18.95,5,1,1,NULL,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (9,'Main',NULL,18.95,5,1,1,NULL,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (10,'Main',NULL,18.95,5,1,1,NULL,NULL,3)
-	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,in_stock,active,position_id_previous,position_id_next,updated_by) VALUES (11,'Main',NULL,18.95,5,1,1,NULL,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Small',NULL,7.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Regular',NULL,9,10,1,1,3,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Large',NULL,12.5,10,1,2,4,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (1,'Family','test comment',15.95,10,1,3,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (2,'Small',NULL,7.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (2,'Regular',NULL,9,10,1,1,3,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (2,'Large',NULL,12.5,10,1,2,4,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (3,'Small',NULL,7.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (3,'Regular',NULL,9,10,1,1,3,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (3,'Large',NULL,12.5,10,1,2,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Small',NULL,7.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Regular',NULL,9,10,1,1,3,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Large',NULL,12.5,10,1,2,4,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (4,'Family',NULL,15.95,10,1,3,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (5,'Regular',NULL,8.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (5,'Large',NULL,12.95,10,1,1,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (6,'Regular',NULL,8.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (6,'Large',NULL,12.95,10,1,1,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (7,'Regular',NULL,8.95,10,1,NULL,2,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (7,'Large',NULL,12.95,10,1,1,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (8,'Main',NULL,18.95,5,1,NULL,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (9,'Main',NULL,18.95,5,1,NULL,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (10,'Main',NULL,18.95,5,1,NULL,NULL,3)
+	INSERT INTO Product.product_options(id_product,name,store_notes,price,limit_per_customer,active,position_id_previous,position_id_next,updated_by) VALUES (11,'Main',NULL,18.95,5,1,NULL,NULL,3)
 COMMIT
 
 GO

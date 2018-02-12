@@ -88,6 +88,7 @@ app.routerBase = {
             if (route == "/index-cordova") route = "/";
         }
 
+        // normalize route and add current section
         routeData.normalizedRoute = app[section].normalizeRoute(route).route;
         routeData.section = section;
 
@@ -99,7 +100,7 @@ app.routerBase = {
         // unknown route
         } else {
             debugger;
-            window.location.href = "/login";
+            app.util.invalidateCredentialsAndGoToLogin();
             return;
         }
 
@@ -113,8 +114,8 @@ app.routerBase = {
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/logout", auth: true
         }, function (err) {
-            app.util.invalidateCredentials();
-            window.location.href = "/login";
+            app.util.invalidateCredentialsAndGoToLogin();
+
         });
     },
 

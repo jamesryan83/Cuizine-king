@@ -10,10 +10,6 @@ app.sysadmin.createStore = {
         this.businessHoursArray = this.generateBusinessHours();
 
 
-        // load tabcontrol
-        new app.controls.TabControl("#page-sysadmin-tabcontrol", function (tab) { });
-
-
         // suburb typeahead
         new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
             console.log(data)
@@ -51,51 +47,6 @@ console.log(data)
         })
 
 
-//        // file upload button
-//        $("#fileupload").fileupload({
-//            maxNumberOfFiles: 1,
-//            acceptFileTypes: /^image\/(jpe?g|png)$/i,
-//            paramName: "logo",
-//            maxFileSize: 250000,
-//            formData: {  },
-//            url: "/api/v1/upload-logo",
-//
-//            add: function (e, data) {
-//                // validate selected file
-//
-//                console.log(data)
-//
-////                var $this = $(this);
-////                var validation = data.process(function () {
-////                    if (data.files.length < 1) return false;
-////                    if (data.files[0].size > 250000) return false;
-////
-////                    return $this.fileupload('process', data.files);
-////                });
-////
-////                validation.done(function() {
-////                    data.submit(); // ok
-////                });
-////
-////                validation.fail(function(data) {
-////                    app.util.showToast("Error - " + data.files[0].error);
-////                    return;
-////                });
-//            },
-//
-//            beforeSend: function() {
-//                $("#store-logo-loading").show();
-//            },
-//
-//            done: function (e, data) {
-//                self.afterImageUploaded(data);
-//            },
-//
-//            fail: function(e, data) {
-//                $("#store-logo-loading").hide();
-//                app.util.showToast("Unknown server error");
-//            }
-//        });
 
     },
 

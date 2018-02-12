@@ -11,6 +11,34 @@
         <link rel="stylesheet" href="/lib/normalize.css" />
 
         <title>Cuisine King</title>
+
+        <style>
+            *, *:before, *:after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                width: 100%;
+                height: 100%;
+            }
+
+            body {
+                width: 100%;
+                min-height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+                background: #151238;
+            }
+
+            #page-container {
+                min-height: 100vh;
+                width: 100%;
+                background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
+                background-repeat: no-repeat;
+            }
+        </style>
     </head>
 
 
@@ -27,7 +55,7 @@
         <!-- Loading screen -->
         <div id="loading-screen" style="display: none;">
             <div id="loading-icon" class="center">
-                <label>Loading</label>
+                <label>Please Wait</label>
             </div>
         </div>
 
@@ -80,7 +108,7 @@
                             console.log(err)
                         }
 
-                        window.location.href = "/";
+                        $pageContainer.append($("<p style='margin: 30px'>Error.  Please refresh the page</p>")[0]);
                     }
                 });
             });

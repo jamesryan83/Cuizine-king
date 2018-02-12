@@ -7,13 +7,6 @@ app.util = {
     // ---------------------- Stuff ----------------------
 
 
-
-    // Get the users location
-    getUserLatLong: function (callback) {
-        // TODO: get users lat long
-    },
-
-
     // Validates an inputs object and shows toast if there's an error
     validateInputs: function (inputs, validationRule) {
         var errors = validate(inputs, validationRule, { format: "flat" });
@@ -34,30 +27,31 @@ app.util = {
 
     // Show toast
     showToast: function (message, timeout) {
+        var $toasts = $("#toasts");
         var toast = $("<p>" + message + "</p>");
 
         // remove toasts if there's too many stacked up
-        if ($("#toasts").children().length >= 5) {
-            $("#toasts").children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
+        if ($toasts.children().length >= 5) {
+            $toasts.children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
                 $(this).remove();
             });
         }
 
         // append toasts message and show toasts
-        $("#toasts").append(toast[0]);
-        $("#toasts").show();
+        $toasts.append(toast[0]);
+        $toasts.show();
 
         $(toast).animate({ opacity: 1, bottom: 0 }, 100);
 
         // hide toast after a little bit
         var currentToast = setTimeout(function () {
-            $("#toasts").children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
+            $toasts.children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
                 $(this).remove();
             });
 
             // hide container if it's empty
-            if ($("#toasts").children().length === 0) {
-                $("#toasts").hide().empty();
+            if ($toasts.children().length === 0) {
+                $toasts.hide().empty();
             }
         }, timeout || 2000);
     },
@@ -80,8 +74,6 @@ app.util = {
     toTitleCase: function(str) {
         return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     },
-
-
 
 
 
@@ -127,10 +119,11 @@ app.util = {
 
 
     // Replace current id and jwt with invalid ones
-    invalidateCredentials: function () {
+    invalidateCredentialsAndGoToLogin: function () {
         localStorage.removeItem("jwt");
         localStorage.removeItem("pid");
         localStorage.removeItem("sid");
+        window.location.href = "/login";
     },
 
 
@@ -143,7 +136,7 @@ app.util = {
         var self = this;
         var jwt = this.getJwtFromStorage();
 
-        if (jwt && jwt.length > 30) {
+        if (jwt && jwt.length > 30) { // TODO : add a regex check or something
 
             this.ajaxRequest({
                 method: "POST", url: "/api/v1/check-token", auth: true
@@ -157,7 +150,7 @@ app.util = {
                 self.addJwtToStorage(result.data.jwt);
                 self.addPersonIdToStorage(result.data.id_person);
                 if (result.data.id_store && result.data.id_store > 0) {
-                    localStorage.setItem("sid", result.data.id_store);
+                    self.addStoreIdToStorage(result.data.id_store);
                 }
 
                 return callback(null);
@@ -227,6 +220,7 @@ app.util = {
             this.showToast("Invalid Image");
         }
     },
+
 
 
     // Generic ajax request

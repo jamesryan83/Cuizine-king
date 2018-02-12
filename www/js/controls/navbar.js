@@ -40,4 +40,5 @@ app.controls.Navbar = function (routeData) {
     });
 }
 
+// Overridden elsewhere
 app.controls.Navbar.prototype.linkClicked = function () { }

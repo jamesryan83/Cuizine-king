@@ -13,17 +13,6 @@ app.site.home = {
             app.routerBase.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode, "site");
         });
 
-
-        // TODO: get users lat long
-//        // Get users location
-//        app.util.getUserLatLong(function (result) {
-//            if (result) {
-//                console.log(result)
-//            }
-//        });
-
-
-
     },
 
 }

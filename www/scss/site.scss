@@ -3,9 +3,9 @@
 @import "shared/navbar";
 @import "shared/rating-control";
 @import "shared/store-content";
-@import "shared/tabcontrol";
 @import "shared/toasts";
 @import "shared/typeahead";
+@import "dialogs/add-to-order";
 @import "dialogs/business-hours";
 @import "dialogs/checkout";
 @import "dialogs/description";
@@ -17,99 +17,21 @@
 @import "site/home-store-list-item";
 @import "site/location";
 @import "site/login";
+@import "site/navbar-site";
 @import "site/store";
+@import "site/verify-account";
 
 
-
-#page-verify-account {
-
-    #form-verify-account {
-        transition: left 0.2s, opacity 0.2s;
-
-        label {
-            text-align: right;
-        }
-
-        button {
-            float: right;
-        }
-
-        &.hidden {
-            left: 10%;
-            opacity: 0;
-            pointer-events: none;
-        }
-    }
-
-
-    // Verify account success
-    #verify-account-success {
-        text-align: center;
-        transition: left 0.2s, opacity 0.2s;
-
-        button {
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 10px;
-
-            &:hover {
-                color: $colorBlue1;
-            }
-        }
-
-        &.hidden {
-            left: 90%;
-            opacity: 0;
-            pointer-events: none;
-        }
-    }
-}
-
-
-
-// Navbar on logged out pages
-#navbar-site {
-    height: $navbarHeight;
-
-    // Navbar icon
-    .navbar-heading {
-        .navbar-icon {
-            @include svgicon(240px, 120px, 240px, 120px,
-                url(/res/images/ck-logo.png));
-        }
-    }
-
-    // bit bigger than mobile, like tablet size
-    @media (max-width: $mediaWidth1) {
-        text-align: center;
-
-        .navbar-heading {
-            .navbar-icon {
-                margin-left: 0;
-
-                @include svgicon(180px, 90px, 180px, 90px,
-                    url(/res/images/ck-logo.png));
-            }
-        }
-
-        .navbar-links {
-            float: none;
-            margin-top: 10px;
+.page {
+    .page-header {
+        h2 {
+            font-size: 30px;
             height: 30px;
+            line-height: 30px;
         }
     }
 
-
-    // mobile
-    @media (max-width: $mediaMobileWidth1) {
-        text-align: left;
-
-        .navbar-heading {
-            .navbar-icon {
-                @include svgicon(180px, 90px, 180px, 90px,
-                    url(/res/images/ck-logo.png));
-            }
-        }
+    .page-content {
+        padding-top: 30px;
     }
-
 }

@@ -25,43 +25,22 @@ body {
     height: 100%;
 
 
-    // header on each page, under the navbar
-    .page-cms-header {
-        padding: 30px 40px 20px 40px;
+    // Floating buttons on bottom of page
+    .page-cms-floating-buttons {
+        position: fixed;
+        padding-top: 20px;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 80px;
+        background-color: #0d0c1a;
+        border-top: 1px solid $colorBlue3;
+        text-align: center;
 
-        // heading
-        .cms-page-heading {
-            font-size: 40px;
-            font-weight: 400;
-            color: $colorBlue2;
-            display: inline-block;
-            height: 40px;
-            line-height: 40px;
-            vertical-align: top;
+        button {
+            margin: 0 15px;
+            width: 130px;
         }
-
-        .page-cms-header-controls {
-            float: right;
-            height: 40px;
-
-            button {
-                margin-right: 20px;
-                width: 120px;
-
-                &.active {
-                    background-color: $colorBlue1;
-                }
-            }
-        }
-
-        @media (max-width: $mediaMobileWidth1) {
-            text-align: center;
-
-            .page-cms-header-controls {
-                display: none;
-            }
-        }
-
     }
 
 }

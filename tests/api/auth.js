@@ -23,18 +23,7 @@ describe("API - AUTH", function () {
     });
 
 
-    function testCreateUser (route, data, status, jwt, callback) {
-        supertest(testutil.supertestUrl)
-            .post(route)
-            .set("Content-Type", "application/json")
-            .set("authorization", "Bearer " + jwt)
-            .send(data)
-            .expect("Content-Type", "application/json; charset=utf-8")
-            .expect(status)
-            .end(function (err, res) {
-                return callback(err, res)
-        });
-    }
+
 
 
 
@@ -43,7 +32,7 @@ describe("API - AUTH", function () {
 
 
     it("#websiteCreateUser creates a website user", function (done) {
-        testCreateUser("/api/v1/create-user", testutil.fakeUsers.website, 200, null, function (err, res) {
+        testutil.createUser("/api/v1/create-user", testutil.fakeUsers.website, 200, null, function (err, res) {
             if (err) return done(new Error(err));
 
             // check result
@@ -65,7 +54,7 @@ describe("API - AUTH", function () {
 
 
     it("#createUser returns error message if user already exists", function (done) {
-        testCreateUser("/api/v1/create-user", testutil.fakeUsers.website, 409, null, function (err, res) {
+        testutil.createUser("/api/v1/create-user", testutil.fakeUsers.website, 409, null, function (err, res) {
             if (err) return done(new Error(err));
             assert.equal(res.body.err, "Account already taken");
             done();
@@ -80,7 +69,7 @@ describe("API - AUTH", function () {
 
 
     it("#storeCreateUser fails without jwt", function (done) {
-        testCreateUser("/api/v1/create-store-user", testutil.fakeUsers.store, 401, null, function (err, res) {
+        testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 401, null, function (err, res) {
             if (err) return done(new Error(err));
             assert.equal(res.body.err, "Not Authorized");
             done();
@@ -89,7 +78,7 @@ describe("API - AUTH", function () {
 
 
     it("#storeCreateUser fails with invalid jwt", function (done) {
-        testCreateUser("/api/v1/create-store-user", testutil.fakeUsers.store, 401, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwic2hvcnRFeHAiOiIzMDAwMDAiLCJpYXQiOjE1MTc3NDE2MDcsImV4cCI6MTU0OTI5OTIwN30.CjvcjnfZgybk4kTo8LE8WfpDKE3o_nWprxuTmnXUzzz", function (err, res) {
+        testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 401, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwic2hvcnRFeHAiOiIzMDAwMDAiLCJpYXQiOjE1MTc3NDE2MDcsImV4cCI6MTU0OTI5OTIwN30.CjvcjnfZgybk4kTo8LE8WfpDKE3o_nWprxuTmnXUzzz", function (err, res) {
             if (err) return done(new Error(err));
             assert.equal(res.body.err, "Not Authorized");
             done();
@@ -100,7 +89,7 @@ describe("API - AUTH", function () {
     // TODO : this is more testing the auth system, maybe move elsewhere
     it("#storeCreateUser fails with another users jwt", function (done) {
         testutil.getJwt(config.dbConstants.adminUsers.website, done, function (jwt) {
-            testCreateUser("/api/v1/create-store-user", testutil.fakeUsers.store, 401, jwt, function (err, res) {
+            testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 401, jwt, function (err, res) {
                 if (err) return done(new Error(err));
 
                 assert.equal(res.body.err, "Not Authorized");
@@ -130,7 +119,7 @@ describe("API - AUTH", function () {
                 if (err) return done(new Error(err));
 
                 // create a store user using the jwt of the user just added to the db
-                testCreateUser("/api/v1/create-store-user", testutil.fakeUsers.store, 200, newUserJwt, function (err, res) {
+                testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 200, newUserJwt, function (err, res) {
                     if (err) return done(new Error(err));
 
                     var newPersonId2 = res.body.data.id_person;
@@ -173,7 +162,7 @@ describe("API - AUTH", function () {
         fakeStore.id_user_doing_update = config.dbConstants.adminUsers.system;
 
         testutil.getJwt(config.dbConstants.adminUsers.system, done, function (jwt) {
-            testCreateUser("/api/v1/create-store-user", testutil.fakeUsers.store, 409, jwt, function (err, res) {
+            testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 409, jwt, function (err, res) {
                 if (err) return done(new Error(err));
                 assert.equal(res.body.err, "Account already taken");
                 done();
@@ -189,7 +178,7 @@ describe("API - AUTH", function () {
 
 
     it("#systemCreateUser fails without jwt", function (done) {
-        testCreateUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 401, null, function (err, res) {
+        testutil.createUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 401, null, function (err, res) {
             if (err) return done(new Error(err));
             assert.equal(res.body.err, "Not Authorized");
             done();
@@ -198,7 +187,7 @@ describe("API - AUTH", function () {
 
 
     it("#systemCreateUser fails with invalid jwt", function (done) {
-        testCreateUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 401, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwic2hvcnRFeHAiOiIzMDAwMDAiLCJpYXQiOjE1MTc3NDE2MjEsImV4cCI6MTU0OTI5OTIyMX0.gNpzQhDhwlPI6GpVXN9JfVtelK0_X-Sj16aRvTOjzzz", function (err, res) {
+        testutil.createUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 401, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwic2hvcnRFeHAiOiIzMDAwMDAiLCJpYXQiOjE1MTc3NDE2MjEsImV4cCI6MTU0OTI5OTIyMX0.gNpzQhDhwlPI6GpVXN9JfVtelK0_X-Sj16aRvTOjzzz", function (err, res) {
             if (err) return done(new Error(err));
             assert.equal(res.body.err, "Not Authorized");
             done();
@@ -209,7 +198,7 @@ describe("API - AUTH", function () {
     // TODO : this is more testing the auth system, maybe move elsewhere
     it("#systemCreateUser fails with another users jwt", function (done) {
         testutil.getJwt(config.dbConstants.adminUsers.website, done, function (jwt) {
-            testCreateUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 401, jwt, function (err, res) {
+            testutil.createUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 401, jwt, function (err, res) {
                 if (err) return done(new Error(err));
 
                 assert.equal(res.body.err, "Not Authorized");
@@ -221,7 +210,7 @@ describe("API - AUTH", function () {
 
     it("#systemCreateUser creates a system user", function (done) {
         testutil.getJwt(config.dbConstants.adminUsers.system, done, function (jwt) {
-            testCreateUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 200, jwt, function (err, res) {
+            testutil.createUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 200, jwt, function (err, res) {
                 if (err) return done(new Error(err));
 
                 assert.ok(res.body.data.jwt.length > 100);
@@ -244,7 +233,7 @@ describe("API - AUTH", function () {
 
     it("#systemCreateUser returns error message if user already exists", function (done) {
         testutil.getJwt(config.dbConstants.adminUsers.system, done, function (jwt) {
-            testCreateUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 409, jwt, function (err, res) {
+            testutil.createUser("/api/sysadmin/create-system-user", testutil.fakeUsers.system, 409, jwt, function (err, res) {
                 if (err) return done(new Error(err));
                 assert.equal(res.body.err, "Account already taken");
                 done();
@@ -522,6 +511,14 @@ describe("API - AUTH", function () {
                 });
         });
     });
+
+
+
+
+
+
+
+
 
 
 });

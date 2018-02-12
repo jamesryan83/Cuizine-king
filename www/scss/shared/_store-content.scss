@@ -12,26 +12,48 @@
     }
 
 
+    // colored labels
+    .label-takeaway, .label-gluten-free, .label-vegetarian {
+        font-size: 12px;
+        height: 15px;
+        line-height: 15px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .label-takeaway {
+        color: $colorRed1;
+    }
+
+    .label-gluten-free {
+        color: $colorOrange1;
+    }
+
+    .label-vegetarian {
+        color: $colorGreen1;
+    }
+
+
+    // Image
+    .store-info-image-container {
+        float: left;
+
+        .store-info-image {
+            margin-top: 18px;
+            height: 240px;
+            width: 340px;
+        }
+    }
+
+
     // Info
     #store-info {
         padding: 40px 20px 20px 20px;
+        text-align: center;
 
         #store-info-inner {
-            position: relative;
-            height: 320px;
-
-
-            // Image
-            #store-info-image-container {
-                float: left;
-
-                #store-info-image {
-                    margin-top: 18px;
-                    height: 240px;
-                    width: 340px;
-                }
-            }
-
+            display: inline-block;
+            text-align: left;
 
             // Details
             #store-info-details {
@@ -40,11 +62,9 @@
                 padding: 10px 20px 0 30px;
                 min-width: 500px;
 
-
                 label {
                     display: inline-block;
                 }
-
 
                 > div {
                     margin-top: 5px;
@@ -72,11 +92,13 @@
                 }
 
 
+                // address
                 #store-info-address {
 
                 }
 
 
+                // hours
                 #store-info-hours-is-open {
                     color: $colorBlue2;
                     margin-right: 10px;
@@ -93,6 +115,7 @@
                 }
 
 
+                // ratings
                 .rating-control {
                     padding: 2px;
                     margin-left: -5px;
@@ -131,12 +154,13 @@
                 text-align: center !important;
                 height: auto;
 
-                #store-info-image-container {
+                .store-info-image-container {
                     float: none;
                     height: auto;
                     display: block;
 
-                    #store-info-image {
+                    .store-info-image {
+                        display: inline-block;
                         margin-top: 0 !important;
                     }
                 }
@@ -171,21 +195,6 @@
                         }
                     }
                 }
-            }
-        }
-
-        @media (max-width: $mediaMobileWidth1) {
-            padding-top: 0;
-
-             #store-info-inner {
-                #store-info-image-container {
-                    #store-info-image {
-                        @media (max-width: $mediaMobileWidth1) {
-                            width: 300px;
-                            height: 210px;
-                        }
-                    }
-                 }
             }
         }
 
@@ -226,6 +235,7 @@
 
             // normal menu item
             .store-menu-list-item {
+                border: 1px solid transparent;
 
                 > div {
                     float: left;

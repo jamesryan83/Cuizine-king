@@ -11,6 +11,7 @@ var validate = require("validate.js");
 var router = require("express").Router();
 
 var authApi = require("../api/auth");
+var peopleApi = require("../api/people");
 var storesApi = require("../api/stores");
 var locationApi = require("../api/location");
 var sysadminApi = require("../api/sysadmin");
@@ -48,6 +49,7 @@ exports = module.exports = {
 
         authApi.init(this);
         locationApi.init(this);
+        peopleApi.init(this);
         storesApi.init(this);
         sysadminApi.init(this);
 
@@ -74,6 +76,8 @@ exports = module.exports = {
         router.get( "/api/v1/store", storesApi.getStore.bind(storesApi));
         router.get( "/api/v1/location", locationApi.getLocation.bind(locationApi));
         router.post("/api/v1/store-application", storesApi.createStoreApplication.bind(storesApi));
+        router.get( "/api/v1/account", authenticate, peopleApi.getPerson.bind(peopleApi))
+        router.get( "/api/v1/delete-user", authenticate, peopleApi.deletePerson.bind(peopleApi));
 
         // auth api
         router.post("/api/v1/login", authApi.websiteLogin.bind(authApi));
@@ -93,6 +97,7 @@ exports = module.exports = {
         router.post("/api/sysadmin/create-system-user", authenticateSystem, authApi.systemCreateUser.bind(authApi));
 
         router.post("/api/v1/store-update-logo", authenticateStore, upload.single("logo"), storesApi.updateLogo.bind(storesApi));
+
 
         // catch all
         router.use(this.catchAll.bind(this));
@@ -263,7 +268,7 @@ exports = module.exports = {
 
     // Catch all
     // Returns an error page or json
-    catchAll: function (req, res, next) {
+    catchAll: function (req, res) {
         var errorMessage = "Unknown Route";
         console.log(errorMessage + " " + req.url);
 

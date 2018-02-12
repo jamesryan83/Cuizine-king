@@ -1,3 +1,7 @@
+ // This is from another project.  It should all be working, needs to be tested.
+// It creates/reads/deletes files and folders on cordova
+
+
 //"use strict";
 //
 //var app = app || {};

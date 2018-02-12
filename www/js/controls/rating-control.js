@@ -58,6 +58,8 @@ app.controls.RatingControls = {
             $(this).prevAll().addClass("active");
         });
 
+
+
 // TODO : what's this ??
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {

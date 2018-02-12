@@ -5,6 +5,7 @@
 .typeahead {
     display: inline-block;
     position: relative;
+    padding: 10px 0;
 
     label {
         width: 80px;
@@ -17,6 +18,8 @@
         width: 300px;
     }
 
+
+    // popup list
     .typeahead-list {
         display: none;
         position: absolute;

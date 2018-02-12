@@ -29,24 +29,11 @@ exports = module.exports = {
             fs.readFile(path.join(__dirname, "../", "../", "www", "generated", "_sysadmin.js"), "utf-8", function (err, js) {
                 if (err) return self.router.sendJson(res, null, "Error loading page", 500);
 
-//                return self.router.sendJson(res, { js: js });
-                console.log(js)
                 return res.send(js);
             });
         } else {
             return this.router.sendJson(res, null, "Not Authorized", 401);
         }
-    },
-
-
-    // recreate the database
-    recreateDatabase: function (req, res) {
-        var b = req.body;
-        var self = this;
-
-        database.recreate(function (err, result) {
-            return self.router.sendJson(res, result);
-        });
     },
 
 }

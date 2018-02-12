@@ -10,6 +10,7 @@ var execSync = require("child_process").execSync;
 
 var config = require("../server/config");
 var database = require("../server/database/database");
+var dbStores = require("../server/procedures/_Store");
 
 var sqlCwd = path.join(__dirname, "../", "sql", "batchfiles");
 
@@ -38,7 +39,7 @@ exports = module.exports = {
 
     // empty database and connect
     startDatabase: function (callback) {
-        database.runBatchFileSync("empty-test-db.bat", sqlCwd);
+        database.runBatchFileSync("test-db-empty.bat", sqlCwd);
 
         if (database.isConnected) {
             return callback();
@@ -60,6 +61,7 @@ exports = module.exports = {
     },
 
 
+
     // Gets an api token for making api requests
     getApiToken: function (callback, email, password, url) {
         superagent
@@ -72,6 +74,55 @@ exports = module.exports = {
                 return callback(res.body.data.jwt);
             });
     },
+
+
+
+    // Create a user
+    createUser: function (route, data, status, jwt, callback) {
+        supertest(this.supertestUrl)
+            .post(route)
+            .set("Content-Type", "application/json")
+            .set("authorization", "Bearer " + jwt)
+            .send(data)
+            .expect("Content-Type", "application/json; charset=utf-8")
+            .expect(status)
+            .end(function (err, res) {
+                return callback(err, res)
+        });
+    },
+
+
+
+    // Creates a store and one website, store and system user
+    createAStoreAndOneOfEachUserType: function (done, callback) {
+        var self = this;
+
+        var fakeStore = JSON.parse(JSON.stringify(this.fakeStores));
+        fakeStore.id_user_doing_update = config.dbConstants.adminUsers.system;
+
+        // create a store first
+        dbStores.stores_create(fakeStore, function (err, outputs) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            self.getJwt(config.dbConstants.adminUsers.system, done, function (jwt) {
+
+                self.createUser("/api/v1/create-user", self.fakeUsers.website, 200, null, function (err, res) {
+                    if (err) return done(new Error(err));
+
+                    self.createUser("/api/v1/create-store-user", self.fakeUsers.store, 200, jwt, function (err, res) {
+                        if (err) return done(new Error(err));
+
+                        self.createUser("/api/sysadmin/create-system-user", self.fakeUsers.system, 200, jwt, function (err, res) {
+                            if (err) return done(new Error(err));
+
+                            return callback();
+                        });
+                    });
+                });
+            });
+        });
+    },
+
 
 
     // Get a users jwt

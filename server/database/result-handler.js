@@ -59,6 +59,7 @@ exports = module.exports = {
             case "people_update_password":
             case "people_update_is_verified":
             case "people_update_reset_password_token":
+            case "people_delete":
             case "reviews_get":
             case "stores_delete":
             case "stores_undelete":

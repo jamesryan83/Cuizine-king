@@ -19,6 +19,7 @@ CREATE OR ALTER PROCEDURE people_create_store_user
         DECLARE @is_system_user BIT
 
 
+        -- get user type
         SELECT @is_store_user = is_store_user, @is_system_user = is_system_user FROM App.people
             WHERE id_person = @id_user_doing_update AND is_deleted = 0
 
@@ -57,7 +58,8 @@ CREATE OR ALTER PROCEDURE people_create_store_user
 
 
         -- create link to store
-        INSERT INTO Store.stores_people (id_store, id_person, updated_by) VALUES (@id_store, @newPersonId, @id_user_doing_update)
+        INSERT INTO Store.stores_people (id_store, id_person, is_store_owner, updated_by)
+            VALUES (@id_store, @newPersonId, 0, @id_user_doing_update)
 
     COMMIT
 GO

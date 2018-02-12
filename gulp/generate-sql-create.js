@@ -14,9 +14,25 @@ exports = module.exports = {
     start: function () {
         var testDBName = config.mssql.database + "Test";
 
+
+        // arrays of sql statements that make up the various outputs
+        var dropConstraints = [];
+        var dropTables = [];
+        var resetSequences = [];
+        var dropSequences = [];
+        var tables = [];
+        var tableConstraints = [];
+        var functions = [];
+        var dropFunctions = [];
+        var storedProcedures = [];
+        var dropProcedures = [];
+        var dropSchemas = [];
+
+
         // output filepaths
         var sqlFolderPath = path.join(__dirname, "../", "sql");
         var sqlOutputFolderPath = path.join(sqlFolderPath, "generated");
+
 
         // Sql file paths
         var sqlTableFilePaths = recursiveReadSync(path.join(sqlFolderPath, "tables"));
@@ -24,7 +40,11 @@ exports = module.exports = {
         var schemasFile = fs.readFileSync(path.join(sqlFolderPath, "other", "schemas.sql"), "utf-8");
         var constantsFile = JSON.parse(fs.readFileSync(path.join(sqlFolderPath, "other", "constants.js"), "utf-8"));
         var procedureFilePaths = recursiveReadSync(path.join(sqlFolderPath, "procedures"));
-        var functionsFile = fs.readFileSync(path.join(sqlFolderPath, "other", "functions.sql"), "utf-8");
+        var functionFilePaths = recursiveReadSync(path.join(sqlFolderPath, "functions"));
+
+
+
+
 
         // ---------------------- _recreate-db.sql ----------------------
 
@@ -52,8 +72,10 @@ exports = module.exports = {
             "CREATE DATABASE " + testDBName + "\n\n" +
             "GO\n";
 
-        fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-db.sql"), outputSql);
-        fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-test-db.sql"), outputSqlTests);
+        fs.writeFileSync(path.join(sqlOutputFolderPath, "_create-db.sql"), outputSql);
+        fs.writeFileSync(path.join(sqlOutputFolderPath, "_create-test-db.sql"), outputSqlTests);
+
+
 
 
 
@@ -63,10 +85,8 @@ exports = module.exports = {
         // creates schemas and sequences
 
         outputSql = "-- GENERATED FILE\n\n";
-
         outputSql += "\n\n\n -- Create Schemas\n\n";
         outputSql += schemasFile;
-
         outputSql += "\n\n\n -- Create Sequences\n\n";
         outputSql += sequencesFile;
 
@@ -76,15 +96,10 @@ exports = module.exports = {
 
 
 
+
+
         // ---------------------- _recreate.sql ----------------------
 
-        // parts that make up the _recreate.sql output
-        var dropConstraints = [];
-        var dropTables = [];
-        var resetSequences = [];
-        var tables = [];
-        var tableConstraints = [];
-        var storedProcedures = [];
 
 
         // Add tables and constraints to arrays
@@ -141,15 +156,11 @@ exports = module.exports = {
                     "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + schema + "' AND TABLE_NAME = '" + newFilename + "')\n" +
                     "BEGIN\n" +
                     "ALTER TABLE " + tableName + " SET (SYSTEM_VERSIONING = OFF)\n" +
-                    "END"
-                );
+                    "END\n" +
+                    "DROP TABLE IF EXISTS " + tableName + "_history"); // also drop history table
             }
 
-            if (schema == "tables") { // tables is just the server/sql/tables folder
-                dropTables.push("DROP TABLE IF EXISTS " + newFilename);
-            } else {
-                dropTables.push("DROP TABLE IF EXISTS " + tableName);
-            }
+            dropTables.push("DROP TABLE IF EXISTS " + tableName);
         }
 
 
@@ -161,16 +172,38 @@ exports = module.exports = {
             var temp = sequenceLines[i].split("AS INT");
             if (temp.length != 2) temp = sequenceLines[i].split("AS TINYINT");
             temp = temp[0].replace("CREATE SEQUENCE", "ALTER SEQUENCE");
+
+            dropSequences.push(temp.replace("ALTER SEQUENCE", "DROP SEQUENCE IF EXISTS"));
+
             temp += "RESTART WITH 1";
+
             resetSequences.push(temp);
         }
 
 
+        // functions
+        var regexExtractFunction = /(\s*)CREATE(\s*)OR(\s*)ALTER(\s*)FUNCTION(\s*)(\S*)(\s*)(\()/i;
+        for (var i = 0; i < functionFilePaths.length; i++) {
+            var fun = fs.readFileSync(functionFilePaths[i], "utf-8");
+            functions.push(fun.trim());
+
+            var match = regexExtractFunction.exec(fun);
+            if (match) {
+                dropFunctions.push("DROP FUNCTION IF EXISTS " + match[6]);
+            }
+        }
+
+
         // stored procedures
-        var regexExtractProcedure = /(\s*)CREATE(\s*)PROCEDURE(\s*)(\S*)(\s*)/i;
+        var regexExtractProcedure = /(\s*)CREATE(\s*)OR(\s*)ALTER(\s*)PROCEDURE(\s*)(\S*)(\s*)/i;
         for (var i = 0; i < procedureFilePaths.length; i++) {
             var sp = fs.readFileSync(procedureFilePaths[i], "utf-8");
             storedProcedures.push(sp.trim());
+
+            var match = regexExtractProcedure.exec(sp);
+            if (match) {
+                dropProcedures.push("DROP PROCEDURE IF EXISTS " + match[6]);
+            }
         }
 
 
@@ -191,7 +224,8 @@ exports = module.exports = {
         outputSql += tableConstraints.join("\n");
         outputSql += "\nGO";
         outputSql += "\n\n\n -- Create Functions\n\n";
-        outputSql += functionsFile;
+        outputSql += functions.join("\n\n\n");
+        outputSql += "\nGO";
         outputSql += "\n\n\n -- Create Stored Procedures\n\n";
         outputSql += storedProcedures.join("\n\n\n");
 
@@ -210,6 +244,8 @@ exports = module.exports = {
 
 
 
+
+
         // ---------------------- _recreate-keep-constants.sql ----------------------
 
         // save copy without altering constants stuff like postcodes and types
@@ -224,6 +260,46 @@ exports = module.exports = {
         outputSql = outputSql.replace(/CREATE TABLE App\.payment_methods[^]*?CREATE/, "CREATE");
 
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-keep-constants.sql"), outputSql);
+
+
+
+
+
+
+        // ---------------------- _drop-all.sql ----------------------
+
+        // drop schema statements
+        var regexExtractSchema = /(\s*)CREATE(\s*)SCHEMA(\s*)(\S*)(\s*)/ig;
+        schemasFile.match(regexExtractSchema).forEach(function (item) {
+            var schema = item.replace(/CREATE(\s*)SCHEMA/i, "").trim();
+            dropSchemas.push("DROP SCHEMA IF EXISTS " + schema);
+        });
+
+
+        outputSql = "-- GENERATED FILE\n\n";
+        outputSql += "\n\n\n -- Drop Constraints\n\n";
+        outputSql += dropConstraints.join("\n");
+        outputSql += "\n\n\n -- Drop Tables\n\n";
+        outputSql += dropTables.join("\n");
+        outputSql += "\nGO";
+        outputSql += "\n\n\n -- Drop Procedures\n\n";
+        outputSql += dropProcedures.join("\n");
+        outputSql += "\nGO";
+        outputSql += "\n\n\n -- Drop Functions\n\n";
+        outputSql += dropFunctions.join("\n");
+        outputSql += "\nGO";
+        outputSql += "\n\n\n -- Drop Sequences\n\n";
+        outputSql += dropSequences.join("\n");
+        outputSql += "\nGO";
+        outputSql += "\n\n\n -- Drop Schemas\n\n";
+        outputSql += dropSchemas.join("\n");
+        outputSql += "\nGO";
+
+
+
+        // save
+        fs.writeFileSync(path.join(sqlOutputFolderPath, "_drop-all.sql"), outputSql);
+
 
 
 

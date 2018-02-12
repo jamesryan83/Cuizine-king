@@ -2,8 +2,7 @@ CREATE TABLE App.addresses
 (
     id_address INT NOT NULL CONSTRAINT DF_app_addresses_id_address DEFAULT (NEXT VALUE FOR Sequences.id_address),
     id_postcode INT NOT NULL,
-	line1 NVARCHAR(128) NOT NULL,
-	line2 NVARCHAR(128),
+	street_address NVARCHAR(256),
     latitude DECIMAL(9,4),
     longitude DECIMAL(9,4),
     updated_by INT NOT NULL,

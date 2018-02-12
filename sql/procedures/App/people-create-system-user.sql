@@ -16,9 +16,11 @@ CREATE OR ALTER PROCEDURE people_create_system_user
             WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
             THROW 50401, 'Not authorized', 1
 
+
         -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
             THROW 50409, 'Account already taken', 1
+
 
         -- create a user
         INSERT INTO App.people
@@ -27,6 +29,7 @@ CREATE OR ALTER PROCEDURE people_create_system_user
             VALUES
             (1, 1, 1, 'na', 'na',
              @verification_token, @email, @password, @id_user_doing_update)
+
 
         -- output value
         SET @newPersonId = dbo.get_sequence_value('id_person')

@@ -1,7 +1,7 @@
 "use strict";
 
 var assert = require("assert");
-
+var bcrypt = require("bcryptjs");
 
 var testutil = require("../test-util");
 var config = require("../../server/config");
@@ -84,7 +84,10 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_create_store_user creates a store user", function (done) {
-        dbStores.stores_create(fakeStore, function (err) {
+        var tempFakeStore = JSON.parse(JSON.stringify(fakeStore));
+        tempFakeStore.password = bcrypt.hashSync(fakeStore.password, 10);
+
+        dbStores.stores_create(tempFakeStore, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
             dbApp.people_create_store_user(userStore, function (err, outputs) {
@@ -242,7 +245,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_id returns error from invalid id 2", function (done) {
-        dbApp.people_get_by_id({ id: 2000000 }, function (err, id_person) {
+        dbApp.people_get_by_id({ id_person: 2000000 }, function (err, id_person) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -250,7 +253,8 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_id returns person from id", function (done) {
-        dbApp.people_get_by_id({ id: userWebsite.id_person }, function (err, person) {
+        console.log("id: " + userWebsite.id_person);
+        dbApp.people_get_by_id({ id_person: userWebsite.id_person }, function (err, person) {
             if (err) return done(new Error(JSON.stringify(err)));
 
             assert.equal(person.email, userWebsite.email);
@@ -440,7 +444,7 @@ describe("PROCEDURES - APP", function () {
         database.executeQuery("SELECT password, reset_password_token FROM App.people WHERE email = '" + userWebsite.email + "'", function (err, result) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            var newPassword = "testpw";
+            var newPassword = bcrypt.hashSync("testpw", 10);
             var existingToken = result.recordset[0].reset_password_token;
 
             assert.equal(existingToken, fakeResetPasswordToken);
@@ -461,5 +465,102 @@ describe("PROCEDURES - APP", function () {
         });
     });
 
+
+
+
+    // -------- Delete users --------
+
+    it("#people_delete returns error when trying to delete protected account", function (done) {
+        var id_person = config.dbConstants.adminUsers.system;
+
+        database.executeQuery("SELECT jwt FROM App.people WHERE id_person = " + id_person, function (err, result) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            var jwt = result.recordset[0].jwt;
+
+            dbApp.people_delete({ id_person: id_person, jwt: jwt }, function (err, result) {
+                assert.equal(err.message, "Protected account");
+                done();
+            });
+        });
+    });
+
+
+    it("#people_delete returns account not found for wrong id_person", function (done) {
+        database.executeQuery("SELECT jwt FROM App.people WHERE id_person = " + 5, function (err, result) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            var jwt = result.recordset[0].jwt;
+
+            dbApp.people_delete({ id_person: 200000, jwt: jwt }, function (err, result) {
+                assert.equal(err.message, "Account not found");
+                done();
+            });
+        });
+    });
+
+
+    it("#people_delete returns invalid token message for wrong jwt", function (done) {
+        testutil.getApiToken(function (jwt) { // create a token first
+            if (!jwt) return done(new Error("jwt missing"));
+
+            dbApp.people_delete({ id_person: 5, jwt: "123123123123123123123123123123123123123123123123123" }, function (err, result) {
+                assert.equal(err.message, "Invalid token");
+                done();
+            });
+        }, testutil.fakeStores.email_user, testutil.fakeStores.password);
+    });
+
+
+    it("#people_delete returns message for deleting store owner", function (done) {
+        testutil.getApiToken(function (jwt) {
+            if (!jwt) return done(new Error("jwt missing"));
+
+            dbApp.people_delete({ id_person: 5, jwt: jwt }, function (err, result) {
+                assert.equal(err.message, "Store owners need to contact support to have their account deleted");
+                done();
+            });
+        }, testutil.fakeStores.email_user, testutil.fakeStores.password);
+    });
+
+
+    function deleteUser (id_person, done) {
+        database.executeQuery("SELECT email, jwt FROM App.people WHERE id_person = " + id_person, function (err, result) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            var jwt = result.recordset[0].jwt;
+            var email = result.recordset[0].email;
+
+            dbApp.people_delete({ id_person: id_person, jwt: jwt }, function (err, result) {
+                if (err) return done(new Error(JSON.stringify(err)));
+
+                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + id_person, function (err, result) {
+                    if (err) return done(new Error(JSON.stringify(err)));
+
+                    var person = result.recordset[0];
+
+                    assert.equal(person.email, id_person);
+                    assert.equal(person.is_deleted, 1);
+                    assert.equal(person.is_deleted_email, email);
+                    done();
+                });
+            });
+        });
+    }
+
+
+    it("#people_delete deletes a website user", function (done) {
+        deleteUser(4, done);
+    });
+
+
+    it("#people_delete deletes a store user", function (done) {
+        deleteUser(6, done);
+    });
+
+
+    it("#people_delete deletes a system user", function (done) {
+        deleteUser(7, done);
+    });
 
 });

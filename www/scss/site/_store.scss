@@ -21,9 +21,10 @@
             }
         }
 
-        > div {
+        .typeahead {
             width: auto;
             float: right;
+            padding-top: 0;
 
             label {
                 width: auto;

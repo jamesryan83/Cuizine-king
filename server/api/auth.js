@@ -138,6 +138,7 @@ exports = module.exports = {
 
 
 
+
     // verify users email
     verifyAccount: function (req, res) {
         var self = this;

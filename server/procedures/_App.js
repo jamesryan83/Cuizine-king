@@ -57,11 +57,21 @@ exports = module.exports = {
 	},
 
 
+	// App.people_delete
+	people_delete: function (inputs, callback) {
+		database.pool.request()
+			.input("id_person", sql.Int, inputs.id_person)
+			.input("jwt", sql.NVarChar, inputs.jwt)
+			.execute(config.mssql.database + ".dbo.people_delete", function (err, result) {
+				return resultHandler.handle("people_delete", err, result, callback, inputs);
+		});
+	},
+
+
 	// App.people_get_by_email
 	people_get_by_email: function (inputs, callback) {
 		database.pool.request()
 			.input("email", sql.NVarChar, inputs.email)
-			.input("alsoGetStoreId", sql.Bit, inputs.alsoGetStoreId)
 			.execute(config.mssql.database + ".dbo.people_get_by_email", function (err, result) {
 				return resultHandler.handle("people_get_by_email", err, result, callback, inputs);
 		});
@@ -71,7 +81,7 @@ exports = module.exports = {
 	// App.people_get_by_id
 	people_get_by_id: function (inputs, callback) {
 		database.pool.request()
-			.input("id", sql.Int, inputs.id)
+			.input("id_person", sql.Int, inputs.id_person)
 			.execute(config.mssql.database + ".dbo.people_get_by_id", function (err, result) {
 				return resultHandler.handle("people_get_by_id", err, result, callback, inputs);
 		});

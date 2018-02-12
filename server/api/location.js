@@ -17,7 +17,7 @@ exports = module.exports = {
         this.router = router;
 
         // load postcodes
-        this.suburbData = require("../../fakedata/postcodes/_postcodes.json");
+        this.suburbData = require("../../data/postcodes/_postcodes.json");
 
         this.suburbsCount = this.suburbData.length;
     },

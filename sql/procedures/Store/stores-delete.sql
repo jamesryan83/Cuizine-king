@@ -23,7 +23,7 @@ CREATE OR ALTER PROCEDURE stores_delete
         UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
             WHERE id_store = @id_store
 
-        -- TODO : delete users too
+        -- TODO : delete users and addresses and other stuff too
         -- Set user deleted
         -- UPDATE App.people SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
             -- WHERE id_store = @id_store

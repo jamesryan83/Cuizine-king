@@ -1,6 +1,5 @@
 "use strict";
 
-var sinon = require("sinon");
 var assert = require("assert");
 var supertest = require("supertest");
 
@@ -132,7 +131,7 @@ describe("API - Stores", function () {
                 assert.ok(data.phone_number.length > 0);
                 assert.ok(data.email.length > 0);
                 assert.equal(data.address[0].id_address, 1);
-                assert.ok(data.address[0].line1.length > 0);
+                assert.ok(data.address[0].street_address.length > 0);
                 assert.ok(data.hours.length > 0);
                 assert.ok(data.review_count > 0);
                 assert.ok(data.products.length > 0);

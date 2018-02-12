@@ -8,7 +8,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     var startPosX = 0;
     var currentX = 0;
 
-
+    // start
     $(containerEl).on("mousedown", function (e) {
         mouseIsDown = true;
         startMouseX = e.clientX;
@@ -16,6 +16,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     });
 
 
+    // scrolling
     $(window).on("mousemove", function (e) {
         if (mouseIsDown) {
             e.stopPropagation();
@@ -23,7 +24,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
         }
     });
 
-
+    // stop
     $(window).on("mouseup", function (e) {
         mouseIsDown = false;
     });
@@ -33,7 +34,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     $(containerEl).on("mouseup", function (e) {
         var diff = e.clientX - startMouseX;
 
-        if (diff >= -3 && diff <= 3) {
+        if (diff >= -4 && diff <= 4) {
             clickCallback(e.target);
         }
     });

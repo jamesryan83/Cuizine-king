@@ -1,7 +1,11 @@
 
 
 // Store content
+// This is the details and menu sections used on the store page and edit store page
 app.storeContent = {
+
+    storeDataRequestNotAllowed: false,
+    storeData: {},
 
     init: function (routeData, dataLoaded) {
         var self = this;
@@ -9,42 +13,6 @@ app.storeContent = {
         this.$address = $("#store-info-address");
         this.$storeMenuNav = $("#store-menu-nav");
         this.$description = $("#store-info-description");
-
-
-        // called from site section
-        if (!dataLoaded) {
-            // store id from url
-            var storeId = routeData.route.split("/");
-            storeId = storeId[storeId.length - 1];
-
-            // Get store data
-            app.util.ajaxRequest({
-                method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
-            }, function (err, result) {
-                if (err) return;
-                console.log(result)
-                result.data.id_store = storeId;
-                self.addStoreDetailsDataToPage(result.data);
-                self.addMenuDataToPage(result.data);
-            });
-        }
-
-
-        // Other events
-        $(window).on("resize", function () {
-            self.resizeDescription();
-        });
-
-
-        $(window).on("scroll", function (e) {
-            // position of menu category navigation thing
-            var rect = document.getElementById("store-menu").getBoundingClientRect();
-            if (rect.top < 0) {
-                self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
-            } else {
-                self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
-            }
-        });
 
 
         // Open dialog buttons
@@ -87,26 +55,13 @@ app.storeContent = {
     },
 
 
-
-    // add data to the page
-    addDataToPage: function (data) {
-        console.log(data);
-
-        $("#store-info-button-hours").show();
-        $("#store-info-button-reviews").show();
-
-        this.resizeDescription();
-    },
-
-
-
     // Add store details data
     addStoreDetailsDataToPage: function (data) {
+        var self = this;
 
         // Format address to a single string
         var address = data.address[0];
-        address = address.line1 + ", " +
-            (address.line2 ? (address.line2 + ", ") : "") +
+        address = address.street_address + " " +
             address.suburb + " " + address.postcode;
 
 
@@ -123,12 +78,20 @@ app.storeContent = {
 
         // rating control
         app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+
+        // Events
+        $(window).on("resize", function () {
+            self.resizeDescription();
+        });
+
     },
 
 
 
     // Add menu data
     addMenuDataToPage: function (data) {
+        var self = this;
 
         // products
         var item = null;
@@ -198,33 +161,51 @@ app.storeContent = {
             });
 
 
+            // Events
+            $(window).on("scroll", function (e) {
+                // position of menu category navigation thing
+                var rect = document.getElementById("store-menu").getBoundingClientRect();
+                if (rect.top < 0) {
+                    self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
+                } else {
+                    self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
+                }
+            });
+
+
+            // Setup dialogs
+            app.dialogs.description.init(data.name, data.description);
+            app.dialogs.businessHours.init(data.hours);
+            app.dialogs.reviews.init(data);
 
         } else {
             $("#store-menu-list").append("No Products");
         }
     },
 
+
+    // Gets the store data and caches it for a little while
+    getStoreData: function (id_store, callback) {
+        var self = this;
+        if (this.storeDataRequestNotAllowed) {
+            return callback(this.storeData);
+        }
+
+        this.storeDataRequestNotAllowed = true;
+        setTimeout(function () {
+            self.storeDataRequestNotAllowed = false;
+        }, 2000);
+
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store?id_store=" + id_store, cache: true
+        }, function (err, result) {
+            if (err) return;
+
+            self.storeData = result.data; // cache storeData
+
+            return callback(self.storeData);
+        });
+    },
+
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Checkout
-
-
-
-
-        // Setup dialogs
-//        app.dialogs.description.init(data.name, data.description);
-//        app.dialogs.businessHours.init(data.hours);
-        //app.dialogs.reviews.init(data);

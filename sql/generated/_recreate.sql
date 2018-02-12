@@ -110,32 +110,36 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product
 BEGIN
 ALTER TABLE Product.product_extras SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Product.product_extras_history
 DROP TABLE IF EXISTS Product.product_extras
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_headings')
 BEGIN
 ALTER TABLE Product.product_headings SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Product.product_headings_history
 DROP TABLE IF EXISTS Product.product_headings
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'product_options')
 BEGIN
 ALTER TABLE Product.product_options SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Product.product_options_history
 DROP TABLE IF EXISTS Product.product_options
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'products_product_extras')
 BEGIN
 ALTER TABLE Product.products_product_extras SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Product.products_product_extras_history
 DROP TABLE IF EXISTS Product.products_product_extras
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Product' AND TABLE_NAME = 'products')
 BEGIN
 ALTER TABLE Product.products SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Product.products_history
 DROP TABLE IF EXISTS Product.products
 DROP TABLE IF EXISTS Sales.order_products_extras
 DROP TABLE IF EXISTS Sales.order_products
 DROP TABLE IF EXISTS Sales.orders
 DROP TABLE IF EXISTS Sales.transactions
-DROP TABLE IF EXISTS sessions
 DROP TABLE IF EXISTS Store.business_hours
 DROP TABLE IF EXISTS Store.reviews
 DROP TABLE IF EXISTS Store.store_applications
@@ -143,11 +147,13 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' 
 BEGIN
 ALTER TABLE Store.stores_people SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Store.stores_people_history
 DROP TABLE IF EXISTS Store.stores_people
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Store' AND TABLE_NAME = 'stores')
 BEGIN
 ALTER TABLE Store.stores SET (SYSTEM_VERSIONING = OFF)
 END
+DROP TABLE IF EXISTS Store.stores_history
 DROP TABLE IF EXISTS Store.stores
 GO
 
@@ -180,8 +186,7 @@ CREATE TABLE App.addresses
 (
     id_address INT NOT NULL CONSTRAINT DF_app_addresses_id_address DEFAULT (NEXT VALUE FOR Sequences.id_address),
     id_postcode INT NOT NULL,
-	line1 NVARCHAR(128) NOT NULL,
-	line2 NVARCHAR(128),
+	street_address NVARCHAR(256),
     latitude DECIMAL(9,4),
     longitude DECIMAL(9,4),
     updated_by INT NOT NULL,
@@ -262,7 +267,6 @@ CREATE TABLE Product.product_extras
 	price SMALLMONEY NOT NULL DEFAULT 0,
     store_notes NVARCHAR(256),
     limit_per_product TINYINT NOT NULL DEFAULT 1,
-    in_stock BIT NOT NULL DEFAULT 1,
     active BIT NOT NULL DEFAULT 1,
     position_id_previous INT,
     position_id_next INT,
@@ -274,7 +278,7 @@ CREATE TABLE Product.product_extras
 )
 WITH
 (
-    SYSTEM_VERSIONING = ON (HISTORY_TABLE = Store.product_extras_history)
+    SYSTEM_VERSIONING = ON (HISTORY_TABLE = Product.product_extras_history)
 )
 
 
@@ -305,7 +309,6 @@ CREATE TABLE Product.product_options
 	store_notes NVARCHAR(256),
     price SMALLMONEY NOT NULL DEFAULT 0,
     limit_per_customer TINYINT NOT NULL DEFAULT 1,
-    in_stock BIT NOT NULL DEFAULT 1,
     active BIT NOT NULL DEFAULT 1,
     position_id_previous INT,
     position_id_next INT,
@@ -348,7 +351,6 @@ CREATE TABLE Product.products
     delivery_available BIT NOT NULL DEFAULT 1,
     gluten_free BIT NOT NULL DEFAULT 0,
     vegetarian BIT NOT NULL DEFAULT 0,
-    in_stock BIT NOT NULL DEFAULT 1,
     active BIT NOT NULL DEFAULT 1,
     position_id_previous INT,
     position_id_next INT,
@@ -427,15 +429,6 @@ CREATE TABLE Sales.transactions
 )
 
 
--- mssql session table
-CREATE TABLE sessions
-(
-	sid VARCHAR(255) NOT NULL PRIMARY KEY,
-	session VARCHAR(MAX) NOT NULL,
-	expires DateTime NOT NULL
-)
-
-
 CREATE TABLE Store.business_hours
 (
 	id_business_hour INT NOT NULL CONSTRAINT DF_store_business_hours_id_business_hour DEFAULT (NEXT VALUE FOR Sequences.id_business_hour),
@@ -487,6 +480,7 @@ CREATE TABLE Store.stores_people
 	id_store_person INT NOT NULL CONSTRAINT DF_store_stores_people_id_store_person DEFAULT (NEXT VALUE FOR Sequences.id_store_person),
     id_store INT NOT NULL,
 	id_person INT NOT NULL,
+    is_store_owner BIT NOT NULL,
 	updated_by INT NOT NULL,
 	SysStartTime DateTime2 GENERATED ALWAYS AS ROW START,
 	SysEndTime DateTime2 GENERATED ALWAYS AS ROW END,
@@ -560,7 +554,6 @@ GO
 
  -- Create Functions
 
-
 -- Returns the current sequence id value
 CREATE OR ALTER FUNCTION get_sequence_value(@name AS NVARCHAR(128))
 RETURNS INT AS
@@ -568,8 +561,7 @@ BEGIN
     RETURN (SELECT CAST(current_value AS INT) FROM sys.sequences WHERE name = @name)
 END
 GO
-
-
+GO
 
 
  -- Create Stored Procedures
@@ -595,6 +587,7 @@ CREATE OR ALTER PROCEDURE people_create_store_user
         DECLARE @is_system_user BIT
 
 
+        -- get user type
         SELECT @is_store_user = is_store_user, @is_system_user = is_system_user FROM App.people
             WHERE id_person = @id_user_doing_update AND is_deleted = 0
 
@@ -633,7 +626,8 @@ CREATE OR ALTER PROCEDURE people_create_store_user
 
 
         -- create link to store
-        INSERT INTO Store.stores_people (id_store, id_person, updated_by) VALUES (@id_store, @newPersonId, @id_user_doing_update)
+        INSERT INTO Store.stores_people (id_store, id_person, is_store_owner, updated_by)
+            VALUES (@id_store, @newPersonId, 0, @id_user_doing_update)
 
     COMMIT
 GO
@@ -657,9 +651,11 @@ CREATE OR ALTER PROCEDURE people_create_system_user
             WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
             THROW 50401, 'Not authorized', 1
 
+
         -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
             THROW 50409, 'Account already taken', 1
+
 
         -- create a user
         INSERT INTO App.people
@@ -668,6 +664,7 @@ CREATE OR ALTER PROCEDURE people_create_system_user
             VALUES
             (1, 1, 1, 'na', 'na',
              @verification_token, @email, @password, @id_user_doing_update)
+
 
         -- output value
         SET @newPersonId = dbo.get_sequence_value('id_person')
@@ -690,14 +687,17 @@ CREATE OR ALTER PROCEDURE people_create_web_user
 
     BEGIN TRANSACTION
 
+        -- check if user exists
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
             THROW 50409, 'Account already taken', 1
+
 
         -- create a user
         INSERT INTO App.people
             (is_web_user, is_store_user, is_system_user, first_name, last_name, email, password, verification_token, updated_by)
             VALUES
             (1, 0, 0, @first_name, @last_name, @email, @password, @verification_token, 3)
+
 
         -- output value
         SET @newPersonId = dbo.get_sequence_value('id_person')
@@ -706,27 +706,130 @@ CREATE OR ALTER PROCEDURE people_create_web_user
 GO
 
 
+-- Delete a person
+CREATE OR ALTER PROCEDURE people_delete
+    @id_person INT,
+    @jwt NVARCHAR(512) AS
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    BEGIN TRANSACTION
+
+        DECLARE @is_store_user BIT
+        DECLARE @is_system_user BIT
+        DECLARE @is_store_owner BIT
+        DECLARE @email NVARCHAR(256)
+        DECLARE @jwt_person NVARCHAR(512)
+
+
+        -- some test accounts can't be deleted
+        IF (@id_person <= 3) THROW 50400, 'Protected account', 1
+
+
+        -- get user type and jwt
+        SELECT @email = email, @jwt_person = jwt, @is_store_user = is_store_user, @is_system_user = is_system_user
+        FROM App.people
+        WHERE id_person = @id_person AND is_deleted = 0
+
+
+        -- no user found
+        IF @email IS NULL THROW 50400, 'Account not found', 1
+
+
+        -- check jwt
+        -- If a jwt is null the user has never logged in, ok to delete account
+        IF @jwt_person IS NOT NULL AND @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
+
+
+        IF (@is_store_user = 1)
+            BEGIN
+                -- store owners have to be deleted using the admin program
+                IF (SELECT is_store_owner FROM Store.stores_people WHERE id_person = @id_person) = 1
+                    THROW 50401, 'Store owners need to contact support to have their account deleted', 1
+
+                -- delete store users link to store
+                DELETE FROM Store.stores_people WHERE id_person = @id_person
+            END
+
+
+        -- delete user
+        UPDATE App.people
+        SET email = @id_person, is_deleted = 1, is_deleted_email = @email, updated_by = @id_person
+        WHERE id_person = @id_person
+
+    COMMIT
+GO
+
+
 -- Get a person by email
 CREATE OR ALTER PROCEDURE people_get_by_email
-	@email NVARCHAR(256),
-    @alsoGetStoreId BIT = 0 AS
+	@email NVARCHAR(256) AS
 
-    IF @alsoGetStoreId = 1
-        SELECT App.people.*, Store.stores_people.id_store FROM App.people
-        JOIN Store.stores_people ON App.people.id_person = Store.stores_people.id_person
-        WHERE App.people.email = @email AND App.people.is_deleted = 0
+    DECLARE @id_person INT
+    DECLARE @is_store_user BIT
+    DECLARE @is_system_user BIT
+
+    SET NOCOUNT ON
+
+
+    -- get user type
+    SELECT @id_person = id_person, @is_store_user = is_store_user, @is_system_user = is_system_user FROM App.people
+    WHERE email = @email AND is_deleted = 0
+
+
+    -- no user found
+    IF (@id_person IS NULL) THROW 50400, 'Account not found', 1
+
+
+    -- return user
+    IF @is_store_user = 1 AND @is_system_user = 0
+        -- get store user
+        SELECT App.people.*, Store.stores_people.id_store, Store.stores_people.is_store_owner FROM App.people
+        JOIN Store.stores_people
+        ON App.people.id_person = Store.stores_people.id_person
+        WHERE App.people.id_person = @id_person
     ELSE
+        -- get website or system user
         SELECT * FROM App.people
-        WHERE email = @email AND is_deleted = 0
+        WHERE id_person = @id_person
+
 GO
 
 
 -- Get a person by id
 CREATE OR ALTER PROCEDURE people_get_by_id
-	@id INT AS
+	@id_person INT AS
 
-    SELECT * FROM App.people
-    WHERE id_person = @id AND is_deleted = 0
+    DECLARE @email NVARCHAR(256)
+    DECLARE @is_store_user BIT
+    DECLARE @is_system_user BIT
+
+    SET NOCOUNT ON
+
+
+    -- get user type and jwt
+    SELECT @email = email, @is_store_user = is_store_user, @is_system_user = is_system_user
+    FROM App.people
+    WHERE id_person = @id_person AND is_deleted = 0
+
+
+    -- no user found
+    IF @email IS NULL THROW 50400, 'Account not found', 1
+
+
+    -- return user
+    IF @is_store_user = 1 AND @is_system_user = 0
+        -- get store user
+        SELECT App.people.*, Store.stores_people.id_store, Store.stores_people.is_store_owner FROM App.people
+        JOIN Store.stores_people
+        ON App.people.id_person = Store.stores_people.id_person
+        WHERE App.people.id_person = @id_person
+    ELSE
+        -- get website or system user
+        SELECT * FROM App.people
+        WHERE id_person = @id_person
+
 GO
 
 
@@ -735,20 +838,45 @@ CREATE OR ALTER PROCEDURE people_get_by_jwt
 	@jwt NVARCHAR(512),
 	@id_person INT AS
 
-    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'Bad token', 1
 
-	SET NOCOUNT ON
-
+    DECLARE @email NVARCHAR(256)
+    DECLARE @is_store_user BIT
+    DECLARE @is_system_user BIT
     DECLARE @jwt_person AS NVARCHAR(512)
 
-	SELECT @jwt_person = jwt
-    FROM App.people
-	WHERE id_person = @id_person AND is_deleted = 0
+    SET NOCOUNT ON
 
+
+    -- check for bad token
+    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'Bad token', 1
+
+
+    -- get user type and jwt
+    SELECT @email = email, @jwt_person = jwt, @is_store_user = is_store_user, @is_system_user = is_system_user
+    FROM App.people
+    WHERE id_person = @id_person AND is_deleted = 0
+
+
+    -- no user found
+    IF @email IS NULL THROW 50400, 'Account not found', 1
+
+
+    -- check jwt
     IF @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
 
-    SELECT * FROM App.people
-    WHERE id_person = @id_person
+
+    -- return user
+    IF @is_store_user = 1 AND @is_system_user = 0
+        -- get store user
+        SELECT App.people.*, Store.stores_people.id_store, Store.stores_people.is_store_owner FROM App.people
+        JOIN Store.stores_people
+        ON App.people.id_person = Store.stores_people.id_person
+        WHERE App.people.id_person = @id_person
+    ELSE
+        -- get website or system user
+        SELECT * FROM App.people
+        WHERE id_person = @id_person
+
 GO
 
 
@@ -756,8 +884,10 @@ GO
 CREATE OR ALTER PROCEDURE people_invalidate_jwt
 	@jwt NVARCHAR(512) AS
 
+    -- set jwt
     UPDATE App.people SET jwt = '' WHERE jwt = @jwt
 
+    -- error if no rows were changed
     IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
 GO
 
@@ -804,15 +934,22 @@ CREATE OR ALTER PROCEDURE people_update_jwt
 
     SET NOCOUNT ON
 
+
+    -- error if account not found
     IF (SELECT TOP 1 id_person FROM App.people
        WHERE id_person = @id_person AND is_deleted = 0) IS NULL
        THROW 50400, 'Account not found', 1
 
+
+    -- update person jwt
 	UPDATE App.people SET jwt = @jwt
 	WHERE id_person = @id_person
 
+
+    -- return person
     SELECT id_person, is_web_user, is_store_user, is_system_user FROM App.people
     WHERE id_person = @id_person
+
 GO
 
 
@@ -822,8 +959,12 @@ CREATE OR ALTER PROCEDURE people_update_password
 	@reset_password_token NVARCHAR(64),
     @password NVARCHAR (64) AS
 
+
+    -- check for bad token
     IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'Bad token', 1
 
+
+    -- check person data
     DECLARE @person_reset_password_token AS NVARCHAR(64)
     DECLARE @id_person AS INT
 
@@ -834,7 +975,10 @@ CREATE OR ALTER PROCEDURE people_update_password
 
     IF @person_reset_password_token <> @reset_password_token THROW 50401, 'Invalid token', 1
 
+
+    -- update person
     UPDATE App.people SET password = @password WHERE id_person = @id_person
+
 GO
 
 
@@ -846,6 +990,8 @@ CREATE OR ALTER PROCEDURE people_update_reset_password_token
     DECLARE @id_person AS INT
     DECLARE @is_verified AS BIT
 
+
+    -- check person data
     SELECT @id_person = id_person, @is_verified = is_verified
     FROM App.people
     WHERE email = @email AND is_deleted = 0
@@ -854,9 +1000,12 @@ CREATE OR ALTER PROCEDURE people_update_reset_password_token
 
     IF @is_verified = 0 THROW 50400, 'Please verify your account', 1
 
+
+    -- update token
     UPDATE App.people
     SET reset_password_token = @reset_password_token
     WHERE id_person = @id_person
+
 GO
 
 
@@ -898,6 +1047,7 @@ CREATE OR ALTER PROCEDURE store_applications_create
             (@name, @email, @message, @id_user_doing_update)
 
 
+        -- output new store application id
         SET @newStoreApplicationId = dbo.get_sequence_value('id_store_application')
     COMMIT
 
@@ -909,9 +1059,7 @@ GO
 CREATE OR ALTER PROCEDURE stores_create
     @postcode NVARCHAR(6),
     @suburb NVARCHAR(64),
-
-    @address_line_1 NVARCHAR(128),
-	@address_line_2 NVARCHAR(128),
+    @street_address NVARCHAR(256),
 
     @first_name NVARCHAR(64),
     @last_name NVARCHAR(64),
@@ -956,9 +1104,9 @@ CREATE OR ALTER PROCEDURE stores_create
 
         -- create store address
         INSERT INTO App.addresses
-            (id_postcode, line1, line2, updated_by)
+            (id_postcode, street_address, updated_by)
             VALUES
-            (@id_postcode, @address_line_1, @address_line_2, @id_user_doing_update)
+            (@id_postcode, @street_address, @id_user_doing_update)
 
         SET @newAddressId = dbo.get_sequence_value('id_address')
 
@@ -984,7 +1132,8 @@ CREATE OR ALTER PROCEDURE stores_create
 
 
         -- Link new user to new store
-        INSERT INTO Store.stores_people (id_store, id_person, updated_by) VALUES (@newStoreID, @newPersonId, @id_user_doing_update)
+        INSERT INTO Store.stores_people (id_store, id_person, is_store_owner, updated_by)
+            VALUES (@newStoreID, @newPersonId, 1, @id_user_doing_update)
 
 
         -- create default store business hours
@@ -1048,7 +1197,7 @@ CREATE OR ALTER PROCEDURE stores_delete
         UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
             WHERE id_store = @id_store
 
-        -- TODO : delete users too
+        -- TODO : delete users and addresses and other stuff too
         -- Set user deleted
         -- UPDATE App.people SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
             -- WHERE id_store = @id_store
@@ -1064,7 +1213,7 @@ CREATE OR ALTER PROCEDURE stores_get
     SELECT id_store, name, description, phone_number, email,
 
         -- addresses
-        (SELECT a.id_address, a.line1, a.line2, a.latitude AS address_latitude, a.longitude AS address_longitude,
+        (SELECT a.id_address, a.street_address, a.latitude AS address_latitude, a.longitude AS address_longitude,
         pc.id_postcode, pc.postcode, pc.suburb, pc.state, pc.latitude AS postcode_latitude, pc.longitude AS postcode_longitude
         FROM App.addresses a
         JOIN App.postcodes pc ON pc.id_postcode = a.id_postcode
@@ -1082,17 +1231,18 @@ CREATE OR ALTER PROCEDURE stores_get
 
         -- products and product options
         (SELECT pr.id_product, pr.name, pr.description, pr.store_notes, pr.delivery_available,
-         pr.gluten_free, pr.vegetarian, pr.in_stock, pr.position_id_previous, pr.position_id_next,
-             (SELECT po.id_product_option, po.id_product, po.name, po.store_notes, po.price, po.limit_per_customer,
-              po.in_stock, po.position_id_previous, po.position_id_next
+         pr.gluten_free, pr.vegetarian, pr.position_id_previous, pr.position_id_next,
+
+             (SELECT po.id_product_option, po.id_product, po.name, po.store_notes, po.price,
+              po.limit_per_customer, po.position_id_previous, po.position_id_next
               FROM Product.product_options po
               WHERE po.id_product = pr.id_product FOR JSON PATH) AS 'options'
          FROM Product.products pr
          WHERE pr.id_store = @id_store AND pr.active = 1 FOR JSON PATH) AS 'products',
 
         -- product extras
-        (SELECT pe.id_product_extra, pe.name, pe.price, pe.store_notes, pe.limit_per_product,
-         pe.in_stock, pe.position_id_previous, pe.position_id_next
+        (SELECT pe.id_product_extra, pe.name, pe.price, pe.store_notes,
+         pe.limit_per_product, pe.position_id_previous, pe.position_id_next
          FROM Product.product_extras pe
          WHERE pe.id_store = @id_store AND pe.active = 1 FOR JSON PATH) AS 'product_extras',
 
@@ -1101,6 +1251,7 @@ CREATE OR ALTER PROCEDURE stores_get
          FROM Product.product_headings ph
          WHERE ph.id_store = @id_store FOR JSON PATH) AS 'product_headings'
 
+    -- store
     FROM Store.stores AS s
     WHERE s.id_store = @id_store AND is_deleted = 0
     FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
@@ -1125,9 +1276,11 @@ CREATE OR ALTER PROCEDURE stores_undelete
 
         IF @email IS NULL THROW 50400, 'Store not found', 1
 
+
         -- Set store deleted
         UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
             WHERE id_store = @id_store
+
 
         -- TODO : undelete users too
         -- Set user deleted

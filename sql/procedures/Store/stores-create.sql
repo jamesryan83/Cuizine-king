@@ -3,9 +3,7 @@
 CREATE OR ALTER PROCEDURE stores_create
     @postcode NVARCHAR(6),
     @suburb NVARCHAR(64),
-
-    @address_line_1 NVARCHAR(128),
-	@address_line_2 NVARCHAR(128),
+    @street_address NVARCHAR(256),
 
     @first_name NVARCHAR(64),
     @last_name NVARCHAR(64),
@@ -50,9 +48,9 @@ CREATE OR ALTER PROCEDURE stores_create
 
         -- create store address
         INSERT INTO App.addresses
-            (id_postcode, line1, line2, updated_by)
+            (id_postcode, street_address, updated_by)
             VALUES
-            (@id_postcode, @address_line_1, @address_line_2, @id_user_doing_update)
+            (@id_postcode, @street_address, @id_user_doing_update)
 
         SET @newAddressId = dbo.get_sequence_value('id_address')
 
@@ -78,7 +76,8 @@ CREATE OR ALTER PROCEDURE stores_create
 
 
         -- Link new user to new store
-        INSERT INTO Store.stores_people (id_store, id_person, updated_by) VALUES (@newStoreID, @newPersonId, @id_user_doing_update)
+        INSERT INTO Store.stores_people (id_store, id_person, is_store_owner, updated_by)
+            VALUES (@newStoreID, @newPersonId, 1, @id_user_doing_update)
 
 
         -- create default store business hours

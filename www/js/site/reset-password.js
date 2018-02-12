@@ -5,6 +5,8 @@ app.site.resetPassword = {
     init: function () {
         var self = this;
 
+
+        // get reset password token
         this.resetPasswordToken = window.location.search;
         if (!this.resetPasswordToken || this.resetPasswordToken.length < 30) {
             app.util.showToast("Invalid verification token", 4000);
@@ -28,7 +30,7 @@ app.site.resetPassword = {
             }, function (err, result) {
                 if (err) return;
 
-                window.location.href = "/login";
+                app.util.invalidateCredentialsAndGoToLogin();
             }, true);
 
             return false;

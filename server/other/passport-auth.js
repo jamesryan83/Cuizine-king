@@ -64,7 +64,7 @@ exports = module.exports = {
 
 
         // check jwt against secret
-        passport.authenticate("jwt", function (err, jwTokenObject, errInfo) {
+        passport.authenticate("jwt", { session: false }, function (err, jwTokenObject, errInfo) {
             if (err) return sendErrorResponse(err);
 
             // check if jwt has expired
@@ -88,13 +88,13 @@ exports = module.exports = {
             if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
 
             // check jwt short expiry
-            console.log(jwTokenObject)
+            console.log(jwTokenObject);
             var d = Date.now() / 1000;
             var shortExp = jwTokenObject.shortExp * 1000;
-            console.log(d)
-            console.log("iat: " + (jwTokenObject.iat - d))
-            console.log("short expiry shortExp: " + (jwTokenObject.shortExp - d))
-            console.log("long expiry exp: " + (jwTokenObject.exp - d))
+            console.log(d);
+            console.log("iat: " + (jwTokenObject.iat - d));
+            console.log("short expiry shortExp: " + (jwTokenObject.shortExp - d));
+            console.log("long expiry exp: " + (jwTokenObject.exp - d));
 
             // TODO : jwt should also fail if signature algorithm is set to none
 
@@ -133,10 +133,10 @@ exports = module.exports = {
     checkUsersPassword: function (accessProperty, res, email, password, callback) {
         var self = this;
 
-        var alsoGetStoreId = accessProperty === "is_store_user";
-
         // get the current user
-        appDB.people_get_by_email({ email: email, alsoGetStoreId: alsoGetStoreId }, function (err, person) {
+        appDB.people_get_by_email({
+            email: email, alsoGetStoreInfo: (accessProperty === "is_store_user")
+        }, function (err, person) {
             if (err) return callback(err);
 
             // check access
@@ -148,6 +148,7 @@ exports = module.exports = {
             }
 
             // check password
+            console.log(password, person.password)
             self.comparePassword(password, person.password, function (err) {
                 if (err) return callback(err);
 

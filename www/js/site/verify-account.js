@@ -6,6 +6,8 @@ app.site.verifyAccount = {
     init: function () {
         var self = this;
 
+
+        // Get verification token
         this.verificationToken = window.location.search;
         if (!this.verificationToken || this.verificationToken.length < 30) {
             app.util.showToast("Invalid verification token", 4000);
@@ -48,7 +50,7 @@ app.site.verifyAccount = {
             if (id_person) {
                 window.location.href = "/account/" + id_person;
             } else {
-                app.util.showToast("Error : Unable to go to account page");
+                app.util.invalidateCredentialsAndGoToLogin();
             }
         });
 

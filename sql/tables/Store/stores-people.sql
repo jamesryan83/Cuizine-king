@@ -3,6 +3,7 @@ CREATE TABLE Store.stores_people
 	id_store_person INT NOT NULL CONSTRAINT DF_store_stores_people_id_store_person DEFAULT (NEXT VALUE FOR Sequences.id_store_person),
     id_store INT NOT NULL,
 	id_person INT NOT NULL,
+    is_store_owner BIT NOT NULL,
 	updated_by INT NOT NULL,
 	SysStartTime DateTime2 GENERATED ALWAYS AS ROW START,
 	SysEndTime DateTime2 GENERATED ALWAYS AS ROW END,

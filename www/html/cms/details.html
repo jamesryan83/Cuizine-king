@@ -2,107 +2,69 @@
 <!-- Store details page -->
 <div id="page-cms-details" class="page">
 
+
     <?- include("navbar-cms") ?>
 
-    <div class="page-cms-header">
-        <h2 class="cms-page-heading">Edit Store Details</h2>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h2>Edit Store Details</h2>
     </div>
+
 
     <div id="store-content">
 
-        <!-- Info -->
-        <div id="store-info">
-            <div id="store-info-inner" class="clearfix">
+        <!-- Store info -->
+        <?- include("store-info") ?>
 
-                <div id="store-info-image-container">
-                    <img id="store-info-image" />
-                </div>
-
-                <div id="store-info-details">
-                    <div id="store-info-description-container">
-                        <p id="store-info-description"></p>
-                        <label id="store-info-button-description" class="label-link">more...</label>
-                    </div>
-
-                    <div>
-                        <label>Location</label>
-                        <label id="store-info-address"></label>
-                    </div>
-
-                    <div>
-                        <label>Hours</label>
-                        <label id="store-info-hours-is-open">Open Now</label>
-                        <label id="store-info-hours-opens-at">Closes at 2am</label>
-                        <label id="store-info-button-hours" class="label-link">show all hours</label>
-                    </div>
-
-                    <div>
-                        <label>Reviews</label>
-                        <ul id="store-info-rating-control" class="rating-control inactive">
-                            <li class="rating-control-star"></li>
-                            <li class="rating-control-star"></li>
-                            <li class="rating-control-star"></li>
-                            <li class="rating-control-star"></li>
-                            <li class="rating-control-star"></li>
-                        </ul>
-                        <label id="store-info-review-count"></label>
-                        <label id="store-info-button-reviews" class="label-link">show all reviews</label>
-                    </div>
-
-                    <div id="store-info-contact-controls">
-                        <label>Contact</label>
-                        <label>Ph:</label>
-                        <label id="store-info-phone-number"></label>
-                        <label>Email:</label>
-                        <label id="store-info-email"></label>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Edit store info -->
-        <div id="store-info-edit" class="clearfix">
-            <div id="store-info-image-container">
-                <img id="store-info-image" />
-                <div class="upload-button">
-                    <label>Click here to add a logo</label>
-                    <input id="fileupload" class="fileupload" type="file" name="logo">
-                </div>
-            </div>
+        <div id="store-info-edit">
+            <div id="store-info-edit-inner" class="clearfix">
 
-            <div id="store-info-details-container">
-                <div class="label-textarea">
-                    <label>Description</label>
-                    <textarea class="textarea-1" name="description"></textarea>
+                <div class="store-info-image-container">
+                    <img class="store-info-image" />
+
+                    <div class="upload-button">
+                        <label>Click here to add a logo</label>
+                        <input id="fileupload" class="fileupload" type="file" name="logo">
+                    </div>
                 </div>
 
-                <div class="label-input">
-                    <label>Address Line 1</label>
-                    <input class="input-1" name="line1" />
-                </div>
+                <div id="store-info-edit-controls">
+                    <div class="label-textarea">
+                        <label>Description</label>
+                        <textarea class="textarea-1" name="description"></textarea>
+                    </div>
 
-                <div class="label-input">
-                    <label>Address Line 2</label>
-                    <input class="input-1" name="line2" value="" />
-                </div>
+                    <div class="label-input">
+                        <label>Street Address</label>
+                        <input class="input-1" name="street_address" />
+                    </div>
 
-                <div id="sysadmin-suburb-search" class="typeahead">
-                    <label>Suburb</label>
-                    <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
-                    <ul id="suburb-search-list" class="typeahead-list" style="display: none;"></ul>
-                </div>
+                    <div id="sysadmin-suburb-search" class="typeahead">
+                        <label>Suburb</label>
+                        <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
+                        <ul id="suburb-search-list" class="typeahead-list" style="display: none;"></ul>
+                    </div>
 
-                <div class="label-input">
-                    <label>Phone Number</label>
-                    <input class="input-1" name="phone-number" value="" />
-                </div>
+                    <div class="label-input">
+                        <label>Phone Number</label>
+                        <input class="input-1" name="phone-number" value="" />
+                    </div>
 
-                <div class="label-input">
-                    <label>Email</label>
-                    <input class="input-1" name="email" value="" />
+                    <div class="label-input">
+                        <label>Email</label>
+                        <input class="input-1" name="email" value="" />
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="page-cms-floating-buttons">
+        <button class="button-3 page-cms-details-preview">PREVIEW</button>
+        <button class="button-3 page-cms-details-return" style="display: none;">RETURN</button>
     </div>
 
 </div>

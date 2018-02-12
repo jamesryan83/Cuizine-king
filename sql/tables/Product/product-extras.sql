@@ -6,7 +6,6 @@ CREATE TABLE Product.product_extras
 	price SMALLMONEY NOT NULL DEFAULT 0,
     store_notes NVARCHAR(256),
     limit_per_product TINYINT NOT NULL DEFAULT 1,
-    in_stock BIT NOT NULL DEFAULT 1,
     active BIT NOT NULL DEFAULT 1,
     position_id_previous INT,
     position_id_next INT,
@@ -18,7 +17,7 @@ CREATE TABLE Product.product_extras
 )
 WITH
 (
-    SYSTEM_VERSIONING = ON (HISTORY_TABLE = Store.product_extras_history)
+    SYSTEM_VERSIONING = ON (HISTORY_TABLE = Product.product_extras_history)
 )
 GO
 

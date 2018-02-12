@@ -34,6 +34,13 @@ app.sysadmin = {
     },
 
 
+    // Remove user specific parts of a url
+    normalizeRoute: function (route) {
+        // not needed so return route
+        return { route: route, match: true };
+    },
+
+
     // System admin routes
     routes: {
         "/sysadmin/create-store": {

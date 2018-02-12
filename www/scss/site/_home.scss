@@ -21,6 +21,10 @@ $mediaWidthHome2: 700px;
             text-align: left;
             width: 380px;
 
+            #suburb-search-list {
+                top: 45px;
+            }
+
             @media (max-width: $mediaMobileWidth1) {
                 width: 290px;
 

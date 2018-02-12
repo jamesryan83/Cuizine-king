@@ -12,14 +12,17 @@ CREATE OR ALTER PROCEDURE people_create_web_user
 
     BEGIN TRANSACTION
 
+        -- check if user exists
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
             THROW 50409, 'Account already taken', 1
+
 
         -- create a user
         INSERT INTO App.people
             (is_web_user, is_store_user, is_system_user, first_name, last_name, email, password, verification_token, updated_by)
             VALUES
             (1, 0, 0, @first_name, @last_name, @email, @password, @verification_token, @const_system_admin_user)
+
 
         -- output value
         SET @newPersonId = dbo.get_sequence_value('id_person')

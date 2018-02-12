@@ -6,7 +6,6 @@ CREATE TABLE Product.product_options
 	store_notes NVARCHAR(256),
     price SMALLMONEY NOT NULL DEFAULT 0,
     limit_per_customer TINYINT NOT NULL DEFAULT 1,
-    in_stock BIT NOT NULL DEFAULT 1,
     active BIT NOT NULL DEFAULT 1,
     position_id_previous INT,
     position_id_next INT,

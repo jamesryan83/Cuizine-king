@@ -1,0 +1,48 @@
+// Navbar on logged out pages
+#navbar-site {
+    height: $navbarHeight;
+
+
+    // Navbar icon
+    .navbar-heading {
+        .navbar-icon {
+            @include svgicon(240px, 120px, 240px, 120px,
+                url(/res/images/ck-logo.png));
+        }
+    }
+
+
+    // bit bigger than mobile, like tablet size
+    @media (max-width: $mediaWidth2) {
+        text-align: center;
+
+        .navbar-heading {
+            .navbar-icon {
+                margin-left: 0;
+
+                @include svgicon(180px, 90px, 180px, 90px,
+                    url(/res/images/ck-logo.png));
+            }
+        }
+
+        .navbar-links {
+            float: none;
+            margin-top: 10px;
+            height: 30px;
+        }
+    }
+
+
+    // mobile
+    @media (max-width: $mediaMobileWidth1) {
+        text-align: left;
+
+        .navbar-heading {
+            .navbar-icon {
+                @include svgicon(120px, 60px, 120px, 60px,
+                    url(/res/images/ck-logo.png));
+            }
+        }
+    }
+
+}

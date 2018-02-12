@@ -166,12 +166,40 @@ app.site.account = {
     init: function (routeData) {
         var self = this;
 
-        // get account data
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/account", auth: true
+        }, function (err, result) {
+            if (err) {
+                app.util.invalidateCredentialsAndGoToLogin();
+                return;
+            }
+
+            console.log(result);
+
+            self.afterInit();
+        });
     },
 
 
     // After init
     afterInit: function () {
+        $(".page-content").show();
+
+
+        // Delete account button
+        $("#delete-account").on("click", function () {
+            app.util.showLoadingScreen();
+
+            app.util.ajaxRequest({
+                method: "GET", url: "/api/v1/delete-user", auth: true
+            }, function (err, result) {
+                app.util.hideLoadingScreen();
+                if (err) return;
+
+                app.util.invalidateCredentialsAndGoToLogin();
+                return;
+            });
+        });
 
     },
 
@@ -234,17 +262,6 @@ app.site.home = {
         new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
             app.routerBase.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode, "site");
         });
-
-
-        // TODO: get users lat long
-//        // Get users location
-//        app.util.getUserLatLong(function (result) {
-//            if (result) {
-//                console.log(result)
-//            }
-//        });
-
-
 
     },
 
@@ -758,6 +775,8 @@ app.site.resetPassword = {
     init: function () {
         var self = this;
 
+
+        // get reset password token
         this.resetPasswordToken = window.location.search;
         if (!this.resetPasswordToken || this.resetPasswordToken.length < 30) {
             app.util.showToast("Invalid verification token", 4000);
@@ -781,7 +800,7 @@ app.site.resetPassword = {
             }, function (err, result) {
                 if (err) return;
 
-                window.location.href = "/login";
+                app.util.invalidateCredentialsAndGoToLogin();
             }, true);
 
             return false;
@@ -795,12 +814,30 @@ app.site.store = {
     init: function (routeData) {
         var self = this;
 
+
         // suburb typeahead
         new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
             app.routerBase.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode, "site");
         });
 
+
         app.storeContent.init(routeData);
+
+
+        // Store id
+        var id_store = routeData.route.split("/");
+        id_store = id_store[id_store.length - 1];
+
+
+        // Get the store data
+        app.storeContent.getStoreData(id_store, function (storeData) {
+            if (storeData) {
+                storeData.id_store = id_store;
+                app.storeContent.addStoreDetailsDataToPage(storeData);
+                app.storeContent.addMenuDataToPage(storeData);
+            }
+        });
+
     },
 }
 
@@ -811,6 +848,8 @@ app.site.verifyAccount = {
     init: function () {
         var self = this;
 
+
+        // Get verification token
         this.verificationToken = window.location.search;
         if (!this.verificationToken || this.verificationToken.length < 30) {
             app.util.showToast("Invalid verification token", 4000);
@@ -853,7 +892,7 @@ app.site.verifyAccount = {
             if (id_person) {
                 window.location.href = "/account/" + id_person;
             } else {
-                app.util.showToast("Error : Unable to go to account page");
+                app.util.invalidateCredentialsAndGoToLogin();
             }
         });
 
@@ -1110,6 +1149,7 @@ app.routerBase = {
             if (route == "/index-cordova") route = "/";
         }
 
+        // normalize route and add current section
         routeData.normalizedRoute = app[section].normalizeRoute(route).route;
         routeData.section = section;
 
@@ -1121,7 +1161,7 @@ app.routerBase = {
         // unknown route
         } else {
             debugger;
-            window.location.href = "/login";
+            app.util.invalidateCredentialsAndGoToLogin();
             return;
         }
 
@@ -1135,8 +1175,8 @@ app.routerBase = {
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/logout", auth: true
         }, function (err) {
-            app.util.invalidateCredentials();
-            window.location.href = "/login";
+            app.util.invalidateCredentialsAndGoToLogin();
+
         });
     },
 
@@ -1154,7 +1194,11 @@ app.routerBase = {
 
 
 // Store content
+// This is the details and menu sections used on the store page and edit store page
 app.storeContent = {
+
+    storeDataRequestNotAllowed: false,
+    storeData: {},
 
     init: function (routeData, dataLoaded) {
         var self = this;
@@ -1162,42 +1206,6 @@ app.storeContent = {
         this.$address = $("#store-info-address");
         this.$storeMenuNav = $("#store-menu-nav");
         this.$description = $("#store-info-description");
-
-
-        // called from site section
-        if (!dataLoaded) {
-            // store id from url
-            var storeId = routeData.route.split("/");
-            storeId = storeId[storeId.length - 1];
-
-            // Get store data
-            app.util.ajaxRequest({
-                method: "GET", url: "/api/v1/store", data: { id_store: storeId }, cache: true
-            }, function (err, result) {
-                if (err) return;
-                console.log(result)
-                result.data.id_store = storeId;
-                self.addStoreDetailsDataToPage(result.data);
-                self.addMenuDataToPage(result.data);
-            });
-        }
-
-
-        // Other events
-        $(window).on("resize", function () {
-            self.resizeDescription();
-        });
-
-
-        $(window).on("scroll", function (e) {
-            // position of menu category navigation thing
-            var rect = document.getElementById("store-menu").getBoundingClientRect();
-            if (rect.top < 0) {
-                self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
-            } else {
-                self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
-            }
-        });
 
 
         // Open dialog buttons
@@ -1240,26 +1248,13 @@ app.storeContent = {
     },
 
 
-
-    // add data to the page
-    addDataToPage: function (data) {
-        console.log(data);
-
-        $("#store-info-button-hours").show();
-        $("#store-info-button-reviews").show();
-
-        this.resizeDescription();
-    },
-
-
-
     // Add store details data
     addStoreDetailsDataToPage: function (data) {
-
+        var self = this;
+        
         // Format address to a single string
         var address = data.address[0];
-        address = address.line1 + ", " +
-            (address.line2 ? (address.line2 + ", ") : "") +
+        address = address.street_address + " " +
             address.suburb + " " + address.postcode;
 
 
@@ -1276,12 +1271,20 @@ app.storeContent = {
 
         // rating control
         app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+
+        // Events
+        $(window).on("resize", function () {
+            self.resizeDescription();
+        });
+
     },
 
 
 
     // Add menu data
     addMenuDataToPage: function (data) {
+        var self = this;
 
         // products
         var item = null;
@@ -1351,49 +1354,61 @@ app.storeContent = {
             });
 
 
+            // Events
+            $(window).on("scroll", function (e) {
+                // position of menu category navigation thing
+                var rect = document.getElementById("store-menu").getBoundingClientRect();
+                if (rect.top < 0) {
+                    self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
+                } else {
+                    self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
+                }
+            });
+
+
+            // Setup dialogs
+            app.dialogs.description.init(data.name, data.description);
+            app.dialogs.businessHours.init(data.hours);
+            app.dialogs.reviews.init(data);
 
         } else {
             $("#store-menu-list").append("No Products");
         }
     },
 
+
+    // Gets the store data and caches it for a little while
+    getStoreData: function (id_store, callback) {
+        var self = this;
+        if (this.storeDataRequestNotAllowed) {
+            return callback(this.storeData);
+        }
+
+        this.storeDataRequestNotAllowed = true;
+        setTimeout(function () {
+            self.storeDataRequestNotAllowed = false;
+        }, 2000);
+
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store?id_store=" + id_store, cache: true
+        }, function (err, result) {
+            if (err) return;
+
+            self.storeData = result.data; // cache storeData
+
+            return callback(self.storeData);
+        });
+    },
+
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-        // Checkout
-
-
-
-
-        // Setup dialogs
-//        app.dialogs.description.init(data.name, data.description);
-//        app.dialogs.businessHours.init(data.hours);
-        //app.dialogs.reviews.init(data);
 
 app.util = {
 
 
 
     // ---------------------- Stuff ----------------------
-
-
-
-    // Get the users location
-    getUserLatLong: function (callback) {
-        // TODO: get users lat long
-    },
 
 
     // Validates an inputs object and shows toast if there's an error
@@ -1416,30 +1431,31 @@ app.util = {
 
     // Show toast
     showToast: function (message, timeout) {
+        var $toasts = $("#toasts");
         var toast = $("<p>" + message + "</p>");
 
         // remove toasts if there's too many stacked up
-        if ($("#toasts").children().length >= 5) {
-            $("#toasts").children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
+        if ($toasts.children().length >= 5) {
+            $toasts.children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
                 $(this).remove();
             });
         }
 
         // append toasts message and show toasts
-        $("#toasts").append(toast[0]);
-        $("#toasts").show();
+        $toasts.append(toast[0]);
+        $toasts.show();
 
         $(toast).animate({ opacity: 1, bottom: 0 }, 100);
 
         // hide toast after a little bit
         var currentToast = setTimeout(function () {
-            $("#toasts").children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
+            $toasts.children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
                 $(this).remove();
             });
 
             // hide container if it's empty
-            if ($("#toasts").children().length === 0) {
-                $("#toasts").hide().empty();
+            if ($toasts.children().length === 0) {
+                $toasts.hide().empty();
             }
         }, timeout || 2000);
     },
@@ -1462,8 +1478,6 @@ app.util = {
     toTitleCase: function(str) {
         return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     },
-
-
 
 
 
@@ -1509,10 +1523,11 @@ app.util = {
 
 
     // Replace current id and jwt with invalid ones
-    invalidateCredentials: function () {
+    invalidateCredentialsAndGoToLogin: function () {
         localStorage.removeItem("jwt");
         localStorage.removeItem("pid");
         localStorage.removeItem("sid");
+        window.location.href = "/login";
     },
 
 
@@ -1525,7 +1540,7 @@ app.util = {
         var self = this;
         var jwt = this.getJwtFromStorage();
 
-        if (jwt && jwt.length > 30) {
+        if (jwt && jwt.length > 30) { // TODO : add a regex check or something
 
             this.ajaxRequest({
                 method: "POST", url: "/api/v1/check-token", auth: true
@@ -1539,7 +1554,7 @@ app.util = {
                 self.addJwtToStorage(result.data.jwt);
                 self.addPersonIdToStorage(result.data.id_person);
                 if (result.data.id_store && result.data.id_store > 0) {
-                    localStorage.setItem("sid", result.data.id_store);
+                    self.addStoreIdToStorage(result.data.id_store);
                 }
 
                 return callback(null);
@@ -1609,6 +1624,7 @@ app.util = {
             this.showToast("Invalid Image");
         }
     },
+
 
 
     // Generic ajax request
@@ -1696,8 +1712,7 @@ app.vr._longitude_optional =    { numericality: { greaterThanOrEqualTo: 0 }};
 // these groups of validation things match the values in the sql tables
 // values not here are using the generic values above
 
-app.vr._addresses_line1 =          { presence: true, length: { maximum: 128 }};
-app.vr._addresses_line2_optional = { length: { maximum: 128 }};
+app.vr._addresses_street_address =          { presence: true, length: { maximum: 256 }};
 
 app.vr._people_first_name =                    { presence: true, length: { minimum: 2, maximum: 45 }};
 app.vr._people_first_name_optional =           { length: { minimum: 2, maximum: 45 }};
@@ -1810,9 +1825,7 @@ app.vr.checkJwt = {
 app.vr.createStore = {
     postcode: app.vr._postcodes_postcode,
     suburb: app.vr._postcodes_suburb,
-
-    address_line_1: app.vr._addresses_line1,
-    address_line_2: app.vr._addresses_line2_optional,
+    street_address: app.vr._addresses_street_address,
 
     first_name: app.vr._people_first_name,
     last_name: app.vr._people_last_name,
@@ -1937,6 +1950,7 @@ app.controls.Navbar = function (routeData) {
     });
 }
 
+// Overridden elsewhere
 app.controls.Navbar.prototype.linkClicked = function () { }
 
 // Sets up multiple rating controls
@@ -1998,6 +2012,8 @@ app.controls.RatingControls = {
             $(this).prevAll().addClass("active");
         });
 
+
+
 // TODO : what's this ??
 //        // User rating control
 //        $(".rating-control-stars.user .rating-control-star").on("click", function (e) {
@@ -2058,7 +2074,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     var startPosX = 0;
     var currentX = 0;
 
-
+    // start
     $(containerEl).on("mousedown", function (e) {
         mouseIsDown = true;
         startMouseX = e.clientX;
@@ -2066,6 +2082,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     });
 
 
+    // scrolling
     $(window).on("mousemove", function (e) {
         if (mouseIsDown) {
             e.stopPropagation();
@@ -2073,7 +2090,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
         }
     });
 
-
+    // stop
     $(window).on("mouseup", function (e) {
         mouseIsDown = false;
     });
@@ -2083,32 +2100,10 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     $(containerEl).on("mouseup", function (e) {
         var diff = e.clientX - startMouseX;
 
-        if (diff >= -3 && diff <= 3) {
+        if (diff >= -4 && diff <= 4) {
             clickCallback(e.target);
         }
     });
-}
-
-// Tab control
-app.controls.TabControl = function (tabcontrolEL, clickCallback) {
-
-    // tab and tabcontent elements
-    var tabEls = $(tabcontrolEL).find(".tabs li");
-    var tabItemEls = $(tabcontrolEL).find(".tab-item");
-
-    // Set active tab and tabcontent when a tab is clicked
-    $(tabEls).on("click", function (e) {
-        $(tabEls).removeClass("active");
-        $(tabItemEls).removeClass("active");
-
-        var clickedTabIndex = $(e.target).index();
-        $(tabEls[clickedTabIndex]).addClass("active");
-        $(tabItemEls[clickedTabIndex]).addClass("active");
-
-        var action = $(tabItemEls[clickedTabIndex]).data("id");
-        return clickCallback(action);
-    });
-
 }
 // Creates a typeahead control
 app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl) {
@@ -2126,7 +2121,8 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
             postcode: $(el).find(".typeahead-item-postcode").text()
         };
 
-        $(listEl).prev().val(result.postcode + " - " + result.suburb); // put selected item into input
+        // put selected item into input
+        $(listEl).prev().val(result.postcode + " - " + result.suburb);
         $(listEl).hide();
 
         return callback(result);

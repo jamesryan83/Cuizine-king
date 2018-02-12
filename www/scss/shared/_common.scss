@@ -72,15 +72,17 @@ $colorGray14: #060606;
 $colorBlue1: #1f58c6;
 $colorBlue2: #5595d8;
 $colorBlue3: #373748;
+$colorBlue4: #000115;
 $colorRed1: #ff7373;
 $colorOrange1: #e8a443;
 $colorGreen1: #3bcd3b;
 
-$elementHeight: 35px;
+$inputReadOnly: rgba(0, 0, 0, 0.3);
 
+
+$elementHeight: 35px;
 $navbarHeight: 170px;
 $navbarPopupIconSize: 40px;
-
 $loggedInNavbarHeight: 70px;
 $loggedInHeaderHeight: 50px;
 
@@ -95,29 +97,8 @@ $zIndexLoadingScreen: 15000;
 $mediaWidth1: 770px;
 $mediaWidth2: 890px;
 $mediaWidth3: 1000px;
-
 $mediaMobileWidth1: 490px;
 
-
-.label-takeaway, .label-gluten-free, .label-vegetarian {
-    font-size: 12px;
-    height: 15px;
-    line-height: 15px;
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.label-takeaway {
-    color: $colorRed1;
-}
-
-.label-gluten-free {
-    color: $colorOrange1;
-}
-
-.label-vegetarian {
-    color: $colorGreen1;
-}
 
 
 
@@ -137,6 +118,7 @@ $mediaMobileWidth1: 490px;
 
 
 
+
 // ----------- Overrides -----------
 
 
@@ -153,12 +135,13 @@ html {
     height: 100%;
 }
 
+
 body {
     width: 100%;
     min-height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    background: #000115;
+    background: $colorBlue4;
 }
 
 
@@ -206,9 +189,11 @@ input, textarea {
     letter-spacing: 1px;
 
     &:read-only {
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: $inputReadOnly;
     }
 }
+
+
 
 
 // ----------- Custom classes -----------
@@ -238,17 +223,16 @@ input, textarea {
 }
 
 
-.p-heading {
-    font-weight: bold;
-    margin-top: 20px;
-    font-size: 15px;
-}
-
-
 .hr-1 {
     height: 1px;
     background-color: $colorGray2;
     border: none;
+}
+
+.hr-2 {
+    @extend .hr-1;
+
+    background-color: $colorBlue3;
 }
 
 
@@ -275,6 +259,7 @@ input, textarea {
 }
 
 
+// regular textarea
 .textarea-1 {
     height: 80px;
     padding: 10px;
@@ -292,6 +277,7 @@ input, textarea {
     font-weight: bold;
     border: 1px solid transparent;
     color: $colorGray10;
+    white-space: nowrap;
 
     &:hover {
         background-color: $colorGray3;
@@ -319,6 +305,7 @@ input, textarea {
 }
 
 
+// transparent button with border
 .button-3 {
     @extend .button-1;
     background-color: transparent;
@@ -359,7 +346,6 @@ input, textarea {
 
 // div with label left input right
 .label-input {
-    width: 450px;
     text-align: left;
     padding: 10px 0;
     clear: both;
@@ -371,22 +357,19 @@ input, textarea {
     }
 
     input, select {
-        float: right;
+        width: 300px;
     }
 }
 
 
 // as above with textarea
 .label-textarea {
-    width: 450px;
-    text-align: right;
     padding: 10px 0;
     vertical-align: middle;
 
     > label {
         width: 140px;
         display: inline-block;
-        margin-right: 10px;
         vertical-align: middle;
         height: 100%;
         line-height: 100%;
@@ -394,48 +377,7 @@ input, textarea {
 
     textarea {
         width: 300px;
-        text-align: left;
         vertical-align: middle;
-    }
-}
-
-
-// Is required star thing
-.label-input, .label-textarea, .typeahead {
-    position: relative;
-
-    &.isrequired {
-        &:before {
-            content: "*";
-            color: red;
-            right: -15px;
-            font-size: 20px;
-            position: absolute;
-        }
-    }
-}
-
-
-// TODO : search icon ?
-// Input with a button next to it
-.input-button {
-    display: inline-block;
-    white-space: nowrap;
-
-    input {
-        display: inline-block;
-        height: 30px;
-        width: 200px;
-        margin: 0;
-        border: none;
-        background-color: transparent;
-        vertical-align: top;
-        @include placeholder($colorGray4);
-    }
-
-    button {
-        display: inline-block;
-        @include svgicon(30px, 30px, 15px, 15px, url(svg/icon-search.svg));
     }
 }
 
@@ -454,82 +396,6 @@ input, textarea {
 }
 
 
-// Form layout for giving left column of labels a consistent width
-.form-layout-1 {
-    > div {
-        height: 50px;
-
-        label {
-            height: 50px;
-            line-height: 50px;
-        }
-
-        input {
-            margin-top: 5px;
-        }
-
-        label, input {
-            display: inline-block;
-        }
-
-        label:first-child {
-            width: 120px;
-        }
-
-        &:last-of-type {
-            margin-top: 10px;
-        }
-
-        button {
-            width: 100px;
-        }
-    }
-}
-
-
-.form-layout-2 {
-    @extend .form-layout-1;
-
-    > div {
-        label:first-child {
-            width: 170px;
-        }
-    }
-}
-
-
-.form-layout-3 {
-    @extend .form-layout-1;
-
-    > div {
-        label:first-child {
-            width: 200px;
-        }
-    }
-}
-
-
-.table-1 {
-    width: 100%;
-    background-color: blue;
-
-    .table-head {
-        background-color: yellow;
-
-        > div {
-            float: left;
-            height: 30px;
-            line-height: 30px;
-        }
-    }
-
-    .table-body {
-        background-color: purple;
-    }
-}
-
-
-
 
 
 // ------------- Other common stuff -------------
@@ -544,9 +410,94 @@ input, textarea {
 }
 
 
+// Generic page
 .page {
     min-height: 100%;
     width: 100%;
+
+    .page-content {
+        padding: 0 50px;
+    }
+
+    // header under the navbar
+    .page-header {
+        padding: 30px 40px 20px 40px;
+
+        // heading
+        h2 {
+            font-size: 40px;
+            font-weight: 400;
+            color: $colorBlue2;
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            vertical-align: top;
+            white-space: nowrap;
+        }
+
+        .page-header-controls {
+            float: right;
+            height: 40px;
+
+            button {
+                margin-right: 20px;
+                width: 120px;
+
+                &.active {
+                    background-color: $colorBlue1;
+                }
+            }
+        }
+
+        @media (max-width: $mediaMobileWidth1) {
+            text-align: center;
+
+            h2 {
+                font-size: 30px;
+                text-align: center;
+            }
+
+            .page-header-controls {
+                display: none;
+            }
+        }
+
+    }
+}
+
+
+
+
+// Custom file upload button
+// based on https://jsfiddle.net/gabrieleromanato/mxq9R/
+// input is just hidden and over the top of a div that looks like a button
+.upload-button {
+    @extend .button-2;
+
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    border-radius: 3px;
+    line-height: 35px;
+    pointer-events: none;
+    top: 1px;
+    border: 1px solid $colorGray3;
+
+    > label {
+        pointer-events: none;
+    }
+
+    > input {
+        position: absolute;
+        width: 170px;
+        height: 35px;
+        left: 0;
+        opacity: 0;
+        overflow: hidden;
+        cursor: pointer;
+        font-size: 0;
+        pointer-events: all;
+    }
 }
 
 
@@ -559,14 +510,29 @@ input, textarea {
     width: 100%;
     top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.35);
     pointer-events: all;
     z-index: $zIndexLoadingScreen;
 
     label {
-        position: relative;
-        color: white;
+        color: $colorBlue2;
+        font-weight: bold;
+        font-size: 18px;
+        white-space: nowrap;
+        position: absolute;
+        animation: loadingScreenAnimation 1s infinite;
     }
+}
+
+
+@keyframes loadingScreenAnimation {
+    0% { transform: translate(-50%, -50%) rotateZ(0deg) },
+    25% { transform: translate(-50%, -50%) rotateZ(0deg) },
+    40% { transform: translate(-50%, -50%) rotateZ(-5deg) },
+    50% { transform: translate(-50%, -50%) rotateZ(5deg) },
+    60% { transform: translate(-50%, -50%) rotateZ(-5deg) },
+    75% { transform: translate(-50%, -50%) rotateZ(0deg) },
+    100% { transform: translate(-50%, -50%) rotateZ(0deg) }
 }
 
 
@@ -616,36 +582,6 @@ input, textarea {
 
 
 
-// Custom file upload button
-// based on https://jsfiddle.net/gabrieleromanato/mxq9R/
-// input is just hidden and over the top of a div that looks like a button
-.upload-button {
-    @extend .button-2;
 
-    text-align: center;
-    position: relative;
-    display: inline-block;
-    border-radius: 3px;
-    line-height: 35px;
-    pointer-events: none;
-    top: 1px;
-    border: 1px solid $colorGray3;
-
-    > label {
-        pointer-events: none;
-    }
-
-    > input {
-        position: absolute;
-        width: 170px;
-        height: 35px;
-        left: 0;
-        opacity: 0;
-        overflow: hidden;
-        cursor: pointer;
-        font-size: 0;
-        pointer-events: all;
-    }
-}
 
 

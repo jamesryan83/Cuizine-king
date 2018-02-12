@@ -1,8 +1,141 @@
 
-// Cms store page
+// Cms store details page
 
 #page-cms-details {
+    padding-bottom: 100px;
 
 
+    // header
+    .page-header {
+        button {
+            float: right;
+            width: 100px;
+            margin-left: 15px;
+        }
+    }
+
+
+    // Store info
+    #store-info {
+        display: none;
+    }
+
+
+    // Store info editing
+    #store-info-edit {
+        text-align: center;
+
+        #store-info-edit-inner {
+            display: inline-block;
+            text-align: left;
+            position: relative;
+
+            img {
+                margin-top: 30px;
+            }
+
+            .upload-button {
+                position: absolute;
+                left: 80px;
+                top: 300px;
+            }
+
+            #store-info-edit-controls {
+                float: left;
+                text-align: left;
+                padding-left: 30px;
+
+                textarea {
+                    height: 120px;
+                    resize: none;
+                    width: 370px;
+                }
+
+                input {
+                    width: 370px;
+                }
+
+                .typeahead {
+                    > label {
+                        width: 140px;
+                    }
+                }
+
+                #suburb-search-list {
+                    top: 45px;
+                    width: 370px;
+                }
+            }
+        }
+    }
+
+
+    @media (max-width: $mediaWidth3) {
+        #store-info-edit {
+            .store-info-image-container {
+                float: none;
+                text-align: center;
+            }
+
+            #store-info-edit-inner {
+
+                .upload-button {
+                    position: absolute;
+                    top: 280px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+
+                #store-info-edit-controls {
+                    float: none;
+                    margin-top: 50px;
+                    padding-left: 0;
+                    width: 370px;
+                }
+            }
+        }
+    }
+
+
+    @media (max-width: 650px) {
+        .page-header {
+            button {
+                display: none;
+            }
+        }
+
+        #store-info-edit {
+            #store-info-mobile-buttons {
+                display: block;
+            }
+        }
+    }
+
+
+    @media (max-width: 410px) {
+        #store-info-edit {
+            #store-info-edit-inner {
+
+                .upload-button {
+                    top: 260px;
+                }
+
+                .store-info-image-container {
+                    .store-info-image {
+                        width: 320px;
+                        height: 220px;
+                    }
+                }
+
+                #store-info-edit-controls {
+                    width: 320px;
+
+                    input, textarea {
+                        width: 320px;
+                    }
+                }
+            }
+        }
+    }
 
 }

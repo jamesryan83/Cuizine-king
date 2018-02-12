@@ -74,7 +74,6 @@ database.once("connected", function () {
     server.use(bodyParser.urlencoded({ extended: true, limit: 5242880 })); // 5MB
     server.use(bodyParser.json({ limit: 5242880 })); // 5MB
     server.use(passport.initialize());
-    server.use(passport.session());
     server.use(hpp()); // more security, stops duplicated querystring values
 
 
@@ -92,10 +91,13 @@ database.once("connected", function () {
 
         next();
     });
+
+
+    // static routes
     server.use("/", express.static(path.join(__dirname, "../", "www"), {
         maxAge: global.devMode ? 30 : 300000
     }));
-    server.use(express.static(path.join(__dirname, "../", "fakedata")));
+    server.use(express.static(path.join(__dirname, "../", "data")));
 
 
     // Passport, mail, router

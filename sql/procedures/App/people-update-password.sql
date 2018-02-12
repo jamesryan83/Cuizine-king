@@ -4,8 +4,12 @@ CREATE OR ALTER PROCEDURE people_update_password
 	@reset_password_token NVARCHAR(64),
     @password NVARCHAR (64) AS
 
+
+    -- check for bad token
     IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'Bad token', 1
 
+
+    -- check person data
     DECLARE @person_reset_password_token AS NVARCHAR(64)
     DECLARE @id_person AS INT
 
@@ -16,5 +20,8 @@ CREATE OR ALTER PROCEDURE people_update_password
 
     IF @person_reset_password_token <> @reset_password_token THROW 50401, 'Invalid token', 1
 
+
+    -- update person
     UPDATE App.people SET password = @password WHERE id_person = @id_person
+
 GO

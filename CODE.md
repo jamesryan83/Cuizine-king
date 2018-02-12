@@ -1,130 +1,238 @@
 
-## Code style notes
-
-Don't use style="" in html.  Except for style="display: none" on big things (loading screen etc.)
-    and things where it's important for them to be hidden if the css doesn't load
-
-Don't use semantic html elements.  Makes things a bit easier
-
-Be careful with naming things.  Id's should be very specific especially on bigger pages
-
-Don't use default parameters in sql store procedure inputs.  Mssql seems to provide default values that override them
-
-Any images used for testing should be funny
+Notes on what's in the codebase and what it does
 
 
+## General notes
 
-## Design patterns
+There are 3 database for the project.  One test, one dev and one live.
 
-Node
+The website is split into 3 sections:
+    Website - The part that public website users see.
+    CMS - (Content management system) The store admin section.
+    System - for us to manage the overall website, database etc.
 
-    // something.js
-
-    "use strict";
-
-    exports = module.exports = {
-
-        doSomething: function (text) {
-            console.log(text);
-        },
-
-        getSomething: function () {
-            return "blah 2";
-        },
-    }
-
-    // in another file
-    var something = require("path/to/something");
-    something.doSomething("blah 1");
+Each section is a single page app.  When you go to a new section it makes
+a new page request.  All other requests are api requests.
 
 
-Client
 
-    "use strict";
-    var app = app || {};
 
-    app.something = {
+## Security and access control
 
-        // startup function
-        init: function () {
-            this.doSomething("blah 1");
-        },
+jwt's (json web tokens) are used for all security.  The jwt contains
+the users id (id_person).  On a request for a restricted resource the
+jwt is checked against the secret and then against the persons
+database record (id_person and jwt).  Jwts have a long and short expiry.
+They are refreshed after the short expiry.  Client side, the jwt is kept in
+local storage.
 
-        doSomething: function (text) {
-            console.log(text);
-        },
+In the table /sql/tables/App/people.sql are 3 columns, is_web_user,
+is_store_user and is_system_user.  These control access to different
+resources.  System users have access to system/store/website stuff,
+store users have access to store/website stuff and website users only
+have access to website stuff.
 
-        doSomethingElse: function () {
-            console.log("blah 2");
-        },
-    }
+/server/other/passport-auth.js handles the jwt authentication.
 
-    // call start function
-    app.something.init();
+
+
+
+
+## App folder
+A cordova app.  It uses the same code as the client side of the website.
+
+
+
+## /Data folder
+
+This is all in the /data folder.  The data is for the
+database and for client side ajax requests.  The postcode data is real data
+but all the rest is made up data.
+
+/data/pages
+    temporary fake data for when developing website pages.  Used from ajax
+    when the database for that page isn't set up yet.
+
+/data/postcodes
+    all the postcode data for the database
+
+/data/stores
+    all the fake store and address data
+
+/data/Fakedata.xlsm and FakedataTest.xlsm
+    This contain worksheets that match the database tables.  Fakedata.xlsm
+    has lots of data and FakedataTest.xlsm has only minimal data for testing.
+    Fakedata.xlsm contains a VBA macro that generates *.sql scripts.  The
+    macro turns the data in the worksheets into a bunch of INSERT statements.
+    FakedataTest.xlsm has no macros, the sheets are accessed from Fakedata.xlsm
+
+/data/Fakedata-run.vbs
+    A visual basic script that calls the macro in Fakedata.xlsm to
+    generate all the seed data from both *.xlsm files into
+    the /sql/generated/seed folder.
+
+
+
+
+## /Gulp folder
+
+Gulp is used to create all the generated files and compile scss to css.
+It does html, css, js and sql files
+
+
+/gulp/generate-html.js
+    There is 3 json files created, one for each section of the website
+    which are then loaded client side.
+
+/gulp/generate-js.js
+    joins javascript files together.  Adds "use strict" and var app = app || {}
+    to the top of the joined files.  There's 3 js files created, one for each section
+
+/gulp/generate-sql-create.js
+    creates all the files in the /sql/generated folder, not the seed folder though,
+    that's from excel
+
+/gulp/generate-sql-js.js
+    generates functions used to call the sql stored procedures.  The generated
+    files are in /server/procedures
+
+/gulp/gulp-all.bat
+    used in the node-webkit program.  just runs "gulp all"
+
+/gulp/gulpfile.js
+    a regular gulp file used to run all the other js files in this folder.
+    The gulpfile has the scss stuff too.
+
+
+
+
+## /Server folder
+
+This is the node.js server.  Currently there is only 1 server for the whole
+project
+
+/server/api
+    These call the database and perform other operations.  They're called
+    from /server/other/router.js
+
+/server/database
+    explained below
+
+/server/other
+    files that don't fit into the other folders
+
+/server/procedures
+    these are the functions used to call the stored procedures.  They're generated
+    by gulp.
+
+
+
+
+## /Server/Database folder
+
+There are 3 databases for the project.  The dev and azure databases are
+called Menuthing, and the Test database is called MenuthingTest.
+MenuthingTest is only used by the unit tests.  Dev is used for local
+development. Azure is the live production database.
+
+All the database SQL code is in the /sql folder
+
+/sql/batchfiles
+    These run multiple *.sql scripts using SqlCmd.  There are batch
+    files for creating a new database and resetting the database to a clean state
+
+/sql/generated
+    files generated by gulp.  These can be run in SSMS or by SqlCmd.  The batch
+    files run these.
+
+/sql/generated/seed
+    The seed data is generated in the excel workbooks in the data folder
+
+/sql/other
+    database files that don't really go in the other folders
+
+/sql/procedures
+    all the stored procedures.  Gulp joins these together and also generates
+    javascript files from them
+
+/sql/tables
+    all the database tables.  Gulp joins these together
+
+
+
+
+## /Tests folder
+
+The database and api tests use mocha, supertest and the default node assert library.
+
+There is no UI testing yet.
+
+
+
+
+## /tools folder
+
+This is a node-webkit desktop app.  It's for performing system tasks like
+creating a new store.  Currently it's performing the same role as the system
+section of the website.  Not sure which one is best to use, probably the
+desktop app for secrutiy reasons.
+
+
+
+
+## /www folder
+
+This is all the client side webste code.
+
+The index-main.html is the first file sent for a page request.  The ajax in
+that file makes a request for the content in the generated folder for
+the section of the website required.
 
 
 
 ## How the server works
 
-The node server doesn't start listening until after the database and session store
-    are connected.  After that it just processes requests until it crashes
+The node server doesn't start listening until after the database is connected.
+After that it just processes requests until it crashes.  Azure will restart the server
+
 
 
 
 ## How pages work on the website
 
-The routes are setup in the init function of other/router.js when the server
-    is started.  router.init is called from server.js
-
-The page routes are in www/js/cms.js and www/js/site.js.  Theses are in the
-    client-side files because it's required on cordova.
-    These lists are passed into router.get() when the router starts up and
-    if any one of these routes is called it calls renderpage with the section
-    of the site the page is in.  The sections are either site, cms or sysadmin
-
-        router.get(routerSite.routesList, function (req, res) { self.renderPage(req, res, "site"); });
-
-
-When a request for /help comes in it goes to other/router.js into the above
-    function and then renderPage in other/router.js is called.
-
-renderPage gets the data and html for the page.  The data
-    comes from the client side router and the html comes from the generated html json file
-    The data is just basic stuff to load the page.  Most of the data comes from the api
-    after a page is loaded
-
-The page is rendered with the data and sent to the client.  There are multiple
-    html index files, one is sent to the client depending on the section of the site
 
 
 
-## How pages work on cordova
-    sort of the same as above
 
-    TODO
+## Files of interest
 
+Files that start with underscores (except the scss ones) are generated by gulp
 
-## Database
+IISNode.yml
+    settings for IISNode on Azure
+    https://github.com/Azure-Samples/app-service-web-nodejs-get-started/blob/master/iisnode.yml
 
-All the database SQL code is in server/sql
+nodemon.json
+    files/folders that nodemon will ignore changes in and won't restart the server.
+    nodemon is used for dev only.  Azure restarts the server on it's own
 
-The seed data is generated in the excel workbook in the fakedata folder
+web.config
+    usually generated by azure, but we need it because server.js is in the
+    src folder and not the root folder, so had to change some paths
 
-## Testing
+server/config.json
+    main config file for the server
 
-    TODO
+server/other/passport-auth.js
+    sets up the passport local strategy
+    http://passportjs.org/
+    https://www.npmjs.com/package/passport-local
 
-## Client js
+www/js/site.js, www/js/cms.js, www/js/sysadmin.js
+    the main js files for the different sections of the site.  They contain the routes
 
-    TODO
-
-
-
-## Fake data
-
-There are descriptions in each of the fake data generation js files of what's there
-But this is just a folder for all the test data that's used for website dev, pretty much all database data
-
-
+www/js/shared/validation-rules.js
+    mostly for validating api route stuff, like when a form is posted etc
+    works client and serverside
 
 

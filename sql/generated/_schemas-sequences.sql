@@ -15,8 +15,6 @@ CREATE SCHEMA Product
 GO
 CREATE SCHEMA Sales
 GO
-CREATE SCHEMA Website
-GO
 
 
  -- Create Sequences
