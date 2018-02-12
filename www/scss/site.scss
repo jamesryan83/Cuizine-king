@@ -34,4 +34,16 @@
     .page-content {
         padding-top: 30px;
     }
+
+
+    @media (max-width: $mediaMobileWidth1) {
+        .page-header {
+            padding: 0;
+            padding-bottom: 5px;
+        }
+
+        .page-content {
+            padding-top: 0;
+        }
+    }
 }

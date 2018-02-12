@@ -1537,7 +1537,8 @@ input, textarea {
         height: 30px; } }
   @media (max-width: 490px) {
     #navbar-site {
-      text-align: left; }
+      text-align: left;
+      height: 140px; }
       #navbar-site .navbar-heading .navbar-icon {
         background-repeat: no-repeat;
         background-position: center;
@@ -1612,3 +1613,10 @@ input, textarea {
 
 .page .page-content {
   padding-top: 30px; }
+
+@media (max-width: 490px) {
+  .page .page-header {
+    padding: 0;
+    padding-bottom: 5px; }
+  .page .page-content {
+    padding-top: 0; } }

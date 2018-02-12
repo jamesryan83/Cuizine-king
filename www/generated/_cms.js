@@ -647,7 +647,7 @@ app.storeContent = {
     // Add store details data
     addStoreDetailsDataToPage: function (data) {
         var self = this;
-        
+
         // Format address to a single string
         var address = data.address[0];
         address = address.street_address + " " +
