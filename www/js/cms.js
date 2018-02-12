@@ -57,6 +57,13 @@ app.cms = {
 
     // CMS routes
     routes: {
+        "/store-admin/:id/account": {
+            title: "Account",
+            file: "account",
+            initFunction: function (routeData) {
+                app.cms.account.init(routeData);
+            },
+        },
         "/store-admin/:id/dashboard": {
             title: "Dashboard",
             file: "dashboard",
@@ -83,13 +90,6 @@ app.cms = {
             file: "orders",
             initFunction: function (routeData) {
                 app.cms.orders.init(routeData);
-            },
-        },
-        "/store-admin/:id/settings": {
-            title: "Settings",
-            file: "settings",
-            initFunction: function (routeData) {
-                app.cms.settings.init(routeData);
             },
         },
         "/store-admin/:id/details": {

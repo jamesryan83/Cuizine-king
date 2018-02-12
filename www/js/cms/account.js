@@ -1,7 +1,7 @@
 
 
-// Settings page
-app.cms.settings = {
+// CMS Account page
+app.cms.account = {
 
     init: function () {
         var self = this;

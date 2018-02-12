@@ -57,6 +57,13 @@ app.cms = {
 
     // CMS routes
     routes: {
+        "/store-admin/:id/account": {
+            title: "Account",
+            file: "account",
+            initFunction: function (routeData) {
+                app.cms.account.init(routeData);
+            },
+        },
         "/store-admin/:id/dashboard": {
             title: "Dashboard",
             file: "dashboard",
@@ -85,13 +92,6 @@ app.cms = {
                 app.cms.orders.init(routeData);
             },
         },
-        "/store-admin/:id/settings": {
-            title: "Settings",
-            file: "settings",
-            initFunction: function (routeData) {
-                app.cms.settings.init(routeData);
-            },
-        },
         "/store-admin/:id/details": {
             title: "Details",
             file: "details",
@@ -116,6 +116,15 @@ app.cms = {
 app.cms.routesList = Object.keys(app.cms.routes);
 
 
+
+// CMS Account page
+app.cms.account = {
+
+    init: function () {
+        var self = this;
+    },
+
+}
 
 // Dashboard page
 app.cms.dashboard = {
@@ -326,15 +335,6 @@ app.cms.navbar = {
 
 // Orders page
 app.cms.orders = {
-
-    init: function () {
-        var self = this;
-    },
-
-}
-
-// Settings page
-app.cms.settings = {
 
     init: function () {
         var self = this;
