@@ -5,7 +5,7 @@
 @import "shared/store-content";
 @import "shared/toasts";
 @import "shared/typeahead";
-@import "cms/account";
+@import "cms/business";
 @import "cms/dashboard";
 @import "cms/delivery-suburbs";
 @import "cms/details";
@@ -24,6 +24,14 @@ body {
 #page-container {
     height: 100%;
 
+    .page {
+        .page-header {
+            @media (max-width: $mediaMobileWidth1) {
+                padding: 20px;
+            }
+        }
+    }
+
 
     // Floating buttons on bottom of page
     .page-cms-floating-buttons {
@@ -36,8 +44,9 @@ body {
         background-color: #0d0c1a;
         border-top: 1px solid $colorBlue3;
         text-align: center;
+        white-space: nowrap;
 
-        button {
+        .label-button, button {
             margin: 0 20px;
             width: 130px;
         }

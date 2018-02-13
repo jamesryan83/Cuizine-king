@@ -1,0 +1,202 @@
+// Mixins, variables, fonts and css overrides
+
+
+// Color for input placeholder attribute
+// http://stackoverflow.com/a/27377850
+@mixin placeholder($color, $size:"") {
+    &::-webkit-input-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+    &:-moz-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+    &::-moz-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+    &:-ms-input-placeholder {
+        color: $color;
+        @if $size != "" {
+            font-size: $size;
+        }
+    }
+}
+
+
+// SVG Icon
+@mixin svgicon($width, $height, $sizeX, $sizeY, $normalSvg, $hoverSvg: none) {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: $sizeX $sizeY;
+    height: $height;
+    width: $width;
+    background-image: $normalSvg;
+    display: inline-block;
+
+    &:hover {
+        @if $hoverSvg != none {
+            cursor: pointer;
+            background-image: $hoverSvg;
+        }
+    }
+}
+
+
+
+
+// ----------- Variables -----------
+
+
+
+$colorGray0: #fafafa;
+$colorGray1: #f4f4f4;
+$colorGray2: #e3e3e3;
+$colorGray3: #d9d9d9;
+$colorGray4: #b9b9b9;
+$colorGray5: #9d9d9d;
+$colorGray6: #777777;
+$colorGray7: #626262;
+$colorGray8: #5f5f5f;
+$colorGray9: #585858;
+$colorGray10: #444444;
+$colorGray11: #333333;
+$colorGray12: #222222;
+$colorGray13: #111111;
+$colorGray14: #060606;
+
+$colorBlue1: #1f58c6;
+$colorBlue2: #5595d8;
+$colorBlue3: #373748;
+$colorBlue4: #000115;
+$colorRed1: #ff7373;
+$colorOrange1: #e8a443;
+$colorGreen1: #31ac31;
+
+$inputReadOnly: rgba(0, 0, 0, 0.3);
+
+
+$elementHeight: 35px; // TODO : remove
+$textControlHeight: 35px;
+$navbarHeight: 170px;
+$navbarPopupIconSize: 40px;
+$loggedInNavbarHeight: 70px;
+$loggedInHeaderHeight: 50px;
+$storeLogoHeight1: 240px;
+$storeLogoWidth1: 340px;
+
+$zIndexTypeahead: 500;
+$zIndexNavbar: 1000;
+$zIndexSidebar: 2000;
+$zIndexTooltip: 5000;
+$zIndexDialogContainer: 7500;
+$zIndexToast: 10000;
+$zIndexLoadingScreen: 15000;
+
+$mediaWidth0: 670px;
+$mediaWidth1: 770px;
+$mediaWidth2: 900px;
+$mediaWidth3: 1000px;
+$mediaWidth4: 1100px;
+$mediaMobileWidth1: 490px;
+$mediaMobileWidth2: 410px;
+
+
+
+
+// ----------- Fonts -----------
+
+
+@font-face {
+    font-family: "Catamaran";
+    src: url(../res/fonts/Catamaran/Catamaran-Light.ttf);
+}
+
+@font-face {
+    font-family: "Catamaran";
+    font-weight: bold;
+    src: url(../res/fonts/Catamaran/Catamaran-Bold.ttf);
+}
+
+
+
+
+// ----------- Overrides -----------
+
+
+*, *:before, *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Catamaran, wingdings;
+}
+
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: $colorBlue4;
+}
+
+
+p, label, h1, h2, h3, h4, h5, h6, li, span {
+    color: $colorGray1;
+    margin: 0;
+    padding: 0;
+    cursor: default;
+    letter-spacing: 1px;
+}
+
+
+a, button {
+    color: $colorGray6;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+
+p, label, li, span {
+    font-size: 14px;
+}
+
+
+select, button {
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+
+// remove yellow on chrome inputs
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+
+// removes clear button on IE 10+
+input::-ms-clear {
+    display: none;
+}
+
+
+input, textarea {
+    letter-spacing: 1px;
+
+    &:read-only {
+        background-color: $inputReadOnly;
+    }
+}

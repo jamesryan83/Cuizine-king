@@ -9,6 +9,7 @@
 
         label {
             text-align: right;
+            padding-right: 20px;
         }
 
         button {
@@ -31,7 +32,7 @@
         button {
             font-size: 12px;
             display: inline-block;
-            margin-bottom: 10px;
+            margin: 10px;
 
             &:hover {
                 color: $colorBlue1;

@@ -85,7 +85,7 @@ input, textarea {
   border: none;
   border: 1px solid #d9d9d9;
   height: 35px;
-  width: 300px;
+  width: 100%;
   outline: none;
   padding: 0 10px;
   color: #d9d9d9;
@@ -165,29 +165,61 @@ input, textarea {
   font-weight: bold;
   font-size: 12px; }
 
-.label-input {
+.text-control, .text-control-2, .label-input-2, .label-textarea-2, .label-input, .label-textarea, .typeahead-inner {
   text-align: left;
-  padding: 10px 0;
-  clear: both; }
-  .label-input > label {
+  margin: 10px 0;
+  clear: both;
+  height: 35px;
+  width: 100%;
+  vertical-align: middle; }
+  .text-control > label, .text-control-2 > label, .label-input-2 > label, .label-textarea-2 > label, .label-input > label, .label-textarea > label, .typeahead-inner > label {
     width: 140px;
-    display: inline-block;
+    float: left;
+    vertical-align: middle;
+    height: 35px;
     line-height: 35px; }
-  .label-input input, .label-input select {
-    width: 300px; }
+  .text-control > input, .text-control-2 > input, .label-input-2 > input, .label-textarea-2 > input, .label-input > input, .label-textarea > input, .typeahead-inner > input, .text-control > select, .text-control-2 > select, .label-input-2 > select, .label-textarea-2 > select, .label-input > select, .label-textarea > select, .typeahead-inner > select, .text-control > textarea, .text-control-2 > textarea, .label-input-2 > textarea, .label-textarea-2 > textarea, .label-input > textarea, .label-textarea > textarea, .typeahead-inner > textarea, .text-control > div, .text-control-2 > div, .label-input-2 > div, .label-textarea-2 > div, .label-input > div, .label-textarea > div, .typeahead-inner > div {
+    float: left;
+    width: calc(100% - 140px);
+    vertical-align: middle; }
+  @media (max-width: 490px) {
+    .text-control, .text-control-2, .label-input-2, .label-textarea-2, .label-input, .label-textarea, .typeahead-inner {
+      clear: none;
+      height: auto; }
+      .text-control > label, .text-control-2 > label, .label-input-2 > label, .label-textarea-2 > label, .label-input > label, .label-textarea > label, .typeahead-inner > label {
+        display: block;
+        float: none; }
+      .text-control input, .text-control-2 input, .label-input-2 input, .label-textarea-2 input, .label-input input, .label-textarea input, .typeahead-inner input, .text-control select, .text-control-2 select, .label-input-2 select, .label-textarea-2 select, .label-input select, .label-textarea select, .typeahead-inner select, .text-control textarea, .text-control-2 textarea, .label-input-2 textarea, .label-textarea-2 textarea, .label-input textarea, .label-textarea textarea, .typeahead-inner textarea, .text-control > div, .text-control-2 > div, .label-input-2 > div, .label-textarea-2 > div, .label-input > div, .label-textarea > div, .typeahead-inner > div {
+        float: none;
+        display: block; } }
+
+.text-control-2, .label-input-2, .label-textarea-2 {
+  clear: none;
+  height: auto; }
+  .text-control-2 > label, .label-input-2 > label, .label-textarea-2 > label {
+    display: block;
+    float: none; }
+  .text-control-2 > input, .label-input-2 > input, .label-textarea-2 > input, .text-control-2 > select, .label-input-2 > select, .label-textarea-2 > select, .text-control-2 > textarea, .label-input-2 > textarea, .label-textarea-2 > textarea, .text-control-2 > div, .label-input-2 > div, .label-textarea-2 > div {
+    display: block;
+    float: none;
+    width: 100%; }
 
 .label-textarea {
-  padding: 10px 0;
-  vertical-align: middle; }
+  height: 142px; }
   .label-textarea > label {
-    width: 140px;
-    display: inline-block;
-    vertical-align: middle;
-    height: 100%;
-    line-height: 100%; }
+    height: 142px;
+    line-height: 142px; }
   .label-textarea textarea {
-    width: 300px;
-    vertical-align: middle; }
+    height: 142px;
+    resize: vertical; }
+
+.label-textarea-2 > label {
+  height: auto;
+  line-height: auto; }
+
+.label-textarea-2 textarea {
+  height: 144px;
+  resize: vertical; }
 
 .label-link {
   margin-left: 20px;
@@ -198,44 +230,44 @@ input, textarea {
   .label-link:hover {
     color: #5595d8; }
 
+.container {
+  display: block;
+  text-align: center; }
+  .container .container-inner {
+    display: inline-block;
+    text-align: center; }
+  .container .container-inner-left {
+    text-align: left; }
+  .container .container-inner-right {
+    text-align: right; }
+
 #page-container {
   min-height: 100vh;
   width: 100%;
   background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
   background-repeat: no-repeat; }
-
-.page {
-  min-height: 100%;
-  width: 100%; }
-  .page .page-content {
-    padding: 0 50px; }
-  .page .page-header {
-    padding: 30px 40px 20px 40px; }
-    .page .page-header h2 {
-      font-size: 40px;
-      font-weight: 400;
-      color: #5595d8;
-      display: inline-block;
-      height: 40px;
-      line-height: 40px;
-      vertical-align: top;
-      white-space: nowrap; }
-    .page .page-header .page-header-controls {
-      float: right;
-      height: 40px; }
-      .page .page-header .page-header-controls button {
-        margin-right: 20px;
-        width: 120px; }
-        .page .page-header .page-header-controls button.active {
-          background-color: #1f58c6; }
-    @media (max-width: 490px) {
-      .page .page-header {
-        text-align: center; }
-        .page .page-header h2 {
-          font-size: 30px;
-          text-align: center; }
-        .page .page-header .page-header-controls {
-          display: none; } }
+  #page-container .page {
+    min-height: 100%;
+    width: 100%; }
+    #page-container .page .page-header {
+      padding: 30px 40px 20px 40px; }
+      #page-container .page .page-header h2 {
+        font-weight: 400;
+        font-size: 30px;
+        height: 30px;
+        line-height: 30px;
+        color: #5595d8;
+        white-space: nowrap;
+        display: inline-block; }
+      @media (max-width: 490px) {
+        #page-container .page .page-header {
+          padding: 20px;
+          text-align: center; } }
+    #page-container .page .page-content {
+      padding: 0 50px; }
+      @media (max-width: 490px) {
+        #page-container .page .page-content {
+          padding: 0 20px; } }
 
 .upload-button {
   text-align: center;
@@ -427,62 +459,55 @@ input, textarea {
     margin-bottom: 10px;
     bottom: -50px; }
 
-.typeahead {
-  display: inline-block;
-  position: relative;
-  padding: 10px 0; }
-  .typeahead label {
-    width: 80px;
-    display: inline-block;
-    line-height: 25px;
-    height: 25px; }
-  .typeahead input {
-    width: 300px; }
-  .typeahead .typeahead-list {
-    display: none;
-    position: absolute;
-    width: 300px;
-    list-style: none;
-    right: 0;
-    top: 35px;
-    border-left: 1px solid #e3e3e3;
-    border-right: 1px solid #e3e3e3;
-    border-bottom: 1px solid #e3e3e3;
-    background-color: #222222;
-    z-index: 500; }
-    .typeahead .typeahead-list .typeahead-item {
-      height: 40px;
-      line-height: 40px;
-      padding-left: 20px;
-      cursor: pointer;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap; }
-      .typeahead .typeahead-list .typeahead-item.active {
-        background-color: #060606; }
-      .typeahead .typeahead-list .typeahead-item:hover {
-        background-color: #060606; }
-      .typeahead .typeahead-list .typeahead-item label, .typeahead .typeahead-list .typeahead-item span {
+.typeahead-inner {
+  position: relative; }
+  .typeahead-inner > div {
+    position: relative; }
+    .typeahead-inner > div .typeahead-list {
+      display: none;
+      position: absolute;
+      width: 100%;
+      list-style: none;
+      right: 0;
+      top: 35px;
+      border-left: 1px solid #e3e3e3;
+      border-right: 1px solid #e3e3e3;
+      border-bottom: 1px solid #e3e3e3;
+      background-color: #222222;
+      z-index: 500; }
+      .typeahead-inner > div .typeahead-list .typeahead-item {
         height: 40px;
         line-height: 40px;
-        pointer-events: none;
-        vertical-align: top; }
-      .typeahead .typeahead-list .typeahead-item label:first-of-type {
-        width: 34px; }
-      .typeahead .typeahead-list .typeahead-item span {
-        padding: 0 7px; }
-    .typeahead .typeahead-list.opens-upwards {
-      border-bottom: none;
-      border-top: 1px solid #e3e3e3;
-      top: auto;
-      bottom: 35px; }
-  @media (max-width: 490px) {
-    .typeahead .typeahead-list {
-      width: 210px;
-      top: auto; }
-      .typeahead .typeahead-list .typeahead-item {
-        font-size: 13px;
-        padding-left: 12px; } }
+        padding-left: 20px;
+        cursor: pointer;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap; }
+        .typeahead-inner > div .typeahead-list .typeahead-item.active {
+          background-color: #060606; }
+        .typeahead-inner > div .typeahead-list .typeahead-item:hover {
+          background-color: #060606; }
+        .typeahead-inner > div .typeahead-list .typeahead-item label, .typeahead-inner > div .typeahead-list .typeahead-item span {
+          height: 40px;
+          line-height: 40px;
+          pointer-events: none;
+          vertical-align: top; }
+        .typeahead-inner > div .typeahead-list .typeahead-item label:first-of-type {
+          width: 34px; }
+        .typeahead-inner > div .typeahead-list .typeahead-item span {
+          padding: 0 7px; }
+
+.typeahead-2 {
+  width: 100%;
+  max-width: 500px;
+  display: inline-block; }
+  .typeahead-2 .typeahead-inner > label {
+    width: 80px; }
+  .typeahead-2 .typeahead-inner > input, .typeahead-2 .typeahead-inner > select, .typeahead-2 .typeahead-inner > textarea, .typeahead-2 .typeahead-inner > div {
+    width: calc(100% - 80px); }
+    @media (max-width: 490px) {
+      .typeahead-2 .typeahead-inner > input, .typeahead-2 .typeahead-inner > select, .typeahead-2 .typeahead-inner > textarea, .typeahead-2 .typeahead-inner > div {
+        width: 100%; } }
 
 html, body {
   height: 100%;

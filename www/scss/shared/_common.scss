@@ -1,201 +1,4 @@
-// Color for input placeholder attribute
-// http://stackoverflow.com/a/27377850
-@mixin placeholder($color, $size:"") {
-    &::-webkit-input-placeholder {
-        color: $color;
-        @if $size != "" {
-            font-size: $size;
-        }
-    }
-        &:-moz-placeholder {
-        color: $color;
-        @if $size != "" {
-            font-size: $size;
-        }
-    }
-    &::-moz-placeholder {
-        color: $color;
-        @if $size != "" {
-            font-size: $size;
-        }
-    }
-    &:-ms-input-placeholder {
-        color: $color;
-        @if $size != "" {
-            font-size: $size;
-        }
-    }
-}
-
-
-// SVG Icon
-@mixin svgicon($width, $height, $sizeX, $sizeY, $normalSvg, $hoverSvg: none) {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: $sizeX $sizeY;
-    height: $height;
-    width: $width;
-    background-image: $normalSvg;
-    display: inline-block;
-
-    &:hover {
-        @if $hoverSvg != none {
-            cursor: pointer;
-            background-image: $hoverSvg;
-        }
-    }
-}
-
-
-
-
-// ----------- Variables -----------
-
-
-
-$colorGray0: #fafafa;
-$colorGray1: #f4f4f4;
-$colorGray2: #e3e3e3;
-$colorGray3: #d9d9d9;
-$colorGray4: #b9b9b9;
-$colorGray5: #9d9d9d;
-$colorGray6: #777777;
-$colorGray7: #626262;
-$colorGray8: #5f5f5f;
-$colorGray9: #585858;
-$colorGray10: #444444;
-$colorGray11: #333333;
-$colorGray12: #222222;
-$colorGray13: #111111;
-$colorGray14: #060606;
-
-$colorBlue1: #1f58c6;
-$colorBlue2: #5595d8;
-$colorBlue3: #373748;
-$colorBlue4: #000115;
-$colorRed1: #ff7373;
-$colorOrange1: #e8a443;
-$colorGreen1: #31ac31;
-
-$inputReadOnly: rgba(0, 0, 0, 0.3);
-
-
-$elementHeight: 35px;
-$navbarHeight: 170px;
-$navbarPopupIconSize: 40px;
-$loggedInNavbarHeight: 70px;
-$loggedInHeaderHeight: 50px;
-
-$zIndexTypeahead: 500;
-$zIndexNavbar: 1000;
-$zIndexSidebar: 2000;
-$zIndexTooltip: 5000;
-$zIndexDialogContainer: 7500;
-$zIndexToast: 10000;
-$zIndexLoadingScreen: 15000;
-
-$mediaWidth0: 670px;
-$mediaWidth1: 770px;
-$mediaWidth2: 900px;
-$mediaWidth3: 1000px;
-$mediaWidth4: 1050px;
-$mediaMobileWidth1: 490px;
-$mediaMobileWidth2: 410px;
-
-
-
-
-// ----------- Fonts -----------
-
-
-@font-face {
-    font-family: "Catamaran";
-    src: url(../res/fonts/Catamaran/Catamaran-Light.ttf);
-}
-
-@font-face {
-    font-family: "Catamaran";
-    font-weight: bold;
-    src: url(../res/fonts/Catamaran/Catamaran-Bold.ttf);
-}
-
-
-
-
-// ----------- Overrides -----------
-
-
-*, *:before, *:after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Catamaran, wingdings;
-}
-
-
-html {
-    width: 100%;
-    height: 100%;
-}
-
-
-body {
-    width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    background: $colorBlue4;
-}
-
-
-p, label, h1, h2, h3, h4, h5, h6, li, span {
-    color: $colorGray1;
-    margin: 0;
-    padding: 0;
-    cursor: default;
-    letter-spacing: 1px;
-}
-
-
-// TODO : 2 of these are overridden in .button-1
-a, button {
-    color: $colorGray6;
-    font-size: 14px;
-    letter-spacing: 1px;
-}
-
-
-p, label, li, span {
-    font-size: 14px;
-}
-
-
-select, button {
-    cursor: pointer;
-    letter-spacing: 1px;
-}
-
-
-// remove yellow on chrome inputs
-input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px white inset;
-}
-
-
-// removes clear button on IE 10+
-input::-ms-clear {
-    display: none;
-}
-
-
-input, textarea {
-    letter-spacing: 1px;
-
-    &:read-only {
-        background-color: $inputReadOnly;
-    }
-}
-
+@import "base";
 
 
 
@@ -232,6 +35,7 @@ input, textarea {
     border: none;
 }
 
+
 .hr-2 {
     @extend .hr-1;
 
@@ -244,7 +48,7 @@ input, textarea {
     border: none;
     border: 1px solid $colorGray3;
     height: $elementHeight;
-    width: 300px;
+    width: 100%;
     outline: none;
     padding: 0 10px;
     color: $colorGray3;
@@ -347,6 +151,7 @@ input, textarea {
 }
 
 
+// Label that looks like a button
 .label-button {
     @extend .link-button;
 
@@ -357,40 +162,104 @@ input, textarea {
 }
 
 
-// div with label left input right
-.label-input {
+// text on left with a control on right
+.text-control {
     text-align: left;
-    padding: 10px 0;
+    margin: 10px 0;
     clear: both;
+    height: $textControlHeight;
+    width: 100%;
+    vertical-align: middle;
 
     > label {
         width: 140px;
-        display: inline-block;
-        line-height: $elementHeight;
+        float: left;
+        vertical-align: middle;
+        height: $textControlHeight;
+        line-height: $textControlHeight;
     }
 
-    input, select {
-        width: 300px;
+    > input, > select, > textarea, > div {
+        float: left;
+        width: calc(100% - 140px);
+        vertical-align: middle;
     }
+
+    @media (max-width: $mediaMobileWidth1) {
+        clear: none;
+        height: auto;
+
+        > label {
+            display: block;
+            float: none;
+        }
+
+        input, select, textarea, > div {
+            float: none;
+            display: block;
+        }
+    }
+}
+
+
+// text above control
+.text-control-2 {
+    @extend .text-control;
+
+    clear: none;
+    height: auto;
+
+    > label {
+        display: block;
+        float: none;
+    }
+
+    > input, > select, > textarea, > div {
+        display: block;
+        float: none;
+        width: 100%;
+    }
+}
+
+
+// div with label left input right
+.label-input {
+    @extend .text-control;
+}
+
+.label-input-2 {
+    @extend .text-control-2;
 }
 
 
 // as above with textarea
 .label-textarea {
-    padding: 10px 0;
-    vertical-align: middle;
+    @extend .text-control;
+
+    height: 142px;
 
     > label {
-        width: 140px;
-        display: inline-block;
-        vertical-align: middle;
-        height: 100%;
-        line-height: 100%;
+        height: 142px;
+        line-height: 142px;
     }
 
     textarea {
-        width: 300px;
-        vertical-align: middle;
+        height: 142px;
+        resize: vertical;
+    }
+}
+
+.label-textarea-2 {
+    @extend .text-control-2;
+
+    > label {
+        height: auto;
+        line-height: auto;
+    }
+
+    textarea {
+        height: 144px;
+        resize: vertical;
     }
 }
 
@@ -414,70 +283,72 @@ input, textarea {
 // ------------- Other common stuff -------------
 
 
+// Container with child that can be left, right or centered
+.container {
+    display: block;
+    text-align: center;
+
+    .container-inner {
+        display: inline-block;
+        text-align: center;
+    }
+
+    .container-inner-left {
+        text-align: left;
+    }
+
+    .container-inner-right {
+        text-align: right;
+    }
+}
+
+
+
+// Page container
 #page-container {
     min-height: 100vh;
     width: 100%;
-
     background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
     background-repeat: no-repeat;
-}
 
 
-// Generic page
-.page {
-    min-height: 100%;
-    width: 100%;
+    // Generic page
+    .page {
+        min-height: 100%;
+        width: 100%;
 
-    .page-content {
-        padding: 0 50px;
-    }
+        // header under the navbar
+        .page-header {
+            padding: 30px 40px 20px 40px;
 
-    // header under the navbar
-    .page-header {
-        padding: 30px 40px 20px 40px;
-
-        // heading
-        h2 {
-            font-size: 40px;
-            font-weight: 400;
-            color: $colorBlue2;
-            display: inline-block;
-            height: 40px;
-            line-height: 40px;
-            vertical-align: top;
-            white-space: nowrap;
-        }
-
-        .page-header-controls {
-            float: right;
-            height: 40px;
-
-            button {
-                margin-right: 20px;
-                width: 120px;
-
-                &.active {
-                    background-color: $colorBlue1;
-                }
-            }
-        }
-
-        @media (max-width: $mediaMobileWidth1) {
-            text-align: center;
-
+            // heading
             h2 {
+                font-weight: 400;
                 font-size: 30px;
+                height: 30px;
+                line-height: 30px;
+                color: $colorBlue2;
+                white-space: nowrap;
+                display: inline-block;
+            }
+
+            @media (max-width: $mediaMobileWidth1) {
+                padding: 20px;
                 text-align: center;
             }
-
-            .page-header-controls {
-                display: none;
-            }
         }
 
+
+        // Page content
+        .page-content {
+            padding: 0 50px;
+
+            @media (max-width: $mediaMobileWidth1) {
+                padding: 0 20px;
+            }
+        }
     }
 }
-
 
 
 

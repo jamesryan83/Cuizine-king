@@ -18,7 +18,7 @@ exports = module.exports = {
     },
 
 
-    // Returns a perosn for the account page
+    // Returns a person for the account page
     getPerson: function (req, res) {
         var self = this;
 

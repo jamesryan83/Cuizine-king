@@ -2,89 +2,88 @@
 // Typeahead control
 // Input and label with a ul dropdown thing
 
-.typeahead {
-    display: inline-block;
+.typeahead-inner {
+    @extend .text-control;
+
     position: relative;
-    padding: 10px 0;
 
-    label {
-        width: 80px;
-        display: inline-block;
-        line-height: 25px;
-        height: 25px;
-    }
+    > div {
+        position: relative;
 
-    input {
-        width: 300px;
-    }
-
-
-    // popup list
-    .typeahead-list {
-        display: none;
-        position: absolute;
-        width: 300px;
-        list-style: none;
-        right: 0;
-        top: 35px;
-        border-left: 1px solid $colorGray2;
-        border-right: 1px solid $colorGray2;
-        border-bottom: 1px solid $colorGray2;
-        background-color: $colorGray12;
-        z-index: $zIndexTypeahead;
-
-        .typeahead-item {
-            height: 40px;
-            line-height: 40px;
-            padding-left: 20px;
-            cursor: pointer;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-
-            &.active {
-                background-color: $colorGray14;
-            }
-
-            &:hover {
-                background-color: $colorGray14;
-            }
-
-            label, span {
-                height: 40px;
-                line-height: 40px;
-                pointer-events: none;
-                vertical-align: top;
-            }
-
-            label:first-of-type {
-                width: 34px;
-            }
-
-            span{
-                padding: 0 7px;
-            }
-        }
-
-
-        &.opens-upwards {
-            border-bottom: none;
-            border-top: 1px solid $colorGray2;
-            top: auto;
-            bottom: 35px;
-        }
-    }
-
-
-
-    @media (max-width: $mediaMobileWidth1) {
+        // popup list
         .typeahead-list {
-            width: 210px;
-            top: auto;
+            display: none;
+            position: absolute;
+            width: 100%;
+            list-style: none;
+            right: 0;
+            top: 35px;
+            border-left: 1px solid $colorGray2;
+            border-right: 1px solid $colorGray2;
+            border-bottom: 1px solid $colorGray2;
+            background-color: $colorGray12;
+            z-index: $zIndexTypeahead;
+
+//            &.opens-upwards {
+//                border-bottom: none;
+//                border-top: 1px solid $colorGray2;
+//                top: auto;
+//                bottom: 35px;
+//            }
 
             .typeahead-item {
-                font-size: 13px;
-                padding-left: 12px;
+                height: 40px;
+                line-height: 40px;
+                padding-left: 20px;
+                cursor: pointer;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+
+                &.active {
+                    background-color: $colorGray14;
+                }
+
+                &:hover {
+                    background-color: $colorGray14;
+                }
+
+                label, span {
+                    height: 40px;
+                    line-height: 40px;
+                    pointer-events: none;
+                    vertical-align: top;
+                }
+
+                label:first-of-type {
+                    width: 34px;
+                }
+
+                span{
+                    padding: 0 7px;
+                }
+            }
+        }
+    }
+}
+
+
+// fixed width and label aligned right
+.typeahead-2 {
+    width: 100%;
+    max-width: 500px;
+    display: inline-block;
+
+    .typeahead-inner {
+        > label {
+            width: 80px;
+        }
+
+        > input, > select, > textarea, > div {
+            width: calc(100% - 80px);
+
+            @media (max-width: $mediaMobileWidth1) {
+                width: 100%;
             }
         }
     }

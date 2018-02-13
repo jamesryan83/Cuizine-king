@@ -57,11 +57,11 @@ app.cms = {
 
     // CMS routes
     routes: {
-        "/store-admin/:id/account": {
-            title: "Account",
-            file: "account",
+        "/store-admin/:id/business": {
+            title: "Business",
+            file: "business",
             initFunction: function (routeData) {
-                app.cms.account.init(routeData);
+                app.cms.business.init(routeData);
             },
         },
         "/store-admin/:id/dashboard": {

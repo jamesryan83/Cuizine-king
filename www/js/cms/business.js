@@ -1,7 +1,7 @@
 
 
-// CMS Account page
-app.cms.account = {
+// Business page
+app.cms.business = {
 
     init: function () {
         var self = this;

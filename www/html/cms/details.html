@@ -19,49 +19,54 @@
 
 
         <!-- Edit store info -->
-        <div id="store-info-edit">
-            <div id="store-info-edit-inner" class="clearfix">
+        <div id="store-info-edit" class="container">
+            <div class="container-inner clearfix">
 
-                <div class="store-info-image-container">
-                    <img class="store-info-image" />
-                    <div class="store-info-image-loading"><label class="center">LOADING</label></div>
-                    <div class="store-info-image-empty"><label class="center">NO LOGO</label></div>
 
-                    <div class="upload-button">
-                        <label>CHANGE LOGO</label>
-                        <input id="fileupload" class="fileupload" type="file" name="logo">
+                <!-- store logo -->
+                <div class="image-store-logo container">
+                    <div class="container-inner">
+                        <img class="store-info-image" />
+                        <div class="store-info-image-loading"><label class="center">LOADING</label></div>
+                        <div class="store-info-image-empty"><label class="center">NO LOGO</label></div>
+
+                        <div class="upload-button">
+                            <label>CHANGE LOGO</label>
+                            <input id="fileupload" class="fileupload" type="file" name="logo">
+                        </div>
                     </div>
                 </div>
 
-                <form id="store-info-edit-controls" action="#" autocomplete="nope">
-                    <div class="label-textarea">
-                        <label>Description</label>
-                        <textarea class="textarea-1" name="description" placeholder="Store description..."></textarea>
-                    </div>
 
-                    <div class="label-input">
-                        <label>Street Address</label>
-                        <input class="input-1" name="street_address" placeholder="Store street address..." />
-                    </div>
+                <!-- store details -->
+                <div class="container">
+                    <form id="store-edit-details-form" class="container-inner" action="#">
+                        <div class="label-textarea">
+                            <label>Description</label>
+                            <textarea class="textarea-1" name="description" autocomplete="nope" placeholder="Store description..."></textarea>
+                        </div>
 
-                    <div id="sysadmin-suburb-search" class="typeahead">
-                        <label>Suburb</label>
-                        <input id="suburb-search" class="input-1" placeholder="enter a suburb..." />
-                        <ul id="suburb-search-list" class="typeahead-list" style="display: none;"></ul>
-                    </div>
+                        <div class="label-input">
+                            <label>Street Address</label>
+                            <input class="input-1" name="street_address" autocomplete="nope" placeholder="Store street address..." />
+                        </div>
 
-                    <div class="label-input">
-                        <label>Phone Number</label>
-                        <input class="input-1" name="phone-number" placeholder="Store phone number..." />
-                    </div>
+                        <?- include("typeahead") ?>
 
-                    <div class="label-input">
-                        <label>Email</label>
-                        <input class="input-1" name="email" placeholder="Store email..." />
-                    </div>
+                        <div class="label-input">
+                            <label>Phone Number</label>
+                            <input class="input-1" name="phone-number" autocomplete="nope" placeholder="Store phone number..." />
+                        </div>
 
-                    <button id="store-info-edit-controls-submit" type="submit" style="display: none;"></button>
-                </form>
+                        <div class="label-input">
+                            <label>Email</label>
+                            <input class="input-1" name="email" autocomplete="nope" placeholder="Store email..." />
+                        </div>
+
+                        <button id="store-info-edit-controls-submit" type="submit" style="display: none;"></button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>

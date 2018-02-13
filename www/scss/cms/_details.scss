@@ -5,77 +5,76 @@
     padding-bottom: 100px;
 
 
-    // header
-    .page-header {
-        button {
-            float: right;
-            width: 100px;
-            margin-left: 15px;
+    // Content
+    #store-content {
+        padding: 0 50px;
+
+
+        // Store info
+        #store-info {
+            display: none;
         }
-    }
 
 
-    // Store info
-    #store-info {
-        display: none;
-    }
+        // Store info edit
+        #store-info-edit {
 
+            > .container-inner {
 
-    // Store info editing
-    #store-info-edit {
-        padding: 20px;
-        text-align: center;
+                // Store logo
+                .image-store-logo {
 
-        #store-info-edit-inner {
-            display: inline-block;
-            position: relative;
+                    // upload button
+                    .upload-button {
+                        position: absolute;
+                        width: 180px;
+                        left: 80px;
+                        top: 270px;
 
-
-            .upload-button {
-                position: absolute;
-                width: 180px;
-                left: 80px;
-                top: 270px;
-
-                label {
-                    font-size: 12px;
-                }
-            }
-
-
-            #store-info-edit-controls {
-                float: left;
-                text-align: left;
-                padding-left: 30px;
-
-                textarea {
-                    height: 142px;
-                    resize: none;
-                    width: 370px;
-                    font-size: 13px;
-                }
-
-                input {
-                    width: 370px;
-                    font-size: 13px;
-                }
-
-                .typeahead {
-                    > label {
-                        width: 140px;
+                        label {
+                            font-size: 12px;
+                        }
                     }
                 }
 
-                #suburb-search-list {
-                    top: 45px;
-                    width: 370px;
+
+                // Store details
+                > div:last-of-type {
+                    position: relative;
                 }
+            }
+        }
+
+
+        // Edit details form
+        #store-edit-details-form {
+            width: 100%;
+
+            textarea {
+                height: 142px;
+                resize: none;
+                font-size: 13px;
+            }
+
+            input {
+                font-size: 13px;
+            }
+
+            .typeahead {
+                > label {
+                    width: 140px;
+                }
+            }
+
+            #suburb-search-list {
+                top: 45px;
             }
         }
     }
 
 
 
+    // Floating buttons on bottom of screen
     .page-cms-floating-buttons {
         .label-button {
             width: 130px;
@@ -85,68 +84,60 @@
     }
 
 
-
     @media (max-width: $mediaWidth4) {
-        #store-info-edit {
+        #store-content {
+            #store-info-edit {
 
-            .store-info-image-container {
-                float: none;
-                text-align: center;
-                display: inline-block;
 
-                .store-info-image, .store-info-image-loading, .store-info-image-empty {
-                    display: inline-block;
-                    margin-top: 0;
-                }
-            }
+                > .container-inner {
+                    .image-store-logo {
+                        .upload-button {
+                            left: 50%;
+                            top: 250px;
+                            transform: translateX(-50%);
 
-            #store-info-edit-inner {
+                            label {
+                                font-size: 12px;
+                            }
+                        }
+                    }
 
-                .upload-button {
-                    position: absolute;
-                    top: 250px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                }
-
-                #store-info-edit-controls {
-                    float: none;
-                    margin-top: 50px;
-                    padding-left: 0;
-                    width: 100%;
+                    // Store details
+                    > div:last-of-type {
+                        margin-top: 40px;
+                    }
                 }
             }
         }
     }
 
 
-    @media (max-width: $mediaWidth0) {
-        .page-header {
-            button {
-                display: none;
-            }
-        }
+    @media (max-width: $mediaWidth1) {
+        #store-content {
+            #store-info-edit {
+                > .container-inner {
+                    #store-edit-details-form {
+                        > div {
+                            clear: none;
+                            height: auto;
 
-        #store-info-edit {
-            padding: 20px 0;
+                            > label {
+                                margin-top: 10px;
+                                height: 27px;
+                                line-height: 27px;
+                                display: block;
+                                width: 100%;
+                                float: none;
+                            }
 
-            #store-info-edit-inner {
-
-                #store-info-edit-controls {
-                    width: 100%;
-
-                    > div {
-                        width: 100%;
-
-                        input, textarea {
-                            width: 100%;
+                            > input, > select, > textarea, > div {
+                                display: block;
+                                float: none;
+                                width: 100%;
+                            }
                         }
                     }
                 }
-            }
-
-            #store-info-mobile-buttons {
-                display: block;
             }
         }
     }
@@ -154,10 +145,8 @@
 
     @media (max-width: $mediaMobileWidth1) {
         #store-info-edit {
-            #store-info-edit-inner {
-                .upload-button {
-                    top: 230px;
-                }
+            .upload-button {
+                top: 230px !important;
             }
         }
     }

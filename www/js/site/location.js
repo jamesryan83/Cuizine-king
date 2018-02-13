@@ -40,8 +40,10 @@ app.site.location = {
 
 
         // suburb typeahead
-        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
-            app.routerBase.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode, "site");
+        new app.controls.Typeahead(function (data) {
+            if (data) {
+                app.routerBase.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode, "site");
+            }
         });
 
 

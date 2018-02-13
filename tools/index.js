@@ -36,7 +36,7 @@ app.main = {
 
 
         // suburb typeahead
-        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
+        new app.controls.Typeahead(function (data) {
 
         }, this.host + "api/v1/location?q=");
 

@@ -9,7 +9,7 @@ app.cms.details = {
         app.storeContent.init(routeData, true);
 
 
-        this.$saveDetailsForm = $("#store-info-edit-controls");
+        this.$saveDetailsForm = $("#store-edit-details-form");
 
 
         // Get the store details data
@@ -19,16 +19,21 @@ app.cms.details = {
 
 
         // address suburb typeahead
-        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
-            console.log(data);
+        new app.controls.Typeahead(function (data) {
+            if (data) {
+                console.log(data);
+            }
         });
+
+
+        // change typeahead label capitalization
+        $("#typeahead-suburb > label").text("Suburb");
 
 
         // Show Edit mode
         $(".page-cms-details-return").on("click", function () {
             $(this).hide();
             $(".page-cms-details-preview").show();
-            $(".page-cms-details-save").show();
 
             $("#store-info").hide();
             $("#store-info-edit").show();
@@ -39,7 +44,6 @@ app.cms.details = {
         $(".page-cms-details-preview").on("click", function () {
             $(this).hide();
             $(".page-cms-details-return").show();
-            $(".page-cms-details-save").hide();
 
             $("#store-info-edit").hide();
             $("#store-info").show();

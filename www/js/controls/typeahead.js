@@ -1,12 +1,16 @@
 
-// Creates a typeahead control
-app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl) {
+// Creates a suburb typeahead control
+app.controls.Typeahead = function (callback) {
     var self = this;
-    var typeaheadList = $(listEl);
 
+    var $typeaheadInput = $("#typeahead-suburb-search");
+    var $typeaheadList = $("#typeahead-suburb-list");
+
+    var lookupTimeout = 500;
     var typeaheadTimeout = null;
 
-    this.baseUrl = baseUrl || "/api/v1/location?q=";
+    this.baseUrl = "/api/v1/location?q=";
+
 
     // when a dropdown item is selected
     function selectItem (el) {
@@ -15,28 +19,33 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
             postcode: $(el).find(".typeahead-item-postcode").text()
         };
 
+        $typeaheadList.hide();
+
+        if (!result.suburb || !result.postcode) {
+            return callback(null);
+        }
+
         // put selected item into input
-        $(listEl).prev().val(result.postcode + " - " + result.suburb);
-        $(listEl).hide();
+        $typeaheadInput.val(result.postcode + " - " + result.suburb);
 
         return callback(result);
     }
 
 
     // list item clicked
-    $(listEl).on("click", function (e) {
+    $typeaheadList.on("click", function (e) {
         selectItem(e.target);
     });
 
 
     // input focused
-    $(inputEl).on("focus", function () {
+    $typeaheadInput.on("focus", function () {
         this.setSelectionRange(0, this.value.length);
     });
 
 
     // when typing, generate dropdown list
-    $(inputEl).on("keyup", function (e) {
+    $typeaheadInput.on("keyup", function (e) {
         var value = $(this).val().toLowerCase();
 
         // esc
@@ -88,7 +97,7 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
         clearTimeout(typeaheadTimeout);
         typeaheadTimeout = setTimeout(function () {
             if (!value) {
-                $("#suburb-search-list").hide();
+                $typeaheadList.hide();
                 return;
             }
 
@@ -110,26 +119,26 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
                         "</li>");
                 }
 
-                typeaheadList.empty();
+                $typeaheadList.empty();
 
                 // add list items
                 if (listItems.length > 0) {
-                    typeaheadList.append(listItems.join(""));
-                    typeaheadList.show();
+                    $typeaheadList.append(listItems.join(""));
+                    $typeaheadList.show();
                 } else {
-                    typeaheadList.show();
-                    typeaheadList.append(
+                    $typeaheadList.show();
+                    $typeaheadList.append(
                         "<li class='typeahead-item'>NO RESULTS</li>");
                 }
             });
-        }, 500);
+        }, lookupTimeout);
     });
 
 
     // hide when click outside control
     $(window).on("mousedown", function (e) {
         if (e.target.className != "typeahead-item") {
-            $("#suburb-search-list").hide();
+            $typeaheadList.hide();
         }
     });
 
@@ -137,7 +146,7 @@ app.controls.Typeahead = function (inputEl, listEl, itemList, callback, baseUrl)
     // hide when esc is presed
     $(window).on("keydown", function (e) {
         if (e.which == 27) {
-            $("#suburb-search-list").hide();
+            $typeaheadList.hide();
         }
     });
 

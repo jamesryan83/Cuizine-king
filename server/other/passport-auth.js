@@ -148,7 +148,6 @@ exports = module.exports = {
             }
 
             // check password
-            console.log(password, person.password)
             self.comparePassword(password, person.password, function (err) {
                 if (err) return callback(err);
 

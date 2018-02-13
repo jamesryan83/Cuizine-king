@@ -243,6 +243,7 @@ app.site.login = {
     // Update the form sizes and stuff
     updateFormVisuals: function () {
         $("#page-login form").each(function (index, el) {
+
             var height = el.clientHeight;
             var width = el.clientWidth;
             var container = $(el).closest(".form-container-outer");

@@ -11,8 +11,10 @@ app.sysadmin.createStore = {
 
 
         // suburb typeahead
-        new app.controls.Typeahead("#suburb-search", "#suburb-search-list", this.suburbs, function (data) {
-            console.log(data)
+        new app.controls.Typeahead(function (data) {
+            if (data) {
+                console.log(data)
+            }
         });
 
 

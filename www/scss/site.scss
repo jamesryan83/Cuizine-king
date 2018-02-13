@@ -20,30 +20,3 @@
 @import "site/navbar-site";
 @import "site/store";
 @import "site/verify-account";
-
-
-.page {
-    .page-header {
-        h2 {
-            font-size: 30px;
-            height: 30px;
-            line-height: 30px;
-        }
-    }
-
-    .page-content {
-        padding-top: 30px;
-    }
-
-
-    @media (max-width: $mediaMobileWidth1) {
-        .page-header {
-            padding: 0;
-            padding-bottom: 5px;
-        }
-
-        .page-content {
-            padding-top: 0;
-        }
-    }
-}

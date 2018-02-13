@@ -27,6 +27,18 @@ exports = module.exports = {
 
         this.htmlFilePaths = recursiveReadSync(htmlFolder);
 
+
+        // get html filenames and check for duplicates
+        var htmlFileNames = this.htmlFilePaths.map(x => {
+            var a = x.split("\\");
+            return a[a.length - 1];
+        }).sort();
+        for (var i = 0; i < htmlFileNames.length - 1; i++) {
+            if (htmlFileNames[i + 1] == htmlFileNames[i])
+                throw new Error("Html filenames must be unique.  Duplicate name: " + htmlFileNames[i]);
+        }
+
+
         // create json files with html pages
         var htmlOutputCms = this.compileHtmlList(
             cmsRouter.routesList, cmsRouter.routes);

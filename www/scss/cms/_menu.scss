@@ -43,31 +43,31 @@
     }
 
 
-    @media (max-width: $mediaWidth1) {
-        #store-info-edit-address {
-            div > div > label {
-                display: block;
-            }
-        }
-    }
-
-
-    @media (max-width: $mediaMobileWidth1) {
-        #store-info-edit-address {
-            width: 340px;
-            padding: 30px 20px;
-
-            input {
-                width: 100%;
-            }
-
-            .typeahead {
-                display: block;
-
-                .typeahead-list {
-                    width: 100%;
-                }
-            }
-        }
-    }
+//    @media (max-width: $mediaWidth1) {
+//        #store-info-edit-address {
+//            div > div > label {
+//                display: block;
+//            }
+//        }
+//    }
+//
+//
+//    @media (max-width: $mediaMobileWidth1) {
+//        #store-info-edit-address {
+//            width: 340px;
+//            padding: 20px 0;
+//
+//            input {
+//                width: 100%;
+//            }
+//
+//            .typeahead {
+//                display: block;
+//
+//                .typeahead-list {
+//                    width: 100%;
+//                }
+//            }
+//        }
+//    }
 }

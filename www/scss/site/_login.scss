@@ -36,44 +36,25 @@
     }
 
 
-    .label-input {
-        width: auto;
-        text-align: left;
-
+    .label-input-2 {
         label {
             font-size: 16px;
-            display: block;
-            float: none;
         }
 
         input {
-            width: 300px;
             background-color: $colorGray3;
             color: $colorGray10;
             font-weight: bold;
-            float: none;
             @include placeholder($colorGray8);
         }
     }
 
 
-    .label-textarea {
-        width: auto;
-        text-align: left;
-
-        label {
-            float: none;
-            display: block;
-            width: auto;
-            margin-right: 0;
-            font-size: 16px;
-            height: 35px;
-            line-height: 35px;
-        }
-
+    .label-textarea-2 {
         textarea {
-            background-color: $colorGray2;
-            color: $colorGray13;
+            background-color: $colorGray3;
+            color: $colorGray10;
+            font-weight: bold;
             @include placeholder($colorGray8);
         }
     }
@@ -96,6 +77,7 @@
     }
 
 
+    // Forms and other containers
     form, #registration-success-container, #store-application-success-container {
         z-index: 100;
         padding: 10px 50px;
@@ -103,6 +85,10 @@
         border: 1px solid $colorGray9;
         backface-visibility: hidden;
         position: absolute;
+
+        .button-2 {
+            margin-top: 10px;
+        }
     }
 
 
@@ -114,6 +100,7 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
+//        max-width: 355px;
 
         // background thing
         .form-container-inner {
@@ -151,14 +138,8 @@
 
         // login form
         #form-login-container {
-            z-index: 100;
-
-            .button-2 {
-                margin-top: 10px;
-            }
-
             #login-goto-register {
-                margin-top: 10px;
+                margin-top: 0;
             }
 
             &.hidden {
@@ -175,12 +156,8 @@
 
         // store login form
         #form-store-login-container {
-            .button-2 {
-                margin-top: 10px;
-            }
-
             #login-store-goto-login {
-                margin-top: 10px;
+                margin-top: 0;
             }
 
             &.hidden {
@@ -198,9 +175,7 @@
         // register form
         #form-register-container {
             .checkbox-1 {
-                margin-top: 10px;
-                margin-bottom: 10px;
-                max-width: 300px;
+                margin-top: 20px;
 
                 a {
                     color: $colorBlue2;
@@ -238,12 +213,8 @@
                 margin-bottom: 10px;
             }
 
-            .button-2 {
-                margin-top: 10px;
-            }
-
             p {
-                padding-bottom: 10px;
+                padding-top: 10px;
                 max-width: 450px;
 
                 span {
@@ -253,7 +224,7 @@
             }
 
             textarea {
-                height: 100px;
+                height: 105px;
                 resize: none;
             }
 
@@ -277,10 +248,6 @@
 
         // Forgot password form
         #form-forgot-password-container {
-            .button-2 {
-                margin-top: 10px;
-            }
-
             .label-input {
                 width: auto;
 
@@ -341,8 +308,16 @@
 
 
     // mobile
-    @media (max-width: $mediaMobileWidth1) {
+    @media (max-width: $mediaWidth2) {
+        #page-login-form-container {
+            padding-top: 50px;
+        }
+    }
 
+
+
+    // mobile
+    @media (max-width: $mediaMobileWidth1) {
         h2 {
             padding-bottom: 0;
         }

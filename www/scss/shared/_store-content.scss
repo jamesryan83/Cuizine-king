@@ -10,237 +10,175 @@
 #store-content {
     padding: 0 50px;
 
-    @media (max-width: $mediaWidth0) {
-        padding: 0 10px;
-    }
 
+    // Store Info (used by #store-info and #store-info-edit in cms section)
+    > .container {
+        padding: 20px;
 
-    // colored labels
-    .label-takeaway, .label-gluten-free, .label-vegetarian {
-        font-size: 12px;
-        height: 15px;
-        line-height: 15px;
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    .label-takeaway {
-        color: $colorRed1;
-    }
-
-    .label-gluten-free {
-        color: $colorOrange1;
-    }
-
-    .label-vegetarian {
-        color: $colorGreen1;
-    }
-
-
-
-    // Image
-    .store-info-image-container {
-        float: left;
-        position: relative;
-        width: 340px;
-        height: 240px;
-
-        @media (max-width: $mediaMobileWidth1) {
-            width: 300px !important;
-            height: 220px !important;
-        }
-
-        .store-info-image, .store-info-image-loading, .store-info-image-empty {
-            height: 100%;
+        > .container-inner {
+            position: relative;
             width: 100%;
-            margin-top: 20px;
+            max-width: 1000px;
+
+
+            // Store logo
+            .image-store-logo {
+                float: left;
+                position: relative;
+
+                > .container-inner {
+                    padding-top: 20px;
+                    width: $storeLogoWidth1;
+                    height: $storeLogoHeight1;
+
+                    img, div:not(.upload-button) {
+                        height: 100%;
+                        width: 100%;
+                    }
+
+                    // loading and empty overlay things
+                    div:not(.upload-button) {
+                        position: absolute;
+                        top: 0;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 10;
+                        background-color: $colorGray13;
+
+                        label {
+                            font-size: 16px;
+                            white-space: nowrap;
+                            font-weight: bold;
+                            color: $colorBlue2;
+                        }
+                    }
+
+                    .store-info-image-loading {
+                        display: none;
+
+                        label {
+                            animation: loadingScreenAnimation 1s infinite;
+                        }
+                    }
+                }
+            }
+
+
+            // Store Details
+            > div:last-of-type {
+                float: left;
+                text-align: left;
+                width: calc(100% - #{$storeLogoWidth1});
+                padding: 10px 20px 0 30px;
+
+                > .container-inner {
+                    text-align: left;
+                }
+            }
+        }
+    }
+
+
+    // website store details page
+    #store-info-details {
+        label {
+            display: inline-block;
         }
 
-        // loading and empty overlay things
-        .store-info-image-loading, .store-info-image-empty {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            background-color: $colorGray13;
+        > div {
+            margin-top: 5px;
 
-            label {
-                font-size: 16px;
+            > label:first-of-type:not(.label-link) {
+                font-weight: bold;
+                width: 90px;
+            }
+        }
+
+        // description
+        #store-info-description-container {
+            min-height: 120px;
+
+            #store-info-description {
+                overflow: hidden;
+                text-align: justify;
+                max-height: 92px;
+            }
+
+            #store-info-button-description {
+                margin-left: 5px;
+            }
+        }
+
+
+        // address
+        #store-info-address {
+
+        }
+
+
+        // hours
+        #store-info-hours-is-open {
+            color: $colorBlue2;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 20px;
+            height: 20px;
+            line-height: 20px;
+            vertical-align: middle;
+        }
+
+
+        #store-info-hours-opens-at {
+            color: $colorGreen1;
+        }
+
+
+        // ratings
+        .rating-control {
+            padding: 2px;
+            margin-left: -5px;
+        }
+
+
+        // contact
+        #store-info-contact-controls {
+
+            > label {
+                height: 54px;
+                line-height: 54px;
+            }
+
+            > div {
+                display: inline-block;
+                width: calc(100% - 145px);
+                vertical-align: top;
+                white-space: nowrap;
+
+                label:first-of-type {
+                    width: 50px;
+                }
+            }
+
+            #store-info-phone-number {
+                margin: 0 10px;
+                color: $colorBlue2;
+                min-width: 90px;
+                max-width: 130px;
                 white-space: nowrap;
                 font-weight: bold;
+            }
+
+            #store-info-email {
+                margin-left: 10px;
                 color: $colorBlue2;
-            }
-        }
-
-        .store-info-image-loading {
-            display: none;
-
-            label {
-                animation: loadingScreenAnimation 1s infinite;
+                min-width: 90px;
+                max-width: 250px;
+                white-space: nowrap;
+                font-weight: bold;
             }
         }
     }
 
-
-
-    // Info
-    #store-info {
-        padding: 20px;
-        text-align: center;
-
-        #store-info-inner {
-            display: inline-block;
-            position: relative;
-
-
-            // Details
-            #store-info-details {
-                text-align: left;
-                float: right;
-                width: calc(100% - 340px);
-                padding: 10px 20px 0 30px;
-                min-width: 500px;
-
-                label {
-                    display: inline-block;
-                }
-
-                > div {
-                    margin-top: 5px;
-
-                    label:first-of-type:not(.label-link) {
-                        font-weight: bold;
-                        width: 90px;
-                    }
-                }
-
-
-                // description
-                #store-info-description-container {
-                    min-height: 120px;
-
-                    #store-info-description {
-                        overflow: hidden;
-                        text-align: justify;
-                        max-height: 92px;
-                    }
-
-                    #store-info-button-description {
-                        margin-left: 5px;
-                    }
-                }
-
-
-                // address
-                #store-info-address {
-
-                }
-
-
-                // hours
-                #store-info-hours-is-open {
-                    color: $colorBlue2;
-                    margin-right: 10px;
-                    font-weight: bold;
-                    font-size: 20px;
-                    height: 20px;
-                    line-height: 20px;
-                    vertical-align: middle;
-                }
-
-
-                #store-info-hours-opens-at {
-                    color: $colorGreen1;
-                }
-
-
-                // ratings
-                .rating-control {
-                    padding: 2px;
-                    margin-left: -5px;
-                }
-
-
-                // contact
-                #store-info-contact-controls {
-                    padding-top: 5px;
-
-                    #store-info-phone-number {
-                        margin: 0 10px;
-                        color: $colorBlue2;
-                        min-width: 90px;
-                        max-width: 130px;
-                        white-space: nowrap;
-                        font-weight: bold;
-                    }
-
-                    #store-info-email {
-                        margin-left: 10px;
-                        color: $colorBlue2;
-                        min-width: 90px;
-                        max-width: 250px;
-                        white-space: nowrap;
-                        font-weight: bold;
-                    }
-                }
-
-            }
-        }
-
-
-        @media (max-width: $mediaWidth4) {
-            #store-info-inner {
-                text-align: center !important;
-                height: auto;
-
-                .store-info-image-container {
-                    float: none;
-                    display: inline-block;
-
-                    .store-info-image, .store-info-image-loading, .store-info-image-empty {
-                        display: inline-block;
-                        margin-top: 0;
-                    }
-                }
-
-                #store-info-details {
-                    float: none;
-                    width: 90%;
-                    display: inline-block;
-                    text-align: left;
-                    padding: 40px 0 0 10px;
-                    min-width: auto;
-                }
-            }
-        }
-
-
-        @media (max-width: $mediaWidth0) {
-            #store-info-inner {
-                #store-info-details {
-                    > div {
-                        > label:first-of-type {
-                            display: block;
-                            margin-left: -5px;
-                        }
-                    }
-
-                    #store-info-contact-controls {
-                        > label {
-                            height: 27px;
-                            line-height: 27px;
-                            vertical-align: inherit;
-                        }
-                    }
-                }
-            }
-        }
-
-        @media (max-width: $mediaMobileWidth1) {
-            padding: 20px 0;
-        }
-    }
 
 
     // Menu
@@ -335,14 +273,96 @@
     }
 
 
+
     // Footer
     #store-footer {
         padding: 30px 10px;
+
         > p {
             font-size: 10px;
         }
     }
+
+
+
+    // colored labels
+    .label-takeaway, .label-gluten-free, .label-vegetarian {
+        font-size: 12px;
+        height: 15px;
+        line-height: 15px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .label-takeaway {
+        color: $colorRed1;
+    }
+
+    .label-gluten-free {
+        color: $colorOrange1;
+    }
+
+    .label-vegetarian {
+        color: $colorGreen1;
+    }
+
+
+
+    @media (max-width: $mediaWidth4) {
+        > .container {
+            > .container-inner {
+                clear: none;
+
+                .image-store-logo {
+                    float: none;
+                }
+
+                > div:last-of-type {
+                    float: none;
+                    display: block;
+                    width: 100%;
+                }
+            }
+        }
+
+        > .container {
+            padding: 0 0 20px 0 !important;
+        }
+    }
+
+
+    @media (max-width: $mediaWidth1) {
+        padding: 0 10px !important;
+
+        #store-info-details {
+            > div {
+                > label:first-of-type {
+                    display: block;
+                    margin-left: -5px;
+                }
+            }
+
+            #store-info-contact-controls {
+                > label {
+                    height: 27px;
+                    line-height: 27px;
+                    vertical-align: inherit;
+                }
+            }
+        }
+    }
+
+
+    @media (max-width: $mediaMobileWidth1) {
+        .image-store-logo {
+            .container-inner {
+                width: 300px !important;
+                height: 220px !important;
+            }
+        }
+
+
+    }
+
 }
-
-
 

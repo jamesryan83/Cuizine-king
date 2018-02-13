@@ -36,6 +36,10 @@
         }
     }
 
+    @media (max-width: $mediaMobileWidth1) {
+        height: 90px;
+    }
+
 
     // Mobile buttons
     #store-content-mobile-buttons {
