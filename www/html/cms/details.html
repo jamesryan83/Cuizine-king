@@ -68,14 +68,60 @@
                 </div>
 
             </div>
+
+
+            <!-- Business hours -->
+            <div id="store-info-edit-hours">
+                <? var dayStrings = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] ?>
+
+                <h3>Business Hours</h3>
+                <hr class="hr-2" />
+
+                <div id="business-hours-container" class="container clearfix">
+                    <div class="container-inner">
+                        <div>
+                            <p>DineIn/Takeaway Hours</p>
+                            <? for (var i = 1; i <= 7; i++) { ?>
+                                <div class="hours-row">
+                                    <label><?- dayStrings[i - 1] ?></label>
+                                    <label>Opens</label>
+                                    <input id="hours-dinein-start-<?- i ?>" name="hours-dinein-start-<?- i ?>" value="10:00" />
+                                    <label>Closes</label>
+                                    <input id="hours-dinein-end-<?- i ?>" name="hours-dinein-end-<?- i ?>" value="21:00" />
+                                </div>
+                            <? } ?>
+                        </div>
+                        <div>
+                            <p>Delivery Hours</p>
+                            <? for (var i = 1; i <= 7; i++) { ?>
+                                <div class="hours-row">
+                                    <label><?- dayStrings[i - 1] ?></label>
+                                    <label>Opens</label>
+                                    <input id="hours-delivery-start-<?- i ?>" name="hours-delivery-start-<?- i ?>" value="10:00" />
+                                    <label>Closes</label>
+                                    <input id="hours-delivery-end-<?- i ?>" name="hours-delivery-end-<?- i ?>" value="21:00" />
+                                </div>
+                            <? } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+
+    <!-- floating buttons -->
     <div class="page-cms-floating-buttons">
         <label class="label-button page-cms-details-save"
                for="store-info-edit-controls-submit">SAVE</label>
         <button class="button-3 page-cms-details-preview">PREVIEW</button>
         <button class="button-3 page-cms-details-return" style="display: none;">RETURN</button>
+    </div>
+
+
+    <!-- preview border -->
+    <div id="preview-mode-border" style="display: none;">
+        <label>PREVIEW</label>
     </div>
 
 </div>

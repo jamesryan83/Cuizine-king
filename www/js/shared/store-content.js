@@ -48,20 +48,6 @@ app.storeContent = {
     },
 
 
-
-    // Returns the data from the page
-    getDataFromPage: function () {
-        var data = {
-            description: this.$description[0].innerText,
-            postcodeSuburb: this.$address.attr("data-postcode-suburb"),
-            addr1: this.$address.attr("data-addr1"),
-            addr2: this.$address.attr("data-addr2")
-        };
-
-        return data;
-    },
-
-
     // Add store details data
     addStoreDetailsDataToPage: function (data) {
         var self = this;

@@ -772,7 +772,7 @@ input, textarea {
         float: left;
         text-align: left;
         width: calc(100% - 340px);
-        padding: 10px 20px 0 30px; }
+        padding: 10px 20px 0 20px; }
         #store-content > .container > .container-inner > div:last-of-type > .container-inner {
           text-align: left; }
   #store-content #store-info-details label {
@@ -1008,6 +1008,32 @@ input, textarea {
         font-size: 12px; }
     #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type {
       position: relative; }
+    #page-cms-details #store-content #store-info-edit #store-info-edit-hours {
+      padding-top: 10px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours h3 {
+        text-align: left;
+        padding-left: 10px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours hr {
+        margin-bottom: 20px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner > div {
+        float: left;
+        text-align: left;
+        margin: 0 10px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner p {
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 5px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label {
+        display: inline-block; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(1) {
+        width: 40px;
+        font-weight: bold; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(2), #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(4) {
+        width: 50px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input {
+        width: 60px;
+        padding-left: 5px;
+        margin-right: 5px; }
     #page-cms-details #store-content #store-edit-details-form {
       width: 100%; }
       #page-cms-details #store-content #store-edit-details-form textarea {
@@ -1048,31 +1074,22 @@ input, textarea {
       #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > input, #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > select, #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > textarea, #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > div {
         display: block;
         float: none;
-        width: 100%; } }
+        width: 100%; }
+    #page-cms-details #store-content #store-info-edit #store-info-edit-hours {
+      padding: 10px 30px 20px 30px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container > .container-inner > div {
+        float: none;
+        display: inline-block; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container > .container-inner > div:last-of-type {
+        margin-top: 20px; } }
   @media (max-width: 490px) {
     #page-cms-details #store-info-edit .upload-button {
-      top: 230px !important; } }
+      top: 230px !important; }
+    #page-cms-details #store-info-edit #store-info-edit-hours {
+      padding: 10px !important; } }
 
 #page-cms-menu {
   padding-bottom: 80px; }
-  #page-cms-menu #preview-mode-border {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    border: 5px solid #1f58c6;
-    pointer-events: none;
-    z-index: 10000; }
-    #page-cms-menu #preview-mode-border label {
-      text-align: center;
-      background-color: #1f58c6;
-      color: white;
-      padding: 5px;
-      width: 100px;
-      font-size: 12px;
-      font-weight: bold;
-      display: inline-block; }
 
 #navbar-cms {
   height: 70px; }
@@ -1129,7 +1146,26 @@ body {
     background-color: #0d0c1a;
     border-top: 1px solid #373748;
     text-align: center;
-    white-space: nowrap; }
+    white-space: nowrap;
+    z-index: 1000; }
     #page-container .page-cms-floating-buttons .label-button, #page-container .page-cms-floating-buttons button {
       margin: 0 20px;
       width: 130px; }
+  #page-container #preview-mode-border {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: 5px solid #1f58c6;
+    pointer-events: none;
+    z-index: 10000; }
+    #page-container #preview-mode-border label {
+      text-align: center;
+      background-color: #1f58c6;
+      color: white;
+      padding: 5px;
+      width: 100px;
+      font-size: 12px;
+      font-weight: bold;
+      display: inline-block; }

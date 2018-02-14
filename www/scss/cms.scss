@@ -45,10 +45,35 @@ body {
         border-top: 1px solid $colorBlue3;
         text-align: center;
         white-space: nowrap;
+        z-index: $zIndexNavbar;
 
         .label-button, button {
             margin: 0 20px;
             width: 130px;
+        }
+    }
+
+
+    // preview border
+    #preview-mode-border {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border: 5px solid $colorBlue1;
+        pointer-events: none;
+        z-index: $zIndexToast;
+
+        label {
+            text-align: center;
+            background-color: $colorBlue1;
+            color: white;
+            padding: 5px;
+            width: 100px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
         }
     }
 

@@ -8,8 +8,11 @@ app.cms.details = {
 
         app.storeContent.init(routeData, true);
 
-
+        this.$storeInfo = $("#store-info");
+        this.$storeInfoEdit = $("#store-info-edit");
         this.$saveDetailsForm = $("#store-edit-details-form");
+
+        var lastScrollPosition = 0; // for scrolling back down after return to editing
 
 
         // Get the store details data
@@ -34,19 +37,25 @@ app.cms.details = {
         $(".page-cms-details-return").on("click", function () {
             $(this).hide();
             $(".page-cms-details-preview").show();
+            $("#preview-mode-border").hide();
 
-            $("#store-info").hide();
-            $("#store-info-edit").show();
+            self.$storeInfo.hide();
+            self.$storeInfoEdit.show();
+
+            $("html, body").animate({ "scrollTop": lastScrollPosition }, 200);
         });
 
 
         // Show Preview
         $(".page-cms-details-preview").on("click", function () {
+            lastScrollPosition = $("html").scrollTop();
+
             $(this).hide();
             $(".page-cms-details-return").show();
+            $("#preview-mode-border").show();
 
-            $("#store-info-edit").hide();
-            $("#store-info").show();
+            self.$storeInfoEdit.hide();
+            self.$storeInfo.show();
         });
 
 
@@ -90,9 +99,14 @@ app.cms.details = {
 
         // Save store details form
         this.$saveDetailsForm.on("submit", function () {
+            var data = validate.collectFormValues($("#store-edit-details-form")[0], { trim: true })
+
+            if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
+                    return false;
+
+
             return false;
         });
-
     },
 
 

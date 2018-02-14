@@ -43,6 +43,60 @@
                     position: relative;
                 }
             }
+
+
+            // Business hours
+            #store-info-edit-hours {
+                padding-top: 10px;
+
+                h3 {
+                    text-align: left;
+                    padding-left: 10px;
+                }
+
+                hr {
+                    margin-bottom: 20px;
+                }
+
+                #business-hours-container {
+
+                    .container-inner {
+
+                        > div {
+                            float: left;
+                            text-align: left;
+                            margin: 0 10px;
+                        }
+
+                        p {
+                            text-align: center;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                        }
+
+                        .hours-row {
+                            label {
+                                display: inline-block;
+                            }
+
+                            label:nth-child(1) {
+                                width: 40px;
+                                font-weight: bold;
+                            }
+
+                            label:nth-child(2), label:nth-child(4) {
+                                width: 50px;
+                            }
+
+                            input {
+                                width: 60px;
+                                padding-left: 5px;
+                                margin-right: 5px;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -138,6 +192,23 @@
                         }
                     }
                 }
+
+                #store-info-edit-hours {
+                    padding: 10px 30px 20px 30px;
+
+                    #business-hours-container {
+                        > .container-inner {
+                            > div {
+                                float: none;
+                                display: inline-block;
+                            }
+
+                            > div:last-of-type {
+                                margin-top: 20px;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -147,6 +218,10 @@
         #store-info-edit {
             .upload-button {
                 top: 230px !important;
+            }
+
+            #store-info-edit-hours {
+                padding: 10px !important;
             }
         }
     }

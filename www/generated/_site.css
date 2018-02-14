@@ -772,7 +772,7 @@ input, textarea {
         float: left;
         text-align: left;
         width: calc(100% - 340px);
-        padding: 10px 20px 0 30px; }
+        padding: 10px 20px 0 20px; }
         #store-content > .container > .container-inner > div:last-of-type > .container-inner {
           text-align: left; }
   #store-content #store-info-details label {

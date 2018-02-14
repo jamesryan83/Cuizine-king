@@ -68,39 +68,7 @@
 
     // Business hours
     #business-hours-container {
-        width: 600px;
-        margin-left: -50px;
 
-        > div {
-            float: left;
-            width: 290px;
-        }
-
-        p {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .hours-row {
-            label {
-                display: inline-block;
-            }
-
-            label:nth-child(1) {
-                width: 40px;
-                font-weight: bold;
-            }
-
-            label:nth-child(2), label:nth-child(4) {
-                width: 50px;
-            }
-
-            input {
-                width: 60px;
-                padding-left: 5px;
-                margin-right: 5px;
-            }
-        }
     }
 
 

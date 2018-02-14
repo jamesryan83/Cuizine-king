@@ -445,26 +445,6 @@ input, textarea {
       #form-create-store #store-logo-container #upload-container > p {
         margin-left: 15px;
         margin-top: 5px; }
-  #form-create-store #business-hours-container {
-    width: 600px;
-    margin-left: -50px; }
-    #form-create-store #business-hours-container > div {
-      float: left;
-      width: 290px; }
-    #form-create-store #business-hours-container p {
-      font-weight: bold;
-      margin-bottom: 5px; }
-    #form-create-store #business-hours-container .hours-row label {
-      display: inline-block; }
-    #form-create-store #business-hours-container .hours-row label:nth-child(1) {
-      width: 40px;
-      font-weight: bold; }
-    #form-create-store #business-hours-container .hours-row label:nth-child(2), #form-create-store #business-hours-container .hours-row label:nth-child(4) {
-      width: 50px; }
-    #form-create-store #business-hours-container .hours-row input {
-      width: 60px;
-      padding-left: 5px;
-      margin-right: 5px; }
   #form-create-store #create-store-button {
     float: right;
     margin-top: 20px; }
