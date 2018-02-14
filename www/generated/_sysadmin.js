@@ -77,100 +77,9 @@ app.sysadmin.routesList = Object.keys(app.sysadmin.routes);
 // Sysadmin
 app.sysadmin.createStore = {
 
-
     init: function (routeData) {
         var self = this;
 
-        this.businessHoursArray = this.generateBusinessHours();
-
-
-        // suburb typeahead
-        new app.controls.Typeahead(function (data) {
-            if (data) {
-                console.log(data)
-            }
-        });
-
-
-        // generate a random password
-        $("input[name='password']").val(this.generatePassword());
-
-
-        // add business hour select elements
-        $("#business-hours-container select").each(function (index, el) {
-            var frag = document.createDocumentFragment();
-            for (var i = 0; i < self.businessHoursArray.length; i++) {
-                frag.appendChild($("<option>" + self.businessHoursArray[i] + "</option>")[0]);
-            }
-
-            $(el).append(frag);
-            $(el)[0].size = "10";
-        });
-
-        $("#fileupload").on("change", function (e) {
-            if (e.target && e.target.files && e.target.files.length > 0) {
-                console.log(e.target.files[0])
-            }
-        });
-
-        $("#form-create-store").on("submit", function (e) {
-            var data = validate.collectFormValues($("#form-create-store")[0], { trim: true });
-console.log(data)
-//            if (!app.util.validateInputs(data, app.validationRules.createStore))
-//                return false;
-
-            return false;
-        })
-
-
-
-    },
-
-
-//    // After an image is uploaded
-//    afterImageUploaded: function (data) {
-//
-//        // load image into background of div
-//        var fr = new FileReader();
-//        fr.onload = function () {
-//            $("#store-logo").css({
-//                "background-image": "url(" + fr.result + ")"
-//            });
-//
-//            $("#store-logo-loading").hide();
-//        }
-//        fr.readAsDataURL(data.files[0]);
-//    },
-
-
-    // Generates a random string for the users first password
-    generatePassword: function () {
-        return Math.random().toString(36).substr(2, 8);
-    },
-
-
-    // Generates the business hours for the select elements
-    generateBusinessHours: function () {
-        var currentHour = "";
-        var currentMin = "";
-        var output = [];
-
-        for (var i = 0; i < 24; i++) {
-            currentHour = i < 10 ? "0" + i : i.toString();
-
-            for (var j = 0; j < 4; j++) {
-                switch (j) {
-                    case 0: currentMin = ":00"; break;
-                    case 1: currentMin = ":15"; break;
-                    case 2: currentMin = ":30"; break;
-                    case 3: currentMin = ":45"; break;
-                }
-
-                output.push(currentHour + currentMin);
-            }
-        }
-
-        return output;
     },
 
 }
@@ -693,6 +602,9 @@ app.storeContent = {
             return callback(this.storeData);
         }
 
+        if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
+            return false;
+
         this.storeDataRequestNotAllowed = true;
         setTimeout(function () {
             self.storeDataRequestNotAllowed = false;
@@ -723,6 +635,11 @@ app.util = {
 
     // Validates an inputs object and shows toast if there's an error
     validateInputs: function (inputs, validationRule) {
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
         var errors = validate(inputs, validationRule, { format: "flat" });
         if (errors && errors.length > 0) {
             this.showToast(errors[0]);
@@ -991,12 +908,16 @@ app.util = {
 // these are related to the tables in server/sql
 // and are used server and client side
 
-// General shared validation rules
+// TODO : this file is a security issue, it shows the database structure pretty much
+// split it into a file for each section
+
 
 if (typeof app === "undefined") {
     var app = {};
 }
 
+
+// General shared validation rules
 app.validationRules = {
 
     // for sequence id's such as id_store, id_adress, updated_by etc.
@@ -1081,16 +1002,11 @@ app.validationRules = {
 
 // These validation objects below use the values from above
 
-// -------- Auth route validation --------
+// -------- Route validation --------
 
 
-
+// Site - login page
 app.validationRules.login = {
-    email: app.validationRules._email,
-    password: app.validationRules._people_password
-}
-
-app.validationRules.storeLogin = {
     email: app.validationRules._email,
     password: app.validationRules._people_password
 }
@@ -1103,20 +1019,24 @@ app.validationRules.createUser = {
     confirmPassword: { equality: "password" }
 }
 
+app.validationRules.storeApplication = {
+    name: { presence: true, length: { maximum: 128 }},
+    email: app.validationRules._email,
+    message: { length: { maximum: 256 }}
+}
+
+app.validationRules.forgotPassword = { email: app.validationRules._email }
+
+
+// Site - verifiy account page
 app.validationRules.verifyAccount = {
     email: app.validationRules._email,
     password: app.validationRules._people_password,
     verification_token: app.validationRules._people_verification_token
 }
 
-app.validationRules.logout = {
-    jwt: app.validationRules._people_jwt
-}
 
-app.validationRules.sendRegistrationEmail = { email: app.validationRules._email }
-
-app.validationRules.forgotPassword = { email: app.validationRules._email }
-
+// Site - reset password page
 app.validationRules.resetPassword = {
     email: app.validationRules._people_email,
     password: app.validationRules._people_password,
@@ -1124,15 +1044,8 @@ app.validationRules.resetPassword = {
     reset_password_token: app.validationRules._people_reset_password_token
 }
 
-app.validationRules.checkJwt = {
-    jwt: app.validationRules._people_jwt
-}
 
-
-
-
-// -------- Store route validation --------
-
+// Tools app
 app.validationRules.createStore = {
     postcode: app.validationRules._postcodes_postcode,
     suburb: app.validationRules._postcodes_suburb,
@@ -1149,30 +1062,19 @@ app.validationRules.createStore = {
     internal_notes_store: app.validationRules._notes_optional
 }
 
-
-app.validationRules.updateStore = {
-    first_name: app.validationRules._people_first_name,
-    last_name: app.validationRules._people_last_name,
-    email_user: app.validationRules._email,
-}
-
-app.validationRules.updateLogo = {
-    id_store: app.validationRules._sequence_id
-}
-
 app.validationRules.deleteStore = {
 	id_store: app.validationRules._sequence_id
 }
 
 
-app.validationRules.storeUpdateBankDetails = {
-    bank_name: app.validationRules._stores_bank_name,
-    bank_bsb: app.validationRules._stores_bank_bsb,
-    bank_account_name: app.validationRules._stores_bank_account_name,
-    bank_account_number: app.validationRules._stores_bank_account_number
-}
-
-app.validationRules.storeUpdateHours = {
+// CMS - Details page
+app.validationRules.updateStoreDetails = {
+    description: app.validationRules._stores_description_optional,
+    street_address: app.validationRules._addresses_street_address,
+    postcode: app.validationRules._postcodes_postcode,
+    suburb: app.validationRules._postcodes_suburb,
+    phone_number: app.validationRules._phone_number,
+    email: app.validationRules._phone_email,
     hours_mon_dinein_open: app.validationRules._stores_hours,
     hours_tue_dinein_open: app.validationRules._stores_hours,
     hours_wed_dinein_open: app.validationRules._stores_hours,
@@ -1203,15 +1105,63 @@ app.validationRules.storeUpdateHours = {
     hours_sun_delivery_close: app.validationRules._stores_hours
 }
 
+
+// Used in store-content.js
 app.validationRules.getStore = {
     id_store: app.validationRules._sequence_id
 }
 
-app.validationRules.storeApplication = {
-    name: { presence: true, length: { maximum: 128 }},
-    email: app.validationRules._email,
-    message: { length: { maximum: 256 }}
-}
+
+
+
+
+
+
+
+
+
+//app.validationRules.storeUpdateBankDetails = {
+//    bank_name: app.validationRules._stores_bank_name,
+//    bank_bsb: app.validationRules._stores_bank_bsb,
+//    bank_account_name: app.validationRules._stores_bank_account_name,
+//    bank_account_number: app.validationRules._stores_bank_account_number
+//}
+
+//app.validationRules.storeUpdateHours = {
+//    hours_mon_dinein_open: app.validationRules._stores_hours,
+//    hours_tue_dinein_open: app.validationRules._stores_hours,
+//    hours_wed_dinein_open: app.validationRules._stores_hours,
+//    hours_thu_dinein_open: app.validationRules._stores_hours,
+//    hours_fri_dinein_open: app.validationRules._stores_hours,
+//    hours_sat_dinein_open: app.validationRules._stores_hours,
+//    hours_sun_dinein_open: app.validationRules._stores_hours,
+//    hours_mon_dinein_close: app.validationRules._stores_hours,
+//    hours_tue_dinein_close: app.validationRules._stores_hours,
+//    hours_wed_dinein_close: app.validationRules._stores_hours,
+//    hours_thu_dinein_close: app.validationRules._stores_hours,
+//    hours_fri_dinein_close: app.validationRules._stores_hours,
+//    hours_sat_dinein_close: app.validationRules._stores_hours,
+//    hours_sun_dinein_close: app.validationRules._stores_hours,
+//    hours_mon_delivery_open: app.validationRules._stores_hours,
+//    hours_tue_delivery_open: app.validationRules._stores_hours,
+//    hours_wed_delivery_open: app.validationRules._stores_hours,
+//    hours_thu_delivery_open: app.validationRules._stores_hours,
+//    hours_fri_delivery_open: app.validationRules._stores_hours,
+//    hours_sat_delivery_open: app.validationRules._stores_hours,
+//    hours_sun_delivery_open: app.validationRules._stores_hours,
+//    hours_mon_delivery_close: app.validationRules._stores_hours,
+//    hours_tue_delivery_close: app.validationRules._stores_hours,
+//    hours_wed_delivery_close: app.validationRules._stores_hours,
+//    hours_thu_delivery_close: app.validationRules._stores_hours,
+//    hours_fri_delivery_close: app.validationRules._stores_hours,
+//    hours_sat_delivery_close: app.validationRules._stores_hours,
+//    hours_sun_delivery_close: app.validationRules._stores_hours
+//}
+
+
+
+
+
 
 
 

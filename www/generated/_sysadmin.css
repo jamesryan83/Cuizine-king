@@ -404,63 +404,6 @@ input, textarea {
         cursor: pointer;
         background-image: url(/res/svg/icon-close-hover.svg); }
 
-#form-create-store {
-  width: 500px;
-  display: inline-block;
-  text-align: left;
-  padding-bottom: 30px; }
-  #form-create-store #store-logo-container {
-    position: relative;
-    width: 600px;
-    margin-left: -50px; }
-    #form-create-store #store-logo-container #store-logo {
-      height: 240px;
-      width: 340px;
-      margin-left: 20px;
-      display: inline-block;
-      border: 1px solid #b9b9b9; }
-    #form-create-store #store-logo-container #store-logo-loading {
-      top: 0;
-      left: 20px;
-      position: absolute;
-      height: 240px;
-      width: 340px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      text-align: center;
-      display: none; }
-      #form-create-store #store-logo-container #store-logo-loading label {
-        height: 200px;
-        line-height: 200px;
-        width: 200px;
-        vertical-align: middle; }
-    #form-create-store #store-logo-container #upload-container {
-      float: right; }
-      #form-create-store #store-logo-container #upload-container .upload {
-        margin-left: 15px;
-        margin-bottom: 0;
-        margin-top: 80px;
-        margin-right: 30px;
-        top: auto; }
-      #form-create-store #store-logo-container #upload-container > p {
-        margin-left: 15px;
-        margin-top: 5px; }
-  #form-create-store #create-store-button {
-    float: right;
-    margin-top: 20px; }
-
-#tab-database {
-  overflow: hidden; }
-  #tab-database > div {
-    float: left;
-    width: 50%;
-    height: 100%; }
-  #tab-database #database-output textarea {
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-    resize: none; }
-
 .checkbox-1 > input, .checkbox-2 > input {
   display: none;
   margin: -1px;
@@ -546,24 +489,6 @@ input, textarea {
 #page-container {
   text-align: center;
   padding-top: 30px; }
-  #page-container h3 {
-    margin-top: 40px;
-    font-size: 20px; }
-  #page-container .button-1, #page-container .button-2, #page-container .upload-button, #page-container .button-3 {
-    margin-left: 20px;
-    margin-top: 20px;
-    width: 150px; }
-  #page-container .label-textarea {
-    text-align: left; }
-    #page-container .label-textarea label {
-      text-align: left;
-      width: 145px;
-      margin-right: 5px; }
-  #page-container .typeahead {
-    margin-top: 10px;
-    text-align: left; }
-    #page-container .typeahead > label {
-      width: 145px; }
   #page-container #navbar-sysadmin {
     text-align: center;
     margin: 20px; }

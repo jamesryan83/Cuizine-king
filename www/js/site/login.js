@@ -67,7 +67,7 @@ app.site.login = {
 
             var data = validate.collectFormValues($("#form-register")[0], { trim: true });
 
-            if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
+            if (!app.util.validateInputs(data, app.validationRules.createUser))
                 return false;
 
             app.util.ajaxRequest({

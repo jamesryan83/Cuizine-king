@@ -19,7 +19,7 @@
 
 
         <!-- Edit store info -->
-        <div id="store-info-edit" class="container">
+        <form id="store-info-edit" class="container" action="#">
             <div class="container-inner clearfix">
 
 
@@ -40,7 +40,7 @@
 
                 <!-- store details -->
                 <div class="container">
-                    <form id="store-edit-details-form" class="container-inner" action="#">
+                    <div class="container-inner">
                         <div class="label-textarea">
                             <label>Description</label>
                             <textarea class="textarea-1" name="description" autocomplete="nope" placeholder="Store description..."></textarea>
@@ -64,7 +64,7 @@
                         </div>
 
                         <button id="store-info-edit-controls-submit" type="submit" style="display: none;"></button>
-                    </form>
+                    </div>
                 </div>
 
             </div>
@@ -72,7 +72,8 @@
 
             <!-- Business hours -->
             <div id="store-info-edit-hours">
-                <? var dayStrings = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] ?>
+                <? var dayStringsUc = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] ?>
+                <? var dayStringsLc = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] ?>
 
                 <h3>Business Hours</h3>
                 <hr class="hr-2" />
@@ -83,11 +84,11 @@
                             <p>DineIn/Takeaway Hours</p>
                             <? for (var i = 1; i <= 7; i++) { ?>
                                 <div class="hours-row">
-                                    <label><?- dayStrings[i - 1] ?></label>
+                                    <label><?- dayStringsUc[i - 1] ?></label>
                                     <label>Opens</label>
-                                    <input id="hours-dinein-start-<?- i ?>" name="hours-dinein-start-<?- i ?>" value="10:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_dinein_open" value="10:00" />
                                     <label>Closes</label>
-                                    <input id="hours-dinein-end-<?- i ?>" name="hours-dinein-end-<?- i ?>" value="21:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_dinein_close" value="21:00" />
                                 </div>
                             <? } ?>
                         </div>
@@ -95,18 +96,18 @@
                             <p>Delivery Hours</p>
                             <? for (var i = 1; i <= 7; i++) { ?>
                                 <div class="hours-row">
-                                    <label><?- dayStrings[i - 1] ?></label>
+                                    <label><?- dayStringsUc[i - 1] ?></label>
                                     <label>Opens</label>
-                                    <input id="hours-delivery-start-<?- i ?>" name="hours-delivery-start-<?- i ?>" value="10:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_delivery_open" value="10:00" />
                                     <label>Closes</label>
-                                    <input id="hours-delivery-end-<?- i ?>" name="hours-delivery-end-<?- i ?>" value="21:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_delivery_close" value="21:00" />
                                 </div>
                             <? } ?>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 
 

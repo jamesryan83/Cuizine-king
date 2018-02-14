@@ -41,6 +41,29 @@
                 // Store details
                 > div:last-of-type {
                     position: relative;
+
+                    .container-inner {
+                        width: 100%;
+
+                        textarea {
+                            resize: none;
+                            font-size: 13px;
+                        }
+
+                        input {
+                            font-size: 13px;
+                        }
+
+                        .typeahead {
+                            > label {
+                                width: 140px;
+                            }
+                        }
+
+                        #suburb-search-list {
+                            top: 45px;
+                        }
+                    }
                 }
             }
 
@@ -98,32 +121,6 @@
                 }
             }
         }
-
-
-        // Edit details form
-        #store-edit-details-form {
-            width: 100%;
-
-            textarea {
-                height: 142px;
-                resize: none;
-                font-size: 13px;
-            }
-
-            input {
-                font-size: 13px;
-            }
-
-            .typeahead {
-                > label {
-                    width: 140px;
-                }
-            }
-
-            #suburb-search-list {
-                top: 45px;
-            }
-        }
     }
 
 
@@ -170,8 +167,8 @@
         #store-content {
             #store-info-edit {
                 > .container-inner {
-                    #store-edit-details-form {
-                        > div {
+                    > div:last-of-type {
+                        > div > div {
                             clear: none;
                             height: auto;
 

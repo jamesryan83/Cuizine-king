@@ -10,7 +10,6 @@ app.cms.details = {
 
         this.$storeInfo = $("#store-info");
         this.$storeInfoEdit = $("#store-info-edit");
-        this.$saveDetailsForm = $("#store-edit-details-form");
 
         var lastScrollPosition = 0; // for scrolling back down after return to editing
 
@@ -98,11 +97,14 @@ app.cms.details = {
 
 
         // Save store details form
-        this.$saveDetailsForm.on("submit", function () {
+        this.$storeInfoEdit.on("submit", function () {
             var data = validate.collectFormValues($("#store-edit-details-form")[0], { trim: true })
 
-            if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
-                    return false;
+            console.log(data)
+
+            if (!app.util.validateInputs(data, app.validationRules.updateStoreDetails))
+                return false;
+
 
 
             return false;
@@ -118,12 +120,12 @@ app.cms.details = {
             app.storeContent.addStoreDetailsDataToPage(storeData);
 
             var address = storeData.address[0];
-
-            this.$saveDetailsForm[0][0].value = storeData.description;
-            this.$saveDetailsForm[0][1].value = address.street_address;
-            this.$saveDetailsForm[0][2].value = address.postcode + " - " + address.suburb;
-            this.$saveDetailsForm[0][3].value = storeData.phone_number;
-            this.$saveDetailsForm[0][4].value = storeData.email;
+//console.log(this.$storeInfoEdit)
+            this.$storeInfoEdit[0][1].value = storeData.description;
+            this.$storeInfoEdit[0][2].value = address.street_address;
+            this.$storeInfoEdit[0][3].value = address.postcode + " - " + address.suburb;
+            this.$storeInfoEdit[0][4].value = storeData.phone_number;
+            this.$storeInfoEdit[0][5].value = storeData.email;
         }
     },
 

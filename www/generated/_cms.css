@@ -1008,6 +1008,17 @@ input, textarea {
         font-size: 12px; }
     #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type {
       position: relative; }
+      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type .container-inner {
+        width: 100%; }
+        #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type .container-inner textarea {
+          resize: none;
+          font-size: 13px; }
+        #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type .container-inner input {
+          font-size: 13px; }
+        #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type .container-inner .typeahead > label {
+          width: 140px; }
+        #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type .container-inner #suburb-search-list {
+          top: 45px; }
     #page-cms-details #store-content #store-info-edit #store-info-edit-hours {
       padding-top: 10px; }
       #page-cms-details #store-content #store-info-edit #store-info-edit-hours h3 {
@@ -1034,18 +1045,6 @@ input, textarea {
         width: 60px;
         padding-left: 5px;
         margin-right: 5px; }
-    #page-cms-details #store-content #store-edit-details-form {
-      width: 100%; }
-      #page-cms-details #store-content #store-edit-details-form textarea {
-        height: 142px;
-        resize: none;
-        font-size: 13px; }
-      #page-cms-details #store-content #store-edit-details-form input {
-        font-size: 13px; }
-      #page-cms-details #store-content #store-edit-details-form .typeahead > label {
-        width: 140px; }
-      #page-cms-details #store-content #store-edit-details-form #suburb-search-list {
-        top: 45px; }
   #page-cms-details .page-cms-floating-buttons .label-button {
     width: 130px;
     background-color: #31ac31;
@@ -1061,17 +1060,17 @@ input, textarea {
     #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type {
       margin-top: 40px; } }
   @media (max-width: 770px) {
-    #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div {
+    #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div {
       clear: none;
       height: auto; }
-      #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > label {
+      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > label {
         margin-top: 10px;
         height: 27px;
         line-height: 27px;
         display: block;
         width: 100%;
         float: none; }
-      #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > input, #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > select, #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > textarea, #page-cms-details #store-content #store-info-edit > .container-inner #store-edit-details-form > div > div {
+      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > input, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > select, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > textarea, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > div {
         display: block;
         float: none;
         width: 100%; }

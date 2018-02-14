@@ -9,6 +9,11 @@ app.util = {
 
     // Validates an inputs object and shows toast if there's an error
     validateInputs: function (inputs, validationRule) {
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
         var errors = validate(inputs, validationRule, { format: "flat" });
         if (errors && errors.length > 0) {
             this.showToast(errors[0]);

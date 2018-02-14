@@ -198,6 +198,9 @@ app.storeContent = {
             return callback(this.storeData);
         }
 
+        if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
+            return false;
+
         this.storeDataRequestNotAllowed = true;
         setTimeout(function () {
             self.storeDataRequestNotAllowed = false;

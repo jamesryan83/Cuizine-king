@@ -154,7 +154,6 @@ app.cms.details = {
 
         this.$storeInfo = $("#store-info");
         this.$storeInfoEdit = $("#store-info-edit");
-        this.$saveDetailsForm = $("#store-edit-details-form");
 
         var lastScrollPosition = 0; // for scrolling back down after return to editing
 
@@ -242,11 +241,14 @@ app.cms.details = {
 
 
         // Save store details form
-        this.$saveDetailsForm.on("submit", function () {
+        this.$storeInfoEdit.on("submit", function () {
             var data = validate.collectFormValues($("#store-edit-details-form")[0], { trim: true })
 
-            if (!app.util.validateInputs(data, app.validationRules.peopleCreate))
-                    return false;
+            console.log(data)
+
+            if (!app.util.validateInputs(data, app.validationRules.updateStoreDetails))
+                return false;
+
 
 
             return false;
@@ -262,12 +264,12 @@ app.cms.details = {
             app.storeContent.addStoreDetailsDataToPage(storeData);
 
             var address = storeData.address[0];
-
-            this.$saveDetailsForm[0][0].value = storeData.description;
-            this.$saveDetailsForm[0][1].value = address.street_address;
-            this.$saveDetailsForm[0][2].value = address.postcode + " - " + address.suburb;
-            this.$saveDetailsForm[0][3].value = storeData.phone_number;
-            this.$saveDetailsForm[0][4].value = storeData.email;
+//console.log(this.$storeInfoEdit)
+            this.$storeInfoEdit[0][1].value = storeData.description;
+            this.$storeInfoEdit[0][2].value = address.street_address;
+            this.$storeInfoEdit[0][3].value = address.postcode + " - " + address.suburb;
+            this.$storeInfoEdit[0][4].value = storeData.phone_number;
+            this.$storeInfoEdit[0][5].value = storeData.email;
         }
     },
 
@@ -855,6 +857,9 @@ app.storeContent = {
             return callback(this.storeData);
         }
 
+        if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
+            return false;
+
         this.storeDataRequestNotAllowed = true;
         setTimeout(function () {
             self.storeDataRequestNotAllowed = false;
@@ -885,6 +890,11 @@ app.util = {
 
     // Validates an inputs object and shows toast if there's an error
     validateInputs: function (inputs, validationRule) {
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
         var errors = validate(inputs, validationRule, { format: "flat" });
         if (errors && errors.length > 0) {
             this.showToast(errors[0]);
@@ -1153,12 +1163,16 @@ app.util = {
 // these are related to the tables in server/sql
 // and are used server and client side
 
-// General shared validation rules
+// TODO : this file is a security issue, it shows the database structure pretty much
+// split it into a file for each section
+
 
 if (typeof app === "undefined") {
     var app = {};
 }
 
+
+// General shared validation rules
 app.validationRules = {
 
     // for sequence id's such as id_store, id_adress, updated_by etc.
@@ -1243,16 +1257,11 @@ app.validationRules = {
 
 // These validation objects below use the values from above
 
-// -------- Auth route validation --------
+// -------- Route validation --------
 
 
-
+// Site - login page
 app.validationRules.login = {
-    email: app.validationRules._email,
-    password: app.validationRules._people_password
-}
-
-app.validationRules.storeLogin = {
     email: app.validationRules._email,
     password: app.validationRules._people_password
 }
@@ -1265,20 +1274,24 @@ app.validationRules.createUser = {
     confirmPassword: { equality: "password" }
 }
 
+app.validationRules.storeApplication = {
+    name: { presence: true, length: { maximum: 128 }},
+    email: app.validationRules._email,
+    message: { length: { maximum: 256 }}
+}
+
+app.validationRules.forgotPassword = { email: app.validationRules._email }
+
+
+// Site - verifiy account page
 app.validationRules.verifyAccount = {
     email: app.validationRules._email,
     password: app.validationRules._people_password,
     verification_token: app.validationRules._people_verification_token
 }
 
-app.validationRules.logout = {
-    jwt: app.validationRules._people_jwt
-}
 
-app.validationRules.sendRegistrationEmail = { email: app.validationRules._email }
-
-app.validationRules.forgotPassword = { email: app.validationRules._email }
-
+// Site - reset password page
 app.validationRules.resetPassword = {
     email: app.validationRules._people_email,
     password: app.validationRules._people_password,
@@ -1286,15 +1299,8 @@ app.validationRules.resetPassword = {
     reset_password_token: app.validationRules._people_reset_password_token
 }
 
-app.validationRules.checkJwt = {
-    jwt: app.validationRules._people_jwt
-}
 
-
-
-
-// -------- Store route validation --------
-
+// Tools app
 app.validationRules.createStore = {
     postcode: app.validationRules._postcodes_postcode,
     suburb: app.validationRules._postcodes_suburb,
@@ -1311,30 +1317,19 @@ app.validationRules.createStore = {
     internal_notes_store: app.validationRules._notes_optional
 }
 
-
-app.validationRules.updateStore = {
-    first_name: app.validationRules._people_first_name,
-    last_name: app.validationRules._people_last_name,
-    email_user: app.validationRules._email,
-}
-
-app.validationRules.updateLogo = {
-    id_store: app.validationRules._sequence_id
-}
-
 app.validationRules.deleteStore = {
 	id_store: app.validationRules._sequence_id
 }
 
 
-app.validationRules.storeUpdateBankDetails = {
-    bank_name: app.validationRules._stores_bank_name,
-    bank_bsb: app.validationRules._stores_bank_bsb,
-    bank_account_name: app.validationRules._stores_bank_account_name,
-    bank_account_number: app.validationRules._stores_bank_account_number
-}
-
-app.validationRules.storeUpdateHours = {
+// CMS - Details page
+app.validationRules.updateStoreDetails = {
+    description: app.validationRules._stores_description_optional,
+    street_address: app.validationRules._addresses_street_address,
+    postcode: app.validationRules._postcodes_postcode,
+    suburb: app.validationRules._postcodes_suburb,
+    phone_number: app.validationRules._phone_number,
+    email: app.validationRules._phone_email,
     hours_mon_dinein_open: app.validationRules._stores_hours,
     hours_tue_dinein_open: app.validationRules._stores_hours,
     hours_wed_dinein_open: app.validationRules._stores_hours,
@@ -1365,15 +1360,63 @@ app.validationRules.storeUpdateHours = {
     hours_sun_delivery_close: app.validationRules._stores_hours
 }
 
+
+// Used in store-content.js
 app.validationRules.getStore = {
     id_store: app.validationRules._sequence_id
 }
 
-app.validationRules.storeApplication = {
-    name: { presence: true, length: { maximum: 128 }},
-    email: app.validationRules._email,
-    message: { length: { maximum: 256 }}
-}
+
+
+
+
+
+
+
+
+
+//app.validationRules.storeUpdateBankDetails = {
+//    bank_name: app.validationRules._stores_bank_name,
+//    bank_bsb: app.validationRules._stores_bank_bsb,
+//    bank_account_name: app.validationRules._stores_bank_account_name,
+//    bank_account_number: app.validationRules._stores_bank_account_number
+//}
+
+//app.validationRules.storeUpdateHours = {
+//    hours_mon_dinein_open: app.validationRules._stores_hours,
+//    hours_tue_dinein_open: app.validationRules._stores_hours,
+//    hours_wed_dinein_open: app.validationRules._stores_hours,
+//    hours_thu_dinein_open: app.validationRules._stores_hours,
+//    hours_fri_dinein_open: app.validationRules._stores_hours,
+//    hours_sat_dinein_open: app.validationRules._stores_hours,
+//    hours_sun_dinein_open: app.validationRules._stores_hours,
+//    hours_mon_dinein_close: app.validationRules._stores_hours,
+//    hours_tue_dinein_close: app.validationRules._stores_hours,
+//    hours_wed_dinein_close: app.validationRules._stores_hours,
+//    hours_thu_dinein_close: app.validationRules._stores_hours,
+//    hours_fri_dinein_close: app.validationRules._stores_hours,
+//    hours_sat_dinein_close: app.validationRules._stores_hours,
+//    hours_sun_dinein_close: app.validationRules._stores_hours,
+//    hours_mon_delivery_open: app.validationRules._stores_hours,
+//    hours_tue_delivery_open: app.validationRules._stores_hours,
+//    hours_wed_delivery_open: app.validationRules._stores_hours,
+//    hours_thu_delivery_open: app.validationRules._stores_hours,
+//    hours_fri_delivery_open: app.validationRules._stores_hours,
+//    hours_sat_delivery_open: app.validationRules._stores_hours,
+//    hours_sun_delivery_open: app.validationRules._stores_hours,
+//    hours_mon_delivery_close: app.validationRules._stores_hours,
+//    hours_tue_delivery_close: app.validationRules._stores_hours,
+//    hours_wed_delivery_close: app.validationRules._stores_hours,
+//    hours_thu_delivery_close: app.validationRules._stores_hours,
+//    hours_fri_delivery_close: app.validationRules._stores_hours,
+//    hours_sat_delivery_close: app.validationRules._stores_hours,
+//    hours_sun_delivery_close: app.validationRules._stores_hours
+//}
+
+
+
+
+
 
 
 
