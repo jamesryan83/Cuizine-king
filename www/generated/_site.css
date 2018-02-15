@@ -937,19 +937,18 @@ input, textarea {
   #toasts p {
     position: relative;
     border-radius: 2px;
-    background-color: #238e23;
+    background-color: #3e75ff;
     min-width: 100px;
     padding: 10px 20px;
     border: 1px solid #e3e3e3;
-    border-radius: 2px;
     color: #e3e3e3;
     opacity: 0;
     margin-bottom: 10px;
     bottom: -50px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold; }
-    #toasts p.msg {
-      background-color: #3e75ff; }
+    #toasts p.success {
+      background-color: #2d982d; }
     #toasts p.error {
       background-color: #ff7373; }
 

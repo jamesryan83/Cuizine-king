@@ -45,7 +45,7 @@ body {
         border-top: 1px solid $colorBlue3;
         text-align: center;
         white-space: nowrap;
-        z-index: $zIndexNavbar;
+        z-index: $zIndexFloatingButtons;
 
         .label-button, button {
             margin: 0 20px;
