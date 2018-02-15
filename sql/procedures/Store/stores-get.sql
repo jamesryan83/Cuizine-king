@@ -2,6 +2,11 @@
 CREATE OR ALTER PROCEDURE stores_get
     @id_store INT AS
 
+    -- Check if store exists
+    IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store and is_deleted = 0) IS NULL
+        THROW 50400, 'Store not found', 1
+
+
     SELECT id_store, name, description, phone_number, email,
 
         -- addresses
@@ -12,8 +17,7 @@ CREATE OR ALTER PROCEDURE stores_get
         WHERE a.id_address = s.id_address FOR JSON PATH) AS 'address',
 
         -- hours
-        (SELECT bh.id_business_hour, bh.day, bh.dine_in_hours, bh.opens, bh.closes
-        FROM Store.business_hours bh
+        (SELECT * FROM Store.business_hours bh
         WHERE bh.id_store = @id_store FOR JSON PATH) AS 'hours',
 
         -- reviews

@@ -33,8 +33,8 @@ exports = module.exports = {
     validationRules: require("../www/js/shared/validation-rules.js"),
 
     fakeUsers: require("./fixtures/fakeusers"),
-
     fakeStores: require("./fixtures/fakestores"),
+    fakeStoreUpdate: require("./fixtures/update-store"),
 
 
     // empty database and connect

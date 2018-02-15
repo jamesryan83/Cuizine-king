@@ -25,6 +25,7 @@ mocha.addFile(path.join(__dirname, "api", "sysadmin.js"));
 mocha.addFile(path.join(__dirname, "routes", "pages.js"));
 
 mocha.addFile(path.join(__dirname, "other", "jwt.js"));
+mocha.addFile(path.join(__dirname, "other", "validation-rules.js"));
 mocha.addFile(path.join(__dirname, "other", "load-database.js"));
 
 

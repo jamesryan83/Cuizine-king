@@ -225,7 +225,6 @@ exports = module.exports = {
         outputSql += "\nGO";
         outputSql += "\n\n\n -- Create Functions\n\n";
         outputSql += functions.join("\n\n\n");
-        outputSql += "\nGO";
         outputSql += "\n\n\n -- Create Stored Procedures\n\n";
         outputSql += storedProcedures.join("\n\n\n");
 

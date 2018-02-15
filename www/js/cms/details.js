@@ -21,8 +21,8 @@ app.cms.details = {
 
 
         // address suburb typeahead
-        new app.controls.Typeahead(function (data) {
-            if (data) {
+        this.typeahead = new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
                 console.log(data);
             }
         });
@@ -98,14 +98,38 @@ app.cms.details = {
 
         // Save store details form
         this.$storeInfoEdit.on("submit", function () {
-            var data = validate.collectFormValues($("#store-edit-details-form")[0], { trim: true })
+            var data = validate.collectFormValues($("#store-info-edit")[0], { trim: true })
 
-            console.log(data)
+
+            // check hours
+            var hoursErr = app.validationRules.validateHours(data);
+            if (hoursErr) {
+                app.util.showToast(hoursErr, 5000);
+                return false;
+            }
+
+
+            // remove logo
+            delete data.logo;
+
+
+            // get postcode/suburb
+            var postcodeSuburb = self.typeahead.getValue();
+            data.suburb = postcodeSuburb.suburb;
+            data.postcode = postcodeSuburb.postcode;
 
             if (!app.util.validateInputs(data, app.validationRules.updateStoreDetails))
                 return false;
 
+            console.log(data)
 
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/store-update-details", data: data, auth: true
+            }, function (err, result) {
+                if (err) return false;
+
+                console.log("hi")
+            });
 
             return false;
         });
@@ -115,17 +139,26 @@ app.cms.details = {
     // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
+            var dayStringsLc = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
             console.log(storeData)
 
             app.storeContent.addStoreDetailsDataToPage(storeData);
 
             var address = storeData.address[0];
-//console.log(this.$storeInfoEdit)
+
             this.$storeInfoEdit[0][1].value = storeData.description;
             this.$storeInfoEdit[0][2].value = address.street_address;
-            this.$storeInfoEdit[0][3].value = address.postcode + " - " + address.suburb;
+            this.typeahead.setValue(address.postcode, address.suburb);
             this.$storeInfoEdit[0][4].value = storeData.phone_number;
             this.$storeInfoEdit[0][5].value = storeData.email;
+
+            // hours
+            Object.keys(storeData.hours).forEach(function (key, index) {
+                if (key.indexOf("hours_") === 0) {
+                    $("[name='" + key + "']").val(
+                        (storeData.hours[key] === "NULL") ? "" : storeData.hours[key]);
+                }
+            });
         }
     },
 

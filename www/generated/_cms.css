@@ -757,7 +757,9 @@ input, textarea {
             -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
             z-index: 10;
-            background-color: #111111; }
+            background-color: #111111;
+            width: 340px;
+            height: 240px; }
             #store-content > .container > .container-inner .image-store-logo > .container-inner div:not(.upload-button) label {
               font-size: 16px;
               white-space: nowrap;
@@ -918,7 +920,10 @@ input, textarea {
   @media (max-width: 490px) {
     #store-content .image-store-logo .container-inner {
       width: 300px !important;
-      height: 220px !important; } }
+      height: 220px !important; }
+      #store-content .image-store-logo .container-inner div:not(.upload-button) {
+        width: 300px !important;
+        height: 220px !important; } }
 
 #toasts {
   position: fixed;
@@ -938,7 +943,6 @@ input, textarea {
     border: 1px solid #e3e3e3;
     border-radius: 2px;
     color: #e3e3e3;
-    white-space: nowrap;
     opacity: 0;
     margin-bottom: 10px;
     bottom: -50px; }
@@ -1034,17 +1038,29 @@ input, textarea {
         text-align: center;
         font-weight: bold;
         margin-bottom: 5px; }
-      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label {
-        display: inline-block; }
-      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(1) {
-        width: 40px;
-        font-weight: bold; }
-      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(2), #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(4) {
-        width: 50px; }
-      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input {
-        width: 60px;
-        padding-left: 5px;
-        margin-right: 5px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row {
+        padding-bottom: 2px; }
+        #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label {
+          display: inline-block; }
+        #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(1) {
+          width: 40px;
+          font-weight: bold; }
+        #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(2), #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row label:nth-child(4) {
+          width: 50px; }
+        #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input {
+          width: 60px;
+          margin-right: 5px;
+          text-align: center;
+          font-weight: bold;
+          font-size: 14px; }
+          #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input::-webkit-input-placeholder {
+            color: #ff3333; }
+          #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input:-moz-placeholder {
+            color: #ff3333; }
+          #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input::-moz-placeholder {
+            color: #ff3333; }
+          #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner .hours-row input:-ms-input-placeholder {
+            color: #ff3333; }
   #page-cms-details .page-cms-floating-buttons .label-button {
     width: 130px;
     background-color: #31ac31;

@@ -77,6 +77,7 @@ exports = module.exports = {
         router.get( "/api/v1/store", storesApi.getStore.bind(storesApi));
         router.post("/api/v1/store-application", storesApi.createStoreApplication.bind(storesApi));
         router.post("/api/v1/store-update-logo", authenticateStore, upload.single("logo"), storesApi.updateLogo.bind(storesApi));
+        router.post("/api/v1/store-update-details", authenticateStore, storesApi.updateStoreDetails.bind(storesApi));
         router.get( "/api/v1/account", authenticate, peopleApi.getPerson.bind(peopleApi))
         router.get( "/api/v1/delete-user", authenticate, peopleApi.deletePerson.bind(peopleApi));
 

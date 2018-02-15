@@ -39,20 +39,8 @@ CREATE OR ALTER PROCEDURE stores_create
             THROW 50409, 'Account already taken', 1
 
 
-        -- Get postcode id
-        SELECT @id_postcode = id_postcode FROM App.postcodes
-        WHERE postcode = @postcode AND suburb = @suburb
-
-        IF @id_postcode IS NULL THROW 50400, 'Invalid postcode or suburb', 1
-
-
-        -- create store address
-        INSERT INTO App.addresses
-            (id_postcode, street_address, updated_by)
-            VALUES
-            (@id_postcode, @street_address, @id_user_doing_update)
-
-        SET @newAddressId = dbo.get_sequence_value('id_address')
+        -- Create address
+        EXEC addresses_create_or_update NULL, @postcode, @suburb, @street_address, @id_user_doing_update, @newAddressId OUTPUT
 
 
         -- create a store user
@@ -81,35 +69,7 @@ CREATE OR ALTER PROCEDURE stores_create
 
 
         -- create default store business hours
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 1, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 2, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 3, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 4, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 5, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 6, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 7, '10:00', '22:00', @id_user_doing_update)
-
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 1, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 2, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 3, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 4, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 5, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 6, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 7, '10:00', '22:00', @id_user_doing_update)
+        INSERT INTO Store.business_hours (id_store, updated_by) VALUES (@newStoreId, @id_user_doing_update)
 
     COMMIT
 

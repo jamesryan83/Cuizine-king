@@ -3,8 +3,8 @@
 app.controls.Typeahead = function (callback) {
     var self = this;
 
-    var $typeaheadInput = $("#typeahead-suburb-search");
-    var $typeaheadList = $("#typeahead-suburb-list");
+    this.$typeaheadInput = $("#typeahead-suburb-search");
+    this.$typeaheadList = $("#typeahead-suburb-list");
 
     var lookupTimeout = 500;
     var typeaheadTimeout = null;
@@ -12,40 +12,58 @@ app.controls.Typeahead = function (callback) {
     this.baseUrl = "/api/v1/location?q=";
 
 
-    // when a dropdown item is selected
+    // when a dropdown item is selected return data and url
     function selectItem (el) {
-        var result = {
-            suburb: encodeURIComponent($(el).find(".typeahead-item-suburb").text()),
+        var data = {
+            suburb: $(el).find(".typeahead-item-suburb").text(),
             postcode: $(el).find(".typeahead-item-postcode").text()
         };
 
-        $typeaheadList.hide();
+        self.$typeaheadList.hide();
 
-        if (!result.suburb || !result.postcode) {
+        self.$typeaheadInput.attr("data-suburb", "");
+        self.$typeaheadInput.attr("data-postcode", "");
+
+        if (!data.suburb || !data.postcode) {
             return callback(null);
         }
 
-        // put selected item into input
-        $typeaheadInput.val(result.postcode + " - " + result.suburb);
+        self.setValue(data.postcode, data.suburb);
 
-        return callback(result);
+        var encodedUrl = encodeURIComponent(data.suburb + "-" + data.postcode);
+        return callback(data, encodedUrl);
     }
 
 
     // list item clicked
-    $typeaheadList.on("click", function (e) {
+    this.$typeaheadList.on("click", function (e) {
         selectItem(e.target);
     });
 
 
     // input focused
-    $typeaheadInput.on("focus", function () {
+    this.$typeaheadInput.on("focus", function () {
         this.setSelectionRange(0, this.value.length);
     });
 
 
+    // input blurred
+    this.$typeaheadInput.on("blur", function () {
+        var data = self.getValue();
+
+        if (data.suburb && data.postcode) {
+            console.log("1")
+            self.setValue(data.postcode, data.suburb);
+        } else {
+            self.$typeaheadInput.attr("data-suburb", "");
+            self.$typeaheadInput.attr("data-postcode", "");
+            self.$typeaheadInput.val("");
+        }
+    });
+
+
     // when typing, generate dropdown list
-    $typeaheadInput.on("keyup", function (e) {
+    this.$typeaheadInput.on("keyup", function (e) {
         var value = $(this).val().toLowerCase();
 
         // esc
@@ -97,7 +115,7 @@ app.controls.Typeahead = function (callback) {
         clearTimeout(typeaheadTimeout);
         typeaheadTimeout = setTimeout(function () {
             if (!value) {
-                $typeaheadList.hide();
+                self.$typeaheadList.hide();
                 return;
             }
 
@@ -119,15 +137,15 @@ app.controls.Typeahead = function (callback) {
                         "</li>");
                 }
 
-                $typeaheadList.empty();
+                self.$typeaheadList.empty();
 
                 // add list items
                 if (listItems.length > 0) {
-                    $typeaheadList.append(listItems.join(""));
-                    $typeaheadList.show();
+                    self.$typeaheadList.append(listItems.join(""));
+                    self.$typeaheadList.show();
                 } else {
-                    $typeaheadList.show();
-                    $typeaheadList.append(
+                    self.$typeaheadList.show();
+                    self.$typeaheadList.append(
                         "<li class='typeahead-item'>NO RESULTS</li>");
                 }
             });
@@ -138,7 +156,7 @@ app.controls.Typeahead = function (callback) {
     // hide when click outside control
     $(window).on("mousedown", function (e) {
         if (e.target.className != "typeahead-item") {
-            $typeaheadList.hide();
+            self.$typeaheadList.hide();
         }
     });
 
@@ -146,9 +164,25 @@ app.controls.Typeahead = function (callback) {
     // hide when esc is presed
     $(window).on("keydown", function (e) {
         if (e.which == 27) {
-            $typeaheadList.hide();
+            self.$typeaheadList.hide();
         }
     });
 
 }
 
+
+// Set the value of the typeahead
+app.controls.Typeahead.prototype.setValue = function (postcode, suburb) {
+    this.$typeaheadInput.val(postcode + " - " + suburb);
+    this.$typeaheadInput.attr("data-suburb", suburb);
+    this.$typeaheadInput.attr("data-postcode", postcode);
+}
+
+
+// Get the value of the typeahead
+app.controls.Typeahead.prototype.getValue = function () {
+    return {
+        suburb: this.$typeaheadInput.attr("data-suburb"),
+        postcode: this.$typeaheadInput.attr("data-postcode")
+    };
+}

@@ -433,10 +433,34 @@ CREATE TABLE Store.business_hours
 (
 	id_business_hour INT NOT NULL CONSTRAINT DF_store_business_hours_id_business_hour DEFAULT (NEXT VALUE FOR Sequences.id_business_hour),
     id_store INT NOT NULL,
-    dine_in_hours BIT NOT NULL,
-    day TINYINT NOT NULL, -- mon=1, sun=7
-    opens NVARCHAR(8) NOT NULL,
-    closes NVARCHAR(8) NOT NULL,
+    hours_mon_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_tue_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_wed_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_thu_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_fri_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_sat_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_sun_dinein_open NVARCHAR(5) DEFAULT '10:00',
+    hours_mon_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_tue_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_wed_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_thu_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_fri_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_sat_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_sun_dinein_close NVARCHAR(5) DEFAULT '22:00',
+    hours_mon_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_tue_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_wed_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_thu_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_fri_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_sat_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_sun_delivery_open NVARCHAR(5) DEFAULT '10:00',
+    hours_mon_delivery_close NVARCHAR(5) DEFAULT '22:00',
+    hours_tue_delivery_close NVARCHAR(5) DEFAULT '22:00',
+    hours_wed_delivery_close NVARCHAR(5) DEFAULT '22:00',
+    hours_thu_delivery_close NVARCHAR(5) DEFAULT '22:00',
+    hours_fri_delivery_close NVARCHAR(5) DEFAULT '22:00',
+    hours_sat_delivery_close NVARCHAR(5) DEFAULT '22:00',
+    hours_sun_delivery_close NVARCHAR(5) DEFAULT '22:00',
     updated_by INT NOT NULL,
 	created DateTime2 NOT NULL DEFAULT GETUTCDATE(),
 	updated DateTime2 NOT NULL DEFAULT GETUTCDATE(),
@@ -561,10 +585,59 @@ BEGIN
     RETURN (SELECT CAST(current_value AS INT) FROM sys.sequences WHERE name = @name)
 END
 GO
-GO
 
 
  -- Create Stored Procedures
+
+-- Create an address
+CREATE OR ALTER PROCEDURE addresses_create_or_update
+    @id_address INT,
+    @postcode NVARCHAR(6),
+    @suburb NVARCHAR(64),
+    @street_address NVARCHAR(256),
+    @id_user_doing_update INT,
+    @newAddressId INT OUTPUT AS
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    BEGIN TRANSACTION
+
+        DECLARE @id_postcode INT
+
+        -- Get postcode id
+        SELECT TOP 1 @id_postcode = id_postcode FROM App.postcodes
+        WHERE postcode = @postcode AND suburb = @suburb
+
+        IF @id_postcode IS NULL THROW 50400, 'Invalid postcode or suburb', 1
+
+
+        -- Create address
+        IF @id_address IS NULL
+            BEGIN
+                INSERT INTO App.addresses
+                    (id_postcode, street_address, updated_by)
+                    VALUES
+                    (@id_postcode, @street_address, @id_user_doing_update)
+
+                SET @newAddressId = dbo.get_sequence_value('id_address')
+            END
+
+        -- Update address
+        ELSE
+            BEGIN
+                SET NOCOUNT OFF
+
+                UPDATE App.addresses
+                SET id_postcode = @id_postcode, street_address = @street_address, updated_by = @id_user_doing_update
+                WHERE id_address = @id_address
+
+                SET @newAddressId = @id_address
+            END
+
+    COMMIT
+GO
+
 
 -- Create a store user
 CREATE OR ALTER PROCEDURE people_create_store_user
@@ -588,8 +661,9 @@ CREATE OR ALTER PROCEDURE people_create_store_user
 
 
         -- get user type
-        SELECT @is_store_user = is_store_user, @is_system_user = is_system_user FROM App.people
-            WHERE id_person = @id_user_doing_update AND is_deleted = 0
+        SELECT TOP 1 @is_store_user = is_store_user, @is_system_user = is_system_user
+        FROM App.people
+        WHERE id_person = @id_user_doing_update AND is_deleted = 0
 
 
         -- not a store or system user
@@ -990,22 +1064,28 @@ CREATE OR ALTER PROCEDURE people_update_reset_password_token
     DECLARE @id_person AS INT
     DECLARE @is_verified AS BIT
 
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
 
-    -- check person data
-    SELECT @id_person = id_person, @is_verified = is_verified
-    FROM App.people
-    WHERE email = @email AND is_deleted = 0
+    BEGIN TRANSACTION
 
-    IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
+        -- check person data
+        SELECT @id_person = id_person, @is_verified = is_verified
+        FROM App.people
+        WHERE email = @email AND is_deleted = 0
 
-    IF @is_verified = 0 THROW 50400, 'Please verify your account', 1
+        -- IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
+        IF @id_person IS NULL THROW 50400, 'Account not found', 1
+
+        IF @is_verified = 0 THROW 50400, 'Please verify your account', 1
 
 
-    -- update token
-    UPDATE App.people
-    SET reset_password_token = @reset_password_token
-    WHERE id_person = @id_person
+        -- update token
+        UPDATE App.people
+        SET reset_password_token = @reset_password_token
+        WHERE id_person = @id_person
 
+    COMMIT
 GO
 
 
@@ -1034,11 +1114,6 @@ CREATE OR ALTER PROCEDURE store_applications_create
     SET XACT_ABORT ON
 
     BEGIN TRANSACTION
-
-        -- only system users can create store applications
-        IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
-
 
         -- create store application
         INSERT INTO Store.store_applications
@@ -1095,20 +1170,8 @@ CREATE OR ALTER PROCEDURE stores_create
             THROW 50409, 'Account already taken', 1
 
 
-        -- Get postcode id
-        SELECT @id_postcode = id_postcode FROM App.postcodes
-        WHERE postcode = @postcode AND suburb = @suburb
-
-        IF @id_postcode IS NULL THROW 50400, 'Invalid postcode or suburb', 1
-
-
-        -- create store address
-        INSERT INTO App.addresses
-            (id_postcode, street_address, updated_by)
-            VALUES
-            (@id_postcode, @street_address, @id_user_doing_update)
-
-        SET @newAddressId = dbo.get_sequence_value('id_address')
+        -- Create address
+        EXEC addresses_create_or_update NULL, @postcode, @suburb, @street_address, @id_user_doing_update, @newAddressId OUTPUT
 
 
         -- create a store user
@@ -1137,35 +1200,7 @@ CREATE OR ALTER PROCEDURE stores_create
 
 
         -- create default store business hours
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 1, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 2, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 3, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 4, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 5, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 6, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 1, 7, '10:00', '22:00', @id_user_doing_update)
-
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 1, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 2, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 3, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 4, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 5, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 6, '10:00', '22:00', @id_user_doing_update)
-        INSERT INTO Store.business_hours (id_store, dine_in_hours, day, opens, closes, updated_by)
-            VALUES (@newStoreId, 0, 7, '10:00', '22:00', @id_user_doing_update)
+        INSERT INTO Store.business_hours (id_store, updated_by) VALUES (@newStoreId, @id_user_doing_update)
 
     COMMIT
 
@@ -1206,9 +1241,126 @@ CREATE OR ALTER PROCEDURE stores_delete
 GO
 
 
+-- Update store details
+CREATE OR ALTER PROCEDURE stores_details_update
+    @id_store INT,
+    @description NVARCHAR(1024),
+    @email NVARCHAR(256),
+    @phone_number NVARCHAR(32),
+    @street_address NVARCHAR(256),
+    @postcode NVARCHAR(6),
+    @suburb NVARCHAR(64),
+    @hours_mon_dinein_open NVARCHAR(5),
+    @hours_tue_dinein_open NVARCHAR(5),
+    @hours_wed_dinein_open NVARCHAR(5),
+    @hours_thu_dinein_open NVARCHAR(5),
+    @hours_fri_dinein_open NVARCHAR(5),
+    @hours_sat_dinein_open NVARCHAR(5),
+    @hours_sun_dinein_open NVARCHAR(5),
+    @hours_mon_dinein_close NVARCHAR(5),
+    @hours_tue_dinein_close NVARCHAR(5),
+    @hours_wed_dinein_close NVARCHAR(5),
+    @hours_thu_dinein_close NVARCHAR(5),
+    @hours_fri_dinein_close NVARCHAR(5),
+    @hours_sat_dinein_close NVARCHAR(5),
+    @hours_sun_dinein_close NVARCHAR(5),
+    @hours_mon_delivery_open NVARCHAR(5),
+    @hours_tue_delivery_open NVARCHAR(5),
+    @hours_wed_delivery_open NVARCHAR(5),
+    @hours_thu_delivery_open NVARCHAR(5),
+    @hours_fri_delivery_open NVARCHAR(5),
+    @hours_sat_delivery_open NVARCHAR(5),
+    @hours_sun_delivery_open NVARCHAR(5),
+    @hours_mon_delivery_close NVARCHAR(5),
+    @hours_tue_delivery_close NVARCHAR(5),
+    @hours_wed_delivery_close NVARCHAR(5),
+    @hours_thu_delivery_close NVARCHAR(5),
+    @hours_fri_delivery_close NVARCHAR(5),
+    @hours_sat_delivery_close NVARCHAR(5),
+    @hours_sun_delivery_close NVARCHAR(5),
+    @id_user_doing_update INT AS
+
+    SET NOCOUNT ON
+    SET XACT_ABORT ON
+
+    DECLARE @id_store_temp INT
+    DECLARE @id_address INT
+    DECLARE @is_store_owner BIT
+
+    BEGIN TRANSACTION
+
+        -- Check if store exists
+        SELECT TOP 1 @id_store_temp = id_store, @id_address = id_address
+        FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
+
+        IF @id_store_temp IS NULL THROW 50400, 'Store not found', 1
+
+
+        -- Check if a member of the store
+        IF (SELECT TOP 1 id_person FROM Store.stores_people
+            WHERE id_store = @id_store AND id_person = @id_user_doing_update) IS NULL
+            THROW 50401, 'Not authorized', 1
+
+
+        -- only store and system users can update stores
+        IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_store_user = 1 AND is_deleted = 0) IS NULL
+            THROW 50401, 'Not authorized', 1
+
+
+        -- Create address
+        EXEC addresses_create_or_update @id_address, @postcode, @suburb, @street_address, @id_user_doing_update, @id_address OUTPUT
+
+
+        -- Update store
+        UPDATE Store.stores SET description = @description, phone_number = @phone_number, email = @email, updated_by = @id_user_doing_update
+            WHERE id_store = @id_store
+
+
+        -- Update business hours
+        UPDATE Store.business_hours SET
+            hours_mon_dinein_open = @hours_mon_dinein_open,
+            hours_tue_dinein_open = @hours_tue_dinein_open,
+            hours_wed_dinein_open = @hours_wed_dinein_open,
+            hours_thu_dinein_open = @hours_thu_dinein_open,
+            hours_fri_dinein_open = @hours_fri_dinein_open,
+            hours_sat_dinein_open = @hours_sat_dinein_open,
+            hours_sun_dinein_open = @hours_sun_dinein_open,
+            hours_mon_dinein_close = @hours_mon_dinein_close,
+            hours_tue_dinein_close = @hours_tue_dinein_close,
+            hours_wed_dinein_close = @hours_wed_dinein_close,
+            hours_thu_dinein_close = @hours_thu_dinein_close,
+            hours_fri_dinein_close = @hours_fri_dinein_close,
+            hours_sat_dinein_close = @hours_sat_dinein_close,
+            hours_sun_dinein_close = @hours_sun_dinein_close,
+            hours_mon_delivery_open = @hours_mon_delivery_open,
+            hours_tue_delivery_open = @hours_tue_delivery_open,
+            hours_wed_delivery_open = @hours_wed_delivery_open,
+            hours_thu_delivery_open = @hours_thu_delivery_open,
+            hours_fri_delivery_open = @hours_fri_delivery_open,
+            hours_sat_delivery_open = @hours_sat_delivery_open,
+            hours_sun_delivery_open = @hours_sun_delivery_open,
+            hours_mon_delivery_close = @hours_mon_delivery_close,
+            hours_tue_delivery_close = @hours_tue_delivery_close,
+            hours_wed_delivery_close = @hours_wed_delivery_close,
+            hours_thu_delivery_close = @hours_thu_delivery_close,
+            hours_fri_delivery_close = @hours_fri_delivery_close,
+            hours_sat_delivery_close = @hours_sat_delivery_close,
+            hours_sun_delivery_close = @hours_sun_delivery_close,
+            updated_by = @id_user_doing_update
+            WHERE id_store = @id_store
+
+    COMMIT
+GO
+
+
 -- Get a store
 CREATE OR ALTER PROCEDURE stores_get
     @id_store INT AS
+
+    -- Check if store exists
+    IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store and is_deleted = 0) IS NULL
+        THROW 50400, 'Store not found', 1
+
 
     SELECT id_store, name, description, phone_number, email,
 
@@ -1220,8 +1372,7 @@ CREATE OR ALTER PROCEDURE stores_get
         WHERE a.id_address = s.id_address FOR JSON PATH) AS 'address',
 
         -- hours
-        (SELECT bh.id_business_hour, bh.day, bh.dine_in_hours, bh.opens, bh.closes
-        FROM Store.business_hours bh
+        (SELECT * FROM Store.business_hours bh
         WHERE bh.id_store = @id_store FOR JSON PATH) AS 'hours',
 
         -- reviews
@@ -1271,10 +1422,9 @@ CREATE OR ALTER PROCEDURE stores_undelete
 
     BEGIN TRANSACTION
 
-        -- Get store email
-        SELECT @email = email FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
-
-        IF @email IS NULL THROW 50400, 'Store not found', 1
+        -- Check if store exists
+        IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store and is_deleted = 0) IS NULL
+            THROW 50400, 'Store not found', 1
 
 
         -- Set store deleted

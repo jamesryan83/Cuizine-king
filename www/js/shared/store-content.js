@@ -211,6 +211,7 @@ app.storeContent = {
         }, function (err, result) {
             if (err) return;
 
+            result.data.hours = result.data.hours[0];
             self.storeData = result.data; // cache storeData
 
             return callback(self.storeData);

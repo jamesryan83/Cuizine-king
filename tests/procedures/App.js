@@ -23,6 +23,8 @@ userSystem.id_user_doing_update = config.dbConstants.adminUsers.system;
 fakeStore.id_user_doing_update = config.dbConstants.adminUsers.system;
 
 
+
+
 describe("PROCEDURES - APP", function () {
 
 
@@ -33,6 +35,96 @@ describe("PROCEDURES - APP", function () {
             done();
         });
     });
+
+
+
+
+    // -------- Addresses --------
+
+    function getAddressData () {
+        return {
+            postcode: "4171",
+            suburb: "Balmoral",
+            street_address: "test address",
+            id_user_doing_update: config.dbConstants.adminUsers.system
+        }
+    }
+
+
+    it("#addresses_create_or_update error message for invalid postcode", function (done) {
+        var testdata = getAddressData();
+        testdata.postcode = "9999";
+
+        dbApp.addresses_create_or_update(testdata, function (err, outputs) {
+            assert.equal(err.message, "Invalid postcode or suburb");
+            done();
+        });
+    });
+
+
+    it("#addresses_create_or_update error message for invalid suburb", function (done) {
+        var testdata = getAddressData();
+        testdata.postcode = "BlahBlahBlah";
+
+        dbApp.addresses_create_or_update(testdata, function (err, outputs) {
+            assert.equal(err.message, "Invalid postcode or suburb");
+            done();
+        });
+    });
+
+
+    it("#addresses_create_or_update creates an address", function (done) {
+        var testdata = getAddressData();
+
+        dbApp.addresses_create_or_update(testdata, function (err, outputs) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            var query =
+                "SELECT * FROM App.addresses AS a " +
+                "JOIN App.postcodes ON a.id_postcode = App.postcodes.id_postcode " +
+                "WHERE id_address = " + outputs.newAddressId;
+
+            database.executeQuery(query, function (err, result) {
+                if (err) return done(new Error(JSON.stringify(err)));
+
+                var address = result.recordset[0];
+                assert.equal(address.street_address, testdata.street_address);
+                assert.equal(address.postcode, testdata.postcode);
+                assert.equal(address.suburb, testdata.suburb);
+                assert.equal(address.state, "QLD");
+
+                done();
+            });
+        });
+    });
+
+
+    it("#addresses_create_or_update updates an address", function (done) {
+        var testdata = getAddressData();
+        testdata.id_address = 2;
+
+        dbApp.addresses_create_or_update(testdata, function (err, outputs) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            var query =
+                "SELECT * FROM App.addresses AS a " +
+                "JOIN App.postcodes ON a.id_postcode = App.postcodes.id_postcode " +
+                "WHERE id_address = " + outputs.newAddressId;
+
+            database.executeQuery(query, function (err, result) {
+                if (err) return done(new Error(JSON.stringify(err)));
+
+                var address = result.recordset[0];
+                assert.equal(address.street_address, testdata.street_address);
+                assert.equal(address.postcode, testdata.postcode);
+                assert.equal(address.suburb, testdata.suburb);
+                assert.equal(address.state, "QLD");
+
+                done();
+            });
+        });
+    });
+
 
 
 
@@ -253,11 +345,21 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_id returns person from id", function (done) {
-        console.log("id: " + userWebsite.id_person);
         dbApp.people_get_by_id({ id_person: userWebsite.id_person }, function (err, person) {
             if (err) return done(new Error(JSON.stringify(err)));
 
             assert.equal(person.email, userWebsite.email);
+            done();
+        });
+    });
+
+
+    it("#people_get_by_id returns store user with store id", function (done) {
+        dbApp.people_get_by_id({ id_person: userStore.id_person }, function (err, person) {
+            if (err) return done(new Error(JSON.stringify(err)));
+
+            assert.ok(person.id_store > 0);
+            assert.equal(person.id_store, userStore.id_store);
             done();
         });
     });

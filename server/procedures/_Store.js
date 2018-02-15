@@ -70,6 +70,51 @@ exports = module.exports = {
 	},
 
 
+	// Store.stores_details_update
+	stores_details_update: function (inputs, callback) {
+		database.pool.request()
+			.input("id_store", sql.Int, inputs.id_store)
+			.input("description", sql.NVarChar, inputs.description)
+			.input("email", sql.NVarChar, inputs.email)
+			.input("phone_number", sql.NVarChar, inputs.phone_number)
+			.input("street_address", sql.NVarChar, inputs.street_address)
+			.input("postcode", sql.NVarChar, inputs.postcode)
+			.input("suburb", sql.NVarChar, inputs.suburb)
+			.input("hours_mon_dinein_open", sql.NVarChar, inputs.hours_mon_dinein_open)
+			.input("hours_tue_dinein_open", sql.NVarChar, inputs.hours_tue_dinein_open)
+			.input("hours_wed_dinein_open", sql.NVarChar, inputs.hours_wed_dinein_open)
+			.input("hours_thu_dinein_open", sql.NVarChar, inputs.hours_thu_dinein_open)
+			.input("hours_fri_dinein_open", sql.NVarChar, inputs.hours_fri_dinein_open)
+			.input("hours_sat_dinein_open", sql.NVarChar, inputs.hours_sat_dinein_open)
+			.input("hours_sun_dinein_open", sql.NVarChar, inputs.hours_sun_dinein_open)
+			.input("hours_mon_dinein_close", sql.NVarChar, inputs.hours_mon_dinein_close)
+			.input("hours_tue_dinein_close", sql.NVarChar, inputs.hours_tue_dinein_close)
+			.input("hours_wed_dinein_close", sql.NVarChar, inputs.hours_wed_dinein_close)
+			.input("hours_thu_dinein_close", sql.NVarChar, inputs.hours_thu_dinein_close)
+			.input("hours_fri_dinein_close", sql.NVarChar, inputs.hours_fri_dinein_close)
+			.input("hours_sat_dinein_close", sql.NVarChar, inputs.hours_sat_dinein_close)
+			.input("hours_sun_dinein_close", sql.NVarChar, inputs.hours_sun_dinein_close)
+			.input("hours_mon_delivery_open", sql.NVarChar, inputs.hours_mon_delivery_open)
+			.input("hours_tue_delivery_open", sql.NVarChar, inputs.hours_tue_delivery_open)
+			.input("hours_wed_delivery_open", sql.NVarChar, inputs.hours_wed_delivery_open)
+			.input("hours_thu_delivery_open", sql.NVarChar, inputs.hours_thu_delivery_open)
+			.input("hours_fri_delivery_open", sql.NVarChar, inputs.hours_fri_delivery_open)
+			.input("hours_sat_delivery_open", sql.NVarChar, inputs.hours_sat_delivery_open)
+			.input("hours_sun_delivery_open", sql.NVarChar, inputs.hours_sun_delivery_open)
+			.input("hours_mon_delivery_close", sql.NVarChar, inputs.hours_mon_delivery_close)
+			.input("hours_tue_delivery_close", sql.NVarChar, inputs.hours_tue_delivery_close)
+			.input("hours_wed_delivery_close", sql.NVarChar, inputs.hours_wed_delivery_close)
+			.input("hours_thu_delivery_close", sql.NVarChar, inputs.hours_thu_delivery_close)
+			.input("hours_fri_delivery_close", sql.NVarChar, inputs.hours_fri_delivery_close)
+			.input("hours_sat_delivery_close", sql.NVarChar, inputs.hours_sat_delivery_close)
+			.input("hours_sun_delivery_close", sql.NVarChar, inputs.hours_sun_delivery_close)
+			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
+			.execute(config.mssql.database + ".dbo.stores_details_update", function (err, result) {
+				return resultHandler.handle("stores_details_update", err, result, callback, inputs);
+		});
+	},
+
+
 	// Store.stores_get
 	stores_get: function (inputs, callback) {
 		database.pool.request()

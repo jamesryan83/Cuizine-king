@@ -4,20 +4,7 @@ SET NOCOUNT ON
 SET XACT_ABORT ON
 
 BEGIN TRANSACTION
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,1,'9am','11pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,2,'6am','1am',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,3,'7am','10pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,4,'9am','9pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,5,'10am','9pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,6,'8am','1am',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,1,7,'9am','10pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,1,'7am','10pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,2,'6am','9pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,3,'8am','1am',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,4,'10am','12am',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,5,'6am','9pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,6,'6am','11pm',3)
-	INSERT INTO Store.business_hours(id_store,dine_in_hours,day,opens,closes,updated_by) VALUES (1,0,7,'6am','9pm',3)
+	INSERT INTO Store.business_hours(id_store,hours_mon_dinein_open,hours_mon_dinein_close,hours_tue_dinein_open,hours_tue_dinein_close,hours_wed_dinein_open,hours_wed_dinein_close,hours_thu_dinein_open,hours_thu_dinein_close,hours_fri_dinein_open,hours_fri_dinein_close,hours_sat_dinein_open,hours_sat_dinein_close,hours_sun_dinein_open,hours_sun_dinein_close,hours_mon_delivery_open,hours_mon_delivery_close,hours_tue_delivery_open,hours_tue_delivery_close,hours_wed_delivery_open,hours_wed_delivery_close,hours_thu_delivery_open,hours_thu_delivery_close,hours_fri_delivery_open,hours_fri_delivery_close,hours_sat_delivery_open,hours_sat_delivery_close,hours_sun_delivery_open,hours_sun_delivery_close,updated_by) VALUES (1,'07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00','NULL','NULL','07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00','07:00','22:00',3)
 COMMIT
 
 GO

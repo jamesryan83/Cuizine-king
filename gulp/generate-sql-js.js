@@ -76,6 +76,7 @@ exports = module.exports = {
                         case "SMALLMONEY": sqlType = "SmallMoney"; break;
                         case "TINYINT": sqlType = "TinyInt"; break;
                         case "NVARCHAR": sqlType = "NVarChar"; break;
+//                        case "TIME": sqlType = "Time(0)"; break; // don't use time, it's buggy
                         case "DATETIME2": sqlType = "DateTime2"; break;
                         case "GEOGRAPHY": sqlType = "Geography"; break;
                     }

@@ -10,6 +10,10 @@ exports = module.exports = {
         if (err) return this.returnError(err, callback);
 
         switch (procedure) {
+            case "addresses_create_or_update":
+                return this.returnOutput(["newAddressId"], result, callback);
+                break;
+
             case "people_create_web_user":
             case "people_create_store_user":
             case "people_create_system_user":
@@ -61,6 +65,7 @@ exports = module.exports = {
             case "people_update_reset_password_token":
             case "people_delete":
             case "reviews_get":
+            case "stores_details_update":
             case "stores_delete":
             case "stores_undelete":
             default:

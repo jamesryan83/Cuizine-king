@@ -283,10 +283,7 @@ describe("API - AUTH", function () {
     });
 
 
-
-
-
-
+    // Test Logout
     it("#logout returns message for no user", function (done) {
         var jwt = testutil.createJwtSync(123123123);
 
@@ -483,9 +480,6 @@ describe("API - AUTH", function () {
     });
 
 
-
-
-
     it("#resetPassword changes password in db", function (done) {
 
         // get reset password token from db
@@ -511,14 +505,5 @@ describe("API - AUTH", function () {
                 });
         });
     });
-
-
-
-
-
-
-
-
-
 
 });

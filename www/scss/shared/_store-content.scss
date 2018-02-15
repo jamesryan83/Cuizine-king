@@ -44,6 +44,8 @@
                         transform: translateX(-50%);
                         z-index: 10;
                         background-color: $colorGray13;
+                        width: $storeLogoWidth1;
+                        height: $storeLogoHeight1;
 
                         label {
                             font-size: 16px;
@@ -358,6 +360,11 @@
             .container-inner {
                 width: 300px !important;
                 height: 220px !important;
+
+                div:not(.upload-button) {
+                    width: 300px !important;
+                    height: 220px !important;
+                }
             }
         }
 

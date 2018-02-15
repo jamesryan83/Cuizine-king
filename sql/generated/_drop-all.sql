@@ -160,6 +160,7 @@ GO
 
  -- Drop Procedures
 
+DROP PROCEDURE IF EXISTS addresses_create_or_update
 DROP PROCEDURE IF EXISTS people_create_store_user
 DROP PROCEDURE IF EXISTS people_create_system_user
 DROP PROCEDURE IF EXISTS people_create_web_user
@@ -176,6 +177,7 @@ DROP PROCEDURE IF EXISTS reviews_get
 DROP PROCEDURE IF EXISTS store_applications_create
 DROP PROCEDURE IF EXISTS stores_create
 DROP PROCEDURE IF EXISTS stores_delete
+DROP PROCEDURE IF EXISTS stores_details_update
 DROP PROCEDURE IF EXISTS stores_get
 DROP PROCEDURE IF EXISTS stores_undelete
 GO

@@ -81,15 +81,23 @@ exports = module.exports = {
     },
 
 
-	// Update a store
-	updateStore: function (req, res) {
+	// Update store details
+	updateStoreDetails: function (req, res) {
 		var b = req.body;
         var self = this;
 
-        if (this.router.validateInputs(req, res, b, global.validationRules.updateStore))
+        b.id_store = res.locals.person.id_store;
+        b.id_user_doing_update = res.locals.person.id_person;
+
+        // validate hours
+        var errMsg = global.validationRules.validateHours(b);
+        if (errMsg) return self.router.sendJson(res, null, errMsg, 400);
+
+        // validate other stuff
+        if (this.router.validateInputs(req, res, b, global.validationRules.updateStoreDetails))
             return;
 
-        storeDB.stores_update(b, function (err, result) {
+        storeDB.stores_details_update(b, function (err, result) {
 			if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             return self.router.sendJson(res, result);

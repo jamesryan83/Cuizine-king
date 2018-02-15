@@ -9,9 +9,9 @@ app.site.home = {
 
 
         // suburb typeahead
-        new app.controls.Typeahead(function (data) {
-            if (data) {
-                app.routerBase.loadPageForRoute("/location/" + data.suburb + "-" + data.postcode, "site");
+        new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
+                app.routerBase.loadPageForRoute("/location/" + url, "site");
             }
         });
 

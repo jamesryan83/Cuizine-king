@@ -12,11 +12,6 @@ CREATE OR ALTER PROCEDURE store_applications_create
 
     BEGIN TRANSACTION
 
-        -- only system users can create store applications
-        IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
-
-
         -- create store application
         INSERT INTO Store.store_applications
             (name, email, message, updated_by)

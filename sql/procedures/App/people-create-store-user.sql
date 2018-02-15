@@ -20,8 +20,9 @@ CREATE OR ALTER PROCEDURE people_create_store_user
 
 
         -- get user type
-        SELECT @is_store_user = is_store_user, @is_system_user = is_system_user FROM App.people
-            WHERE id_person = @id_user_doing_update AND is_deleted = 0
+        SELECT TOP 1 @is_store_user = is_store_user, @is_system_user = is_system_user
+        FROM App.people
+        WHERE id_person = @id_user_doing_update AND is_deleted = 0
 
 
         -- not a store or system user

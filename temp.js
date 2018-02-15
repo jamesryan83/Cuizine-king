@@ -1,3 +1,4 @@
+
 // https://docs.microsoft.com/en-us/rest/api/
 // https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal
 

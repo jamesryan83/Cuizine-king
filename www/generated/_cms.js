@@ -165,8 +165,8 @@ app.cms.details = {
 
 
         // address suburb typeahead
-        new app.controls.Typeahead(function (data) {
-            if (data) {
+        this.typeahead = new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
                 console.log(data);
             }
         });
@@ -242,14 +242,38 @@ app.cms.details = {
 
         // Save store details form
         this.$storeInfoEdit.on("submit", function () {
-            var data = validate.collectFormValues($("#store-edit-details-form")[0], { trim: true })
+            var data = validate.collectFormValues($("#store-info-edit")[0], { trim: true })
 
-            console.log(data)
+
+            // check hours
+            var hoursErr = app.validationRules.validateHours(data);
+            if (hoursErr) {
+                app.util.showToast(hoursErr, 5000);
+                return false;
+            }
+
+
+            // remove logo
+            delete data.logo;
+
+
+            // get postcode/suburb
+            var postcodeSuburb = self.typeahead.getValue();
+            data.suburb = postcodeSuburb.suburb;
+            data.postcode = postcodeSuburb.postcode;
 
             if (!app.util.validateInputs(data, app.validationRules.updateStoreDetails))
                 return false;
 
+            console.log(data)
 
+            app.util.ajaxRequest({
+                method: "POST", url: "/api/v1/store-update-details", data: data, auth: true
+            }, function (err, result) {
+                if (err) return false;
+
+                console.log("hi")
+            });
 
             return false;
         });
@@ -259,17 +283,26 @@ app.cms.details = {
     // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
+            var dayStringsLc = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
             console.log(storeData)
 
             app.storeContent.addStoreDetailsDataToPage(storeData);
 
             var address = storeData.address[0];
-//console.log(this.$storeInfoEdit)
+
             this.$storeInfoEdit[0][1].value = storeData.description;
             this.$storeInfoEdit[0][2].value = address.street_address;
-            this.$storeInfoEdit[0][3].value = address.postcode + " - " + address.suburb;
+            this.typeahead.setValue(address.postcode, address.suburb);
             this.$storeInfoEdit[0][4].value = storeData.phone_number;
             this.$storeInfoEdit[0][5].value = storeData.email;
+
+            // hours
+            Object.keys(storeData.hours).forEach(function (key, index) {
+                if (key.indexOf("hours_") === 0) {
+                    $("[name='" + key + "']").val(
+                        (storeData.hours[key] === "NULL") ? "" : storeData.hours[key]);
+                }
+            });
         }
     },
 
@@ -870,6 +903,7 @@ app.storeContent = {
         }, function (err, result) {
             if (err) return;
 
+            result.data.hours = result.data.hours[0];
             self.storeData = result.data; // cache storeData
 
             return callback(self.storeData);
@@ -879,6 +913,10 @@ app.storeContent = {
 
 }
 
+
+if (typeof app === "undefined") {
+    var app = {};
+}
 
 
 app.util = {
@@ -1157,6 +1195,8 @@ app.util = {
     },
 
 };
+
+
 // Validation
 // https://validatejs.org/
 
@@ -1215,10 +1255,6 @@ app.validationRules = {
     _postcodes_suburb:                       { presence: true, length: { minimum: 1, maximum: 64 }},
     _postcodes_state:                        { presence: true, length: { minimum: 1, maximum: 32 }},
 
-    _business_hours_day:                     { presence: true, numericality: { onlyInteger: true, greaterThan: 0, lessThan: 8 }},
-    _business_hours_opens:                   { presence: true, length: { maximum: 8 }},
-    _business_hours_closes:                  { presence: true, length: { maximum: 8 }},
-
     _reviews_title:                          { presence: true, length: { minimum: 2, maximum: 128 }},
     _reviews_review_optional:                { length: { maximum: 512 }},
     _reviews_rating:                         { presence: true, numericality: { onlyInteger: true, greaterThan: 0, lessThan: 6 }},
@@ -1230,7 +1266,7 @@ app.validationRules = {
     _stores_bank_bsb:                        { presence: true, length: { minimum: 6, maximum: 16 }},
     _stores_bank_account_name:               { presence: true, length: { minimum: 2, maximum: 128 }},
     _stores_bank_account_number:             { presence: true, length: { minimum: 2, maximum: 32 }},
-    _stores_hours:                           { presence: true, length: { minimum: 4, maximum: 5 }},
+    _stores_hours:                           { length: { maximum: 5 }},
 
     _product_extras_name:                    { presence: true, length: { maximum: 128 }},
 
@@ -1367,8 +1403,44 @@ app.validationRules.getStore = {
 }
 
 
+// Validates a business hours object
+// checks time is HH:MM and gives if only one open/close time is null
+app.validationRules.validateHours = function (data) {
+    if (!data || Object.keys(data).length === 0) {
+        return "Data missing";
+    }
 
+    var keys = Object.keys(data);
 
+    for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf("hours_") === 0) {
+
+            if (data[keys[i]]) {
+                if (data[keys[i]].length !== 5 || !data[keys[i]].match(/\d{2}:\d{2}/)) {
+                    var temp = keys[i].split("_");
+                    var text = temp[1] + " " + temp[2] + " " + temp[3];
+                    text = app.util.toTitleCase(text);
+                    return "Error in Hours " + text + ".  Must be HH:MM";
+                }
+
+            // both times have to be null
+            } else {
+                var temp = keys[i].split("_");
+                var check = temp[3] === "open" ? "close" : "open";
+
+                var text = temp[1] + " " + temp[2] + " " + temp[3];
+                text = app.util.toTitleCase(text);
+                temp = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + check;
+
+                if (data[temp]) { // check matching time
+                    return "Error in Hours " + text + ".  Open and Close must be both times or both closed";
+                }
+            }
+        }
+    }
+
+    return null;
+}
 
 
 
@@ -1381,39 +1453,6 @@ app.validationRules.getStore = {
 //    bank_account_name: app.validationRules._stores_bank_account_name,
 //    bank_account_number: app.validationRules._stores_bank_account_number
 //}
-
-//app.validationRules.storeUpdateHours = {
-//    hours_mon_dinein_open: app.validationRules._stores_hours,
-//    hours_tue_dinein_open: app.validationRules._stores_hours,
-//    hours_wed_dinein_open: app.validationRules._stores_hours,
-//    hours_thu_dinein_open: app.validationRules._stores_hours,
-//    hours_fri_dinein_open: app.validationRules._stores_hours,
-//    hours_sat_dinein_open: app.validationRules._stores_hours,
-//    hours_sun_dinein_open: app.validationRules._stores_hours,
-//    hours_mon_dinein_close: app.validationRules._stores_hours,
-//    hours_tue_dinein_close: app.validationRules._stores_hours,
-//    hours_wed_dinein_close: app.validationRules._stores_hours,
-//    hours_thu_dinein_close: app.validationRules._stores_hours,
-//    hours_fri_dinein_close: app.validationRules._stores_hours,
-//    hours_sat_dinein_close: app.validationRules._stores_hours,
-//    hours_sun_dinein_close: app.validationRules._stores_hours,
-//    hours_mon_delivery_open: app.validationRules._stores_hours,
-//    hours_tue_delivery_open: app.validationRules._stores_hours,
-//    hours_wed_delivery_open: app.validationRules._stores_hours,
-//    hours_thu_delivery_open: app.validationRules._stores_hours,
-//    hours_fri_delivery_open: app.validationRules._stores_hours,
-//    hours_sat_delivery_open: app.validationRules._stores_hours,
-//    hours_sun_delivery_open: app.validationRules._stores_hours,
-//    hours_mon_delivery_close: app.validationRules._stores_hours,
-//    hours_tue_delivery_close: app.validationRules._stores_hours,
-//    hours_wed_delivery_close: app.validationRules._stores_hours,
-//    hours_thu_delivery_close: app.validationRules._stores_hours,
-//    hours_fri_delivery_close: app.validationRules._stores_hours,
-//    hours_sat_delivery_close: app.validationRules._stores_hours,
-//    hours_sun_delivery_close: app.validationRules._stores_hours
-//}
-
-
 
 
 
@@ -1621,8 +1660,8 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
 app.controls.Typeahead = function (callback) {
     var self = this;
 
-    var $typeaheadInput = $("#typeahead-suburb-search");
-    var $typeaheadList = $("#typeahead-suburb-list");
+    this.$typeaheadInput = $("#typeahead-suburb-search");
+    this.$typeaheadList = $("#typeahead-suburb-list");
 
     var lookupTimeout = 500;
     var typeaheadTimeout = null;
@@ -1630,40 +1669,58 @@ app.controls.Typeahead = function (callback) {
     this.baseUrl = "/api/v1/location?q=";
 
 
-    // when a dropdown item is selected
+    // when a dropdown item is selected return data and url
     function selectItem (el) {
-        var result = {
-            suburb: encodeURIComponent($(el).find(".typeahead-item-suburb").text()),
+        var data = {
+            suburb: $(el).find(".typeahead-item-suburb").text(),
             postcode: $(el).find(".typeahead-item-postcode").text()
         };
 
-        $typeaheadList.hide();
+        self.$typeaheadList.hide();
 
-        if (!result.suburb || !result.postcode) {
+        self.$typeaheadInput.attr("data-suburb", "");
+        self.$typeaheadInput.attr("data-postcode", "");
+
+        if (!data.suburb || !data.postcode) {
             return callback(null);
         }
 
-        // put selected item into input
-        $typeaheadInput.val(result.postcode + " - " + result.suburb);
+        self.setValue(data.postcode, data.suburb);
 
-        return callback(result);
+        var encodedUrl = encodeURIComponent(data.suburb + "-" + data.postcode);
+        return callback(data, encodedUrl);
     }
 
 
     // list item clicked
-    $typeaheadList.on("click", function (e) {
+    this.$typeaheadList.on("click", function (e) {
         selectItem(e.target);
     });
 
 
     // input focused
-    $typeaheadInput.on("focus", function () {
+    this.$typeaheadInput.on("focus", function () {
         this.setSelectionRange(0, this.value.length);
     });
 
 
+    // input blurred
+    this.$typeaheadInput.on("blur", function () {
+        var data = self.getValue();
+
+        if (data.suburb && data.postcode) {
+            console.log("1")
+            self.setValue(data.postcode, data.suburb);
+        } else {
+            self.$typeaheadInput.attr("data-suburb", "");
+            self.$typeaheadInput.attr("data-postcode", "");
+            self.$typeaheadInput.val("");
+        }
+    });
+
+
     // when typing, generate dropdown list
-    $typeaheadInput.on("keyup", function (e) {
+    this.$typeaheadInput.on("keyup", function (e) {
         var value = $(this).val().toLowerCase();
 
         // esc
@@ -1715,7 +1772,7 @@ app.controls.Typeahead = function (callback) {
         clearTimeout(typeaheadTimeout);
         typeaheadTimeout = setTimeout(function () {
             if (!value) {
-                $typeaheadList.hide();
+                self.$typeaheadList.hide();
                 return;
             }
 
@@ -1737,15 +1794,15 @@ app.controls.Typeahead = function (callback) {
                         "</li>");
                 }
 
-                $typeaheadList.empty();
+                self.$typeaheadList.empty();
 
                 // add list items
                 if (listItems.length > 0) {
-                    $typeaheadList.append(listItems.join(""));
-                    $typeaheadList.show();
+                    self.$typeaheadList.append(listItems.join(""));
+                    self.$typeaheadList.show();
                 } else {
-                    $typeaheadList.show();
-                    $typeaheadList.append(
+                    self.$typeaheadList.show();
+                    self.$typeaheadList.append(
                         "<li class='typeahead-item'>NO RESULTS</li>");
                 }
             });
@@ -1756,7 +1813,7 @@ app.controls.Typeahead = function (callback) {
     // hide when click outside control
     $(window).on("mousedown", function (e) {
         if (e.target.className != "typeahead-item") {
-            $typeaheadList.hide();
+            self.$typeaheadList.hide();
         }
     });
 
@@ -1764,9 +1821,25 @@ app.controls.Typeahead = function (callback) {
     // hide when esc is presed
     $(window).on("keydown", function (e) {
         if (e.which == 27) {
-            $typeaheadList.hide();
+            self.$typeaheadList.hide();
         }
     });
 
 }
 
+
+// Set the value of the typeahead
+app.controls.Typeahead.prototype.setValue = function (postcode, suburb) {
+    this.$typeaheadInput.val(postcode + " - " + suburb);
+    this.$typeaheadInput.attr("data-suburb", suburb);
+    this.$typeaheadInput.attr("data-postcode", postcode);
+}
+
+
+// Get the value of the typeahead
+app.controls.Typeahead.prototype.getValue = function () {
+    return {
+        suburb: this.$typeaheadInput.attr("data-suburb"),
+        postcode: this.$typeaheadInput.attr("data-postcode")
+    };
+}

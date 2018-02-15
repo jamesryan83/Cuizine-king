@@ -1,4 +1,8 @@
 
+if (typeof app === "undefined") {
+    var app = {};
+}
+
 
 app.util = {
 
@@ -276,3 +280,8 @@ app.util = {
     },
 
 };
+
+
+if (typeof module !== 'undefined' && this.module !== module) {
+    exports = module.exports = app.util;
+}

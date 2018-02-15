@@ -6,7 +6,7 @@ var supertest = require("supertest");
 var testutil = require("../test-util");
 var config = require("../../server/config");
 var database = require("../../server/database/database");
-
+var storesDB = require("../../server/procedures/_Store");
 
 
 
@@ -21,6 +21,18 @@ describe("API - Stores", function () {
     });
 
 
+
+    // ------- Reviews -------
+
+    it.skip("#reviews", function (done) {
+
+    });
+
+
+
+
+    // ------- Create a store -------
+
     function createStore (data, status, jwt, callback) {
         supertest(testutil.supertestUrl)
             .post("/api/sysadmin/create-store")
@@ -28,7 +40,7 @@ describe("API - Stores", function () {
             .set("authorization", "Bearer " + jwt)
             .send(data)
             .expect("Content-Type", "application/json; charset=utf-8")
-//            .expect(status)
+            .expect(status)
             .end(function (err, res) {
                 return callback(err, res)
         });
@@ -84,6 +96,12 @@ describe("API - Stores", function () {
     });
 
 
+
+
+
+
+    // ------- Store application -------
+
     it("#createStoreApplication creates a store application", function (done) {
         supertest(testutil.supertestUrl)
             .post("/api/v1/store-application")
@@ -100,11 +118,20 @@ describe("API - Stores", function () {
     });
 
 
+
+
+
+
+
+
+
+
+    // ------- Get Store -------
+
     it("#getStore returns a message when store not found", function (done) {
         supertest(testutil.supertestUrl)
             .get("/api/v1/store?id_store=10000")
             .set("Content-Type", "application/json")
-//            .send({ id_store: 10000 })
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
@@ -142,5 +169,101 @@ describe("API - Stores", function () {
                 done();
         });
     });
+
+
+
+
+
+
+    // ------- Update Store -------
+
+
+    function updateStore (data, jwt, callback) {
+        supertest(testutil.supertestUrl)
+            .post("/api/v1/store-update-details")
+            .set("Content-Type", "application/json")
+            .set("authorization", "Bearer " + jwt)
+            .send(data)
+            .expect("Content-Type", "application/json; charset=utf-8")
+//            .expect(200)
+            .end(function (err, res) {
+                return callback(err, res);
+        });
+    }
+
+
+//    it("#updateStoreDetails returns message when store not found", function (done) {
+//        var fakeStore = JSON.parse(JSON.stringify(testutil.fakeStoreUpdate));
+//        fakeStore.id_store = 999999;
+//
+//        testutil.getJwt(config.dbConstants.adminUsers.store, done, function (jwt) {
+//            updateStore(fakeStore, jwt, function (err, res) {
+//                console.log(res.body)
+//                if (err) return done(new Error(err));
+//
+//                assert.equal(res.body.err, "Store not found");
+//                done();
+//            });
+//        });
+//    });
+
+
+    it("#updateStoreDetails returns unauthorized with website jwt", function (done) {
+        // use website jwt
+        testutil.getJwt(config.dbConstants.adminUsers.website, done, function (jwt) {
+            updateStore(testutil.fakeStoreUpdate, jwt, function (err, res) {
+                if (err) return done(new Error(err));
+
+                assert.equal(res.body.err, "Not Authorized");
+                done();
+            });
+        });
+    });
+
+
+    it("#updateStoreDetails updates details correctly", function (done) {
+        testutil.getJwt(config.dbConstants.adminUsers.store, done, function (jwt) {
+            updateStore(testutil.fakeStoreUpdate, jwt, function (err, res) {
+                if (err) return done(new Error(err));
+
+                storesDB.stores_get({ "id_store": testutil.fakeStoreUpdate.id_store }, function (err, result) {
+                    if (err) return done(new Error(err));
+
+                    assert.equal(result.description, testutil.fakeStoreUpdate.description);
+                    assert.equal(result.phone_number, testutil.fakeStoreUpdate.phone_number);
+                    assert.equal(result.email, testutil.fakeStoreUpdate.email);
+                    done();
+                });
+            });
+        });
+    });
+
+
+
+
+
+
+
+
+
+    // ------- Delete Store -------
+
+    it.skip("#deleteStore deletes a store", function (done) {
+
+    });
+
+
+
+
+
+
+    // ------- Logo Store -------
+
+    it.skip("#updateLogo deletes a store", function (done) {
+
+    });
+
+
+
 
 });

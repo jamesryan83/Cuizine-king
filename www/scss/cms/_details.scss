@@ -98,6 +98,8 @@
                         }
 
                         .hours-row {
+                            padding-bottom: 2px;
+
                             label {
                                 display: inline-block;
                             }
@@ -113,8 +115,12 @@
 
                             input {
                                 width: 60px;
-                                padding-left: 5px;
                                 margin-right: 5px;
+                                text-align: center;
+                                font-weight: bold;
+                                font-size: 14px;
+
+                                @include placeholder($colorRed2);
                             }
                         }
                     }

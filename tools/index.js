@@ -36,8 +36,10 @@ app.main = {
 
 
         // suburb typeahead
-        new app.controls.Typeahead(function (data) {
+        new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
 
+            }
         }, this.host + "api/v1/location?q=");
 
 

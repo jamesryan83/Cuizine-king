@@ -38,6 +38,18 @@
                 background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
                 background-repeat: no-repeat;
             }
+
+            #error-index-h {
+                font-weight: 400;
+                color: #5595d8;
+                margin: 0 !important;
+                padding: 50px;
+            }
+
+            #error-index-a {
+                margin-left: 50px;
+                color: #373748;
+            }
         </style>
     </head>
 
@@ -108,7 +120,8 @@
                             console.log(err)
                         }
 
-                        $pageContainer.append($("<p style='margin: 30px'>Error.  Please refresh the page</p>")[0]);
+                        $pageContainer.append($("<h3 id='error-index-h' style='margin: 30px'>Error.  Please refresh the page</h3>")[0]);
+                        $pageContainer.append($("<a id='error-index-a' href='/'>Click here to go home</a>")[0]);
                     }
                 });
             });

@@ -11,6 +11,21 @@ var resultHandler = require("../database/result-handler");
 // Calls stored procedures for App
 exports = module.exports = {
 
+	// App.addresses_create_or_update
+	addresses_create_or_update: function (inputs, callback) {
+		database.pool.request()
+			.input("id_address", sql.Int, inputs.id_address)
+			.input("postcode", sql.NVarChar, inputs.postcode)
+			.input("suburb", sql.NVarChar, inputs.suburb)
+			.input("street_address", sql.NVarChar, inputs.street_address)
+			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
+			.output("newAddressId", sql.Int)
+			.execute(config.mssql.database + ".dbo.addresses_create_or_update", function (err, result) {
+				return resultHandler.handle("addresses_create_or_update", err, result, callback, inputs);
+		});
+	},
+
+
 	// App.people_create_store_user
 	people_create_store_user: function (inputs, callback) {
 		database.pool.request()

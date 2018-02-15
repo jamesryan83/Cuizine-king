@@ -56,10 +56,6 @@ app.validationRules = {
     _postcodes_suburb:                       { presence: true, length: { minimum: 1, maximum: 64 }},
     _postcodes_state:                        { presence: true, length: { minimum: 1, maximum: 32 }},
 
-    _business_hours_day:                     { presence: true, numericality: { onlyInteger: true, greaterThan: 0, lessThan: 8 }},
-    _business_hours_opens:                   { presence: true, length: { maximum: 8 }},
-    _business_hours_closes:                  { presence: true, length: { maximum: 8 }},
-
     _reviews_title:                          { presence: true, length: { minimum: 2, maximum: 128 }},
     _reviews_review_optional:                { length: { maximum: 512 }},
     _reviews_rating:                         { presence: true, numericality: { onlyInteger: true, greaterThan: 0, lessThan: 6 }},
@@ -71,7 +67,7 @@ app.validationRules = {
     _stores_bank_bsb:                        { presence: true, length: { minimum: 6, maximum: 16 }},
     _stores_bank_account_name:               { presence: true, length: { minimum: 2, maximum: 128 }},
     _stores_bank_account_number:             { presence: true, length: { minimum: 2, maximum: 32 }},
-    _stores_hours:                           { presence: true, length: { minimum: 4, maximum: 5 }},
+    _stores_hours:                           { length: { maximum: 5 }},
 
     _product_extras_name:                    { presence: true, length: { maximum: 128 }},
 
@@ -208,8 +204,44 @@ app.validationRules.getStore = {
 }
 
 
+// Validates a business hours object
+// checks time is HH:MM and gives if only one open/close time is null
+app.validationRules.validateHours = function (data) {
+    if (!data || Object.keys(data).length === 0) {
+        return "Data missing";
+    }
 
+    var keys = Object.keys(data);
 
+    for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf("hours_") === 0) {
+
+            if (data[keys[i]]) {
+                if (data[keys[i]].length !== 5 || !data[keys[i]].match(/\d{2}:\d{2}/)) {
+                    var temp = keys[i].split("_");
+                    var text = temp[1] + " " + temp[2] + " " + temp[3];
+                    text = app.util.toTitleCase(text);
+                    return "Error in Hours " + text + ".  Must be HH:MM";
+                }
+
+            // both times have to be null
+            } else {
+                var temp = keys[i].split("_");
+                var check = temp[3] === "open" ? "close" : "open";
+
+                var text = temp[1] + " " + temp[2] + " " + temp[3];
+                text = app.util.toTitleCase(text);
+                temp = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + check;
+
+                if (data[temp]) { // check matching time
+                    return "Error in Hours " + text + ".  Open and Close must be both times or both closed";
+                }
+            }
+        }
+    }
+
+    return null;
+}
 
 
 
@@ -223,44 +255,12 @@ app.validationRules.getStore = {
 //    bank_account_number: app.validationRules._stores_bank_account_number
 //}
 
-//app.validationRules.storeUpdateHours = {
-//    hours_mon_dinein_open: app.validationRules._stores_hours,
-//    hours_tue_dinein_open: app.validationRules._stores_hours,
-//    hours_wed_dinein_open: app.validationRules._stores_hours,
-//    hours_thu_dinein_open: app.validationRules._stores_hours,
-//    hours_fri_dinein_open: app.validationRules._stores_hours,
-//    hours_sat_dinein_open: app.validationRules._stores_hours,
-//    hours_sun_dinein_open: app.validationRules._stores_hours,
-//    hours_mon_dinein_close: app.validationRules._stores_hours,
-//    hours_tue_dinein_close: app.validationRules._stores_hours,
-//    hours_wed_dinein_close: app.validationRules._stores_hours,
-//    hours_thu_dinein_close: app.validationRules._stores_hours,
-//    hours_fri_dinein_close: app.validationRules._stores_hours,
-//    hours_sat_dinein_close: app.validationRules._stores_hours,
-//    hours_sun_dinein_close: app.validationRules._stores_hours,
-//    hours_mon_delivery_open: app.validationRules._stores_hours,
-//    hours_tue_delivery_open: app.validationRules._stores_hours,
-//    hours_wed_delivery_open: app.validationRules._stores_hours,
-//    hours_thu_delivery_open: app.validationRules._stores_hours,
-//    hours_fri_delivery_open: app.validationRules._stores_hours,
-//    hours_sat_delivery_open: app.validationRules._stores_hours,
-//    hours_sun_delivery_open: app.validationRules._stores_hours,
-//    hours_mon_delivery_close: app.validationRules._stores_hours,
-//    hours_tue_delivery_close: app.validationRules._stores_hours,
-//    hours_wed_delivery_close: app.validationRules._stores_hours,
-//    hours_thu_delivery_close: app.validationRules._stores_hours,
-//    hours_fri_delivery_close: app.validationRules._stores_hours,
-//    hours_sat_delivery_close: app.validationRules._stores_hours,
-//    hours_sun_delivery_close: app.validationRules._stores_hours
-//}
-
-
-
 
 
 
 
 
 if (typeof module !== 'undefined' && this.module !== module) {
+    app.util = require("./util");
     exports = module.exports = app.validationRules;
 }

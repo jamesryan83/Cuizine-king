@@ -55,7 +55,7 @@
 
                         <div class="label-input">
                             <label>Phone Number</label>
-                            <input class="input-1" name="phone-number" autocomplete="nope" placeholder="Store phone number..." />
+                            <input class="input-1" name="phone_number" autocomplete="nope" placeholder="Store phone number..." />
                         </div>
 
                         <div class="label-input">
@@ -86,9 +86,9 @@
                                 <div class="hours-row">
                                     <label><?- dayStringsUc[i - 1] ?></label>
                                     <label>Opens</label>
-                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_dinein_open" value="10:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_dinein_open" placeholder="closed" autocomplete="nope" />
                                     <label>Closes</label>
-                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_dinein_close" value="21:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_dinein_close" placeholder="closed" autocomplete="nope" />
                                 </div>
                             <? } ?>
                         </div>
@@ -98,15 +98,16 @@
                                 <div class="hours-row">
                                     <label><?- dayStringsUc[i - 1] ?></label>
                                     <label>Opens</label>
-                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_delivery_open" value="10:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_delivery_open" placeholder="closed" autocomplete="nope" />
                                     <label>Closes</label>
-                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_delivery_close" value="21:00" />
+                                    <input name="hours_<?- dayStringsLc[i - 1] ?>_delivery_close" placeholder="closed" autocomplete="nope" />
                                 </div>
                             <? } ?>
                         </div>
                     </div>
                 </div>
             </div>
+
         </form>
     </div>
 
