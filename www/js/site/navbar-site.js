@@ -16,15 +16,21 @@ app.site.navbar = {
             $(".navbar-link-" + (routeData.file)).addClass("active");
         }
 
+
         // if logged in
         if (app.routerBase.isUserLoggedIn()) {
             $(".navbar-link-logout").show();
             $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
+
+            if (app.util.getStoreIdFromStorage()) {
+                $(".navbar-link-dashboard").show();
+            }
         } else {
             $(".navbar-link-login").show();
             $(".navbar-link-logout").hide();
             $(".navbar-link-account").hide();
+            $(".navbar-link-dashboard").hide();
         }
 
 
@@ -37,6 +43,12 @@ app.site.navbar = {
 
             if (e.target.innerText.toLowerCase() == "account") {
                 app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                return false;
+            }
+
+            if (e.target.innerText.toLowerCase() == "dashboard") {
+                var sid = app.util.getStoreIdFromStorage();
+                window.location.href = "/store-admin/" + sid + "/dashboard";
                 return false;
             }
 

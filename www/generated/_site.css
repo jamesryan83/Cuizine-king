@@ -531,7 +531,7 @@ input, textarea {
       background-color: #333333; }
     .navbar .navbar-links-popup-button:hover {
       background-color: #333333; }
-  @media (max-width: 490px) {
+  @media (max-width: 670px) {
     .navbar {
       padding: 30px 20px 10px 20px;
       height: auto;
