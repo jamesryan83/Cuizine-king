@@ -1268,7 +1268,7 @@ app.storeContent = {
 
         // logo
         var logo = new Image();
-        logo.src = "/res/storelogos/store" + this.id_store + ".jpg";
+        logo.src = "/res/storelogos/store" + this.id_store + ".jpg?" + Date.now();
         logo.onload = function () {
             $(".store-info-image-empty").hide();
             self.$logo.attr("src", logo.src);
