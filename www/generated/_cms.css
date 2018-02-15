@@ -1110,6 +1110,10 @@ input, textarea {
 
 #page-cms-menu {
   padding-bottom: 80px; }
+  #page-cms-menu .page-cms-floating-buttons .label-button {
+    width: 130px;
+    background-color: #31ac31;
+    color: white; }
 
 #navbar-cms {
   height: 70px; }
