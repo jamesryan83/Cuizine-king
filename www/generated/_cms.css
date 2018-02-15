@@ -937,7 +937,7 @@ input, textarea {
   #toasts p {
     position: relative;
     border-radius: 2px;
-    background-color: #3e75ff;
+    background-color: #238e23;
     min-width: 100px;
     padding: 10px 20px;
     border: 1px solid #e3e3e3;
@@ -945,7 +945,13 @@ input, textarea {
     color: #e3e3e3;
     opacity: 0;
     margin-bottom: 10px;
-    bottom: -50px; }
+    bottom: -50px;
+    font-size: 13px;
+    font-weight: bold; }
+    #toasts p.msg {
+      background-color: #3e75ff; }
+    #toasts p.error {
+      background-color: #ff7373; }
 
 .typeahead-inner {
   position: relative; }

@@ -662,9 +662,9 @@ app.util = {
 
 
     // Show toast
-    showToast: function (message, timeout) {
+    showToast: function (message, timeout, cssClass) {
         var $toasts = $("#toasts");
-        var toast = $("<p>" + message + "</p>");
+        var toast = $("<p class='" + (cssClass || "") + "'>" + message + "</p>");
 
         // remove toasts if there's too many stacked up
         if ($toasts.children().length >= 5) {

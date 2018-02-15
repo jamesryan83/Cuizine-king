@@ -97,7 +97,9 @@ database.once("connected", function () {
     server.use("/", express.static(path.join(__dirname, "../", "www"), {
         maxAge: global.devMode ? 30 : 300000
     }));
-    server.use(express.static(path.join(__dirname, "../", "data")));
+    server.use(express.static(path.join(__dirname, "../", "data"), {
+        maxAge: global.devMode ? 30 : 300000
+    }));
 
 
     // Passport, mail, router

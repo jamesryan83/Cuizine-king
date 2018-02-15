@@ -265,14 +265,13 @@ app.cms.details = {
             if (!app.util.validateInputs(data, app.validationRules.updateStoreDetails))
                 return false;
 
-            console.log(data)
-
+            // send data
             app.util.ajaxRequest({
                 method: "POST", url: "/api/v1/store-update-details", data: data, auth: true
             }, function (err, result) {
                 if (err) return false;
 
-                console.log("hi")
+                app.util.showToast("SAVED", null, "success");
             });
 
             return false;
@@ -950,9 +949,9 @@ app.util = {
 
 
     // Show toast
-    showToast: function (message, timeout) {
+    showToast: function (message, timeout, cssClass) {
         var $toasts = $("#toasts");
-        var toast = $("<p>" + message + "</p>");
+        var toast = $("<p class='" + (cssClass || "") + "'>" + message + "</p>");
 
         // remove toasts if there's too many stacked up
         if ($toasts.children().length >= 5) {

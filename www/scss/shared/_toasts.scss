@@ -11,14 +11,23 @@
     p {
         position: relative;
         border-radius: 2px;
-        background-color: #3e75ff;
+        background-color: $colorBlue5;
         min-width: 100px;
         padding: 10px 20px;
         border: 1px solid $colorGray2;
-        border-radius: 2px;
         color: $colorGray2;
         opacity: 0;
         margin-bottom: 10px;
         bottom: -50px;
+        font-size: 14px;
+        font-weight: bold;
+
+        &.success {
+            background-color: $colorGreen2;
+        }
+
+        &.error {
+            background-color: $colorRed1;
+        }
     }
 }

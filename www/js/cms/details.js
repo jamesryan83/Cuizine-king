@@ -121,14 +121,13 @@ app.cms.details = {
             if (!app.util.validateInputs(data, app.validationRules.updateStoreDetails))
                 return false;
 
-            console.log(data)
-
+            // send data
             app.util.ajaxRequest({
                 method: "POST", url: "/api/v1/store-update-details", data: data, auth: true
             }, function (err, result) {
                 if (err) return false;
 
-                console.log("hi")
+                app.util.showToast("SAVED", null, "success");
             });
 
             return false;
