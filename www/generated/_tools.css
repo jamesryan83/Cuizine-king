@@ -502,8 +502,8 @@ input, textarea {
           padding: 0 7px; }
 
 .typeahead-2 {
-  width: 100%;
-  max-width: 500px;
+  float: right;
+  width: 500px;
   display: inline-block; }
   .typeahead-2 .typeahead-inner > label {
     width: 80px; }

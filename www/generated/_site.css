@@ -540,7 +540,11 @@ input, textarea {
       .navbar .navbar-links {
         display: none; }
       .navbar .navbar-links-popup-button {
-        display: block; } }
+        display: block; }
+      .navbar .typeahead-2 {
+        width: 100%; }
+        .navbar .typeahead-2 > div {
+          width: 90% !important; } }
 
 .rating-control {
   display: inline-block;
@@ -829,6 +833,29 @@ input, textarea {
     max-width: 250px;
     white-space: nowrap;
     font-weight: bold; }
+  #store-content .store-menu-nav-list {
+    list-style: none;
+    margin-top: 30px; }
+    #store-content .store-menu-nav-list li {
+      height: 40px;
+      line-height: 40px;
+      padding-left: 30px;
+      font-weight: bold; }
+      #store-content .store-menu-nav-list li:hover {
+        cursor: pointer;
+        color: #5595d8; }
+  #store-content #store-menu-nav-top {
+    background-color: blue; }
+    #store-content #store-menu-nav-top ul {
+      white-space: nowrap; }
+      #store-content #store-menu-nav-top ul li {
+        font-size: 16px;
+        height: 60px;
+        line-height: 60px;
+        display: inline-block; }
+  #store-content #store-menu-nav {
+    float: left;
+    width: 200px; }
   #store-content #store-menu {
     padding-top: 30px; }
     #store-content #store-menu #store-menu-list {
@@ -868,18 +895,6 @@ input, textarea {
           cursor: pointer; }
           #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
             color: #1f58c6; }
-    #store-content #store-menu #store-menu-nav {
-      float: left;
-      width: 200px; }
-      #store-content #store-menu #store-menu-nav ul {
-        list-style: none;
-        margin-top: 30px; }
-        #store-content #store-menu #store-menu-nav ul li {
-          padding: 10px 10px 10px 50px;
-          font-weight: bold; }
-          #store-content #store-menu #store-menu-nav ul li:hover {
-            cursor: pointer;
-            color: #5595d8; }
   #store-content #store-footer {
     padding: 30px 10px; }
     #store-content #store-footer > p {
@@ -991,8 +1006,8 @@ input, textarea {
           padding: 0 7px; }
 
 .typeahead-2 {
-  width: 100%;
-  max-width: 500px;
+  float: right;
+  width: 500px;
   display: inline-block; }
   .typeahead-2 .typeahead-inner > label {
     width: 80px; }
@@ -1186,7 +1201,7 @@ input, textarea {
 #page-location {
   text-align: center;
   position: relative; }
-  @media (max-width: 700px) {
+  @media (max-width: 770px) {
     #page-location {
       padding-top: 0; } }
   #page-location br {
@@ -1195,10 +1210,21 @@ input, textarea {
     text-align: left;
     white-space: nowrap;
     width: 100%;
-    padding: 20px 100px; }
+    padding: 20px 100px 0 100px;
+    font-size: 26px; }
+    @media (max-width: 900px) {
+      #page-location #location-header {
+        text-align: center;
+        padding: 20px 0; }
+        #page-location #location-header #location-header-heading h2 {
+          font-size: 26px; }
+        #page-location #location-header #location-header-location {
+          display: block !important;
+          margin-left: 0 !important;
+          height: 30px;
+          line-height: 30px; } }
     #page-location #location-header #location-header-heading {
       display: inline-block;
-      width: calc(100% - 390px);
       overflow: hidden; }
       #page-location #location-header #location-header-heading h2 {
         display: inline-block;
@@ -1206,51 +1232,15 @@ input, textarea {
         font-size: 35px;
         height: 50px;
         line-height: 50px;
-        text-overflow: ellipsis;
-        overflow: hidden;
         vertical-align: top; }
-        @media (max-width: 1130px) {
+        @media (max-width: 1100px) {
           #page-location #location-header #location-header-heading h2 {
-            font-size: 30px; } }
-        @media (max-width: 930px) {
-          #page-location #location-header #location-header-heading h2 {
-            font-size: 26px; } }
+            font-size: 24px;
+            height: 30px;
+            line-height: 30px; } }
     #page-location #location-header #location-header-location {
       margin-left: 10px;
-      color: #5595d8;
-      padding-right: 10px; }
-    #page-location #location-header #location-suburb-search {
-      white-space: nowrap;
-      float: right;
-      margin-top: 8px;
-      width: 380px; }
-      #page-location #location-header #location-suburb-search > input {
-        color: white; }
-    #page-location #location-header.suburb-next-line {
-      text-align: center;
-      display: inline-block;
-      width: auto;
-      padding: 20px 0; }
-      #page-location #location-header.suburb-next-line #location-header-heading {
-        display: block;
-        width: auto; }
-        #page-location #location-header.suburb-next-line #location-header-heading #location-header-location {
-          height: 50px;
-          line-height: 50px; }
-          @media (max-width: 930px) {
-            #page-location #location-header.suburb-next-line #location-header-heading #location-header-location {
-              white-space: normal;
-              word-break: keep-all;
-              line-height: auto;
-              height: auto; } }
-      #page-location #location-header.suburb-next-line #location-suburb-search {
-        margin-top: 15px;
-        float: none;
-        text-align: left; }
-    #page-location #location-header.heading-next-line {
-      padding-top: 0; }
-      #page-location #location-header.heading-next-line #location-header-heading h2 {
-        display: block; }
+      color: #5595d8; }
   #page-location #location-store-filter {
     text-align: left;
     white-space: nowrap;
@@ -1280,10 +1270,10 @@ input, textarea {
     @media (max-width: 1330px) {
       #page-location #location-store-filter {
         padding: 20px 150px; } }
-    @media (max-width: 1130px) {
+    @media (max-width: 1100px) {
       #page-location #location-store-filter {
         padding: 20px 50px; } }
-    @media (max-width: 930px) {
+    @media (max-width: 900px) {
       #page-location #location-store-filter {
         display: inline-block;
         width: auto; }
@@ -1335,10 +1325,10 @@ input, textarea {
       #page-location #location-store-list .category-stores-row .category-stores-row-inner {
         overflow-x: scroll;
         height: 375px; }
-    @media (max-width: 930px) {
+    @media (max-width: 900px) {
       #page-location #location-store-list {
         max-width: 90%; } }
-    @media (max-width: 700px) {
+    @media (max-width: 770px) {
       #page-location #location-store-list {
         max-width: 95%; } }
   @media (max-width: 490px) {
@@ -1349,7 +1339,7 @@ input, textarea {
       #page-location #location-header #location-suburb-search input {
         width: 210px; }
     #page-location #location-store-filter {
-      padding: 20px 0; } }
+      padding: 0; } }
 
 .page-auth {
   overflow: hidden;
@@ -1549,9 +1539,14 @@ input, textarea {
     width: 240px;
     background-image: url(/res/images/ck-logo.png);
     display: inline-block; }
+  #navbar-site .typeahead-2 {
+    position: absolute;
+    top: 80px;
+    right: 60px; }
   @media (max-width: 900px) {
     #navbar-site {
-      text-align: center; }
+      text-align: center;
+      height: 245px; }
       #navbar-site .navbar-heading .navbar-icon {
         margin-left: 0;
         background-repeat: no-repeat;
@@ -1564,11 +1559,26 @@ input, textarea {
       #navbar-site .navbar-links {
         float: none;
         margin-top: 10px;
-        height: 30px; } }
+        height: 30px; }
+      #navbar-site .typeahead-2 {
+        margin-top: 30px;
+        float: none;
+        width: auto;
+        display: block;
+        text-align: center;
+        position: relative;
+        top: auto;
+        right: auto; }
+        #navbar-site .typeahead-2 > div {
+          display: inline-block;
+          width: 100%;
+          max-width: 500px; } }
+  @media (max-width: 670px) {
+    #navbar-site {
+      height: 205px; } }
   @media (max-width: 490px) {
     #navbar-site {
-      text-align: left;
-      height: 140px; }
+      text-align: left; }
       #navbar-site .navbar-heading .navbar-icon {
         background-repeat: no-repeat;
         background-position: center;
@@ -1591,13 +1601,12 @@ input, textarea {
       #page-store #store-header #store-header-h1 span {
         font-size: 30px;
         color: #5595d8; }
-    #page-store #store-header .typeahead {
-      width: auto;
-      float: right;
-      padding-top: 0; }
-      #page-store #store-header .typeahead label {
-        width: auto;
-        margin-right: 10px; }
+    @media (max-width: 770px) {
+      #page-store #store-header {
+        text-align: center; }
+        #page-store #store-header span {
+          display: block;
+          padding-top: 10px; } }
   #page-store #store-footer-links {
     padding: 40px 40px; }
     #page-store #store-footer-links #store-footer-links-container {

@@ -70,8 +70,8 @@
 
 // fixed width and label aligned right
 .typeahead-2 {
-    width: 100%;
-    max-width: 500px;
+    float: right;
+    width: 500px;
     display: inline-block;
 
     .typeahead-inner {
@@ -88,4 +88,5 @@
         }
     }
 }
+
 

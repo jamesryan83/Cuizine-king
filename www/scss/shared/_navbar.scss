@@ -140,6 +140,14 @@
         .navbar-links-popup-button {
             display: block;
         }
+
+        .typeahead-2 {
+            width: 100%;
+
+            > div {
+                width: 90% !important;
+            }
+        }
     }
 
 }

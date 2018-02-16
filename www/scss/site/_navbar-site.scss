@@ -2,7 +2,6 @@
 #navbar-site {
     height: $navbarHeight;
 
-
     // Navbar icon
     .navbar-heading {
         .navbar-icon {
@@ -12,9 +11,17 @@
     }
 
 
+    .typeahead-2 {
+        position: absolute;
+        top: 80px;
+        right: 60px;
+    }
+
+
     // bit bigger than mobile, like tablet size
     @media (max-width: $mediaWidth2) {
         text-align: center;
+        height: $navbarHeight2;
 
         .navbar-heading {
             .navbar-icon {
@@ -30,13 +37,35 @@
             margin-top: 10px;
             height: 30px;
         }
+
+        .typeahead-2 {
+            margin-top: 30px;
+            float: none;
+            width: auto;
+            display: block;
+            text-align: center;
+            position: relative;
+            top: auto;
+            right: auto;
+
+            > div {
+                display: inline-block;
+                width: 100%;
+                max-width: 500px;
+            }
+        }
+    }
+
+
+    @media (max-width: $mediaWidth0) {
+        height: $navbarHeight3;
     }
 
 
     // mobile
     @media (max-width: $mediaMobileWidth1) {
         text-align: left;
-        height: 140px;
+//        height: $navbarHeight2;
 
         .navbar-heading {
             .navbar-icon {

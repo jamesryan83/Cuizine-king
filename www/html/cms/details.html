@@ -51,7 +51,7 @@
                             <input class="input-1" name="street_address" autocomplete="nope" placeholder="Store street address..." />
                         </div>
 
-                        <?- include("typeahead") ?>
+                        <div class="typeahead"><?- include("typeahead") ?></div>
 
                         <div class="label-input">
                             <label>Phone Number</label>
@@ -75,8 +75,10 @@
                 <? var dayStringsUc = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] ?>
                 <? var dayStringsLc = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] ?>
 
-                <h3>Business Hours</h3>
-                <hr class="hr-2" />
+                <div>
+                    <h3>Business Hours</h3>
+                    <hr class="hr-2" />
+                </div>
 
                 <div id="business-hours-container" class="container clearfix">
                     <div class="container-inner">

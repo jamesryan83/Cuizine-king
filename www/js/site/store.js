@@ -32,5 +32,20 @@ app.site.store = {
             }
         });
 
+
+        // Resize heading when window resizes
+        $(window).on("resize blur focus", function () {
+            setTimeout(function () {
+                self.resizeLocationHeading();
+            }, 400); // doesn't always work without delay
+        });
+
     },
+
+
+    resizeLocationHeading: function () {
+
+    },
+
+
 }

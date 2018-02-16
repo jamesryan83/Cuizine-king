@@ -182,6 +182,48 @@
     }
 
 
+    // Store menu nav list
+    .store-menu-nav-list {
+        list-style: none;
+        margin-top: 30px;
+
+        li {
+            height: 40px;
+            line-height: 40px;
+            padding-left: 30px;
+            font-weight: bold;
+
+            &:hover {
+                cursor: pointer;
+                color: $colorBlue2;
+            }
+        }
+    }
+
+
+    // Top nav
+    #store-menu-nav-top {
+        background-color: blue;
+
+        ul {
+            white-space: nowrap;
+
+            li {
+                font-size: 16px;
+                height: 60px;
+                line-height: 60px;
+                display: inline-block;
+            }
+        }
+    }
+
+
+    // Side nav
+    #store-menu-nav {
+        float: left;
+        width: 200px;
+    }
+
 
     // Menu
     #store-menu {
@@ -249,29 +291,6 @@
                 }
             }
         }
-
-
-        // category groups nav thing
-        #store-menu-nav {
-            float: left;
-            width: 200px;
-
-            ul {
-                list-style: none;
-                margin-top: 30px;
-
-                li {
-                    padding: 10px 10px 10px 50px;
-                    font-weight: bold;
-
-                    &:hover {
-                        cursor: pointer;
-                        color: $colorBlue2;
-                    }
-                }
-            }
-        }
-
     }
 
 

@@ -540,7 +540,11 @@ input, textarea {
       .navbar .navbar-links {
         display: none; }
       .navbar .navbar-links-popup-button {
-        display: block; } }
+        display: block; }
+      .navbar .typeahead-2 {
+        width: 100%; }
+        .navbar .typeahead-2 > div {
+          width: 90% !important; } }
 
 .rating-control {
   display: inline-block;
@@ -829,6 +833,29 @@ input, textarea {
     max-width: 250px;
     white-space: nowrap;
     font-weight: bold; }
+  #store-content .store-menu-nav-list {
+    list-style: none;
+    margin-top: 30px; }
+    #store-content .store-menu-nav-list li {
+      height: 40px;
+      line-height: 40px;
+      padding-left: 30px;
+      font-weight: bold; }
+      #store-content .store-menu-nav-list li:hover {
+        cursor: pointer;
+        color: #5595d8; }
+  #store-content #store-menu-nav-top {
+    background-color: blue; }
+    #store-content #store-menu-nav-top ul {
+      white-space: nowrap; }
+      #store-content #store-menu-nav-top ul li {
+        font-size: 16px;
+        height: 60px;
+        line-height: 60px;
+        display: inline-block; }
+  #store-content #store-menu-nav {
+    float: left;
+    width: 200px; }
   #store-content #store-menu {
     padding-top: 30px; }
     #store-content #store-menu #store-menu-list {
@@ -868,18 +895,6 @@ input, textarea {
           cursor: pointer; }
           #store-content #store-menu #store-menu-list .store-menu-list-item > label:hover {
             color: #1f58c6; }
-    #store-content #store-menu #store-menu-nav {
-      float: left;
-      width: 200px; }
-      #store-content #store-menu #store-menu-nav ul {
-        list-style: none;
-        margin-top: 30px; }
-        #store-content #store-menu #store-menu-nav ul li {
-          padding: 10px 10px 10px 50px;
-          font-weight: bold; }
-          #store-content #store-menu #store-menu-nav ul li:hover {
-            cursor: pointer;
-            color: #5595d8; }
   #store-content #store-footer {
     padding: 30px 10px; }
     #store-content #store-footer > p {
@@ -991,8 +1006,8 @@ input, textarea {
           padding: 0 7px; }
 
 .typeahead-2 {
-  width: 100%;
-  max-width: 500px;
+  float: right;
+  width: 500px;
   display: inline-block; }
   .typeahead-2 .typeahead-inner > label {
     width: 80px; }
@@ -1030,11 +1045,15 @@ input, textarea {
           top: 45px; }
     #page-cms-details #store-content #store-info-edit #store-info-edit-hours {
       padding-top: 10px; }
-      #page-cms-details #store-content #store-info-edit #store-info-edit-hours h3 {
-        text-align: left;
-        padding-left: 10px; }
-      #page-cms-details #store-content #store-info-edit #store-info-edit-hours hr {
-        margin-bottom: 20px; }
+      #page-cms-details #store-content #store-info-edit #store-info-edit-hours > div:first-of-type {
+        max-width: 600px;
+        width: 100%;
+        display: inline-block;
+        text-align: center; }
+        #page-cms-details #store-content #store-info-edit #store-info-edit-hours > div:first-of-type h3 {
+          text-align: left; }
+        #page-cms-details #store-content #store-info-edit #store-info-edit-hours > div:first-of-type hr {
+          margin-bottom: 20px; }
       #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container .container-inner > div {
         float: left;
         text-align: left;
@@ -1084,17 +1103,19 @@ input, textarea {
     #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div {
       clear: none;
       height: auto; }
-      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > label {
+      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > label, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div .typeahead-inner > label {
         margin-top: 10px;
         height: 27px;
         line-height: 27px;
         display: block;
         width: 100%;
         float: none; }
-      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > input, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > select, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > textarea, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > div {
+      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > input, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > select, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > textarea, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div > div, #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div .typeahead-inner > div {
         display: block;
         float: none;
         width: 100%; }
+      #page-cms-details #store-content #store-info-edit > .container-inner > div:last-of-type > div > div.typeahead {
+        height: 65px; }
     #page-cms-details #store-content #store-info-edit #store-info-edit-hours {
       padding: 10px 30px 20px 30px; }
       #page-cms-details #store-content #store-info-edit #store-info-edit-hours #business-hours-container > .container-inner > div {

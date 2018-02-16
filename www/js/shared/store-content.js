@@ -152,12 +152,23 @@ app.storeContent = {
             $("#store-menu-list").append(frag);
 
 
+            // fake headings
+            for (var i = 0; i < 20; i++) {
+                data.product_headings.push({
+                    above_product_id: i + 10,
+                    id_product_heading: i + 3,
+                    subtitle: "test" + i,
+                    title: "Test" + i
+                });
+            }
+
+
             // Category nav
             frag = document.createDocumentFragment();
             for (var i = 0; i < data.product_headings.length; i++) {
                 frag.append($("<li class='store-menu-nav-list-item'>" + data.product_headings[i].title + "</li>")[0])
             }
-            $("#store-menu-nav-list").append(frag);
+            $(".store-menu-nav-list").append(frag);
 
             $(".store-menu-nav-list-item").on("click", function (e) {
                 var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");

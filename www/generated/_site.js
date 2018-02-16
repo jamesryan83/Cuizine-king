@@ -339,42 +339,42 @@ app.site.location = {
         }
 
 
-        this.resizeLocationHeading();
+//        this.resizeLocationHeading();
 
 
-        // Resize heading when window resizes
-        $(window).on("resize blur focus", function () {
-            setTimeout(function () {
-                self.resizeLocationHeading();
-            }, 400); // doesn't always work without delay
-        });
+//        // Resize heading when window resizes
+//        $(window).on("resize blur focus", function () {
+//            setTimeout(function () {
+//                self.resizeLocationHeading();
+//            }, 400); // doesn't always work without delay
+//        });
     },
 
 
-    // TODO : this is a bit yucky, try again with css
-    // Resizes the location heading so it's visible
-    resizeLocationHeading: function () {
-//        console.log("resizing heading");
-        if (!document.getElementById("location-header-1")) return; // incase page isn't loaded
-
-        this.pageWidth = document.getElementById("page-location").offsetWidth;
-        this.regularHeadingWidth = document.getElementById("location-header-1").offsetWidth;
-        this.locationHeadingWidth = document.getElementById("location-header-location").offsetWidth;
-        this.headingContainerWidth = document.getElementById("location-header-heading").offsetWidth;
-        this.typeaheadWidth = document.getElementById("location-suburb-search").offsetWidth;
-
-        if (this.regularHeadingWidth + this.locationHeadingWidth > this.headingContainerWidth) {
-            $("#location-header").addClass("suburb-next-line");
-        } else if (this.headingContainerWidth + this.typeaheadWidth < this.pageWidth - 300) {
-            $("#location-header").removeClass("suburb-next-line");
-        }
-
-        if (this.regularHeadingWidth + this.locationHeadingWidth > this.pageWidth - 60) {
-            $("#location-header").addClass("heading-next-line");
-        } else {
-            $("#location-header").removeClass("heading-next-line");
-        }
-    },
+//    // TODO : this is a bit yucky, try again with css
+//    // Resizes the location heading so it's visible
+//    resizeLocationHeading: function () {
+////        console.log("resizing heading");
+//        if (!document.getElementById("location-header-1")) return; // incase page isn't loaded
+//
+//        this.pageWidth = document.getElementById("page-location").offsetWidth;
+//        this.regularHeadingWidth = document.getElementById("location-header-1").offsetWidth;
+//        this.locationHeadingWidth = document.getElementById("location-header-location").offsetWidth;
+//        this.headingContainerWidth = document.getElementById("location-header-heading").offsetWidth;
+//        this.typeaheadWidth = document.getElementById("location-suburb-search").offsetWidth;
+//
+//        if (this.regularHeadingWidth + this.locationHeadingWidth > this.headingContainerWidth) {
+//            $("#location-header").addClass("suburb-next-line");
+//        } else if (this.headingContainerWidth + this.typeaheadWidth < this.pageWidth - 300) {
+//            $("#location-header").removeClass("suburb-next-line");
+//        }
+//
+//        if (this.regularHeadingWidth + this.locationHeadingWidth > this.pageWidth - 60) {
+//            $("#location-header").addClass("heading-next-line");
+//        } else {
+//            $("#location-header").removeClass("heading-next-line");
+//        }
+//    },
 
 
 
@@ -455,14 +455,14 @@ app.site.location = {
         });
 
 
-        setTimeout(function () {
-            self.resizeLocationHeading();
-        }, 100);
-
-
-        setTimeout(function () { // again just incase
-            self.resizeLocationHeading();
-        }, 1000);
+//        setTimeout(function () {
+//            self.resizeLocationHeading();
+//        }, 100);
+//
+//
+//        setTimeout(function () { // again just incase
+//            self.resizeLocationHeading();
+//        }, 1000);
     },
 
 }
@@ -858,7 +858,22 @@ app.site.store = {
             }
         });
 
+
+        // Resize heading when window resizes
+        $(window).on("resize blur focus", function () {
+            setTimeout(function () {
+                self.resizeLocationHeading();
+            }, 400); // doesn't always work without delay
+        });
+
     },
+
+
+    resizeLocationHeading: function () {
+
+    },
+
+
 }
 
 
@@ -1365,12 +1380,23 @@ app.storeContent = {
             $("#store-menu-list").append(frag);
 
 
+            // fake headings
+            for (var i = 0; i < 20; i++) {
+                data.product_headings.push({
+                    above_product_id: i + 10,
+                    id_product_heading: i + 3,
+                    subtitle: "test" + i,
+                    title: "Test" + i
+                });
+            }
+
+
             // Category nav
             frag = document.createDocumentFragment();
             for (var i = 0; i < data.product_headings.length; i++) {
                 frag.append($("<li class='store-menu-nav-list-item'>" + data.product_headings[i].title + "</li>")[0])
             }
-            $("#store-menu-nav-list").append(frag);
+            $(".store-menu-nav-list").append(frag);
 
             $(".store-menu-nav-list-item").on("click", function (e) {
                 var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");

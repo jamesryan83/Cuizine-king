@@ -1,15 +1,10 @@
 
-$mediaWidthLocation0: 1130px;
-$mediaWidthLocation1: 930px;
-$mediaWidthLocation2: 700px;
-
-
 // location page
 #page-location {
     text-align: center;
     position: relative;
 
-    @media (max-width: $mediaWidthLocation2) {
+    @media (max-width: $mediaWidth1) {
         padding-top: 0;
     }
 
@@ -18,16 +13,35 @@ $mediaWidthLocation2: 700px;
     }
 
 
+    // TODO : clean up
     // Header
     #location-header {
         text-align: left;
         white-space: nowrap;
         width: 100%;
-        padding: 20px 100px;
+        padding: 20px 100px 0 100px;
+        font-size: 26px;
+
+        @media (max-width: $mediaWidth2) {
+            text-align: center;
+            padding: 20px 0;
+
+            #location-header-heading {
+                h2 {
+                    font-size: 26px;
+                }
+            }
+
+            #location-header-location {
+                display: block !important;
+                margin-left: 0 !important;
+                height: 30px;
+                line-height: 30px;
+            }
+        }
 
         #location-header-heading {
             display: inline-block;
-            width: calc(100% - 390px);
             overflow: hidden;
 
             h2 {
@@ -36,16 +50,12 @@ $mediaWidthLocation2: 700px;
                 font-size: 35px;
                 height: 50px;
                 line-height: 50px;
-                text-overflow: ellipsis;
-                overflow: hidden;
                 vertical-align: top;
 
-                @media (max-width: $mediaWidthLocation0) {
-                    font-size: 30px;
-                }
-
-                @media (max-width: $mediaWidthLocation1) {
-                    font-size: 26px;
+                @media (max-width: $mediaWidth4) {
+                    font-size: 24px;
+                    height: 30px;
+                    line-height: 30px;
                 }
             }
         }
@@ -53,60 +63,6 @@ $mediaWidthLocation2: 700px;
         #location-header-location {
             margin-left: 10px;
             color: $colorBlue2;
-            padding-right: 10px;
-        }
-
-        #location-suburb-search {
-            white-space: nowrap;
-            float: right;
-            margin-top: 8px;
-            width: 380px;
-
-            > input {
-                color: white;
-            }
-        }
-
-        // added in js
-        &.suburb-next-line {
-            text-align: center;
-            display: inline-block;
-            width: auto;
-            padding: 20px 0;
-
-            #location-header-heading {
-                display: block;
-                width: auto;
-
-                #location-header-location {
-                    height: 50px;
-                    line-height: 50px;
-
-                    @media (max-width: $mediaWidthLocation1) {
-                        white-space: normal;
-                        word-break: keep-all;
-                        line-height: auto;
-                        height: auto;
-                    }
-                }
-            }
-
-            #location-suburb-search {
-                margin-top: 15px;
-                float: none;
-                text-align: left;
-            }
-        }
-
-        // added in js
-        &.heading-next-line {
-            padding-top: 0;
-
-            #location-header-heading {
-                h2 {
-                    display: block;
-                }
-            }
         }
     }
 
@@ -172,11 +128,11 @@ $mediaWidthLocation2: 700px;
             padding: 20px 150px;
         }
 
-        @media (max-width: $mediaWidthLocation0) {
+        @media (max-width: $mediaWidth4) {
             padding: 20px 50px;
         }
 
-        @media (max-width: $mediaWidthLocation1) {
+        @media (max-width: $mediaWidth2) {
             display: inline-block;
             width: auto;
 
@@ -272,11 +228,11 @@ $mediaWidthLocation2: 700px;
         }
 
 
-        @media (max-width: $mediaWidthLocation1) {
+        @media (max-width: $mediaWidth2) {
             max-width: 90%;
         }
 
-        @media (max-width: $mediaWidthLocation2) {
+        @media (max-width: $mediaWidth1) {
             max-width: 95%;
         }
     }
@@ -297,7 +253,7 @@ $mediaWidthLocation2: 700px;
         }
 
         #location-store-filter {
-            padding: 20px 0;
+            padding: 0;
         }
     }
 }

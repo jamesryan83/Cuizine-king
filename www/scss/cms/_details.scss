@@ -72,15 +72,23 @@
             #store-info-edit-hours {
                 padding-top: 10px;
 
-                h3 {
-                    text-align: left;
-                    padding-left: 10px;
+                // heading
+                > div:first-of-type {
+                    max-width: 600px;
+                    width: 100%;
+                    display: inline-block;
+                    text-align: center;
+
+                    h3 {
+                        text-align: left;
+                    }
+
+                    hr {
+                        margin-bottom: 20px;
+                    }
                 }
 
-                hr {
-                    margin-bottom: 20px;
-                }
-
+                // inputs
                 #business-hours-container {
 
                     .container-inner {
@@ -168,7 +176,7 @@
         }
     }
 
-
+    // TODO : this is ugly
     @media (max-width: $mediaWidth1) {
         #store-content {
             #store-info-edit {
@@ -178,7 +186,7 @@
                             clear: none;
                             height: auto;
 
-                            > label {
+                            > label, .typeahead-inner > label {
                                 margin-top: 10px;
                                 height: 27px;
                                 line-height: 27px;
@@ -187,10 +195,14 @@
                                 float: none;
                             }
 
-                            > input, > select, > textarea, > div {
+                            > input, > select, > textarea, > div, .typeahead-inner > div {
                                 display: block;
                                 float: none;
                                 width: 100%;
+                            }
+
+                            &.typeahead {
+                                height: 65px;
                             }
                         }
                     }

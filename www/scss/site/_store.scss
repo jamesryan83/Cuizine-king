@@ -21,14 +21,12 @@
             }
         }
 
-        .typeahead {
-            width: auto;
-            float: right;
-            padding-top: 0;
+        @media (max-width: $mediaWidth1) {
+            text-align: center;
 
-            label {
-                width: auto;
-                margin-right: 10px;
+            span {
+                display: block;
+                padding-top: 10px;
             }
         }
     }
