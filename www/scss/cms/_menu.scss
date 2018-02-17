@@ -1,8 +1,13 @@
 
 // Menu page
 
-#page-cms-menu {
+#page-cms-menu.page {
     padding-bottom: 80px;
+
+    .page-header {
+        padding-bottom: 50px;
+    }
+
 
     // Store content
     #store-content {

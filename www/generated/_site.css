@@ -438,8 +438,12 @@ input, textarea {
 
 .category-scroller-container {
   margin-bottom: 50px;
-  height: 120px; }
+  height: 120px;
+  text-align: center; }
   .category-scroller-container .category-scroller {
+    text-align: left;
+    width: 90%;
+    display: inline-block;
     overflow: hidden;
     position: relative;
     white-space: nowrap;
@@ -471,7 +475,8 @@ input, textarea {
       width: 100%;
       background-color: #0f0c29;
       border-bottom: 1px solid #373748;
-      clear: both; }
+      clear: both;
+      z-index: 1000; }
       .category-scroller-container .category-scroller.floating h3 {
         height: 70px;
         line-height: 70px;
@@ -967,51 +972,61 @@ input, textarea {
       font-weight: bold; }
   #store-content #store-menu-list {
     width: 100%; }
+    #store-content #store-menu-list .store-menu-list-item.heading {
+      margin-top: 10px;
+      padding: 20px 0; }
+      #store-content #store-menu-list .store-menu-list-item.heading h4 {
+        font-size: 40px;
+        line-height: 40px;
+        height: 40px;
+        color: #5595d8; }
+      #store-content #store-menu-list .store-menu-list-item.heading > hr {
+        margin-bottom: 10px;
+        background-color: #373748; }
+    #store-content #store-menu-list .store-menu-list-item {
+      position: relative; }
+      #store-content #store-menu-list .store-menu-list-item:not(.heading) {
+        margin-bottom: 25px;
+        background-color: #10112b;
+        box-shadow: 1px 1px 1px 1px #000115;
+        border-radius: 2px; }
+      #store-content #store-menu-list .store-menu-list-item > div {
+        float: left;
+        width: calc(100% - 100px);
+        padding: 20px 30px; }
+        #store-content #store-menu-list .store-menu-list-item > div > h4 {
+          font-size: 22px;
+          margin-bottom: 10px; }
+        #store-content #store-menu-list .store-menu-list-item > div > p {
+          max-height: 46px;
+          font-size: 17px;
+          line-height: 23px;
+          overflow: hidden; }
+        #store-content #store-menu-list .store-menu-list-item > div label {
+          display: none; }
+      #store-content #store-menu-list .store-menu-list-item > button {
+        position: absolute;
+        font-size: 18px;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        right: 30px; }
+      #store-content #store-menu-list .store-menu-list-item:active {
+        -webkit-transform: scale(0.99, 0.99);
+        transform: scale(0.99, 0.99); }
     #store-content #store-menu-list .label-takeaway, #store-content #store-menu-list .label-gluten-free, #store-content #store-menu-list .label-vegetarian {
       font-size: 12px;
       height: 15px;
       line-height: 15px;
       font-weight: bold;
-      margin-right: 10px; }
+      margin-right: 10px;
+      display: inline-block !important; }
     #store-content #store-menu-list .label-takeaway {
       color: #ff7373; }
     #store-content #store-menu-list .label-gluten-free {
       color: #e8a443; }
     #store-content #store-menu-list .label-vegetarian {
       color: #31ac31; }
-    #store-content #store-menu-list .store-menu-list-item.heading {
-      margin: 20px 0; }
-      #store-content #store-menu-list .store-menu-list-item.heading h4 {
-        font-size: 30px;
-        line-height: 30px;
-        height: 30px;
-        color: #5595d8; }
-      #store-content #store-menu-list .store-menu-list-item.heading > hr {
-        margin-bottom: 10px;
-        background-color: #373748; }
-    #store-content #store-menu-list .store-menu-list-item.heading:not(:first-of-type) {
-      margin: 20px 0; }
-    #store-content #store-menu-list .store-menu-list-item {
-      border: 1px solid transparent; }
-      #store-content #store-menu-list .store-menu-list-item > div {
-        float: left;
-        width: calc(100% - 100px);
-        padding: 5px 20px; }
-        #store-content #store-menu-list .store-menu-list-item > div > p {
-          max-height: 46px;
-          overflow: hidden; }
-      #store-content #store-menu-list .store-menu-list-item > label {
-        float: right;
-        height: 100%;
-        width: 100px;
-        color: #5595d8;
-        font-size: 14px;
-        display: block;
-        margin-top: 20px;
-        text-decoration: underline;
-        cursor: pointer; }
-        #store-content #store-menu-list .store-menu-list-item > label:hover {
-          color: #1f58c6; }
   #store-content #store-footer {
     padding: 30px 10px; }
     #store-content #store-footer > p {

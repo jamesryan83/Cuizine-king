@@ -5,8 +5,12 @@ $categoryScrollerHeight1: 70px;
 .category-scroller-container {
     margin-bottom: 50px;
     height: 120px;
+    text-align: center;
 
     .category-scroller {
+        text-align: left;
+        width: 90%;
+        display: inline-block;
         overflow: hidden;
         position: relative;
         white-space: nowrap;
@@ -39,12 +43,8 @@ $categoryScrollerHeight1: 70px;
             }
         }
 
-        &.no-heading {
 
-
-
-        }
-
+        // When at top of screen
         &.floating {
             height: $categoryScrollerHeight1;
             position: fixed;
@@ -54,6 +54,7 @@ $categoryScrollerHeight1: 70px;
             background-color: $colorBlue6;
             border-bottom: 1px solid $colorBlue3;
             clear: both;
+            z-index: $zIndexNavbar;
 
             h3 {
                 height: $categoryScrollerHeight1;
@@ -78,5 +79,6 @@ $categoryScrollerHeight1: 70px;
                 }
             }
         }
+
     }
 }

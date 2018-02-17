@@ -800,44 +800,39 @@ app.storeContent = {
 
             // create product items
             for (var i = 0; i < data.products.length; i++) {
-
                 item = data.products[i];
-                itemProperties = "";
 
-                if (item.gluten_free) itemProperties += "<label class='label-gluten-free'>GLUTEN FREE</label>";
-                if (item.vegetarian) itemProperties += "<label class='label-vegetarian'>VEGETARIAN</label>";
-                if (!item.delivery_available) itemProperties += "<label class='label-takeaway'>DELIVERY NOT AVAILABLE</label>";
+                if (item.gluten_free) item.class1 = "label-gluten-free";
+                if (item.vegetarian) item.class2 = "label-vegetarian";
+                if (!item.delivery_available) item.class3 = "label-takeaway";
 
-                if (!itemProperties) itemProperties = "<br />";
+                var $item = $("<div></div>")
+                    .loadTemplate($("#template-store-menu-item"), item);
 
-                frag.append(
-                    $("<div class='store-menu-list-item clearfix' data-id-product='" + item.id_product + "'>" +
-                        "<div>" +
-                            "<h4>" + item.name + "</h4>" +
-                            "<p>" + item.description + "</p>" +
-                            itemProperties +
-                        "</div>" +
-                        "<label>Add to order</label>" +
-                    "</div>")[0]);
+                $item = $item.children().first();
+                $item.attr("data-product-id", item.id_product);
+                frag.append($item[0]);
             }
 
 
             // create product heading items
-            if (data.product_headings) {
-                for (var i = 0; i < data.product_headings.length; i++) {
-                    var heading = data.product_headings[i];
+            for (var i = 0; i < data.product_headings.length; i++) {
+                var heading = data.product_headings[i];
 
-                    var el = $(frag).find(".store-menu-list-item[data-id-product='" +
-                                 heading.above_product_id + "']");
+                var el = $(frag).find(".store-menu-list-item[data-product-id='" +
+                             heading.above_product_id + "']");
 
-                    if (el) {
-                        $("<div class='store-menu-list-item heading' data-id-heading='" + heading.id_product_heading + "'>" +
-                            "<h4 class='store-menu-list-item-group-heading'>" + heading.title + "</h4>" +
-                            "<hr class='hr-1' />" +
-                        "</div>").insertBefore(el);
-                    }
+                if (el) {
+                    var $item = $("<div></div>")
+                        .loadTemplate($("#template-store-menu-heading"), heading);
+
+
+                    $item = $item.children().first();
+                    $item.attr("data-heading-id", heading.id_product_heading);
+                    $item.insertBefore(el);
                 }
             }
+
 
             // add products and headings to page
             $("#store-menu-list").append(frag);

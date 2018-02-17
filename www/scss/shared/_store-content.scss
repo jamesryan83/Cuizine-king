@@ -188,6 +188,73 @@
         width: 100%;
 
 
+        // heading item
+        .store-menu-list-item.heading {
+            margin-top: 10px;
+            padding: 20px 0;
+
+            h4 {
+                font-size: 40px;
+                line-height: 40px;
+                height: 40px;
+                color: $colorBlue2;
+            }
+
+            > hr {
+                margin-bottom: 10px;
+                background-color: $colorBlue3;
+            }
+        }
+
+
+        // normal menu item
+        .store-menu-list-item {
+            position: relative;
+
+            &:not(.heading) {
+                margin-bottom: 25px;
+                background-color: $colorBlue7;
+                box-shadow: 1px 1px 1px 1px $colorBlue4;
+                border-radius: 2px;
+            }
+
+            > div {
+                float: left;
+                width: calc(100% - 100px);
+                padding: 20px 30px;
+
+                > h4 {
+                    font-size: 22px;
+                    margin-bottom: 10px;
+                }
+
+                > p {
+                    max-height: 46px;
+                    font-size: 17px;
+                    line-height: 23px;
+                    overflow: hidden;
+                }
+
+                label {
+                    display: none;
+                }
+            }
+
+            // add to order
+            > button {
+                position: absolute;
+                font-size: 18px;
+                top: 50%;
+                transform: translateY(-50%);
+                right: 30px;
+            }
+
+            &:active {
+                transform: scale(0.99, 0.99);
+            }
+        }
+
+
         // colored labels
         .label-takeaway, .label-gluten-free, .label-vegetarian {
             font-size: 12px;
@@ -195,6 +262,7 @@
             line-height: 15px;
             font-weight: bold;
             margin-right: 10px;
+            display: inline-block !important;
         }
 
         .label-takeaway {
@@ -209,61 +277,6 @@
             color: $colorGreen1;
         }
 
-
-        // heading item
-        .store-menu-list-item.heading {
-            margin: 20px 0;
-
-            h4 {
-                font-size: 30px;
-                line-height: 30px;
-                height: 30px;
-                color: $colorBlue2;
-            }
-
-            > hr {
-                margin-bottom: 10px;
-                background-color: $colorBlue3;
-            }
-        }
-
-        .store-menu-list-item.heading:not(:first-of-type) {
-            margin: 20px 0;
-        }
-
-
-        // normal menu item
-        .store-menu-list-item {
-            border: 1px solid transparent;
-
-            > div {
-                float: left;
-                width: calc(100% - 100px);
-                padding: 5px 20px;
-
-                > p {
-                    max-height: 46px;
-                    overflow: hidden;
-                }
-            }
-
-            // add to order
-            > label {
-                float: right;
-                height: 100%;
-                width: 100px;
-                color: $colorBlue2;
-                font-size: 14px;
-                display: block;
-                margin-top: 20px;
-                text-decoration: underline;
-                cursor: pointer;
-
-                &:hover {
-                    color: $colorBlue1;
-                }
-            }
-        }
     }
 
 
