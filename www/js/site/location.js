@@ -39,14 +39,6 @@ app.site.location = {
         });
 
 
-        // suburb typeahead
-        new app.controls.Typeahead(function (data, url) {
-            if (data && url) {
-                app.routerBase.loadPageForRoute("/location/" + url, "site");
-            }
-        });
-
-
         // load stores
         app.util.ajaxRequest({
             method: "GET", url: "/res/_stores.json"
@@ -68,45 +60,7 @@ app.site.location = {
             $("#location-header-location")
                 .text(decodeURIComponent(location[0]) + " " + location[1]);
         }
-
-
-//        this.resizeLocationHeading();
-
-
-//        // Resize heading when window resizes
-//        $(window).on("resize blur focus", function () {
-//            setTimeout(function () {
-//                self.resizeLocationHeading();
-//            }, 400); // doesn't always work without delay
-//        });
     },
-
-
-//    // TODO : this is a bit yucky, try again with css
-//    // Resizes the location heading so it's visible
-//    resizeLocationHeading: function () {
-////        console.log("resizing heading");
-//        if (!document.getElementById("location-header-1")) return; // incase page isn't loaded
-//
-//        this.pageWidth = document.getElementById("page-location").offsetWidth;
-//        this.regularHeadingWidth = document.getElementById("location-header-1").offsetWidth;
-//        this.locationHeadingWidth = document.getElementById("location-header-location").offsetWidth;
-//        this.headingContainerWidth = document.getElementById("location-header-heading").offsetWidth;
-//        this.typeaheadWidth = document.getElementById("location-suburb-search").offsetWidth;
-//
-//        if (this.regularHeadingWidth + this.locationHeadingWidth > this.headingContainerWidth) {
-//            $("#location-header").addClass("suburb-next-line");
-//        } else if (this.headingContainerWidth + this.typeaheadWidth < this.pageWidth - 300) {
-//            $("#location-header").removeClass("suburb-next-line");
-//        }
-//
-//        if (this.regularHeadingWidth + this.locationHeadingWidth > this.pageWidth - 60) {
-//            $("#location-header").addClass("heading-next-line");
-//        } else {
-//            $("#location-header").removeClass("heading-next-line");
-//        }
-//    },
-
 
 
     // After the store data is loaded
@@ -184,16 +138,6 @@ app.site.location = {
                 app.routerBase.loadPageForRoute("/store/" + storeId, "site");
             });
         });
-
-
-//        setTimeout(function () {
-//            self.resizeLocationHeading();
-//        }, 100);
-//
-//
-//        setTimeout(function () { // again just incase
-//            self.resizeLocationHeading();
-//        }, 1000);
     },
 
 }

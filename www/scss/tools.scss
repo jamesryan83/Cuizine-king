@@ -2,9 +2,9 @@
 // This is for the node-webkit project in the /tools folder
 
 @import "shared/common";
-@import "shared/checkbox";
-@import "shared/toasts";
-@import "shared/typeahead";
+@import "controls/checkbox";
+@import "controls/toasts";
+@import "controls/typeahead";
 
 
 html, body {

@@ -77,6 +77,7 @@ $colorBlue2: #5595d8;
 $colorBlue3: #373748;
 $colorBlue4: #000115;
 $colorBlue5: #3e75ff;
+$colorBlue6: #0f0c29;
 $colorRed1: #ff7373;
 $colorRed2: #ff3333;
 $colorOrange1: #e8a443;
@@ -155,7 +156,7 @@ body {
     width: 100%;
     min-height: 100%;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     background: $colorBlue4;
 }
 

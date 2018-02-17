@@ -34,6 +34,14 @@ app.site.navbar = {
         }
 
 
+        // suburb typeahead
+        new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
+                app.routerBase.loadPageForRoute("/location/" + url, "site");
+            }
+        });
+
+
         // link clicked
         navbar.linkClicked = function (e, route) {
             if (e.target.innerText.toLowerCase() == "blog") {

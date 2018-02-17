@@ -257,14 +257,6 @@ app.site.home = {
     init: function (routeData) {
         var self = this;
 
-
-        // suburb typeahead
-        new app.controls.Typeahead(function (data, url) {
-            if (data && url) {
-                app.routerBase.loadPageForRoute("/location/" + url, "site");
-            }
-        });
-
     },
 
 }
@@ -308,14 +300,6 @@ app.site.location = {
         });
 
 
-        // suburb typeahead
-        new app.controls.Typeahead(function (data, url) {
-            if (data && url) {
-                app.routerBase.loadPageForRoute("/location/" + url, "site");
-            }
-        });
-
-
         // load stores
         app.util.ajaxRequest({
             method: "GET", url: "/res/_stores.json"
@@ -337,45 +321,7 @@ app.site.location = {
             $("#location-header-location")
                 .text(decodeURIComponent(location[0]) + " " + location[1]);
         }
-
-
-//        this.resizeLocationHeading();
-
-
-//        // Resize heading when window resizes
-//        $(window).on("resize blur focus", function () {
-//            setTimeout(function () {
-//                self.resizeLocationHeading();
-//            }, 400); // doesn't always work without delay
-//        });
     },
-
-
-//    // TODO : this is a bit yucky, try again with css
-//    // Resizes the location heading so it's visible
-//    resizeLocationHeading: function () {
-////        console.log("resizing heading");
-//        if (!document.getElementById("location-header-1")) return; // incase page isn't loaded
-//
-//        this.pageWidth = document.getElementById("page-location").offsetWidth;
-//        this.regularHeadingWidth = document.getElementById("location-header-1").offsetWidth;
-//        this.locationHeadingWidth = document.getElementById("location-header-location").offsetWidth;
-//        this.headingContainerWidth = document.getElementById("location-header-heading").offsetWidth;
-//        this.typeaheadWidth = document.getElementById("location-suburb-search").offsetWidth;
-//
-//        if (this.regularHeadingWidth + this.locationHeadingWidth > this.headingContainerWidth) {
-//            $("#location-header").addClass("suburb-next-line");
-//        } else if (this.headingContainerWidth + this.typeaheadWidth < this.pageWidth - 300) {
-//            $("#location-header").removeClass("suburb-next-line");
-//        }
-//
-//        if (this.regularHeadingWidth + this.locationHeadingWidth > this.pageWidth - 60) {
-//            $("#location-header").addClass("heading-next-line");
-//        } else {
-//            $("#location-header").removeClass("heading-next-line");
-//        }
-//    },
-
 
 
     // After the store data is loaded
@@ -453,16 +399,6 @@ app.site.location = {
                 app.routerBase.loadPageForRoute("/store/" + storeId, "site");
             });
         });
-
-
-//        setTimeout(function () {
-//            self.resizeLocationHeading();
-//        }, 100);
-//
-//
-//        setTimeout(function () { // again just incase
-//            self.resizeLocationHeading();
-//        }, 1000);
     },
 
 }
@@ -761,6 +697,14 @@ app.site.navbar = {
         }
 
 
+        // suburb typeahead
+        new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
+                app.routerBase.loadPageForRoute("/location/" + url, "site");
+            }
+        });
+
+
         // link clicked
         navbar.linkClicked = function (e, route) {
             if (e.target.innerText.toLowerCase() == "blog") {
@@ -832,22 +776,15 @@ app.site.store = {
         var self = this;
 
 
-        // suburb typeahead
-        new app.controls.Typeahead(function (data, url) {
-            if (data && url) {
-                app.routerBase.loadPageForRoute("/location/" + url, "site");
-            }
-        });
-
-
         app.storeContent.init(routeData);
 
 
-        // Store id
+        // Store id from url
         var id_store = routeData.route.split("/");
         id_store = id_store[id_store.length - 1];
 
         app.storeContent.id_store = id_store;
+
 
         // Get the store data
         app.storeContent.getStoreData(function (storeData) {
@@ -857,22 +794,7 @@ app.site.store = {
                 app.storeContent.addMenuDataToPage(storeData);
             }
         });
-
-
-        // Resize heading when window resizes
-        $(window).on("resize blur focus", function () {
-            setTimeout(function () {
-                self.resizeLocationHeading();
-            }, 400); // doesn't always work without delay
-        });
-
     },
-
-
-    resizeLocationHeading: function () {
-
-    },
-
 
 }
 
@@ -1380,43 +1302,8 @@ app.storeContent = {
             $("#store-menu-list").append(frag);
 
 
-            // fake headings
-            for (var i = 0; i < 20; i++) {
-                data.product_headings.push({
-                    above_product_id: i + 10,
-                    id_product_heading: i + 3,
-                    subtitle: "test" + i,
-                    title: "Test" + i
-                });
-            }
-
-
-            // Category nav
-            frag = document.createDocumentFragment();
-            for (var i = 0; i < data.product_headings.length; i++) {
-                frag.append($("<li class='store-menu-nav-list-item'>" + data.product_headings[i].title + "</li>")[0])
-            }
-            $(".store-menu-nav-list").append(frag);
-
-            $(".store-menu-nav-list-item").on("click", function (e) {
-                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-
-                if (el[0]) {
-                    $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
-                }
-            });
-
-
-            // Events
-            $(window).on("scroll", function (e) {
-                // position of menu category navigation thing
-                var rect = document.getElementById("store-menu").getBoundingClientRect();
-                if (rect.top < 0) {
-                    self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
-                } else {
-                    self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
-                }
-            });
+            // Category scroller
+            new app.controls.CategoryScroller(data.product_headings);
 
 
             // Setup dialogs
@@ -2007,6 +1894,49 @@ app.validationRules.validateHours = function (data) {
 
 
 
+// Scroller on store and cms menu pages
+app.controls.CategoryScroller = function (categories) {
+
+    var scrollerListEl = ".category-scroller-list";
+    var $categoryScrollerContainer = $(".category-scroller-container");
+    var $categoryScroller = $(".category-scroller");
+    var $categoryScrollerList = $(scrollerListEl);
+
+
+    // Add items to scroller
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < categories.length; i++) {
+        var $item = $("<li class='store-menu-nav-list-item'>" + categories[i].title + "</li>");
+
+        // Item clicked event
+        $item.on("click", function (e) {
+            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+            if (el[0]) {
+                $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
+            }
+        });
+
+        frag.append($item[0]);
+    }
+    $categoryScrollerList.append(frag);
+
+
+    // top category nav
+    new app.controls.HorizontalScroller(scrollerListEl, function (clickedEl) {
+
+    });
+
+
+    // Change to floating navbar
+    $(window).on("scroll", function (e) {
+        if ($categoryScrollerContainer[0].getBoundingClientRect().top < 20) {
+            $categoryScroller.addClass("floating");
+        } else {
+            $categoryScroller.removeClass("floating");
+        }
+    });
+}
 // Navbar
 
 app.controls.Navbar = function (routeData) {

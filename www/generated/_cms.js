@@ -843,43 +843,8 @@ app.storeContent = {
             $("#store-menu-list").append(frag);
 
 
-            // fake headings
-            for (var i = 0; i < 20; i++) {
-                data.product_headings.push({
-                    above_product_id: i + 10,
-                    id_product_heading: i + 3,
-                    subtitle: "test" + i,
-                    title: "Test" + i
-                });
-            }
-
-
-            // Category nav
-            frag = document.createDocumentFragment();
-            for (var i = 0; i < data.product_headings.length; i++) {
-                frag.append($("<li class='store-menu-nav-list-item'>" + data.product_headings[i].title + "</li>")[0])
-            }
-            $(".store-menu-nav-list").append(frag);
-
-            $(".store-menu-nav-list-item").on("click", function (e) {
-                var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
-
-                if (el[0]) {
-                    $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
-                }
-            });
-
-
-            // Events
-            $(window).on("scroll", function (e) {
-                // position of menu category navigation thing
-                var rect = document.getElementById("store-menu").getBoundingClientRect();
-                if (rect.top < 0) {
-                    self.$storeMenuNav.css({ "position": "fixed", "right": 50, "top": 0, "float": "none" });
-                } else {
-                    self.$storeMenuNav.css({ "position": "relative", "right": "auto", "top": "auto", "float": "left" });
-                }
-            });
+            // Category scroller
+            new app.controls.CategoryScroller(data.product_headings);
 
 
             // Setup dialogs
@@ -1470,6 +1435,49 @@ app.validationRules.validateHours = function (data) {
 
 
 
+// Scroller on store and cms menu pages
+app.controls.CategoryScroller = function (categories) {
+
+    var scrollerListEl = ".category-scroller-list";
+    var $categoryScrollerContainer = $(".category-scroller-container");
+    var $categoryScroller = $(".category-scroller");
+    var $categoryScrollerList = $(scrollerListEl);
+
+
+    // Add items to scroller
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < categories.length; i++) {
+        var $item = $("<li class='store-menu-nav-list-item'>" + categories[i].title + "</li>");
+
+        // Item clicked event
+        $item.on("click", function (e) {
+            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+
+            if (el[0]) {
+                $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
+            }
+        });
+
+        frag.append($item[0]);
+    }
+    $categoryScrollerList.append(frag);
+
+
+    // top category nav
+    new app.controls.HorizontalScroller(scrollerListEl, function (clickedEl) {
+
+    });
+
+
+    // Change to floating navbar
+    $(window).on("scroll", function (e) {
+        if ($categoryScrollerContainer[0].getBoundingClientRect().top < 20) {
+            $categoryScroller.addClass("floating");
+        } else {
+            $categoryScroller.removeClass("floating");
+        }
+    });
+}
 // Navbar
 
 app.controls.Navbar = function (routeData) {

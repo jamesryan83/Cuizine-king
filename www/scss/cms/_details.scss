@@ -158,7 +158,7 @@
                     .image-store-logo {
                         .upload-button {
                             left: 50%;
-                            top: 250px;
+                            top: 270px;
                             transform: translateX(-50%);
 
                             label {
@@ -232,7 +232,7 @@
     @media (max-width: $mediaMobileWidth1) {
         #store-info-edit {
             .upload-button {
-                top: 230px !important;
+                top: 250px !important;
             }
 
             #store-info-edit-hours {

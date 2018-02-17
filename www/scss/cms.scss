@@ -1,10 +1,16 @@
 @import "shared/common";
-@import "shared/checkbox";
+@import "controls/checkbox";
+@import "controls/category-scroller";
+@import "controls/rating-control";
+@import "controls/toasts";
+@import "controls/typeahead";
 @import "shared/navbar";
-@import "shared/rating-control";
 @import "shared/store-content";
-@import "shared/toasts";
-@import "shared/typeahead";
+@import "dialogs/add-to-order";
+@import "dialogs/business-hours";
+@import "dialogs/checkout";
+@import "dialogs/description";
+@import "dialogs/reviews";
 @import "cms/business";
 @import "cms/dashboard";
 @import "cms/delivery-suburbs";
@@ -14,10 +20,6 @@
 @import "cms/orders";
 @import "cms/transactions";
 
-
-body {
-    overflow-y: scroll;
-}
 
 
 // make page stay 100% height

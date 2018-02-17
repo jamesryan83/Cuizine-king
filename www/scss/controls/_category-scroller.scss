@@ -1,0 +1,82 @@
+
+$categoryScrollerHeight1: 70px;
+
+// On store and cms menu pages
+.category-scroller-container {
+    margin-bottom: 50px;
+    height: 120px;
+
+    .category-scroller {
+        overflow: hidden;
+        position: relative;
+        white-space: nowrap;
+        height: 120px;
+
+        h3 {
+            font-size: 30px;
+            color: $colorBlue2;
+        }
+
+        ul {
+            overflow-x: scroll;
+            overflow-y: hidden;
+            height: 90px;
+            padding: 0 40px;
+
+            li {
+                height: $categoryScrollerHeight1;
+                line-height: $categoryScrollerHeight1;
+                font-size: 20px;
+                display: inline-block;
+                padding-right: 35px;
+                color: $colorGray4;
+                font-weight: bold;
+
+                &:hover {
+                    color: $colorBlue2;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        &.no-heading {
+
+
+
+        }
+
+        &.floating {
+            height: $categoryScrollerHeight1;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: $colorBlue6;
+            border-bottom: 1px solid $colorBlue3;
+            clear: both;
+
+            h3 {
+                height: $categoryScrollerHeight1;
+                line-height: $categoryScrollerHeight1;
+                float: left;
+                width: 170px;
+                font-size: 22px;
+                padding-left: 20px;
+            }
+
+            hr {
+                display: none;
+            }
+
+            ul {
+                float: left;
+                width: calc(100% - 170px);
+                padding-left: 0;
+
+                li {
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+}

@@ -9,6 +9,11 @@
     background-size: cover;
 
 
+    .typeahead-2 {
+        display: none !important;
+    }
+
+
     h2 {
         font-size: 34px;
         font-weight: 400;
@@ -309,6 +314,10 @@
 
     // mobile
     @media (max-width: $mediaWidth2) {
+        #navbar-site {
+            height: 170px !important;
+        }
+
         #page-login-form-container {
             padding-top: 50px;
         }
@@ -318,6 +327,10 @@
 
     // mobile
     @media (max-width: $mediaMobileWidth1) {
+        #navbar-site {
+            height: 140px !important;
+        }
+
         h2 {
             padding-bottom: 0;
         }
