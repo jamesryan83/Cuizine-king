@@ -12,14 +12,20 @@
 
 <!-- Store menu item -->
 <script id="template-store-menu-item" type="text/html">
-    <div class="store-menu-list-item clearfix">
-        <div>
+    <div class="store-menu-list-item noselect">
+        <div class="store-menu-list-item-details">
             <h4 data-content="name"></h4>
             <p data-content="description"></p>
             <label data-class="class1">GLUTEN FREE</label>
             <label data-class="class2">VEGETARIAN</label>
             <label data-class="class3">NO DELIVERY</label>
+
+            <button class="button-3">Add to order</button>
         </div>
-        <button class="button-3">Add to order</button>
+        <div class="store-menu-list-item-options">
+            <label>blah</label>
+
+            <button class="store-menu-list-item-options-cancel button-3">CANCEL</button>
+        </div>
     </div>
 </script>

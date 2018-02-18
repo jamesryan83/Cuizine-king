@@ -515,6 +515,7 @@ app.storeContent = {
             for (var i = 0; i < data.products.length; i++) {
                 item = data.products[i];
 
+                // item template
                 if (item.gluten_free) item.class1 = "label-gluten-free";
                 if (item.vegetarian) item.class2 = "label-vegetarian";
                 if (!item.delivery_available) item.class3 = "label-takeaway";
@@ -524,6 +525,16 @@ app.storeContent = {
 
                 $item = $item.children().first();
                 $item.attr("data-product-id", item.id_product);
+
+                // click events
+                $item.find(".store-menu-list-item-details").on("click", function () {
+                    $(this).next().addClass("active");
+                });
+
+                $item.find(".store-menu-list-item-options-cancel").on("click", function () {
+                    $(this).parent().removeClass("active");
+                });
+
                 frag.append($item[0]);
             }
 
