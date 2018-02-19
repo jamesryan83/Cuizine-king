@@ -13,19 +13,31 @@
 <!-- Store menu item -->
 <script id="template-store-menu-item" type="text/html">
     <div class="store-menu-list-item noselect">
-        <div class="store-menu-list-item-details">
-            <h4 data-content="name"></h4>
-            <p data-content="description"></p>
-            <label data-class="class1">GLUTEN FREE</label>
-            <label data-class="class2">VEGETARIAN</label>
-            <label data-class="class3">NO DELIVERY</label>
-
-            <button class="button-3">Add to order</button>
+        <div class="store-menu-list-item-details clearfix" role="button">
+            <div class="store-menu-list-item-content">
+                <h4 data-content="name"></h4>
+                <p data-content="description"></p>
+                <label data-class="class1">GLUTEN FREE</label>
+                <label data-class="class2">VEGETARIAN</label>
+                <label data-class="class3">NO DELIVERY</label>
+            </div>
+            <div class="store-menu-list-item-button"><label class="center">SELECT</label></div>
         </div>
-        <div class="store-menu-list-item-options">
-            <label>blah</label>
+        <div class="store-menu-list-item-options clearfix">
+            <div class="store-menu-list-item-content clearfix"></div>
+            <div class="store-menu-list-item-button store-menu-list-item-options-cancel"><label class="center">CANCEL</label></div>
+        </div>
+    </div>
+</script>
 
-            <button class="store-menu-list-item-options-cancel button-3">CANCEL</button>
+
+<!-- Store menu item option -->
+<script id="template-store-menu-option" type="text/html">
+    <div class="store-menu-list-item-option">
+        <div class="center">
+            <label data-content="name"></label>
+            <label data-content="price" data-format="priceFormatter"></label>
+            <label>ADD TO BASKET</button>
         </div>
     </div>
 </script>

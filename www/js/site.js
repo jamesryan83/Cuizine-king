@@ -23,6 +23,7 @@ app.site = {
 
         this.htmlFiles = html;
 
+        app.util.setupTemplateFormatters();
 
         // Dialogs
         app.dialogs.init();

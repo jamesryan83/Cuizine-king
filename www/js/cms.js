@@ -21,6 +21,7 @@ app.cms = {
 
         this.htmlFiles = html;
 
+        app.util.setupTemplateFormatters();
 
         // Dialogs
         app.dialogs.init();

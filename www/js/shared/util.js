@@ -11,6 +11,28 @@ app.util = {
     // ---------------------- Stuff ----------------------
 
 
+    // jquery-template formatters
+    setupTemplateFormatters: function () {
+        $.addTemplateFormatter({
+            priceFormatter: function (value) {
+                return "$" + value.toFixed(2);
+            },
+            categoryArrayFormatter: function(value) {
+                return value.join(", ");
+            },
+            phoneNumberFormatter: function(value) {
+                return "Ph: " + value;
+            },
+            deliveryFormatter: function(value) {
+                return "Delivery " + value;
+            },
+            minOrderFormatter: function(value) {
+                return "Min. Order " + value;
+            },
+        });
+    },
+
+
     // Validates an inputs object and shows toast if there's an error
     validateInputs: function (inputs, validationRule) {
         if (!validationRule) {
@@ -84,6 +106,20 @@ app.util = {
         return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     },
 
+
+    // Load a jquery-template template and return it
+    loadTemplate: function (templateEl, data, itemId, idName) {
+        var $item = $("<div></div>")
+            .loadTemplate($(templateEl), data, { isFile: false });
+
+        $item = $item.children().first().unwrap();
+
+        if (idName) {
+            $item.attr(idName, itemId);
+        }
+
+        return $item;
+    },
 
 
 

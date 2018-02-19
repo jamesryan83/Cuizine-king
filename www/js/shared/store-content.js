@@ -112,7 +112,7 @@ app.storeContent = {
         // products
         var item = null;
         var frag = document.createDocumentFragment();
-
+console.log(data)
         if (data.products) {
 
 
@@ -120,25 +120,33 @@ app.storeContent = {
             for (i = 0; i < data.products.length; i++) {
                 item = data.products[i];
 
+                if (i == 0) item.name = "a really long title a really long title a really long title a really long title"
+
                 // item template
                 if (item.gluten_free) item.class1 = "label-gluten-free";
                 if (item.vegetarian) item.class2 = "label-vegetarian";
                 if (!item.delivery_available) item.class3 = "label-takeaway";
 
-                $item = $("<div></div>")
-                    .loadTemplate($("#template-store-menu-item"), item, { isFile: false });
+                $item = app.util.loadTemplate(
+                    "#template-store-menu-item", item,
+                    item.id_product, "data-product-id");
 
-                $item = $item.children().first();
-                $item.attr("data-product-id", item.id_product);
 
-                // click events
-                $item.find(".store-menu-list-item-details").on("click", function () {
-                    $(this).next().addClass("active");
-                });
+                // Panels
+                var $optionsPanel = $item.find(".store-menu-list-item-options > div").first();
+                var $option = null;
+                var size = item.options.length;
 
-                $item.find(".store-menu-list-item-options-cancel").on("click", function () {
-                    $(this).parent().removeClass("active");
-                });
+                // product options
+                for (var j = 0; j < item.options.length; j++) {
+                    $option = app.util.loadTemplate(
+                        "#template-store-menu-option", item.options[j],
+                        item.options[j].id_product_option, "data-product-option-id");
+
+                    $option.css({ width: (100 / size) + "%" });
+
+                    $optionsPanel.prepend($option[0]);
+                }
 
                 frag.append($item[0]);
             }
@@ -153,17 +161,25 @@ app.storeContent = {
                              heading.above_product_id + "']");
 
                 if (el) {
-                    $item = $("<div></div>")
-                        .loadTemplate($("#template-store-menu-heading"), heading, { isFile: false });
-
-                    $item = $item.children().first();
-                    $item.attr("data-heading-id", heading.id_product_heading);
+                    $item = app.util.loadTemplate(
+                        "#template-store-menu-heading", heading,
+                        heading.id_product_heading, "data-heading-id");
 
                     // add heading before element
                     $item.insertBefore(el);
                 }
             }
             self.$menuList.append(frag);
+
+
+            // click events
+            $(".store-menu-list-item-details").on("click", function () {
+                $(this).next().addClass("active");
+            });
+
+            $(".store-menu-list-item-options-cancel").on("click", function () {
+                $(this).parent().removeClass("active");
+            });
 
 
             // Category scroller

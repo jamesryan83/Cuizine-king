@@ -19,26 +19,6 @@ app.site.location = {
         var self = this;
 
 
-        // jquery-template formatters for store items
-        $.addTemplateFormatter({
-            categoryArrayFormatter: function(value) {
-                return value.join(", ");
-            },
-
-            phoneNumberFormatter: function(value) {
-                return "Ph: " + value;
-            },
-
-            deliveryFormatter: function(value) {
-                return "Delivery " + value;
-            },
-
-            minOrderFormatter: function(value) {
-                return "Min. Order " + value;
-            },
-        });
-
-
         // load stores
         app.util.ajaxRequest({
             method: "GET", url: "/res/_stores.json"
@@ -67,6 +47,7 @@ app.site.location = {
     afterStoreDataLoaded: function () {
         var locationsLength = -1;
         var locationsText = "";
+        var storeData = null;
 
 
         // for each category
@@ -88,30 +69,32 @@ app.site.location = {
             // add stores for category
             var frag = document.createDocumentFragment();
             for (var j = 0; j < this.storeData[i].stores.length; j++) {
+                storeData = this.storeData[i].stores[j];
 
                 // add the word 'store' to the id for the store el id
-                this.storeData[i].stores[j].storeId = "store" + this.storeData[i].stores[j].id_store;
+                storeData.storeId = "store" + storeData.id_store;
 
-                var item = $("<div></div>")
-                    .loadTemplate($("#template-store-list-item"), this.storeData[i].stores[j], { isFile: false });
+                var $item = app.util.loadTemplate(
+                    "#template-store-list-item", storeData,
+                    storeData.id_store, "data-store-id");
 
                 // highlight open now
-                if (this.storeData[i].stores[j].open == "Open Now") {
-                    $(item).find(".store-list-item-text-open").addClass("active");
+                if (storeData.open == "Open Now") {
+                    $item.find(".store-list-item-text-open").addClass("active");
                 }
 
                 // add store image
-                $(item).find(".store-list-item-image")
-                    .css({ "background-image": "url(" + this.storeData[i].stores[j].image + ")" });
+                $item.find(".store-list-item-image")
+                    .css({ "background-image": "url(" + storeData.image + ")" });
 
                 // add review stars
-                var starsRounded = Math.round(this.storeData[i].stores[j].avgReview);
-                var stars = $(item).find(".rating-control-static > div");
+                var starsRounded = Math.round(storeData.avgReview);
+                var stars = $item.find(".rating-control-static > div");
                 for (var k = 0; k < starsRounded; k++) {
                     $(stars[k]).addClass("active");
                 }
 
-                frag.append(item.children(0)[0]);
+                frag.append($item[0]);
             }
 
 

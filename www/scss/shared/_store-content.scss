@@ -213,35 +213,53 @@
             white-space: nowrap;
             overflow: hidden;
 
+
             &:not(.heading) {
                 cursor: pointer;
-                margin-bottom: 25px;
+                margin-bottom: 15px;
                 background-color: $colorBlue7;
                 box-shadow: 1px 1px 1px 1px $colorBlue4;
                 border-radius: 2px;
             }
 
+
+            h4, p, label {
+                pointer-events: none;
+            }
+
+
+            // item inner div
             > div {
                 width: 100%;
                 height: 100%;
                 background-color: $colorBlue7;
-                padding: 20px 190px 20px 40px;
 
-                > h4 {
-                    font-size: 22px;
-                    margin-bottom: 10px;
-                    margin-left: -10px;
+                > div {
+                    height: 100%;
                 }
+            }
 
-                > p {
-                    max-height: 46px;
-                    font-size: 17px;
-                    line-height: 23px;
-                    overflow: hidden;
-                }
 
-                h4, p, label {
-                    pointer-events: none;
+            // content
+            .store-menu-list-item-content {
+                float: left;
+                width: calc(100% - 150px);
+            }
+
+
+            // button on right
+            .store-menu-list-item-button {
+                position: absolute;
+                width: 150px;
+                right: 0;
+                top: 0;
+                border-left: 1px solid $colorBlue3;
+                font-weight: bold;
+
+                > label {
+                    text-align: center;
+                    width: 100px;
+                    white-space: normal;
                 }
 
                 &:hover {
@@ -249,12 +267,41 @@
                 }
             }
 
+
+            // details
             .store-menu-list-item-details {
-                label {
-                    display: none;
+                .store-menu-list-item-content {
+                    padding: 20px;
+                    padding-left: 40px;
+
+                    &:hover {
+                        background-color: $colorBlue8;
+                    }
+
+                    h4 {
+                        font-weight: bold;
+                        font-size: 20px;
+                        margin-bottom: 10px;
+                        margin-left: -10px;
+                        white-space: normal;
+                    }
+
+                    p {
+                        max-height: 46px;
+                        font-size: 16px;
+                        line-height: 23px;
+                        overflow: hidden;
+                        white-space: normal;
+                    }
+
+                    label {
+                        display: none;
+                    }
                 }
             }
 
+
+            // options
             .store-menu-list-item-options {
                 position: absolute;
                 top: 0;
@@ -266,21 +313,48 @@
                 &.active {
                     transform: translateX(0);
                 }
+
+                // A single option
+                .store-menu-list-item-option {
+                    float: left;
+                    height: 100%;
+                    text-align: center;
+                    position: relative;
+
+                    &:hover {
+                        background-color: $colorBlue8;
+                    }
+
+                    > div {
+                        label {
+                            pointer-events: none;
+                            display: block;
+                            height: 33%;
+                            line-height: 28px;
+                        }
+
+                        label:nth-child(1) {
+                            font-weight: bold;
+                            font-size: 20px;
+                        }
+
+                        label:nth-child(2) {
+                            font-size: 18px;
+                        }
+
+                        label:nth-child(2) {
+                            font-weight: bold;
+                            font-size: 16px;
+                        }
+                    }
+                }
             }
 
-            // add to order
-            button {
-                position: absolute;
-                font-size: 16px;
-                top: 50%;
-                transform: translateY(-50%);
-                right: 30px;
-                width: 150px;
-            }
 
             &:not(.heading):active {
                 transform: scale(0.99, 0.99);
             }
+
         }
 
 
