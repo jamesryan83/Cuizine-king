@@ -6,7 +6,7 @@ app.dialogs.businessHours = {
     days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
 
 
-    init: function (storeHours) {
+    init: function () {
         var self = this;
 
         $("#dialog-store-hours-close").on("click", function () {
@@ -16,8 +16,8 @@ app.dialogs.businessHours = {
 
 
     update: function (hours, hoursEl) {
-        this.addHoursToList(storeHours.slice(0, 7), "#dialog-store-hours-left");
-        this.addHoursToList(storeHours.slice(7, 14), "#dialog-store-hours-right");
+        this.addHoursToList(hours.slice(0, 7), "#dialog-store-hours-left");
+        this.addHoursToList(hours.slice(7, 14), "#dialog-store-hours-right");
 
         var text = "";
         var frag = document.createDocumentFragment();
@@ -35,14 +35,12 @@ app.dialogs.businessHours = {
 
 
     show: function () {
-        $("#dialog-container").show();
-        $("#dialog-store-hours").show();
+        app.dialogs.show("#dialog-store-hours");
     },
 
 
     hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
+        app.dialogs.hide();
     },
 
 }

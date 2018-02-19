@@ -4,7 +4,6 @@ var assert = require("assert");
 
 var testutil = require("../test-util");
 var config = require("../../server/config");
-var mail = require("../../server/other/mail");
 var storesDB = require("../../server/procedures/_Store");
 var database = require("../../server/database/database");
 
@@ -32,12 +31,12 @@ describe("PROCEDURES - STORE", function () {
 
     // ------- Reviews -------
 
-    it.skip("#reviews_get returns message for store not found", function (done) {
+    it.skip("#reviews_get returns message for store not found", function () {
 
     });
 
 
-    it.skip("#reviews_get returns reviews for a store", function (done) {
+    it.skip("#reviews_get returns reviews for a store", function () {
 
     });
 
@@ -135,7 +134,9 @@ describe("PROCEDURES - STORE", function () {
                 "SELECT * FROM Store.stores_people";
 
             // check data was inserted in other tables
-            database.executeQuery(query, function (err, result) {
+            database.executeQuery(query, function (err2, result) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
+
                 var people = result.recordsets[0];
                 var addresses = result.recordsets[1];
                 var stores_people = result.recordsets[2];
@@ -168,7 +169,7 @@ describe("PROCEDURES - STORE", function () {
     // ------- Get Store -------
 
     it("#stores_get returns message when store not found", function (done) {
-        storesDB.stores_get({ "id_store": 0 }, function (err, result) {
+        storesDB.stores_get({ "id_store": 0 }, function (err) {
             assert.equal(err.status, 400);
             assert.equal(err.message, "Store not found");
             done();
@@ -262,8 +263,8 @@ describe("PROCEDURES - STORE", function () {
         storesDB.stores_details_update(testutil.fakeStoreUpdate, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            storesDB.stores_get({ "id_store": 1 }, function (err, store) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            storesDB.stores_get({ "id_store": 1 }, function (err2, store) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 assert.equal(store.description, testutil.fakeStoreUpdate.description);
                 assert.equal(store.email, testutil.fakeStoreUpdate.email);
@@ -311,7 +312,7 @@ describe("PROCEDURES - STORE", function () {
 
 
     it("#stores_delete returns message for store not found", function (done) {
-        storesDB.stores_delete({ id_store: 1002020, id_user_doing_update: config.dbConstants.adminUsers.system }, function (err, result) {
+        storesDB.stores_delete({ id_store: 1002020, id_user_doing_update: config.dbConstants.adminUsers.system }, function (err) {
             assert.equal(err.message, "Store not found");
             done();
         });
@@ -321,11 +322,11 @@ describe("PROCEDURES - STORE", function () {
     it("#stores_delete deletes a store", function (done) {
         var fakeStore = getFakeStore();
 
-        storesDB.stores_delete({ id_store: fakeStore.id_store, id_user_doing_update: config.dbConstants.adminUsers.system }, function (err, result) {
+        storesDB.stores_delete({ id_store: fakeStore.id_store, id_user_doing_update: config.dbConstants.adminUsers.system }, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            database.executeQuery("SELECT * FROM Store.stores WHERE id_store = " + fakeStore.id_store, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            database.executeQuery("SELECT * FROM Store.stores WHERE id_store = " + fakeStore.id_store, function (err2, result) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 var store = result.recordset[0];
 
@@ -346,14 +347,14 @@ describe("PROCEDURES - STORE", function () {
     // ------- Undelete Store -------
 
     it.skip("#stores_undelete returns message for store not found", function (done) {
-        storesDB.stores_undelete({ "id_store": 1002020 }, function (err, result) {
+        storesDB.stores_undelete({ "id_store": 1002020 }, function (err) {
             assert.equal(err.message, "Store not found");
             done();
         });
     });
 
 
-    it.skip("#stores_undelete deletes a store", function (done) {
+    it.skip("#stores_undelete deletes a store", function () {
 
     });
 

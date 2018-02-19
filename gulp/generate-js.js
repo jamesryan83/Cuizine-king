@@ -2,7 +2,7 @@
 
 var fs = require("fs");
 var path = require("path");
-var uglify = require("uglify-js"); // TODO : setup uglify
+// var uglify = require("uglify-js"); // TODO : setup uglify
 var recursiveReadSync = require("recursive-readdir-sync");
 
 var wwwFolder = path.join(__dirname, "../", "www");
@@ -45,6 +45,7 @@ exports = module.exports = {
     // Concatenate file contents from an array of file paths
     joinJsFilesTogetherSync: function (files) {
         var data = "";
+        var regexNode = /if \(typeof app === "undefined"\) \{(\s*)var app = {};(\s*)}/;
         for (var i = 0; i < files.length; i++) {
             var js = fs.readFileSync(files[i], "utf-8");
 
@@ -53,6 +54,9 @@ exports = module.exports = {
             if (nodeIndex !== -1) {
                 js = js.substr(0, nodeIndex);
             }
+
+
+            js = js.replace(regexNode, "");
 
             data += js;
         }

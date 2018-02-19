@@ -14,6 +14,6 @@ app.i18n.en = {
 }
 
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.i18n.en;
 }

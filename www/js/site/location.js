@@ -21,19 +21,19 @@ app.site.location = {
 
         // jquery-template formatters for store items
         $.addTemplateFormatter({
-            categoryArrayFormatter: function(value, template) {
+            categoryArrayFormatter: function(value) {
                 return value.join(", ");
             },
 
-            phoneNumberFormatter: function(value, template) {
+            phoneNumberFormatter: function(value) {
                 return "Ph: " + value;
             },
 
-            deliveryFormatter: function(value, template) {
+            deliveryFormatter: function(value) {
                 return "Delivery " + value;
             },
 
-            minOrderFormatter: function(value, template) {
+            minOrderFormatter: function(value) {
                 return "Min. Order " + value;
             },
         });
@@ -65,7 +65,6 @@ app.site.location = {
 
     // After the store data is loaded
     afterStoreDataLoaded: function () {
-        var self = this;
         var locationsLength = -1;
         var locationsText = "";
 

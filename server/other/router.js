@@ -4,7 +4,6 @@
 
 var fs = require("fs");
 var ejs = require("ejs");
-var url = require("url");
 var path = require("path");
 var multer  = require("multer");
 var validate = require("validate.js");
@@ -28,7 +27,7 @@ var wwwFolder = path.join(__dirname, "../", "../", "www");
 
 exports = module.exports = {
 
-    server: undefined,
+    server: null,
 
 
     // Setup router
@@ -164,7 +163,6 @@ exports = module.exports = {
     // The response is the content for the page
     handleSecondaryPageRequest: function (req, res) {
         var self = this;
-        var jwt = req.headers["authorization"];
         var route = decodeURI(req.body.encodedUrl);
 
 
@@ -174,8 +172,6 @@ exports = module.exports = {
             normalized = routerSite.normalizeRoute(route);
         }
 
-
-        var routeData = {};
 
         // site
         if (routerSite.routes[normalized.route]) {
@@ -228,7 +224,7 @@ exports = module.exports = {
 //            pageData.reset_password_token = !req.query ? null : req.query.t;
 //        }
 //
-////        return res.send(ejs.render(currentPage, pageData));
+// //        return res.send(ejs.render(currentPage, pageData));
 //        var tempIndex = fs.readFileSync(path.join(wwwFolder, "index-main.html"), "utf8");
 //        return res.send(ejs.render(tempIndex, pageData));
 //    },
@@ -305,7 +301,7 @@ exports = module.exports = {
         this.files = {};
         var genFolder = path.join(wwwFolder, "generated");
 
-        this.files.indexMain = fs.readFileSync(path.join(wwwFolder, "index-main.html"), "utf8");
+        this.files.indexMain = fs.readFileSync(path.join(wwwFolder, "_index-main.html"), "utf8");
         this.files.indexError = fs.readFileSync(path.join(wwwFolder, "index-error.html"), "utf8");
         this.files.indexAdmin = fs.readFileSync(path.join(wwwFolder, "index-admin.html"), "utf8");
 

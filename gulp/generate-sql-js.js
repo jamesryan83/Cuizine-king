@@ -11,6 +11,8 @@ var recursiveReadSync = require("recursive-readdir-sync");
 exports = module.exports = {
 
     start: function () {
+        var i = 0;
+
         var regexProcedure = /(\s*)CREATE OR ALTER PROCEDURE(\s*)(.*)/mi;
         var regexProcedureInput = /(\s*)@(\w*)(\s*)(\w*)\(?(\w*)\)?/mi;
 
@@ -22,7 +24,7 @@ exports = module.exports = {
 
         // Group stored procedure filepaths into their folders
         var procedurePathsObject = {};
-        for (var i = 0; i < sqlProcedureFilePaths.length; i++) {
+        for (i = 0; i < sqlProcedureFilePaths.length; i++) {
             var pathParts = path.parse(sqlProcedureFilePaths[i]).dir.split(path.sep);
             var folderName = pathParts[pathParts.length - 1];
 
@@ -33,19 +35,19 @@ exports = module.exports = {
         }
 
 
-        Object.keys(procedurePathsObject).forEach(function(key, index) {
+        Object.keys(procedurePathsObject).forEach(function(key) {
 
             var outputJs =
                 "// GENERATED\n\n" +
-                '"use strict";\n\n' +
-                'var sql = require("mssql");\n\n' +
-                'var config = require("../config");\n' +
-                'var database = require("../database/database");\n' +
-                'var resultHandler = require("../database/result-handler");\n\n' +
+                "\"use strict\";\n\n" +
+                "var sql = require(\"mssql\");\n\n" +
+                "var config = require(\"../config\");\n" +
+                "var database = require(\"../database/database\");\n" +
+                "var resultHandler = require(\"../database/result-handler\");\n\n" +
                 "// Calls stored procedures for " + key + "\n" +
                 "exports = module.exports = {\n\n";
 
-            for (var i = 0; i < procedurePathsObject[key].length; i++) {
+            for (i = 0; i < procedurePathsObject[key].length; i++) {
 
                 // get procedure name
                 var sqlProcedure = fs.readFileSync(procedurePathsObject[key][i], "utf8");
@@ -83,10 +85,10 @@ exports = module.exports = {
 
                     if (procedureInputs[j].indexOf(" OUTPUT") === -1) {
                         procedureInputsOutput +=
-                            '\t\t\t.input("' + match[2] + '", sql.' + sqlType + ", inputs." + match[2] + ")\n";
+                            "\t\t\t.input(\"" + match[2] + "\", sql." + sqlType + ", inputs." + match[2] + ")\n";
                     } else {
                         procedureInputsOutput +=
-                            '\t\t\t.output("' + match[2] + '", sql.' + sqlType + ")\n";
+                            "\t\t\t.output(\"" + match[2] + "\", sql." + sqlType + ")\n";
                     }
 
 
@@ -98,8 +100,8 @@ exports = module.exports = {
                     "\t" + functionName + ": function (inputs, callback) {\n" +
                         "\t\tdatabase.pool.request()\n" +
                             procedureInputsOutput +
-                            '\t\t\t.execute(config.mssql.database + ".dbo.' + procedureName + '", function (err, result) {\n' +
-                                '\t\t\t\treturn resultHandler.handle("' + procedureName + '", err, result, callback, inputs);\n' +
+                            "\t\t\t.execute(config.mssql.database + \".dbo." + procedureName + "\", function (err, result) {\n" +
+                                "\t\t\t\treturn resultHandler.handle(\"" + procedureName + "\", err, result, callback, inputs);\n" +
                             "\t\t});\n" +
                         "\t},\n\n\n";
 

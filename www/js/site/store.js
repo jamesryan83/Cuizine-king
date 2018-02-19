@@ -3,8 +3,6 @@
 app.site.store = {
 
     init: function (routeData) {
-        var self = this;
-
 
         app.storeContent.init(routeData);
 

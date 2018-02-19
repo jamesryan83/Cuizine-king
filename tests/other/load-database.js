@@ -1,9 +1,6 @@
 "use strict";
 
-var assert = require("assert");
-
 var testutil = require("../test-util");
-var config = require("../../server/config");
 var database = require("../../server/database/database");
 
 
@@ -13,7 +10,7 @@ describe("LOAD - DATABASE", function () {
         this.timeout(5000);
 
         testutil.startDatabase(function () {
-            database.executeQuery("CREATE TABLE testtable ( id INT IDENTITY(1,1) PRIMARY KEY, name nvarchar(64), email nvarchar(64) )", function (err, result) {
+            database.executeQuery("CREATE TABLE testtable ( id INT IDENTITY(1,1) PRIMARY KEY, name nvarchar(64), email nvarchar(64) )", function (err) {
                 if (err) return done(new Error(err));
 
                 done();
@@ -23,7 +20,7 @@ describe("LOAD - DATABASE", function () {
 
 
     after(function (done) {
-        database.executeQuery("DROP TABLE IF EXISTS testtable", function (err, result) {
+        database.executeQuery("DROP TABLE IF EXISTS testtable", function (err) {
             if (err) return done(new Error(err));
 
             done();
@@ -37,10 +34,9 @@ describe("LOAD - DATABASE", function () {
         var query = "";
         var counter = 0;
         for (var i = 0; i < 1000; i++) {
-            query = "INSERT INTO testtable (name, email) VALUES " +
-                    "('" + "a" + i + "', 'b" + i + "')";
+            query = "INSERT INTO testtable (name, email) VALUES ('a" + i + "', 'b" + i + "')";
 
-            database.executeQuery(query, function (err, result) {
+            database.executeQuery(query, function (err) {
                 if (err) return done(new Error(err));
 
                 counter++;
@@ -60,7 +56,7 @@ describe("LOAD - DATABASE", function () {
         for (var i = 0; i < 1000; i++) {
             query = "UPDATE testtable SET name = 'test' WHERE id = " + (i + 1);
 
-            database.executeQuery(query, function (err, result) {
+            database.executeQuery(query, function (err) {
                 if (err) return done(new Error(err));
 
                 counter++;
@@ -80,7 +76,7 @@ describe("LOAD - DATABASE", function () {
         for (var i = 0; i < 1000; i++) {
             query = "DELETE FROM testtable WHERE id = " + i;
 
-            database.executeQuery(query, function (err, result) {
+            database.executeQuery(query, function (err) {
                 if (err) return done(new Error(err));
 
                 counter++;

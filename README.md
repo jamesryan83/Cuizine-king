@@ -33,6 +33,7 @@ Azure
 ## Project setup
 
 install nodemon globally (https://github.com/remy/nodemon) [npm i -g nodemon]
+
 install mocha globally (https://github.com/mochajs/mocha) [npm i -g mocha]
 
 
@@ -85,22 +86,28 @@ Push the code to git and the website is restarted and updated automatically
 Which node packages are for which part of the code:
 
 General server stuff
+
     sendgrid, body-parser, ejs, express, multer, request-ip, validate.js
 
 Database
+
     azure-storage, mssql
 
 Auth
+
     bcryptjs, jsonwebtoken, passport, passport-jwt
 
 Security
+
     helmet, hpp
 
 Gulp
+
     gulp, gulp-autoprefixer, gulp-rename, gulp-sass, gulp-watch,
     html-minifier, recursive-readdir-sync, uglify-js
 
 Testing
+
     mocha, supertest
 
 
@@ -110,10 +117,15 @@ Testing
 ## Other Notes
 
 Azure handles the following things:
+
     - restarting the server when it stops
+
     - clustering (from nodeProcessCountPerApplication in IISNode.yml)
+
     - logging
+
     - some security headers
+
     - compression
 
     https://tomasz.janczuk.org/2011/08/hosting-nodejs-applications-in-iis-on.html
@@ -128,12 +140,15 @@ Azure handles the following things:
 was having this issue here with latest android studio: https://stackoverflow.com/a/43049089
 
 use this tools folder instead
+
 https://www.techspot.com/downloads/5425-android-sdk.html
 
 and set these environment variables
+
 http://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html#setting-environment-variables
 
 creating hardlink to www folder.  this is required for cordova to compile
+
 mklink /J C:\Code\projects\appmakin\menuthing\app\www C:\Code\projects\appmakin\menuthing\www
 
 

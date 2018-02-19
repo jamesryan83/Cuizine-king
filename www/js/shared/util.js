@@ -37,7 +37,7 @@ app.util = {
     // Show toast
     showToast: function (message, timeout, cssClass) {
         var $toasts = $("#toasts");
-        var toast = $("<p class='" + (cssClass || "") + "'>" + message + "</p>");
+        var $toast = $("<p class='" + (cssClass || "") + "'>" + message + "</p>");
 
         // remove toasts if there's too many stacked up
         if ($toasts.children().length >= 5) {
@@ -47,13 +47,13 @@ app.util = {
         }
 
         // append toasts message and show toasts
-        $toasts.append(toast[0]);
+        $toasts.append($toast[0]);
         $toasts.show();
 
-        $(toast).animate({ opacity: 1, bottom: 0 }, 100);
+        $toast.animate({ opacity: 1, bottom: 0 }, 100);
 
         // hide toast after a little bit
-        var currentToast = setTimeout(function () {
+        setTimeout(function () {
             $toasts.children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
                 $(this).remove();
             });
@@ -191,8 +191,6 @@ app.util = {
 
     // Upload an image
     uploadImage: function (files, callback) {
-        var self = this;
-
         if (files && files.length > 0) {
             var file = files[0];
             if (file.size > 250000) {
@@ -282,6 +280,6 @@ app.util = {
 };
 
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.util;
 }

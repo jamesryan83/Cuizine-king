@@ -8,16 +8,18 @@ app.storeContent = {
     storeData: {},
 
     init: function (routeData, dataLoaded) {
-        var self = this;
+
+        console.log(dataLoaded)
 
         this.$logo = $(".store-info-image");
-        this.$address = $("#store-info-address");
-        this.$storeMenuNav = $("#store-menu-nav");
         this.$description = $("#store-info-description");
+        this.$logoEmpty = $(".store-info-image-empty");
+        this.$logoLoading = $(".store-info-image-loading");
+        this.$descriptionButton = $("#store-info-button-description");
+        this.$menuList = $("#store-menu-list");
 
-        $(".store-info-image-empty").hide();
-        $(".store-info-image-loading").show();
-
+        this.$logoEmpty.hide();
+        this.$logoLoading.show();
 
         this.id_store = app.util.getStoreIdFromStorage();
 
@@ -41,9 +43,9 @@ app.storeContent = {
     // Show hide more button when description text changes height
     resizeDescription: function () {
         if (this.$description[0].scrollHeight > this.$description.innerHeight()) {
-            $("#store-info-button-description").show();
+            this.$descriptionButton.show();
         } else {
-            $("#store-info-button-description").hide();
+            this.$descriptionButton.hide();
         }
     },
 
@@ -57,13 +59,14 @@ app.storeContent = {
         var logo = new Image();
         logo.src = "/res/storelogos/store" + this.id_store + ".jpg?" + Date.now();
         logo.onload = function () {
-            $(".store-info-image-empty").hide();
             self.$logo.attr("src", logo.src);
-            $(".store-info-image-loading").hide();
+
+            self.$logoEmpty.hide();
+            self.$logoLoading.hide();
         }
         logo.onerror = function () {
-            $(".store-info-image-loading").hide();
-            $(".store-info-image-empty").show();
+            self.$logoLoading.hide();
+            self.$logoEmpty.show();
         }
 
 
@@ -75,7 +78,7 @@ app.storeContent = {
 
         // add store details
         $("#store-header-name").text(data.name);
-        $("#store-info-description").text(data.description);
+        this.$description.text(data.description);
         $("#store-info-address").text(address);
         $("#store-info-phone-number").text(data.phone_number);
         $("#store-info-email").text(data.email);
@@ -85,6 +88,12 @@ app.storeContent = {
 
         // rating control
         app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+
+        // Setup dialogs
+        app.dialogs.description.init(data.name, data.description);
+        app.dialogs.businessHours.init(data.hours);
+        app.dialogs.reviews.init(data);
 
 
         // Events
@@ -99,16 +108,18 @@ app.storeContent = {
     // Add menu data
     addMenuDataToPage: function (data) {
         var self = this;
+        var i = 0;
+        var $item = null;
 
         // products
         var item = null;
-        var itemProperties = "";
         var frag = document.createDocumentFragment();
 
         if (data.products) {
 
+
             // create product items
-            for (var i = 0; i < data.products.length; i++) {
+            for (i = 0; i < data.products.length; i++) {
                 item = data.products[i];
 
                 // item template
@@ -116,7 +127,7 @@ app.storeContent = {
                 if (item.vegetarian) item.class2 = "label-vegetarian";
                 if (!item.delivery_available) item.class3 = "label-takeaway";
 
-                var $item = $("<div></div>")
+                $item = $("<div></div>")
                     .loadTemplate($("#template-store-menu-item"), item);
 
                 $item = $item.children().first();
@@ -136,46 +147,42 @@ app.storeContent = {
 
 
             // create product heading items
-            for (var i = 0; i < data.product_headings.length; i++) {
+            for (i = 0; i < data.product_headings.length; i++) {
                 var heading = data.product_headings[i];
 
+                // find element to put heading above
                 var el = $(frag).find(".store-menu-list-item[data-product-id='" +
                              heading.above_product_id + "']");
 
                 if (el) {
-                    var $item = $("<div></div>")
+                    $item = $("<div></div>")
                         .loadTemplate($("#template-store-menu-heading"), heading);
-
 
                     $item = $item.children().first();
                     $item.attr("data-heading-id", heading.id_product_heading);
+
+                    // add heading before element
                     $item.insertBefore(el);
                 }
             }
-
-
-            // add products and headings to page
-            $("#store-menu-list").append(frag);
+            self.$menuList.append(frag);
 
 
             // Category scroller
             new app.controls.CategoryScroller(data.product_headings);
 
-
-            // Setup dialogs
-            app.dialogs.description.init(data.name, data.description);
-            app.dialogs.businessHours.init(data.hours);
-            app.dialogs.reviews.init(data);
-
         } else {
-            $("#store-menu-list").append("No Products");
+            self.$menuList.append("No Products");
         }
     },
+
 
 
     // Gets the store data and caches it for a little while
     getStoreData: function (callback) {
         var self = this;
+
+        // check if already running
         if (this.storeDataRequestNotAllowed) {
             return callback(this.storeData);
         }
@@ -183,11 +190,15 @@ app.storeContent = {
         if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
             return false;
 
+
+        // set timeout
         this.storeDataRequestNotAllowed = true;
         setTimeout(function () {
             self.storeDataRequestNotAllowed = false;
         }, 2000);
 
+
+        // get data from server
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/store?id_store=" + this.id_store, cache: true
         }, function (err, result) {

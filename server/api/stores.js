@@ -70,8 +70,8 @@ exports = module.exports = {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             // send user verification email
-            self.mail.sendStoreApplicationEmail(b.name, b.email, function (err, result2) {
-                if (err) console.log(err);
+            self.mail.sendStoreApplicationEmail(b.name, b.email, function (err2) {
+                if (err2) console.log(err2);
             });
 
             // TODO : send internal email for new application
@@ -118,8 +118,8 @@ exports = module.exports = {
 			if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             // delete azure container
-            self.blobService.deleteContainerIfExists("store" + b.id_store, function (err) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
+            self.blobService.deleteContainerIfExists("store" + b.id_store, function (err2) {
+                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
 
                 return self.router.sendJson(res, result);
             });
@@ -152,6 +152,8 @@ exports = module.exports = {
         var imgPath = "/res/storelogos/store" + b.id_store + ".jpg";
 
         fs.writeFile(path.join(__dirname, "../", "../", "www", imgPath), req.file.buffer, function (err) {
+            if (err) return self.router.sendJson(res, null, err.message, err.status);
+
             self.router.sendJson(res, { url: imgPath });
         });
     },

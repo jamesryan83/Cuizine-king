@@ -1,7 +1,7 @@
 
 // Navbar
 
-app.controls.Navbar = function (routeData) {
+app.controls.Navbar = function () {
     var self = this;
 
 

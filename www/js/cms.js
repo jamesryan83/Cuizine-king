@@ -15,21 +15,18 @@ app.cms = {
 
 
     init: function (html) {
-        var self = this;
 
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
         this.htmlFiles = html;
 
+
+        // Dialogs
+        app.dialogs.init();
+
         // setup router
         app.routerBase.init();
-
-
-        // setup dialogs
-        app.dialogs.description.init();
-        app.dialogs.businessHours.init();
-        app.dialogs.reviews.init();
 
         app.routerBase.loadPageForRoute(null, "cms");
     },
@@ -44,14 +41,15 @@ app.cms = {
     // Remove user specific parts of a url
     normalizeRoute: function (route) {
         var match = false;
+        var newRoute = route;
 
         if (this.regexUrlStoreAdmin.exec(route)) {
-            var temp = route.split("/");
-            route = "/store-admin/:id/" + temp[temp.length - 1];
+            newRoute = newRoute.split("/");
+            newRoute = "/store-admin/:id/" + newRoute[newRoute.length - 1];
             match = true;
         }
 
-        return { route: route, match: match };
+        return { route: newRoute, match: match };
     },
 
 
@@ -115,7 +113,7 @@ app.cms = {
 // create arrays of filepaths for express router
 app.cms.routesList = Object.keys(app.cms.routes);
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.cms;
 }
 

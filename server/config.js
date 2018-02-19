@@ -72,18 +72,18 @@ if (process.env.NODE_ENV === "production") {
 
  // Dev settings
 } else { // James
-  config.host = "http://localhost" + ":" + config.port
+  config.host = "http://localhost:" + config.port
   config.mssql.user = "sa";
   config.mssql.password = "budza123";
   config.mssql.server = "localhost";
 }
 
-//} else { // User 2
-//  config.host = "http://localhost" + ":" + config.port
-//  config.mssql.user = "sa";
-//  config.mssql.password = "my_password";
-//  config.mssql.server = "localhost";
-//}
+// } else { // User 2
+//   config.host = "http://localhost" + ":" + config.port
+//   config.mssql.user = "sa";
+//   config.mssql.password = "my_password";
+//   config.mssql.server = "localhost";
+// }
 
 
 exports = module.exports = config;

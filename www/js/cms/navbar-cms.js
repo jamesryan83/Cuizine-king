@@ -13,7 +13,7 @@ app.cms.navbar = {
 
         // add store id's to links
         var storeId = app.util.getStoreIdFromStorage();
-        $("#navbar-cms a").each(function (index, el) {
+        $("#navbar-cms a").each(function () {
             var href = $(this).attr("href");
             $(this).attr("href", href.replace(":storeId", storeId));
         });

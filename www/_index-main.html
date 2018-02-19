@@ -1,0 +1,195 @@
+<!-- GENERATED -->
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:">
+
+        <link rel="icon" href="/res/favicon.ico">
+        <link rel="stylesheet" href="/lib/normalize.css" />
+
+        <title>Cuisine King</title>
+
+        <style>
+            *, *:before, *:after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                width: 100%;
+                height: 100%;
+            }
+
+            body {
+                width: 100%;
+                min-height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+                background: #151238;
+            }
+
+            #page-container {
+                min-height: 100vh;
+                width: 100%;
+                background: linear-gradient(to bottom, #070517, #151238, #0f0c29);
+                background-repeat: no-repeat;
+            }
+
+            #error-index-h {
+                font-weight: 400;
+                color: #5595d8;
+                margin: 0 !important;
+                padding: 50px;
+            }
+
+            #error-index-a {
+                margin-left: 50px;
+                color: #373748;
+            }
+        </style>
+    </head>
+
+
+    <body>
+
+        <!-- Page container -->
+        <div id="page-container"></div>
+
+
+        <!-- Dialog container -->
+        <div id="dialog-container" style="display: none;">
+            <!-- hours popup -->
+<div id="dialog-store-hours" class="center dialog" style="display: none">
+    <div>
+        <h3>BUSINESS HOURS</h3>
+        <div id="dialog-store-hours-close" class="dialog-close-icon"></div>
+    </div>
+    <div>
+        <div>
+            <label>TAKEAWAY HOURS</label>
+            <label>DELIVERY HOURS</label>
+        </div>
+        <div class="clearfix">
+            <ul id="dialog-store-hours-left">
+
+            </ul>
+            <ul id="dialog-store-hours-right">
+
+            </ul>
+        </div>
+    </div>
+</div>
+            <!-- description popup -->
+<div id="dialog-store-description" class="dialog center" style="display: none;">
+    <div>
+        <h3>About</h3>
+        <h3 id="dialog-store-description-heading"></h3>
+        <div id="dialog-store-description-close" class="dialog-close-icon"></div>
+    </div>
+    <div>
+        <p id="dialog-store-description-text"></p>
+    </div>
+</div>
+            <!-- Store reviews dialog -->
+<div id="dialog-store-reviews" class="center dialog" style="display: none;">
+    <div id="dialog-store-reviews-header">
+        <div>
+            <h3>REVIEWS</h3>
+            <ul id="dialog-store-reviews-rating-control" class="rating-control inactive">
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+                <li class="rating-control-star"></li>
+            </ul>
+            <label id="dialog-store-reviews-count"></label>
+        </div>
+        <div>
+            <label id="dialog-store-reviews-add-review" class="label-link">Add a Review</label>
+            <div id="dialog-store-reviews-close"></div>
+        </div>
+    </div>
+
+    <hr class="hr-1" />
+
+    <div id="dialog-store-reviews-list"></div>
+</div>
+        </div>
+
+
+        <!-- Toasts -->
+        <div id="toasts" style="display: none;"></div>
+
+
+        <!-- Loading screen -->
+        <div id="loading-screen" style="display: none;">
+            <div id="loading-icon" class="center">
+                <label>Please Wait</label>
+            </div>
+        </div>
+
+
+        <script src="/lib/jquery-3.0.js"></script>
+        <script src="/lib/validate.min.js"></script>
+        <script src="/lib/jquery.loadTemplate.min.js"></script>
+
+        <script>
+            "use strict";
+
+            // load page resources
+            $(document).ready(function () {
+                var $pageContainer = $("#page-container");
+
+                $.ajax({
+                    method: "POST",
+                    url: "/page-request",
+                    data: { encodedUrl: encodeURI(window.location.pathname) },
+                    beforeSend: function(request) {
+                        request.setRequestHeader("authorization", "Bearer " + localStorage.getItem("jwt"));
+                    },
+                    success: function (result) {
+                        if (!result.html || !result.css || !result.js || !result.section) {
+                            $pageContainer.append($("<p style='margin: 30px'>Error loading data.  Please refresh the page</p>")[0]);
+                            return;
+                        }
+
+                        // load css
+                        document.getElementsByTagName('head')[0]
+                            .appendChild($("<link rel='stylesheet' href='" + result.css + "' />")[0]);
+
+                        // load js
+                        $.ajax({
+                            dataType: "script",
+                            cache: true,
+                            url: result.js,
+                            success: function () {
+                                // pass html to js
+                                app[result.section].init(JSON.parse(result.html));
+                            },
+                            error: function () {
+                                console.log(err)
+                                $pageContainer.append($("<p style='margin: 30px'>Error loading scripts.  Please refresh the page</p>")[0]);
+                            }
+                        });
+                    },
+                    error: function (err) {
+                        if (err) {
+                            console.log(err)
+                        }
+
+                        $pageContainer.append($("<h3 id='error-index-h' style='margin: 30px'>Error.  Please refresh the page</h3>")[0]);
+                        $pageContainer.append($("<a id='error-index-a' href='/'>Click here to go home</a>")[0]);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
+
+

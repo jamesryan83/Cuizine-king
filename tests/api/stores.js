@@ -5,7 +5,7 @@ var supertest = require("supertest");
 
 var testutil = require("../test-util");
 var config = require("../../server/config");
-var database = require("../../server/database/database");
+// var database = require("../../server/database/database");
 var storesDB = require("../../server/procedures/_Store");
 
 
@@ -24,7 +24,7 @@ describe("API - Stores", function () {
 
     // ------- Reviews -------
 
-    it.skip("#reviews", function (done) {
+    it.skip("#reviews", function () {
 
     });
 
@@ -135,6 +135,8 @@ describe("API - Stores", function () {
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
+                if (err) return done(new Error(err));
+
                 assert.equal(res.body.err, "Store not found");
                 done();
         });
@@ -223,11 +225,11 @@ describe("API - Stores", function () {
 
     it("#updateStoreDetails updates details correctly", function (done) {
         testutil.getJwt(config.dbConstants.adminUsers.store, done, function (jwt) {
-            updateStore(testutil.fakeStoreUpdate, jwt, function (err, res) {
+            updateStore(testutil.fakeStoreUpdate, jwt, function (err) {
                 if (err) return done(new Error(err));
 
-                storesDB.stores_get({ "id_store": testutil.fakeStoreUpdate.id_store }, function (err, result) {
-                    if (err) return done(new Error(err));
+                storesDB.stores_get({ "id_store": testutil.fakeStoreUpdate.id_store }, function (err2, result) {
+                    if (err2) return done(new Error(err2));
 
                     assert.equal(result.description, testutil.fakeStoreUpdate.description);
                     assert.equal(result.phone_number, testutil.fakeStoreUpdate.phone_number);
@@ -248,7 +250,7 @@ describe("API - Stores", function () {
 
     // ------- Delete Store -------
 
-    it.skip("#deleteStore deletes a store", function (done) {
+    it.skip("#deleteStore deletes a store", function () {
 
     });
 
@@ -259,7 +261,7 @@ describe("API - Stores", function () {
 
     // ------- Logo Store -------
 
-    it.skip("#updateLogo deletes a store", function (done) {
+    it.skip("#updateLogo deletes a store", function () {
 
     });
 

@@ -4,7 +4,7 @@
 app.cms.deliverySuburbs = {
 
     init: function () {
-        var self = this;
+
     },
 
 }

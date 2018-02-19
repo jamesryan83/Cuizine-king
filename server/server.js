@@ -2,12 +2,12 @@
 
 Error.stackTraceLimit = 20; // node.js stacktrace line count
 
-global.serverInstance = undefined;
+global.serverInstance = null;
 global.isShuttingDown = false;
 global.devMode = !(process.env.NODE_ENV == "production");
 
 
-var hpp = require('hpp');
+var hpp = require("hpp");
 var path = require("path");
 var helmet = require("helmet");
 var express = require("express");
@@ -30,12 +30,12 @@ var database = require("./database/database");
 if (config.showLogPaths) {
 
     // https://remysharp.com/2014/05/23/where-is-that-console-log
-    ['log', 'warn'].forEach(function(method) {
+    ["log", "warn"].forEach(function(method) {
         var old = console[method];
         console[method] = function() {
             var stack = (new Error()).stack.split(/\n/);
-            // Chrome includes a single "Error" line, FF doesn't.
-            if (stack[0].indexOf('Error') === 0) {
+            // Chrome includes a single "Error" line, FF doesn"t.
+            if (stack[0].indexOf("Error") === 0) {
                 stack = stack.slice(1);
             }
             var tempParts = stack[1].trim().split(/\\/);
@@ -110,7 +110,7 @@ database.once("connected", function () {
 
     // start server
     var port = process.env.PORT || config.port;
-    serverInstance = server.listen(port, function() {
+    global.serverInstance = server.listen(port, function() {
         console.log("listening on port " + port);
     });
 });
@@ -120,12 +120,12 @@ database.once("connected", function () {
 // this is run on shutdown
 // the node instance stops after the server and database are closed
 // azure will restart the server automatically
-function shutdown(err, err2) {
+function shutdown(err) {
     console.log("shutting down");
-    if (isShuttingDown)
+    if (global.isShuttingDown)
         return;
     console.log("shutting down 2");
-    isShuttingDown = true;
+    global.isShuttingDown = true;
 
     if (err) console.log(err);
 
@@ -134,9 +134,9 @@ function shutdown(err, err2) {
         database.close();
     }
 
-    if (serverInstance) {
+    if (global.serverInstance) {
         console.log("stopping server");
-        serverInstance.close();
+        global.serverInstance.close();
     }
 }
 

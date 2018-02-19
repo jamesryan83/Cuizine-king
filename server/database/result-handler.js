@@ -6,57 +6,46 @@ exports = module.exports = {
 
 
     // Handles results for specific stored procedures
-    handle: function (procedure, err, result, callback, inputs) {
+    handle: function (procedure, err, result, callback) {
         if (err) return this.returnError(err, callback);
 
         switch (procedure) {
             case "addresses_create_or_update":
                 return this.returnOutput(["newAddressId"], result, callback);
-                break;
 
             case "people_create_web_user":
             case "people_create_store_user":
             case "people_create_system_user":
                 return this.returnOutput(["newPersonId"], result, callback);
-                break;
 
             case "people_get_by_id":
             case "people_get_by_email":
             case "people_get_by_jwt":
             case "people_update_jwt":
                 return this.returnResult(result, 400, "Account not found", callback);
-                break;
 
             case "people_invalidate_jwt":
-                return callback(null, result.rowsAffected)
-                break;
+                return callback(null, result.rowsAffected);
 
             case "store_applications_create":
                 return this.returnOutput(["newStoreApplicationId"], result, callback);
-                break;
 
             case "stores_create":
                 return this.returnOutput(["newStoreId", "newPersonId"], result, callback);
-                break;
 
             case "stores_get":
-                this.returnResult(result, 400, "Store not found", callback, true);
-                break;
+                return this.returnResult(result, 400, "Store not found", callback, true);
 
 
             // These are for tests
             case "test_result":
-                this.returnResult(result, null, null, callback);
-                break;
+                return this.returnResult(result, null, null, callback);
             case "test_result_error":
-                this.returnResult(result, 123, "test message", callback);
-                break;
+                return  this.returnResult(result, 123, "test message", callback);
             case "test_null_err_result":
                 return callback(null);
-                break;
             case "test_output":
                 return this.returnOutput(["id_test"], result, callback);
-                break;
 
 
             // these procedures don't return anything

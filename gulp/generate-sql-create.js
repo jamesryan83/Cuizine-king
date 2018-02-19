@@ -14,6 +14,15 @@ exports = module.exports = {
     start: function () {
         var testDBName = config.mssql.database + "Test";
 
+        var i = 0;
+        var schema = "";
+        var table = "";
+        var temp = "";
+        var match = false;
+        var placeholder = "";
+        var value = "";
+        var re = "";
+
 
         // arrays of sql statements that make up the various outputs
         var dropConstraints = [];
@@ -104,8 +113,8 @@ exports = module.exports = {
 
         // Add tables and constraints to arrays
         outputSql += "\n\n\n -- Create Tables\n\n";
-        for (var i = 0; i < sqlTableFilePaths.length; i++) {
-            var table = fs.readFileSync(sqlTableFilePaths[i], "utf-8").split("GO");
+        for (i = 0; i < sqlTableFilePaths.length; i++) {
+            table = fs.readFileSync(sqlTableFilePaths[i], "utf-8").split("GO");
             tables.push(table[0].trim());
 
             var tempTableConstraints = table[1].trim();
@@ -116,15 +125,15 @@ exports = module.exports = {
 
          // Create drop contraint statements array
         var regexExtractConstraint = /(\s*)ALTER(\s*)TABLE(\s*)(\S*)(\s*)ADD(\s*)CONSTRAINT(\s*)(\w*)/i;
-        for (var i = 0; i < tableConstraints.length; i++) {
-            var temp = tableConstraints[i].split(os.EOL);
+        for (i = 0; i < tableConstraints.length; i++) {
+            temp = tableConstraints[i].split(os.EOL);
 
             for (var j = 0; j < temp.length; j++) {
-                var match = regexExtractConstraint.exec(temp[j]);
+                match = regexExtractConstraint.exec(temp[j]);
 
                 if (match) {
                     // find the schema or use dbo
-                    var schema = "dbo";
+                    schema = "dbo";
                     var parts = match[4].split(".");
                     if (parts.length > 1) {
                         schema = parts[0];
@@ -142,15 +151,15 @@ exports = module.exports = {
 
         // Create drop table statements array
         var regexCheckIfTemporal = /SYSTEM_VERSIONING = ON/i;
-        for (var i = 0; i < sqlTableFilePaths.length; i++) {
+        for (i = 0; i < sqlTableFilePaths.length; i++) {
             var filename = path.parse(sqlTableFilePaths[i]).name;
             var newFilename = filename.replace(/-/gmi, "_");
             var dirName = path.parse(sqlTableFilePaths[i]).dir.split("\\");
-            var schema = dirName[dirName.length - 1];
+            schema = dirName[dirName.length - 1];
             var tableName = schema + "." + newFilename;
 
             // check if it's a temporal table
-            var table = fs.readFileSync(sqlTableFilePaths[i], "utf-8");
+            table = fs.readFileSync(sqlTableFilePaths[i], "utf-8");
             if (regexCheckIfTemporal.exec(table)) {
                 dropTables.push(
                     "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + schema + "' AND TABLE_NAME = '" + newFilename + "')\n" +
@@ -166,10 +175,10 @@ exports = module.exports = {
 
         // Create reset sequences array
         var sequenceLines = sequencesFile.split(os.EOL);
-        for (var i = 0; i < sequenceLines.length; i++) {
+        for (i = 0; i < sequenceLines.length; i++) {
             if (sequenceLines[i].trim().length === 0) continue;
 
-            var temp = sequenceLines[i].split("AS INT");
+            temp = sequenceLines[i].split("AS INT");
             if (temp.length != 2) temp = sequenceLines[i].split("AS TINYINT");
             temp = temp[0].replace("CREATE SEQUENCE", "ALTER SEQUENCE");
 
@@ -183,11 +192,11 @@ exports = module.exports = {
 
         // functions
         var regexExtractFunction = /(\s*)CREATE(\s*)OR(\s*)ALTER(\s*)FUNCTION(\s*)(\S*)(\s*)(\()/i;
-        for (var i = 0; i < functionFilePaths.length; i++) {
+        for (i = 0; i < functionFilePaths.length; i++) {
             var fun = fs.readFileSync(functionFilePaths[i], "utf-8");
             functions.push(fun.trim());
 
-            var match = regexExtractFunction.exec(fun);
+            match = regexExtractFunction.exec(fun);
             if (match) {
                 dropFunctions.push("DROP FUNCTION IF EXISTS " + match[6]);
             }
@@ -196,11 +205,11 @@ exports = module.exports = {
 
         // stored procedures
         var regexExtractProcedure = /(\s*)CREATE(\s*)OR(\s*)ALTER(\s*)PROCEDURE(\s*)(\S*)(\s*)/i;
-        for (var i = 0; i < procedureFilePaths.length; i++) {
+        for (i = 0; i < procedureFilePaths.length; i++) {
             var sp = fs.readFileSync(procedureFilePaths[i], "utf-8");
             storedProcedures.push(sp.trim());
 
-            var match = regexExtractProcedure.exec(sp);
+            match = regexExtractProcedure.exec(sp);
             if (match) {
                 dropProcedures.push("DROP PROCEDURE IF EXISTS " + match[6]);
             }
@@ -230,10 +239,10 @@ exports = module.exports = {
 
 
         // replace placeholders with constants
-        for (var i = 0; i < Object.keys(constantsFile).length; i++) {
-            var placeholder = Object.keys(constantsFile)[i];
-            var value = constantsFile[placeholder];
-            var re = new RegExp(placeholder, "gi");
+        for (i = 0; i < Object.keys(constantsFile).length; i++) {
+            placeholder = Object.keys(constantsFile)[i];
+            value = constantsFile[placeholder];
+            re = new RegExp(placeholder, "gi");
             outputSql = outputSql.replace(re, value);
         }
 
@@ -270,7 +279,7 @@ exports = module.exports = {
         // drop schema statements
         var regexExtractSchema = /(\s*)CREATE(\s*)SCHEMA(\s*)(\S*)(\s*)/ig;
         schemasFile.match(regexExtractSchema).forEach(function (item) {
-            var schema = item.replace(/CREATE(\s*)SCHEMA/i, "").trim();
+            schema = item.replace(/CREATE(\s*)SCHEMA/i, "").trim();
             dropSchemas.push("DROP SCHEMA IF EXISTS " + schema);
         });
 
@@ -311,10 +320,10 @@ exports = module.exports = {
         outputSql += storedProcedures.join("\n\n\n");
 
         // replace placeholders with constants
-        for (var i = 0; i < Object.keys(constantsFile).length; i++) {
-            var placeholder = Object.keys(constantsFile)[i];
-            var value = constantsFile[placeholder];
-            var re = new RegExp(placeholder, "gi");
+        for (i = 0; i < Object.keys(constantsFile).length; i++) {
+            placeholder = Object.keys(constantsFile)[i];
+            value = constantsFile[placeholder];
+            re = new RegExp(placeholder, "gi");
             outputSql = outputSql.replace(re, value);
         }
 
@@ -330,15 +339,15 @@ exports = module.exports = {
         outputSql = "-- GENERATED FILE\n\n";
 
         // Create reset sequences array
-        for (var i = 0; i < sequenceLines.length; i++) {
+        for (i = 0; i < sequenceLines.length; i++) {
             if (sequenceLines[i].trim().length === 0) continue;
 
-            var temp = sequenceLines[i].split(" AS ");
+            temp = sequenceLines[i].split(" AS ");
             temp = temp[0].replace("CREATE SEQUENCE Sequences.", "");
 
             outputSql +=
                 "SELECT name, current_value FROM sys.sequences WHERE name = '" +
-                    temp + "'" + "\n";
+                    temp + "'\n";
         }
 
         // save

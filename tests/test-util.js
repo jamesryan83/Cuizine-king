@@ -6,7 +6,6 @@ var assert = require("assert");
 var jwt = require("jsonwebtoken");
 var supertest = require("supertest");
 var superagent = require("superagent");
-var execSync = require("child_process").execSync;
 
 var config = require("../server/config");
 var database = require("../server/database/database");
@@ -78,11 +77,11 @@ exports = module.exports = {
 
 
     // Create a user
-    createUser: function (route, data, status, jwt, callback) {
+    createUser: function (route, data, status, jwtToken, callback) {
         supertest(this.supertestUrl)
             .post(route)
             .set("Content-Type", "application/json")
-            .set("authorization", "Bearer " + jwt)
+            .set("authorization", "Bearer " + jwtToken)
             .send(data)
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(status)
@@ -101,19 +100,19 @@ exports = module.exports = {
         fakeStore.id_user_doing_update = config.dbConstants.adminUsers.system;
 
         // create a store first
-        dbStores.stores_create(fakeStore, function (err, outputs) {
+        dbStores.stores_create(fakeStore, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            self.getJwt(config.dbConstants.adminUsers.system, done, function (jwt) {
+            self.getJwt(config.dbConstants.adminUsers.system, done, function (jwToken) {
 
-                self.createUser("/api/v1/create-user", self.fakeUsers.website, 200, null, function (err, res) {
-                    if (err) return done(new Error(err));
+                self.createUser("/api/v1/create-user", self.fakeUsers.website, 200, null, function (err2) {
+                    if (err) return done(new Error(err2));
 
-                    self.createUser("/api/v1/create-store-user", self.fakeUsers.store, 200, jwt, function (err, res) {
-                        if (err) return done(new Error(err));
+                    self.createUser("/api/v1/create-store-user", self.fakeUsers.store, 200, jwToken, function (err3) {
+                        if (err) return done(new Error(err3));
 
-                        self.createUser("/api/sysadmin/create-system-user", self.fakeUsers.system, 200, jwt, function (err, res) {
-                            if (err) return done(new Error(err));
+                        self.createUser("/api/sysadmin/create-system-user", self.fakeUsers.system, 200, jwt, function (err4) {
+                            if (err) return done(new Error(err4));
 
                             return callback();
                         });
@@ -137,10 +136,10 @@ exports = module.exports = {
 
     // create a jwt synchronously
     createJwtSync: function (id_person, shortExp, longExp) {
-        if (!id_person) id_person = 1;
+        var personId = id_person || 1;
 
         return jwt.sign({
-            sub: id_person,
+            sub: personId,
             shortExp: shortExp || config.jwtExpiryShort
         }, config.secret, {
             expiresIn: longExp || config.jwtExpiryLong
@@ -149,17 +148,17 @@ exports = module.exports = {
 
 
     // test if page has valid html and other stuff
-    testValidPage: function (route, done, status, jwt, isErrorPage) {
+    testValidPage: function (route, done, status, jwToken, isErrorPage) {
         var self = this;
-        if (!status) status = 200;
+        var newStatus = status || 200;
 
         supertest(this.supertestUrl)
             .get(route)
             .set("Content-Type", "text/html")
             .set("Accept", "text/html")
-            .set("authorization", "Bearer " + jwt)
+            .set("authorization", "Bearer " + jwToken)
             .expect("Content-Type", "text/html; charset=utf-8")
-            .expect(status)
+            .expect(newStatus)
             .end(function (err, res) {
                 if (err) return done(new Error(err));
 

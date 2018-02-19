@@ -5,7 +5,6 @@
 // multiple strategies example: https://gist.github.com/joshbirk/1732068
 
 var bcrypt = require("bcryptjs");
-var jwt = require('jsonwebtoken');
 var passport = require("passport");
 var JwtStrategy = require("passport-jwt").Strategy;
 var ExtractJwt = require("passport-jwt").ExtractJwt;
@@ -21,9 +20,7 @@ exports = module.exports = {
 
     // Setup
     init: function (router) {
-        var self = this;
         this.router = router;
-
 
         // this is run whenever passport.authenticate("jwt" is called
         passport.use(new JwtStrategy({ // this calls jwt.verify(
@@ -67,6 +64,8 @@ exports = module.exports = {
         passport.authenticate("jwt", { session: false }, function (err, jwTokenObject, errInfo) {
             if (err) return sendErrorResponse(err);
 
+            var jwtObj = jwTokenObject;
+
             // check if jwt has expired
             if (errInfo) {
                 if (errInfo.name == "TokenExpiredError") {
@@ -79,13 +78,13 @@ exports = module.exports = {
                     } else {
                         console.log("Unknown jwt errInfo occured", errInfo);
                     }
-                    jwTokenObject = null;
+                    jwtObj = null;
                 }
             }
 
 
             // invalid or missing jwt
-            if (!jwTokenObject) return sendErrorResponse({ message: "Not Authorized", status: 401 });
+            if (!jwtObj) return sendErrorResponse({ message: "Not Authorized", status: 401 });
 
             // check jwt short expiry
 //            console.log(jwTokenObject);
@@ -106,9 +105,9 @@ exports = module.exports = {
             var jwt = self.getJwtFromHeader(req, res);
 
             // get person from database by their jwt
-            appDB.people_get_by_jwt({ jwt: jwt, id_person: jwTokenObject.sub }, function (err, person) {
+            appDB.people_get_by_jwt({ jwt: jwt, id_person: jwtObj.sub }, function (err2, person) {
                 res.locals.person = null;
-                if (err) return sendErrorResponse(err);
+                if (err2) return sendErrorResponse(err2);
 
                 if (!person.is_system_user && !person.is_store_user && section === "store") {
                     return sendErrorResponse({ message: "Not Authorized", status: 401 });
@@ -148,8 +147,8 @@ exports = module.exports = {
             }
 
             // check password
-            self.comparePassword(password, person.password, function (err) {
-                if (err) return callback(err);
+            self.comparePassword(password, person.password, function (err2) {
+                if (err2) return callback(err2);
 
                 res.locals.person = person;
                 return callback(null);

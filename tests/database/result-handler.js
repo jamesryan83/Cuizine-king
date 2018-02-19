@@ -1,7 +1,6 @@
 "use strict";
 
 var fs = require("fs");
-var os = require("os");
 var assert = require("assert");
 
 var resultHandler = require("../../server/database/result-handler");
@@ -58,7 +57,7 @@ describe("DATABASE RESULT HANDLER", function () {
 
 
         // remove handled test procedures
-        handledProcedures = handledProcedures.filter(x => x.indexOf("test") !== 0);
+        handledProcedures = handledProcedures.filter(function (x) { return x.indexOf("test") !== 0; });
 
 
         // compare arrays, they should have the same elements, might be different order though
@@ -104,7 +103,7 @@ describe("DATABASE RESULT HANDLER", function () {
         resultHandler.handle("test_result", null, result, function (err, output) {
             assert.equal(err.status, 500);
             assert.equal(err.message, "Server Error");
-            assert.ok(output == undefined);
+            assert.ok(!output);
             done();
         });
     });
@@ -116,7 +115,7 @@ describe("DATABASE RESULT HANDLER", function () {
         resultHandler.handle("test_result_error", null, result, function (err, output) {
             assert.equal(err.status, 123);
             assert.equal(err.message, "test message");
-            assert.ok(output == undefined);
+            assert.ok(!output);
             done();
         });
     });
@@ -173,7 +172,7 @@ describe("DATABASE RESULT HANDLER", function () {
         resultHandler.handle("test_output", null, result, function (err, outputs) {
             assert.equal(err.status, 500);
             assert.equal(err.message, "Database output missing");
-            assert.ok(outputs == undefined);
+            assert.ok(!outputs);
             done();
         });
     });

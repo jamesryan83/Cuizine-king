@@ -17,21 +17,18 @@ app.site = {
 
 
     init: function (html) {
-        var self = this;
 
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
         this.htmlFiles = html;
 
+
+        // Dialogs
+        app.dialogs.init();
+
         // setup router
         app.routerBase.init();
-
-
-        // setup dialogs
-        app.dialogs.description.init();
-        app.dialogs.businessHours.init();
-        app.dialogs.reviews.init();
 
         app.routerBase.loadPageForRoute(null, "site");
     },
@@ -46,19 +43,20 @@ app.site = {
     // Remove user specific parts of a url
     normalizeRoute: function (route) {
         var match = false;
+        var newRoute = route;
 
         if (this.regexUrlStore.exec(route)) {
-            route = "/store/:id";
+            newRoute = "/store/:id";
             match = true;
         } else if (this.regexUrlLocation.exec(route)) {
-            route = "/location/:suburb";
+            newRoute = "/location/:suburb";
             match = true;
         } else if (this.regexUrlAccount.exec(route)) {
-            route = "/account/:id";
+            newRoute = "/account/:id";
             match = true;
         }
 
-        return { route: route, match: match };
+        return { route: newRoute, match: match };
     },
 
 
@@ -81,14 +79,14 @@ app.site = {
         "/about": {
             title: "About",
             file: "about",
-            initFunction: function (routeData) {
+            initFunction: function () {
 
             },
         },
         "/help": {
             title: "Help",
             file: "help",
-            initFunction: function (routeData) {
+            initFunction: function () {
 
             },
         },
@@ -163,7 +161,7 @@ app.site.account = {
 
 
     // Init
-    init: function (routeData) {
+    init: function () {
         var self = this;
 
         app.util.ajaxRequest({
@@ -192,12 +190,11 @@ app.site.account = {
 
             app.util.ajaxRequest({
                 method: "GET", url: "/api/v1/delete-user", auth: true
-            }, function (err, result) {
+            }, function (err) {
                 app.util.hideLoadingScreen();
                 if (err) return;
 
                 app.util.invalidateCredentialsAndGoToLogin();
-                return;
             });
         });
 
@@ -254,8 +251,8 @@ app.site.home = {
 
 
     // Init
-    init: function (routeData) {
-        var self = this;
+    init: function () {
+
 
     },
 
@@ -282,19 +279,19 @@ app.site.location = {
 
         // jquery-template formatters for store items
         $.addTemplateFormatter({
-            categoryArrayFormatter: function(value, template) {
+            categoryArrayFormatter: function(value) {
                 return value.join(", ");
             },
 
-            phoneNumberFormatter: function(value, template) {
+            phoneNumberFormatter: function(value) {
                 return "Ph: " + value;
             },
 
-            deliveryFormatter: function(value, template) {
+            deliveryFormatter: function(value) {
                 return "Delivery " + value;
             },
 
-            minOrderFormatter: function(value, template) {
+            minOrderFormatter: function(value) {
                 return "Min. Order " + value;
             },
         });
@@ -326,7 +323,6 @@ app.site.location = {
 
     // After the store data is loaded
     afterStoreDataLoaded: function () {
-        var self = this;
         var locationsLength = -1;
         var locationsText = "";
 
@@ -758,7 +754,7 @@ app.site.resetPassword = {
 
             app.util.ajaxRequest({
                 method: "POST", url: "/api/v1/reset-password", data: data
-            }, function (err, result) {
+            }, function (err) {
                 if (err) return;
 
                 app.util.invalidateCredentialsAndGoToLogin();
@@ -773,8 +769,6 @@ app.site.resetPassword = {
 app.site.store = {
 
     init: function (routeData) {
-        var self = this;
-
 
         app.storeContent.init(routeData);
 
@@ -868,7 +862,7 @@ app.dialogs.businessHours = {
     days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
 
 
-    init: function (storeHours) {
+    init: function () {
         var self = this;
 
         $("#dialog-store-hours-close").on("click", function () {
@@ -878,8 +872,8 @@ app.dialogs.businessHours = {
 
 
     update: function (hours, hoursEl) {
-        this.addHoursToList(storeHours.slice(0, 7), "#dialog-store-hours-left");
-        this.addHoursToList(storeHours.slice(7, 14), "#dialog-store-hours-right");
+        this.addHoursToList(hours.slice(0, 7), "#dialog-store-hours-left");
+        this.addHoursToList(hours.slice(7, 14), "#dialog-store-hours-right");
 
         var text = "";
         var frag = document.createDocumentFragment();
@@ -897,14 +891,12 @@ app.dialogs.businessHours = {
 
 
     show: function () {
-        $("#dialog-container").show();
-        $("#dialog-store-hours").show();
+        app.dialogs.show("#dialog-store-hours");
     },
 
 
     hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
+        app.dialogs.hide();
     },
 
 }
@@ -929,23 +921,53 @@ app.dialogs.description = {
 
 
     show: function () {
-        $("#dialog-container").show();
-        $("#dialog-store-description").show();
+        app.dialogs.show("#dialog-store-description");
     },
 
 
     hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
+        app.dialogs.hide();
     },
 
 }
+// Dialog container
+app.dialogs.init = function () {
+
+    // initialize available dialogs
+    Object.keys(this).forEach(function (el) {
+        if (app.dialogs[el].init) {
+            app.dialogs[el].init();
+        }
+    });
+
+
+    this.$dialogContainer = $("#dialog-container");
+    this.$dialogs = this.$dialogContainer.children();
+
+
+    this.$dialogContainer.on("click", function () {
+
+    });
+}
+
+
+app.dialogs.show = function (dialogEl) {
+    this.$dialogContainer.show();
+    $(dialogEl).show();
+}
+
+
+app.dialogs.hide = function () {
+    this.$dialogs.hide();
+    this.$dialogContainer.hide();
+}
+
 
 // Reviews dialog
 app.dialogs.reviews = {
 
 
-    init: function (data) {
+    init: function () {
         var self = this;
 
         $("#dialog-store-reviews-add-review").on("click", function () {
@@ -958,7 +980,7 @@ app.dialogs.reviews = {
     },
 
 
-    update: function () {
+    update: function (data) {
         $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
 
         app.controls.RatingControls.setValue("#dialog-store-reviews-rating-control",
@@ -990,20 +1012,16 @@ app.dialogs.reviews = {
 
 
     show: function () {
-        $("#dialog-container").show();
-        $("#dialog-store-reviews").show();
+        app.dialogs.show("#dialog-store-reviews");
     },
 
 
     hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
+        app.dialogs.hide();
     },
 
 }
-if (typeof app === "undefined") {
-    var app = {};
-}
+
 
 app.i18n = {};
 
@@ -1027,7 +1045,6 @@ app.routerBase = {
 
     // Init
     init: function () {
-        var self = this;
 
         // For Cordova
         document.addEventListener("deviceready", function () {
@@ -1097,17 +1114,17 @@ app.routerBase = {
 
     // Returns the data for the current route
     getCurrentRouteData: function (route, section) {
-        var route = route || window.location.pathname;
-        var routeData = { route: route };
+        var newRoute = route || window.location.pathname;
+        var routeData = { route: newRoute };
 
         if (app.util.isCordova()) {
             // remove extra cordova stuff from route
-            route = route.substring(route.lastIndexOf("/"), route.length - 5);
-            if (route == "/index-cordova") route = "/";
+            newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
+            if (newRoute == "/index-cordova") newRoute = "/";
         }
 
         // normalize route and add current section
-        routeData.normalizedRoute = app[section].normalizeRoute(route).route;
+        routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
         routeData.section = section;
 
         // Add html and other route data
@@ -1131,7 +1148,7 @@ app.routerBase = {
     logUserOut: function () {
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/logout", auth: true
-        }, function (err) {
+        }, function () {
             app.util.invalidateCredentialsAndGoToLogin();
 
         });
@@ -1158,16 +1175,18 @@ app.storeContent = {
     storeData: {},
 
     init: function (routeData, dataLoaded) {
-        var self = this;
+
+        console.log(dataLoaded)
 
         this.$logo = $(".store-info-image");
-        this.$address = $("#store-info-address");
-        this.$storeMenuNav = $("#store-menu-nav");
         this.$description = $("#store-info-description");
+        this.$logoEmpty = $(".store-info-image-empty");
+        this.$logoLoading = $(".store-info-image-loading");
+        this.$descriptionButton = $("#store-info-button-description");
+        this.$menuList = $("#store-menu-list");
 
-        $(".store-info-image-empty").hide();
-        $(".store-info-image-loading").show();
-
+        this.$logoEmpty.hide();
+        this.$logoLoading.show();
 
         this.id_store = app.util.getStoreIdFromStorage();
 
@@ -1191,9 +1210,9 @@ app.storeContent = {
     // Show hide more button when description text changes height
     resizeDescription: function () {
         if (this.$description[0].scrollHeight > this.$description.innerHeight()) {
-            $("#store-info-button-description").show();
+            this.$descriptionButton.show();
         } else {
-            $("#store-info-button-description").hide();
+            this.$descriptionButton.hide();
         }
     },
 
@@ -1207,13 +1226,14 @@ app.storeContent = {
         var logo = new Image();
         logo.src = "/res/storelogos/store" + this.id_store + ".jpg?" + Date.now();
         logo.onload = function () {
-            $(".store-info-image-empty").hide();
             self.$logo.attr("src", logo.src);
-            $(".store-info-image-loading").hide();
+
+            self.$logoEmpty.hide();
+            self.$logoLoading.hide();
         }
         logo.onerror = function () {
-            $(".store-info-image-loading").hide();
-            $(".store-info-image-empty").show();
+            self.$logoLoading.hide();
+            self.$logoEmpty.show();
         }
 
 
@@ -1225,7 +1245,7 @@ app.storeContent = {
 
         // add store details
         $("#store-header-name").text(data.name);
-        $("#store-info-description").text(data.description);
+        this.$description.text(data.description);
         $("#store-info-address").text(address);
         $("#store-info-phone-number").text(data.phone_number);
         $("#store-info-email").text(data.email);
@@ -1235,6 +1255,12 @@ app.storeContent = {
 
         // rating control
         app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+
+
+        // Setup dialogs
+        app.dialogs.description.init(data.name, data.description);
+        app.dialogs.businessHours.init(data.hours);
+        app.dialogs.reviews.init(data);
 
 
         // Events
@@ -1249,16 +1275,18 @@ app.storeContent = {
     // Add menu data
     addMenuDataToPage: function (data) {
         var self = this;
+        var i = 0;
+        var $item = null;
 
         // products
         var item = null;
-        var itemProperties = "";
         var frag = document.createDocumentFragment();
 
         if (data.products) {
 
+
             // create product items
-            for (var i = 0; i < data.products.length; i++) {
+            for (i = 0; i < data.products.length; i++) {
                 item = data.products[i];
 
                 // item template
@@ -1266,7 +1294,7 @@ app.storeContent = {
                 if (item.vegetarian) item.class2 = "label-vegetarian";
                 if (!item.delivery_available) item.class3 = "label-takeaway";
 
-                var $item = $("<div></div>")
+                $item = $("<div></div>")
                     .loadTemplate($("#template-store-menu-item"), item);
 
                 $item = $item.children().first();
@@ -1286,46 +1314,42 @@ app.storeContent = {
 
 
             // create product heading items
-            for (var i = 0; i < data.product_headings.length; i++) {
+            for (i = 0; i < data.product_headings.length; i++) {
                 var heading = data.product_headings[i];
 
+                // find element to put heading above
                 var el = $(frag).find(".store-menu-list-item[data-product-id='" +
                              heading.above_product_id + "']");
 
                 if (el) {
-                    var $item = $("<div></div>")
+                    $item = $("<div></div>")
                         .loadTemplate($("#template-store-menu-heading"), heading);
-
 
                     $item = $item.children().first();
                     $item.attr("data-heading-id", heading.id_product_heading);
+
+                    // add heading before element
                     $item.insertBefore(el);
                 }
             }
-
-
-            // add products and headings to page
-            $("#store-menu-list").append(frag);
+            self.$menuList.append(frag);
 
 
             // Category scroller
             new app.controls.CategoryScroller(data.product_headings);
 
-
-            // Setup dialogs
-            app.dialogs.description.init(data.name, data.description);
-            app.dialogs.businessHours.init(data.hours);
-            app.dialogs.reviews.init(data);
-
         } else {
-            $("#store-menu-list").append("No Products");
+            self.$menuList.append("No Products");
         }
     },
+
 
 
     // Gets the store data and caches it for a little while
     getStoreData: function (callback) {
         var self = this;
+
+        // check if already running
         if (this.storeDataRequestNotAllowed) {
             return callback(this.storeData);
         }
@@ -1333,11 +1357,15 @@ app.storeContent = {
         if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
             return false;
 
+
+        // set timeout
         this.storeDataRequestNotAllowed = true;
         setTimeout(function () {
             self.storeDataRequestNotAllowed = false;
         }, 2000);
 
+
+        // get data from server
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/store?id_store=" + this.id_store, cache: true
         }, function (err, result) {
@@ -1354,9 +1382,7 @@ app.storeContent = {
 }
 
 
-if (typeof app === "undefined") {
-    var app = {};
-}
+
 
 
 app.util = {
@@ -1392,7 +1418,7 @@ app.util = {
     // Show toast
     showToast: function (message, timeout, cssClass) {
         var $toasts = $("#toasts");
-        var toast = $("<p class='" + (cssClass || "") + "'>" + message + "</p>");
+        var $toast = $("<p class='" + (cssClass || "") + "'>" + message + "</p>");
 
         // remove toasts if there's too many stacked up
         if ($toasts.children().length >= 5) {
@@ -1402,13 +1428,13 @@ app.util = {
         }
 
         // append toasts message and show toasts
-        $toasts.append(toast[0]);
+        $toasts.append($toast[0]);
         $toasts.show();
 
-        $(toast).animate({ opacity: 1, bottom: 0 }, 100);
+        $toast.animate({ opacity: 1, bottom: 0 }, 100);
 
         // hide toast after a little bit
-        var currentToast = setTimeout(function () {
+        setTimeout(function () {
             $toasts.children().first().animate({ opacity: 0, bottom: -50 }, 100, function () {
                 $(this).remove();
             });
@@ -1546,8 +1572,6 @@ app.util = {
 
     // Upload an image
     uploadImage: function (files, callback) {
-        var self = this;
-
         if (files && files.length > 0) {
             var file = files[0];
             if (file.size > 250000) {
@@ -1647,9 +1671,7 @@ app.util = {
 // split it into a file for each section
 
 
-if (typeof app === "undefined") {
-    var app = {};
-}
+
 
 
 // General shared validation rules
@@ -1850,6 +1872,8 @@ app.validationRules.validateHours = function (data) {
         return "Data missing";
     }
 
+    var temp = null;
+    var text = null;
     var keys = Object.keys(data);
 
     for (var i = 0; i < keys.length; i++) {
@@ -1857,18 +1881,18 @@ app.validationRules.validateHours = function (data) {
 
             if (data[keys[i]]) {
                 if (data[keys[i]].length !== 5 || !data[keys[i]].match(/\d{2}:\d{2}/)) {
-                    var temp = keys[i].split("_");
-                    var text = temp[1] + " " + temp[2] + " " + temp[3];
+                    temp = keys[i].split("_");
+                    text = temp[1] + " " + temp[2] + " " + temp[3];
                     text = app.util.toTitleCase(text);
                     return "Error in Hours " + text + ".  Must be HH:MM";
                 }
 
             // both times have to be null
             } else {
-                var temp = keys[i].split("_");
+                temp = keys[i].split("_");
                 var check = temp[3] === "open" ? "close" : "open";
 
-                var text = temp[1] + " " + temp[2] + " " + temp[3];
+                text = temp[1] + " " + temp[2] + " " + temp[3];
                 text = app.util.toTitleCase(text);
                 temp = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + check;
 
@@ -1887,12 +1911,12 @@ app.validationRules.validateHours = function (data) {
 
 
 
-//app.validationRules.storeUpdateBankDetails = {
-//    bank_name: app.validationRules._stores_bank_name,
-//    bank_bsb: app.validationRules._stores_bank_bsb,
-//    bank_account_name: app.validationRules._stores_bank_account_name,
-//    bank_account_number: app.validationRules._stores_bank_account_number
-//}
+// app.validationRules.storeUpdateBankDetails = {
+//     bank_name: app.validationRules._stores_bank_name,
+//     bank_bsb: app.validationRules._stores_bank_bsb,
+//     bank_account_name: app.validationRules._stores_bank_account_name,
+//     bank_account_number: app.validationRules._stores_bank_account_number
+// }
 
 
 
@@ -1929,13 +1953,13 @@ app.controls.CategoryScroller = function (categories) {
 
 
     // top category nav
-    new app.controls.HorizontalScroller(scrollerListEl, function (clickedEl) {
+    new app.controls.HorizontalScroller(scrollerListEl, function () {
 
     });
 
 
     // Change to floating navbar
-    $(window).on("scroll", function (e) {
+    $(window).on("scroll", function () {
         if ($categoryScrollerContainer[0].getBoundingClientRect().top < 20) {
             $categoryScroller.addClass("floating");
         } else {
@@ -1945,7 +1969,7 @@ app.controls.CategoryScroller = function (categories) {
 }
 // Navbar
 
-app.controls.Navbar = function (routeData) {
+app.controls.Navbar = function () {
     var self = this;
 
 
@@ -2025,7 +2049,6 @@ app.controls.RatingControls = {
     // Adds click events to all the rating controls
     // bit easier to do it this way when there's not many reviews
     recreateRatingControlEvents: function () {
-        var self = this;
         $(".rating-control-star").off();
         $(".rating-control-star").unbind();
 
@@ -2040,6 +2063,7 @@ app.controls.RatingControls = {
                 isUnused = true;
             }
 
+            console.log(isUnused)
             $(this).removeClass("active");
             $(this).siblings().removeClass("active");
             $(this).addClass("active");
@@ -2106,7 +2130,6 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     var mouseIsDown = false;
     var startMouseX = 0;
     var startPosX = 0;
-    var currentX = 0;
 
     // start
     $(containerEl).on("mousedown", function (e) {
@@ -2125,7 +2148,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     });
 
     // stop
-    $(window).on("mouseup", function (e) {
+    $(window).on("mouseup", function () {
         mouseIsDown = false;
     });
 
@@ -2204,10 +2227,15 @@ app.controls.Typeahead = function (callback) {
 
     // when typing, generate dropdown list
     this.$typeaheadInput.on("keyup", function (e) {
+
+        var i = 0;
+        var items = [];
         var value = $(this).val().toLowerCase();
+
 
         // esc
         if (e.which == 27) return;
+
 
         // enter
         if (e.which == 13) {
@@ -2220,8 +2248,8 @@ app.controls.Typeahead = function (callback) {
 
         // up arrow select previous item
         if (e.which == 38) {
-            var items = $(".typeahead-item");
-            for (var i = 0; i < items.length; i++) {
+            items = $(".typeahead-item");
+            for (i = 0; i < items.length; i++) {
                 if ($(items[i]).hasClass("active")) {
                     $(items[i]).removeClass("active");
                     $(items[i]).prev().addClass("active");
@@ -2237,8 +2265,8 @@ app.controls.Typeahead = function (callback) {
 
         // down arrow select next item
         if (e.which == 40) {
-            var items = $(".typeahead-item");
-            for (var i = items.length - 1; i >= 0; i--) {
+            items = $(".typeahead-item");
+            for (i = items.length - 1; i >= 0; i--) {
                 if ($(items[i]).hasClass("active")) {
                     $(items[i]).removeClass("active");
                     $(items[i]).next().addClass("active");
@@ -2268,7 +2296,7 @@ app.controls.Typeahead = function (callback) {
 
                 // create new list items
                 var listItems = [];
-                for (var i = 0; i < result.data.length; i++) {
+                for (i = 0; i < result.data.length; i++) {
                     listItems.push(
                         "<li class='typeahead-item'>" +
                             "<label class='typeahead-item-postcode'>" + result.data[i].postcode + "</label>" +

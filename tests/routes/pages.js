@@ -1,14 +1,8 @@
 "use strict";
 
-var assert = require("assert");
-var supertest = require("supertest");
 
 var testutil = require("../test-util");
-var router = require("../../server/other/router");
 
-
-
-var cookie = null;
 
 
 describe("ROUTES - PAGES", function () {
@@ -106,7 +100,7 @@ describe("ROUTES - PAGES", function () {
 
 
 
-    it.skip("#sysadminPage create-store invalid jwt redirects to login page with 302", function (done) {
+    it.skip("#sysadminPage create-store invalid jwt redirects to login page with 302", function () {
         // this is more of a ui test
         // there is some html loaded to make the initial request for other stuff
     });

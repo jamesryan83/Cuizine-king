@@ -17,21 +17,18 @@ app.site = {
 
 
     init: function (html) {
-        var self = this;
 
         app.util.preloadImages("/res/svg/", [
             "icon-navbar-active.svg", "icon-close-hover.svg"]);
 
         this.htmlFiles = html;
 
+
+        // Dialogs
+        app.dialogs.init();
+
         // setup router
         app.routerBase.init();
-
-
-        // setup dialogs
-        app.dialogs.description.init();
-        app.dialogs.businessHours.init();
-        app.dialogs.reviews.init();
 
         app.routerBase.loadPageForRoute(null, "site");
     },
@@ -46,19 +43,20 @@ app.site = {
     // Remove user specific parts of a url
     normalizeRoute: function (route) {
         var match = false;
+        var newRoute = route;
 
         if (this.regexUrlStore.exec(route)) {
-            route = "/store/:id";
+            newRoute = "/store/:id";
             match = true;
         } else if (this.regexUrlLocation.exec(route)) {
-            route = "/location/:suburb";
+            newRoute = "/location/:suburb";
             match = true;
         } else if (this.regexUrlAccount.exec(route)) {
-            route = "/account/:id";
+            newRoute = "/account/:id";
             match = true;
         }
 
-        return { route: route, match: match };
+        return { route: newRoute, match: match };
     },
 
 
@@ -81,14 +79,14 @@ app.site = {
         "/about": {
             title: "About",
             file: "about",
-            initFunction: function (routeData) {
+            initFunction: function () {
 
             },
         },
         "/help": {
             title: "Help",
             file: "help",
-            initFunction: function (routeData) {
+            initFunction: function () {
 
             },
         },
@@ -157,6 +155,6 @@ app.site = {
 // create arrays of filepaths for express router
 app.site.routesList = Object.keys(app.site.routes);
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.site;
 }

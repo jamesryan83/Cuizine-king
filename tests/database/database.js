@@ -1,6 +1,5 @@
 "use strict";
 
-var path = require("path");
 var assert = require("assert");
 
 var config = require("../../server/config");
@@ -64,7 +63,7 @@ describe("DATABASE", function () {
     it("#connect returns error message on invaid query", function (done) {
         var query = "Blah blah blah";
 
-        database.executeQuery(query, function (err, result) {
+        database.executeQuery(query, function (err) {
             assert.ok(err.indexOf("Incorrect syntax") !== -1);
             done();
         });
@@ -80,29 +79,29 @@ describe("DATABASE", function () {
                 "name NVARCHAR(45) NOT NULL," +
                 "email NVARCHAR(45) NOT NULL UNIQUE)";
 
-        database.executeQuery(query, function (err, result) {
+        database.executeQuery(query, function (err) {
             if (err) return done(new Error(err));
 
             // insert some data
             var query2 = "INSERT INTO testtable " +
                 "(name, email) VALUES ('test1', 'test2')";
 
-            database.executeQuery(query2, function (err, result) {
-                if (err) return done(new Error(err));
+            database.executeQuery(query2, function (err2) {
+                if (err2) return done(new Error(err2));
 
                 // check the data is there
                 var query3 = "SELECT * FROM testtable";
 
-                database.executeQuery(query3, function (err, result) {
-                    if (err) return done(new Error(err));
+                database.executeQuery(query3, function (err3, result) {
+                    if (err3) return done(new Error(err3));
 
-                    result = result.recordset[0];
-                    assert.equal(result.id, 1);
-                    assert.equal(result.name, "test1");
-                    assert.equal(result.email, "test2");
+                    var res = result.recordset[0];
+                    assert.equal(res.id, 1);
+                    assert.equal(res.name, "test1");
+                    assert.equal(res.email, "test2");
 
-                    database.executeQuery("DROP TABLE testtable", function (err, result) {
-                        if (err) return done(new Error(err));
+                    database.executeQuery("DROP TABLE testtable", function (err4) {
+                        if (err4) return done(new Error(err4));
 
                         done();
                     });

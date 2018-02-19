@@ -66,7 +66,7 @@ app.cms.details = {
                 $(".store-info-image-loading").show();
 
                 // send image to server
-                app.util.uploadImage(e.target.files, function (err, imgPath) {
+                app.util.uploadImage(e.target.files, function (err) {
                     if (err) {
                         app.util.showToast(err);
                         return;
@@ -127,6 +127,7 @@ app.cms.details = {
             }, function (err, result) {
                 if (err) return false;
 
+                console.log(result);
                 app.util.showToast("SAVED", null, "success");
             });
 
@@ -138,7 +139,6 @@ app.cms.details = {
     // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
-            var dayStringsLc = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
             console.log(storeData)
 
             app.storeContent.addStoreDetailsDataToPage(storeData);
@@ -152,7 +152,7 @@ app.cms.details = {
             this.$storeInfoEdit[0][5].value = storeData.email;
 
             // hours
-            Object.keys(storeData.hours).forEach(function (key, index) {
+            Object.keys(storeData.hours).forEach(function (key) {
                 if (key.indexOf("hours_") === 0) {
                     $("[name='" + key + "']").val(
                         (storeData.hours[key] === "NULL") ? "" : storeData.hours[key]);

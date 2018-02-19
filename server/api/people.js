@@ -20,7 +20,6 @@ exports = module.exports = {
 
     // Returns a person for the account page
     getPerson: function (req, res) {
-        var self = this;
 
         // TODO : get person
         res.send({ person: "abc" });

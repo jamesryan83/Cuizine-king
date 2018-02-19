@@ -27,7 +27,7 @@ app.site.resetPassword = {
 
             app.util.ajaxRequest({
                 method: "POST", url: "/api/v1/reset-password", data: data
-            }, function (err, result) {
+            }, function (err) {
                 if (err) return;
 
                 app.util.invalidateCredentialsAndGoToLogin();

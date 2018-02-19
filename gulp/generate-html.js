@@ -3,7 +3,7 @@
 var fs = require("fs");
 var ejs = require("ejs");
 var path = require("path");
-var minify = require('html-minifier').minify; // TODO : setup minify
+var minify = require("html-minifier").minify; // TODO : setup minify
 var recursiveReadSync = require("recursive-readdir-sync");
 
 var config = require("../server/config");
@@ -12,7 +12,7 @@ var siteRouter = require("../www/js/site");
 var sysadminRouter = require("../www/js/sysadmin");
 
 var wwwFolder = path.join(__dirname, "../", "www");
-var htmlFolder = path.join(__dirname, "../", "www", "html");
+var htmlFolder = path.join(wwwFolder, "html");
 
 
 exports = module.exports = {
@@ -29,7 +29,7 @@ exports = module.exports = {
 
 
         // get html filenames and check for duplicates
-        var htmlFileNames = this.htmlFilePaths.map(x => {
+        var htmlFileNames = this.htmlFilePaths.map(function (x) {
             var a = x.split("\\");
             return a[a.length - 1];
         }).sort();
@@ -52,6 +52,12 @@ exports = module.exports = {
         fs.writeFileSync(path.join(outputsPath, "_cms.json"), JSON.stringify(htmlOutputCms));
         fs.writeFileSync(path.join(outputsPath, "_site.json"), JSON.stringify(htmlOutputSite));
         fs.writeFileSync(path.join(outputsPath, "_sysadmin.json"), JSON.stringify(htmlOutputSysadmin));
+
+
+        // compile main index file
+        var main = this.compileHtml(path.join(htmlFolder, "main.html"));
+        main = "<!-- GENERATED -->\n\n" + main;
+        fs.writeFileSync(path.join(path.join(wwwFolder, "_index-main.html")), main);
     },
 
 
@@ -64,7 +70,7 @@ exports = module.exports = {
         var compiledHtml = ejs.compile(html, { client: true, delimiter: "?" });
 
         // the callback here is fired for each include found
-        return compiledHtml(data, null, function (include, otherData) {
+        return compiledHtml(data, null, function (include) {
             if (include) {
 
                 // if there is an include in this file, get the filepath

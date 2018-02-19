@@ -5,7 +5,6 @@ var supertest = require("supertest");
 
 var testutil = require("../test-util");
 var config = require("../../server/config");
-var authApi = require("../../server/api/auth");
 var database = require("../../server/database/database");
 var dbApp = require("../../server/procedures/_App");
 var dbStores = require("../../server/procedures/_Store");
@@ -40,8 +39,8 @@ describe("API - AUTH", function () {
             assert.ok(res.body.data.id_person > 0);
 
             // get new person from db
-            database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.website.email + "'", function (err, result) {
-                if (err) return done(new Error(err));
+            database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.website.email + "'", function (err2, result) {
+                if (err2) return done(new Error(err2));
 
                 var person = result.recordset[0];
                 assert.equal(person.is_web_user, true);
@@ -115,12 +114,12 @@ describe("API - AUTH", function () {
             var query = "UPDATE App.people SET jwt = '" + newUserJwt + "' WHERE id_person = " + outputs.newPersonId;
 
             // update users jwt
-            database.executeQuery(query, function (err) {
-                if (err) return done(new Error(err));
+            database.executeQuery(query, function (err2) {
+                if (err2) return done(new Error(err2));
 
                 // create a store user using the jwt of the user just added to the db
-                testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 200, newUserJwt, function (err, res) {
-                    if (err) return done(new Error(err));
+                testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 200, newUserJwt, function (err3, res) {
+                    if (err3) return done(new Error(err3));
 
                     var newPersonId2 = res.body.data.id_person;
 
@@ -128,8 +127,8 @@ describe("API - AUTH", function () {
                     assert.equal(newPersonId2, outputs.newPersonId + 1);
 
                     // get person created from creating the store
-                    database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.store.email + "'", function (err, result) {
-                        if (err) return done(new Error(err));
+                    database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.store.email + "'", function (err4, result) {
+                        if (err4) return done(new Error(err4));
 
                         var person = result.recordset[0];
                         assert.equal(person.is_web_user, true);
@@ -137,8 +136,8 @@ describe("API - AUTH", function () {
                         assert.equal(person.is_system_user, false);
 
                         // Check stores_people was updated correctly
-                        database.executeQuery("SELECT * FROM Store.stores_people WHERE id_store = " + outputs.newStoreId, function (err, result2) {
-                            if (err) return done(new Error(err));
+                        database.executeQuery("SELECT * FROM Store.stores_people WHERE id_store = " + outputs.newStoreId, function (err5, result2) {
+                            if (err5) return done(new Error(err5));
 
                             var person1 = result2.recordset[0];
                             var person2 = result2.recordset[1];
@@ -217,8 +216,8 @@ describe("API - AUTH", function () {
                 assert.ok(res.body.data.id_person > 0);
 
                 // get new person from db
-                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + res.body.data.id_person, function (err, result2) {
-                    if (err) return done(new Error(err));
+                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + res.body.data.id_person, function (err2, result2) {
+                    if (err2) return done(new Error(err2));
 
                     var person = result2.recordset[0];
                     assert.equal(person.is_web_user, true);
@@ -294,6 +293,8 @@ describe("API - AUTH", function () {
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
+                if (err) return done(new Error(err));
+
                 assert.equal(res.body.err, "Account not found");
                 done();
             });
@@ -301,12 +302,12 @@ describe("API - AUTH", function () {
 
 
     it("#login works when unverified", function (done) {
-        testutil.getApiToken(function (res) {
+        testutil.getApiToken(function (jwToken) {
 
             supertest(testutil.supertestUrl)
                 .post("/api/v1/login")
                 .set("Content-Type", "application/json")
-                .set("authorization", "Bearer " + res)
+                .set("authorization", "Bearer " + jwToken)
                 .send({
                     email: testutil.fakeUsers.website.email,
                     password: testutil.fakeUsers.website.password })
@@ -336,8 +337,10 @@ describe("API - AUTH", function () {
             .set("Content-Type", "application/json")
             .send({ email: testutil.fakeUsers.website.email })
             .expect("Content-Type", "application/json; charset=utf-8")
-            .expect(401)
+            .expect(400)
             .end(function (err, res) {
+                if (err) return done(new Error(err));
+
                 assert.equal(res.body.err, "Please verify your account");
                 done();
             });
@@ -395,8 +398,8 @@ describe("API - AUTH", function () {
                     verification_token: result.recordset[0].verification_token })
                 .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200)
-                .end(function (err, res) {
-                    if (err) return done(new Error(err));
+                .end(function (err2, res) {
+                    if (err2) return done(new Error(err2));
 
                     assert.ok(!res.body.err);
                     done();
@@ -432,6 +435,8 @@ describe("API - AUTH", function () {
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
+                if (err) return done(new Error(err));
+
                 assert.equal(res.body.err, "Account not found");
                 done();
             });
@@ -461,6 +466,8 @@ describe("API - AUTH", function () {
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
+                if (err) return done(new Error(err));
+
                 assert.equal(res.body.err, "Email can't be blank");
                 done();
             });
@@ -474,6 +481,8 @@ describe("API - AUTH", function () {
             .expect("Content-Type", "application/json; charset=utf-8")
             .expect(400)
             .end(function (err, res) {
+                if (err) return done(new Error(err));
+
                 assert.equal(res.body.err, "First name can't be blank");
                 done();
             });
@@ -491,12 +500,12 @@ describe("API - AUTH", function () {
                 .send({ email: testutil.fakeUsers.website.email, password: "test2", confirmPassword: "test2", reset_password_token: user.reset_password_token })
                 .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200)
-                .end(function (err, res) {
-                    if (err) return done(new Error(err));
+                .end(function (err2) {
+                    if (err2) return done(new Error(err2));
 
                     // check password was changed
-                    dbApp.people_get_by_email({ email: testutil.fakeUsers.website.email }, function (err, user2) {
-                        if (err) return done(new Error(err));
+                    dbApp.people_get_by_email({ email: testutil.fakeUsers.website.email }, function (err3, user2) {
+                        if (err3) return done(new Error(err3));
 
                         assert.ok(user.password != user2.password);
 

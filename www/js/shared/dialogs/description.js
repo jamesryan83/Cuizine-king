@@ -20,14 +20,12 @@ app.dialogs.description = {
 
 
     show: function () {
-        $("#dialog-container").show();
-        $("#dialog-store-description").show();
+        app.dialogs.show("#dialog-store-description");
     },
 
 
     hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
+        app.dialogs.hide();
     },
 
 }

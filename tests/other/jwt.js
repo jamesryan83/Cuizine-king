@@ -4,10 +4,10 @@ var assert = require("assert");
 var supertest = require("supertest");
 
 var testutil = require("../test-util");
-var config = require("../../server/config");
-var authApi = require("../../server/api/auth");
-var database = require("../../server/database/database");
-var dbApp = require("../../server/procedures/_App");
+// var config = require("../../server/config");
+// var authApi = require("../../server/api/auth");
+// var database = require("../../server/database/database");
+// var dbApp = require("../../server/procedures/_App");
 
 
 
@@ -189,36 +189,36 @@ describe("JWT", function () {
     });
 
 
-    it.skip("#checkJwt returns id_person and diferent jwt when time > short expiry", function (done) {
+    it.skip("#checkJwt returns id_person and diferent jwt when time > short expiry", function () {
 
     });
 
 
-    it.skip("#checkJwt returns error message when token is expired", function (done) {
+    it.skip("#checkJwt returns error message when token is expired", function () {
 
     });
 
 
     it("#logout invalidates jwt when unverified", function (done) {
-        testutil.getApiToken(function (jwt) {
+        testutil.getApiToken(function (jwToken) {
 
             supertest(testutil.supertestUrl)
                 .get("/api/v1/logout")
                 .set("Content-Type", "application/json")
-                .set("authorization", "Bearer " + jwt)
+                .set("authorization", "Bearer " + jwToken)
                 .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200)
-                .end(function (err, res) {
+                .end(function (err) {
                     if (err) return done(new Error(err));
 
                     supertest(testutil.supertestUrl)
                         .post("/api/v1/check-token")
                         .set("Content-Type", "application/json")
-                        .set("authorization", "Bearer " + jwt)
+                        .set("authorization", "Bearer " + jwToken)
                         .expect("Content-Type", "application/json; charset=utf-8")
                         .expect(401)
-                        .end(function (err, res) {
-                            if (err) return done(new Error(err));
+                        .end(function (err2, res) {
+                            if (err2) return done(new Error(err2));
 
                             assert.equal(res.body.err, "Invalid token");
                             done();

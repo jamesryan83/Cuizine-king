@@ -64,10 +64,15 @@ app.controls.Typeahead = function (callback) {
 
     // when typing, generate dropdown list
     this.$typeaheadInput.on("keyup", function (e) {
+
+        var i = 0;
+        var items = [];
         var value = $(this).val().toLowerCase();
+
 
         // esc
         if (e.which == 27) return;
+
 
         // enter
         if (e.which == 13) {
@@ -80,8 +85,8 @@ app.controls.Typeahead = function (callback) {
 
         // up arrow select previous item
         if (e.which == 38) {
-            var items = $(".typeahead-item");
-            for (var i = 0; i < items.length; i++) {
+            items = $(".typeahead-item");
+            for (i = 0; i < items.length; i++) {
                 if ($(items[i]).hasClass("active")) {
                     $(items[i]).removeClass("active");
                     $(items[i]).prev().addClass("active");
@@ -97,8 +102,8 @@ app.controls.Typeahead = function (callback) {
 
         // down arrow select next item
         if (e.which == 40) {
-            var items = $(".typeahead-item");
-            for (var i = items.length - 1; i >= 0; i--) {
+            items = $(".typeahead-item");
+            for (i = items.length - 1; i >= 0; i--) {
                 if ($(items[i]).hasClass("active")) {
                     $(items[i]).removeClass("active");
                     $(items[i]).next().addClass("active");
@@ -128,7 +133,7 @@ app.controls.Typeahead = function (callback) {
 
                 // create new list items
                 var listItems = [];
-                for (var i = 0; i < result.data.length; i++) {
+                for (i = 0; i < result.data.length; i++) {
                     listItems.push(
                         "<li class='typeahead-item'>" +
                             "<label class='typeahead-item-postcode'>" + result.data[i].postcode + "</label>" +

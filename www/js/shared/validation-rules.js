@@ -211,6 +211,8 @@ app.validationRules.validateHours = function (data) {
         return "Data missing";
     }
 
+    var temp = null;
+    var text = null;
     var keys = Object.keys(data);
 
     for (var i = 0; i < keys.length; i++) {
@@ -218,18 +220,18 @@ app.validationRules.validateHours = function (data) {
 
             if (data[keys[i]]) {
                 if (data[keys[i]].length !== 5 || !data[keys[i]].match(/\d{2}:\d{2}/)) {
-                    var temp = keys[i].split("_");
-                    var text = temp[1] + " " + temp[2] + " " + temp[3];
+                    temp = keys[i].split("_");
+                    text = temp[1] + " " + temp[2] + " " + temp[3];
                     text = app.util.toTitleCase(text);
                     return "Error in Hours " + text + ".  Must be HH:MM";
                 }
 
             // both times have to be null
             } else {
-                var temp = keys[i].split("_");
+                temp = keys[i].split("_");
                 var check = temp[3] === "open" ? "close" : "open";
 
-                var text = temp[1] + " " + temp[2] + " " + temp[3];
+                text = temp[1] + " " + temp[2] + " " + temp[3];
                 text = app.util.toTitleCase(text);
                 temp = temp[0] + "_" + temp[1] + "_" + temp[2] + "_" + check;
 
@@ -248,19 +250,19 @@ app.validationRules.validateHours = function (data) {
 
 
 
-//app.validationRules.storeUpdateBankDetails = {
-//    bank_name: app.validationRules._stores_bank_name,
-//    bank_bsb: app.validationRules._stores_bank_bsb,
-//    bank_account_name: app.validationRules._stores_bank_account_name,
-//    bank_account_number: app.validationRules._stores_bank_account_number
-//}
+// app.validationRules.storeUpdateBankDetails = {
+//     bank_name: app.validationRules._stores_bank_name,
+//     bank_bsb: app.validationRules._stores_bank_bsb,
+//     bank_account_name: app.validationRules._stores_bank_account_name,
+//     bank_account_number: app.validationRules._stores_bank_account_number
+// }
 
 
 
 
 
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     app.util = require("./util");
     exports = module.exports = app.validationRules;
 }

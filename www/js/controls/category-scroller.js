@@ -28,13 +28,13 @@ app.controls.CategoryScroller = function (categories) {
 
 
     // top category nav
-    new app.controls.HorizontalScroller(scrollerListEl, function (clickedEl) {
+    new app.controls.HorizontalScroller(scrollerListEl, function () {
 
     });
 
 
     // Change to floating navbar
-    $(window).on("scroll", function (e) {
+    $(window).on("scroll", function () {
         if ($categoryScrollerContainer[0].getBoundingClientRect().top < 20) {
             $categoryScroller.addClass("floating");
         } else {

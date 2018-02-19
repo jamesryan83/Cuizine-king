@@ -4,14 +4,8 @@
 app.sysadmin.editStore = {
 
 
-    init: function (routeData) {
-        var self = this;
-
-
+    init: function () {
 
     },
-
-
-
 
 }

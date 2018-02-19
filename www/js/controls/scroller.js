@@ -6,7 +6,6 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     var mouseIsDown = false;
     var startMouseX = 0;
     var startPosX = 0;
-    var currentX = 0;
 
     // start
     $(containerEl).on("mousedown", function (e) {
@@ -25,7 +24,7 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     });
 
     // stop
-    $(window).on("mouseup", function (e) {
+    $(window).on("mouseup", function () {
         mouseIsDown = false;
     });
 

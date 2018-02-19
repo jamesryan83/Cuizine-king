@@ -76,7 +76,7 @@ exports = module.exports = {
                 subject: subject,
                 text: message,
                 html: message
-            }, function (err, result) {
+            }, function (err) {
                 if (err) {
                     console.log(err)
                     return callback(err);

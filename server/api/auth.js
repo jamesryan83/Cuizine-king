@@ -3,11 +3,10 @@
 // Auth api route handlers and some functions to create tokens and stuff
 
 var bcrypt = require("bcryptjs");
-var jwt = require('jsonwebtoken');
+var jwt = require("jsonwebtoken");
 
 var config = require("../config");
 var appDB = require("../procedures/_App");
-var database = require("../database/database");
 var passportAuth = require("../other/passport-auth");
 
 
@@ -53,14 +52,14 @@ exports = module.exports = {
         passportAuth.checkUsersPassword(accessProperty, res, b.email, b.password, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
-            // system users aren't tied to a store id and should update stores using backend stuff
+            // system users aren"t tied to a store id and should update stores using backend stuff
             if (accessProperty == "is_store_user" && res.locals.person.is_system_user) {
                 return self.router.sendJson(res, null, "System users can't log into stores", 401);
             }
 
             // create a jwt and send to user
-            self.createJwt(res.locals.person.id_person, function (err, result) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
+            self.createJwt(res.locals.person.id_person, function (err2, result) {
+                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
 
                 // add id_store to result if logging into cms
                 if (accessProperty == "is_store_user") {
@@ -116,17 +115,17 @@ exports = module.exports = {
             }
 
             // create person in db
-            appDB[procedure](b, function (err, outputs) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
+            appDB[procedure](b, function (err2, outputs) {
+                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
 
                 // create a jwt
-                self.createJwt(outputs.newPersonId, function (err, result) {
-                    if (err) return self.router.sendJson(res, null, err.message, err.status);
+                self.createJwt(outputs.newPersonId, function (err3, result) {
+                    if (err3) return self.router.sendJson(res, null, err3.message, err3.status);
 
                     // send user verification email
                     if (procedure != "people_create_system_user") {
-                        self.mail.sendUserRegistrationEmail(b.first_name, b.email, b.verification_token, function (err) {
-                            if (err) console.log(err);
+                        self.mail.sendUserRegistrationEmail(b.first_name, b.email, b.verification_token, function (err4) {
+                            if (err4) console.log(err4);
                         });
                     }
 
@@ -154,17 +153,17 @@ exports = module.exports = {
             delete b.password;
 
             // set persons email as validated
-            appDB.people_update_is_verified(b, function (err) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
+            appDB.people_update_is_verified(b, function (err2) {
+                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
 
                 // send thanks for verifying email
-                self.mail.sendThanksForVerifyingEmail(b.email, function (err) {
-                    if (err) console.log(err);
+                self.mail.sendThanksForVerifyingEmail(b.email, function (err3) {
+                    if (err3) console.log(err3);
                 });
 
                 // create a jwt and send to user
-                self.createJwt(res.locals.person.id_person, function (err, result) {
-                    if (err) return self.router.sendJson(res, null, err.message, err.status);
+                self.createJwt(res.locals.person.id_person, function (err4, result) {
+                    if (err4) return self.router.sendJson(res, null, err4.message, err4.status);
 
                     return self.router.sendJson(res, result);
                 });
@@ -184,7 +183,7 @@ exports = module.exports = {
             return;
 
         // TODO : security of inputs
-        appDB.people_invalidate_jwt(inputs, function (err, rowsAffected) {
+        appDB.people_invalidate_jwt(inputs, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             return self.router.sendJson(res);
@@ -208,12 +207,12 @@ exports = module.exports = {
         appDB.people_update_reset_password_token({
             email: b.email,
             reset_password_token: reset_password_token
-        }, function (err, id_person) {
+        }, function (err) {
             if (err) return self.router.sendJson(res, null, err.message, err.status);
 
             // send reset link
-            self.mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err) {
-                if (err) return self.router.sendJson(res, null, err.message, err.status);
+            self.mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err2) {
+                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
 
                 return self.router.sendJson(res, {
                     message: "You have been sent an email to reset your password"
@@ -242,8 +241,8 @@ exports = module.exports = {
                 email: b.email,
                 password: encryptedPassword,
                 reset_password_token: b.reset_password_token
-            }, function (err) {
-                if (err) return self.router.sendJson(res, null, err.message);
+            }, function (err2) {
+                if (err2) return self.router.sendJson(res, null, err2.message);
 
                 return self.router.sendJson(res);
             });
@@ -286,8 +285,8 @@ exports = module.exports = {
             if (err) return callback(err);
 
             // update jwt in db
-            appDB.people_update_jwt({ id_person: id_person, jwt: jwToken }, function (err, person) {
-                if (err) return callback(err);
+            appDB.people_update_jwt({ id_person: id_person, jwt: jwToken }, function (err2, person) {
+                if (err2) return callback(err2);
 
                 var result = { jwt: jwToken, id_person: person.id_person };
 

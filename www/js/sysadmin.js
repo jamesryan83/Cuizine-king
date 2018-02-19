@@ -13,9 +13,12 @@ app.sysadmin = {
 
 
     init: function (html) {
-        var self = this;
 
         this.htmlFiles = html;
+
+
+        // Dialogs
+        app.dialogs.init();
 
         // setup router
         app.routerBase.init();
@@ -25,7 +28,7 @@ app.sysadmin = {
 
 
     // Called whenever the page is changed
-    onPageChanged: function (routeData) {
+    onPageChanged: function () {
 
         // logout button
         $("#navbar-link-logout").on("click", function () {
@@ -72,7 +75,7 @@ app.sysadmin = {
 // create arrays of filepaths for express router
 app.sysadmin.routesList = Object.keys(app.sysadmin.routes);
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.sysadmin;
 }
 

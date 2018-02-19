@@ -4,7 +4,7 @@ app.site.account = {
 
 
     // Init
-    init: function (routeData) {
+    init: function () {
         var self = this;
 
         app.util.ajaxRequest({
@@ -33,12 +33,11 @@ app.site.account = {
 
             app.util.ajaxRequest({
                 method: "GET", url: "/api/v1/delete-user", auth: true
-            }, function (err, result) {
+            }, function (err) {
                 app.util.hideLoadingScreen();
                 if (err) return;
 
                 app.util.invalidateCredentialsAndGoToLogin();
-                return;
             });
         });
 

@@ -15,16 +15,16 @@ describe("VALIDATION RULES", function () {
         var errMsg = validationRules.validateHours();
         assert.equal(errMsg, "Data missing");
 
-        var errMsg = validationRules.validateHours(undefined);
+        errMsg = validationRules.validateHours();
         assert.equal(errMsg, "Data missing");
 
-        var errMsg = validationRules.validateHours({});
+        errMsg = validationRules.validateHours({});
         assert.equal(errMsg, "Data missing");
 
-        var errMsg = validationRules.validateHours(null);
+        errMsg = validationRules.validateHours(null);
         assert.equal(errMsg, "Data missing");
 
-        var errMsg = validationRules.validateHours("");
+        errMsg = validationRules.validateHours("");
         assert.equal(errMsg, "Data missing");
     });
 
@@ -38,23 +38,23 @@ describe("VALIDATION RULES", function () {
 
         store.hours_mon_dinein_open = "07:00";
         store.hours_wed_dinein_close = "z";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Wed Dinein Close.  Must be HH:MM");
 
         store.hours_mon_dinein_open = "13:x0";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Mon Dinein Open.  Must be HH:MM");
 
         store.hours_mon_dinein_open = "13000";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Mon Dinein Open.  Must be HH:MM");
 
         store.hours_mon_dinein_open = "13:";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Mon Dinein Open.  Must be HH:MM");
 
         store.hours_mon_dinein_open = "13 00";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Mon Dinein Open.  Must be HH:MM");
     });
 
@@ -66,12 +66,12 @@ describe("VALIDATION RULES", function () {
         var errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Thu Delivery Close.  Open and Close must be both times or both closed");
 
-        store.hours_thu_delivery_close = undefined;
-        var errMsg = validationRules.validateHours(store);
+        store.hours_thu_delivery_close = null;
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Thu Delivery Close.  Open and Close must be both times or both closed");
 
         store.hours_thu_delivery_close = "";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.equal(errMsg, "Error in Hours Thu Delivery Close.  Open and Close must be both times or both closed");
     });
 
@@ -83,17 +83,17 @@ describe("VALIDATION RULES", function () {
         assert.ok(!errMsg);
 
         store.hours_thu_delivery_close = "00:00";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.ok(!errMsg);
 
         store.hours_thu_delivery_open = null;
         store.hours_thu_delivery_close = null;
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.ok(!errMsg);
 
         store.hours_thu_delivery_open = "";
         store.hours_thu_delivery_close = "";
-        var errMsg = validationRules.validateHours(store);
+        errMsg = validationRules.validateHours(store);
         assert.ok(!errMsg);
     });
 

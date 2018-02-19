@@ -9,7 +9,6 @@ app.routerBase = {
 
     // Init
     init: function () {
-        var self = this;
 
         // For Cordova
         document.addEventListener("deviceready", function () {
@@ -79,17 +78,17 @@ app.routerBase = {
 
     // Returns the data for the current route
     getCurrentRouteData: function (route, section) {
-        var route = route || window.location.pathname;
-        var routeData = { route: route };
+        var newRoute = route || window.location.pathname;
+        var routeData = { route: newRoute };
 
         if (app.util.isCordova()) {
             // remove extra cordova stuff from route
-            route = route.substring(route.lastIndexOf("/"), route.length - 5);
-            if (route == "/index-cordova") route = "/";
+            newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
+            if (newRoute == "/index-cordova") newRoute = "/";
         }
 
         // normalize route and add current section
-        routeData.normalizedRoute = app[section].normalizeRoute(route).route;
+        routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
         routeData.section = section;
 
         // Add html and other route data
@@ -113,7 +112,7 @@ app.routerBase = {
     logUserOut: function () {
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/logout", auth: true
-        }, function (err) {
+        }, function () {
             app.util.invalidateCredentialsAndGoToLogin();
 
         });
@@ -130,6 +129,6 @@ app.routerBase = {
 }
 
 
-if (typeof module !== 'undefined' && this.module !== module) {
+if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.routerBase;
 }

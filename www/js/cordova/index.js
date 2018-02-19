@@ -40,12 +40,12 @@ app.cordova = {
     // On Back
     onBack: function () {
         console.log("back")
-        //app.router.back();
+        // app.router.back();
     },
 
 
     // Touch Start
-    touchStarted: function (e) {
+    touchStarted: function () {
 //        if ($(e.target).hasClass("longClickable")) {
 //            app.touchStartTime = new Date().getTime();
 //            app.touchStartTimeout = setTimeout(function () {
@@ -56,7 +56,7 @@ app.cordova = {
 
 
     // Touch End
-    touchEnded: function (e) {
+    touchEnded: function () {
 //        var touchTime = new Date().getTime() - app.touchStartTime;
 //        if (touchTime < 800) {
 //            window.clearTimeout(app.touchStartTimeout);

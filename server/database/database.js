@@ -3,7 +3,6 @@
 // Main Database file
 // https://github.com/patriksimek/node-mssql
 
-var path = require("path");
 var mssql = require("mssql");
 var EventEmitter = require("events");
 var execSync = require("child_process").execSync;
@@ -18,7 +17,7 @@ exports = module.exports = {
 
     mssql: mssql,
     isConnected: false,
-    pool: undefined,
+    pool: null,
 
     // some event emitter events
     on: ee.on.bind(ee),

@@ -4,7 +4,7 @@
 app.dialogs.reviews = {
 
 
-    init: function (data) {
+    init: function () {
         var self = this;
 
         $("#dialog-store-reviews-add-review").on("click", function () {
@@ -17,7 +17,7 @@ app.dialogs.reviews = {
     },
 
 
-    update: function () {
+    update: function (data) {
         $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
 
         app.controls.RatingControls.setValue("#dialog-store-reviews-rating-control",
@@ -49,14 +49,12 @@ app.dialogs.reviews = {
 
 
     show: function () {
-        $("#dialog-container").show();
-        $("#dialog-store-reviews").show();
+        app.dialogs.show("#dialog-store-reviews");
     },
 
 
     hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
+        app.dialogs.hide();
     },
 
 }

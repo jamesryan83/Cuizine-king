@@ -25,7 +25,7 @@ describe("ROUTER", function () {
             password: "blahblah"
         }, testutil.validationRules.login);
 
-        assert.equal(result, undefined);
+        assert.equal(result, null);
     });
 
 

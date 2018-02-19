@@ -1,11 +1,11 @@
 "use strict";
 
-var assert = require("assert");
-var supertest = require("supertest");
+// var assert = require("assert");
+// var supertest = require("supertest");
 
 var testutil = require("../test-util");
-var config = require("../../server/config");
-var database = require("../../server/database/database");
+// var config = require("../../server/config");
+// var database = require("../../server/database/database");
 
 
 
@@ -20,7 +20,7 @@ describe("API - Location", function () {
     });
 
 
-    it.skip("#get", function (done) {
+    it.skip("#get", function () {
 
     });
 

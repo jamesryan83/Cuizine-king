@@ -45,9 +45,8 @@ A cordova app.  It uses the same code as the client side of the website.
 
 ## /Data folder
 
-This is all in the /data folder.  The data is for the
-database and for client side ajax requests.  The postcode data is real data
-but all the rest is made up data.
+The data is for the database and for client side ajax requests.
+The postcode data is real data but all the rest is made up data.
 
 /data/pages
     temporary fake data for when developing website pages.  Used from ajax
@@ -224,9 +223,8 @@ server/config.json
     main config file for the server
 
 server/other/passport-auth.js
-    sets up the passport local strategy
+    sets up the passport jwt strategy
     http://passportjs.org/
-    https://www.npmjs.com/package/passport-local
 
 www/js/site.js, www/js/cms.js, www/js/sysadmin.js
     the main js files for the different sections of the site.  They contain the routes

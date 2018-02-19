@@ -55,7 +55,7 @@ describe("PROCEDURES - APP", function () {
         var testdata = getAddressData();
         testdata.postcode = "9999";
 
-        dbApp.addresses_create_or_update(testdata, function (err, outputs) {
+        dbApp.addresses_create_or_update(testdata, function (err) {
             assert.equal(err.message, "Invalid postcode or suburb");
             done();
         });
@@ -66,7 +66,7 @@ describe("PROCEDURES - APP", function () {
         var testdata = getAddressData();
         testdata.postcode = "BlahBlahBlah";
 
-        dbApp.addresses_create_or_update(testdata, function (err, outputs) {
+        dbApp.addresses_create_or_update(testdata, function (err) {
             assert.equal(err.message, "Invalid postcode or suburb");
             done();
         });
@@ -84,8 +84,8 @@ describe("PROCEDURES - APP", function () {
                 "JOIN App.postcodes ON a.id_postcode = App.postcodes.id_postcode " +
                 "WHERE id_address = " + outputs.newAddressId;
 
-            database.executeQuery(query, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            database.executeQuery(query, function (err2, result) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 var address = result.recordset[0];
                 assert.equal(address.street_address, testdata.street_address);
@@ -111,8 +111,8 @@ describe("PROCEDURES - APP", function () {
                 "JOIN App.postcodes ON a.id_postcode = App.postcodes.id_postcode " +
                 "WHERE id_address = " + outputs.newAddressId;
 
-            database.executeQuery(query, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            database.executeQuery(query, function (err2, result) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 var address = result.recordset[0];
                 assert.equal(address.street_address, testdata.street_address);
@@ -137,7 +137,9 @@ describe("PROCEDURES - APP", function () {
 
             assert.ok(outputs.newPersonId > 0);
 
-            database.executeQuery("SELECT * FROM App.people WHERE id_person = " + outputs.newPersonId, function (err, result) {
+            database.executeQuery("SELECT * FROM App.people WHERE id_person = " + outputs.newPersonId, function (err2, result) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
+
                 var person = result.recordset[0];
                 assert.equal(person.id_person, outputs.newPersonId);
                 assert.equal(person.is_web_user, true);
@@ -158,7 +160,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_create_web_user error message account already exists", function (done) {
-        dbApp.people_create_web_user(userWebsite, function (err, result) {
+        dbApp.people_create_web_user(userWebsite, function (err) {
             assert.equal(err.status, 409);
             assert.equal(err.message, "Account already taken");
             done();
@@ -167,7 +169,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_create_store_user returns an error for store not found", function (done) {
-        dbApp.people_create_store_user(userStore, function (err, result) {
+        dbApp.people_create_store_user(userStore, function (err) {
             assert.equal(err.status, 400);
             assert.equal(err.message, "Store not found");
             done();
@@ -182,11 +184,11 @@ describe("PROCEDURES - APP", function () {
         dbStores.stores_create(tempFakeStore, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            dbApp.people_create_store_user(userStore, function (err, outputs) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            dbApp.people_create_store_user(userStore, function (err2, outputs) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
-                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + outputs.newPersonId, function (err, result) {
-                    if (err) return done(new Error(JSON.stringify(err)));
+                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + outputs.newPersonId, function (err3, result) {
+                    if (err3) return done(new Error(JSON.stringify(err3)));
 
                     var person = result.recordset[0];
                     assert.equal(person.id_person, outputs.newPersonId);
@@ -209,7 +211,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_create_store_user error message account already exists", function (done) {
-        dbApp.people_create_store_user(userStore, function (err, result) {
+        dbApp.people_create_store_user(userStore, function (err) {
             assert.equal(err.status, 409);
             assert.equal(err.message, "Account already taken");
             done();
@@ -221,7 +223,7 @@ describe("PROCEDURES - APP", function () {
         var tempUser = JSON.parse(JSON.stringify(userStore));
         tempUser.id_user_doing_update = config.dbConstants.adminUsers.website;
 
-        dbApp.people_create_store_user(tempUser, function (err, result) {
+        dbApp.people_create_store_user(tempUser, function (err) {
             assert.equal(err.status, 401);
             assert.equal(err.message, "Not authorized");
             done();
@@ -233,7 +235,7 @@ describe("PROCEDURES - APP", function () {
         var tempUser = JSON.parse(JSON.stringify(userStore));
         tempUser.id_user_doing_update = config.dbConstants.adminUsers.store;
 
-        dbApp.people_create_store_user(tempUser, function (err, result) {
+        dbApp.people_create_store_user(tempUser, function (err) {
             assert.equal(err.status, 401);
             assert.equal(err.message, "Not authorized");
             done();
@@ -245,8 +247,8 @@ describe("PROCEDURES - APP", function () {
         dbApp.people_create_system_user(userSystem, function (err, outputs) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            database.executeQuery("SELECT * FROM App.people WHERE id_person = " + outputs.newPersonId, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            database.executeQuery("SELECT * FROM App.people WHERE id_person = " + outputs.newPersonId, function (err2, result) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 var person = result.recordset[0];
                 assert.equal(person.id_person, outputs.newPersonId);
@@ -266,7 +268,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_create_system_user error message account already exists", function (done) {
-        dbApp.people_create_system_user(userSystem, function (err, id_person) {
+        dbApp.people_create_system_user(userSystem, function (err) {
             assert.equal(err.status, 409);
             assert.equal(err.message, "Account already taken");
             done();
@@ -278,7 +280,7 @@ describe("PROCEDURES - APP", function () {
         var tempUser = JSON.parse(JSON.stringify(userSystem));
         tempUser.id_user_doing_update = config.dbConstants.adminUsers.website;
 
-        dbApp.people_create_system_user(tempUser, function (err, result) {
+        dbApp.people_create_system_user(tempUser, function (err) {
             assert.equal(err.status, 401);
             assert.equal(err.message, "Not authorized");
             done();
@@ -290,7 +292,7 @@ describe("PROCEDURES - APP", function () {
         var tempUser = JSON.parse(JSON.stringify(userSystem));
         tempUser.id_user_doing_update = config.dbConstants.adminUsers.store;
 
-        dbApp.people_create_system_user(tempUser, function (err, result) {
+        dbApp.people_create_system_user(tempUser, function (err) {
             assert.equal(err.status, 401);
             assert.equal(err.message, "Not authorized");
             done();
@@ -303,7 +305,7 @@ describe("PROCEDURES - APP", function () {
     // -------- Get users --------
 
     it("#people_get_by_email returns error from invalid email", function (done) {
-        dbApp.people_get_by_email({ }, function (err, id_person) {
+        dbApp.people_get_by_email({ }, function (err) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -311,7 +313,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_email returns error from invalid email 2", function (done) {
-        dbApp.people_get_by_email({ email: "123123@lkajsdf.com" }, function (err, id_person) {
+        dbApp.people_get_by_email({ email: "123123@lkajsdf.com" }, function (err) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -329,7 +331,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_id returns error from invalid id", function (done) {
-        dbApp.people_get_by_id({ }, function (err, id_person) {
+        dbApp.people_get_by_id({ }, function (err) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -337,7 +339,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_id returns error from invalid id 2", function (done) {
-        dbApp.people_get_by_id({ id_person: 2000000 }, function (err, id_person) {
+        dbApp.people_get_by_id({ id_person: 2000000 }, function (err) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -366,7 +368,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_jwt returns error from invalid jwt", function (done) {
-        dbApp.people_get_by_jwt({ }, function (err, id_person) {
+        dbApp.people_get_by_jwt({ }, function (err) {
             assert.equal(err.message, "Bad token");
             done();
         });
@@ -374,7 +376,7 @@ describe("PROCEDURES - APP", function () {
 
 
     it("#people_get_by_jwt returns error from invalid jwt 2", function (done) {
-        dbApp.people_get_by_jwt({ jwt: "Account not found" }, function (err, id_person) {
+        dbApp.people_get_by_jwt({ jwt: "Account not found" }, function (err) {
             assert.equal(err.message, "Bad token");
             done();
         });
@@ -384,11 +386,11 @@ describe("PROCEDURES - APP", function () {
     it("#people_get_by_jwt returns person from jwt", function (done) {
         var jwt = testutil.createJwtSync(userWebsite.id_person);
         database.executeQuery("UPDATE App.people SET jwt = '" + jwt +
-                              "' WHERE id_person = " + userWebsite.id_person, function (err, result) {
+                              "' WHERE id_person = " + userWebsite.id_person, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            dbApp.people_get_by_jwt({ jwt: jwt, id_person: userWebsite.id_person }, function (err, person) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            dbApp.people_get_by_jwt({ jwt: jwt, id_person: userWebsite.id_person }, function (err2, person) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 assert.equal(person.email, userWebsite.email);
                 done();
@@ -406,7 +408,7 @@ describe("PROCEDURES - APP", function () {
     it("#people_update_reset_password_token returns message if account not verified", function (done) {
         dbApp.people_update_reset_password_token({
             email: userWebsite.email, reset_password_token: userWebsite.reset_password
-        }, function (err, id_person) {
+        }, function (err) {
             assert.equal(err.message, "Please verify your account");
             done();
         });
@@ -416,7 +418,7 @@ describe("PROCEDURES - APP", function () {
     it("#people_update_is_verified returns message if account not found", function (done) {
         var inputs = { email: "test@test.test", verification_token: userWebsite.verification_token };
 
-        dbApp.people_update_is_verified(inputs, function (err, id_person) {
+        dbApp.people_update_is_verified(inputs, function (err) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -426,7 +428,7 @@ describe("PROCEDURES - APP", function () {
     it("#people_update_is_verified returns message if token mismatch", function (done) {
         var inputs = { email: userWebsite.email, verification_token: "fakeToken" };
 
-        dbApp.people_update_is_verified(inputs, function (err, id_person) {
+        dbApp.people_update_is_verified(inputs, function (err) {
             assert.equal(err.message, "Invalid token");
             done();
         });
@@ -442,15 +444,15 @@ describe("PROCEDURES - APP", function () {
             dbApp.people_update_is_verified({
                 email: userWebsite.email,
                 verification_token: result.recordset[0].verification_token
-            }, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            }, function (err2) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
                 var query2 = "SELECT is_verified FROM App.people WHERE email ='" + userWebsite.email + "'";
 
-                database.executeQuery(query2, function (err, result) {
-                    if (err) return done(new Error(JSON.stringify(err)));
+                database.executeQuery(query2, function (err3, result2) {
+                    if (err3) return done(new Error(JSON.stringify(err3)));
 
-                    assert.equal(result.recordset[0].is_verified, 1);
+                    assert.equal(result2.recordset[0].is_verified, 1);
                     done();
                 });
             });
@@ -467,9 +469,8 @@ describe("PROCEDURES - APP", function () {
             dbApp.people_update_is_verified({
                 email: userWebsite.email,
                 verification_token: result.recordset[0].verification_token
-            }, function (err, result) {
-
-                assert.equal(err.message, "Account already verified");
+            }, function (err2) {
+                assert.equal(err2.message, "Account already verified");
                 done();
             });
         });
@@ -479,7 +480,7 @@ describe("PROCEDURES - APP", function () {
     it("#people_update_reset_password_token returns message if account not found", function (done) {
         dbApp.people_update_reset_password_token({
             email: "test@test.test", reset_password_token: userWebsite.reset_password
-        }, function (err, id_person) {
+        }, function (err) {
             assert.equal(err.message, "Account not found");
             done();
         });
@@ -494,11 +495,11 @@ describe("PROCEDURES - APP", function () {
 
             dbApp.people_update_reset_password_token({
                 email: userWebsite.email, reset_password_token: fakeResetPasswordToken
-            }, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            }, function (err2) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
-                database.executeQuery("SELECT reset_password_token FROM App.people WHERE email = '" + userWebsite.email + "'", function (err, result2) {
-                    if (err) return done(new Error(JSON.stringify(err)));
+                database.executeQuery("SELECT reset_password_token FROM App.people WHERE email = '" + userWebsite.email + "'", function (err3, result2) {
+                    if (err3) return done(new Error(JSON.stringify(err3)));
 
                     assert.equal(result2.recordset[0].reset_password_token, fakeResetPasswordToken);
 
@@ -516,7 +517,7 @@ describe("PROCEDURES - APP", function () {
     it("#people_update_password returns message if bad token", function (done) {
         dbApp.people_update_password({
             email: userWebsite.email, reset_password_token: "somekindatoken", password: "testpw"
-        }, function (err, result) {
+        }, function (err) {
             assert.equal(err.message, "Bad token");
 
             done();
@@ -533,8 +534,8 @@ describe("PROCEDURES - APP", function () {
 
             dbApp.people_update_password({
                 email: "fake@user.com", reset_password_token: existingToken, password: "testpw"
-            }, function (err, result) {
-                assert.equal(err.message, "Account not found");
+            }, function (err2) {
+                assert.equal(err2.message, "Account not found");
 
                 done();
             });
@@ -554,11 +555,11 @@ describe("PROCEDURES - APP", function () {
 
             dbApp.people_update_password({
                 email: userWebsite.email, reset_password_token: existingToken, password: newPassword
-            }, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            }, function (err2) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
-                database.executeQuery("SELECT password FROM App.people WHERE email = '" + userWebsite.email + "'", function (err, result2) {
-                    if (err) return done(new Error(JSON.stringify(err)));
+                database.executeQuery("SELECT password FROM App.people WHERE email = '" + userWebsite.email + "'", function (err3, result2) {
+                    if (err3) return done(new Error(JSON.stringify(err3)));
 
                     assert.equal(result2.recordset[0].password, newPassword);
                     done();
@@ -580,8 +581,8 @@ describe("PROCEDURES - APP", function () {
 
             var jwt = result.recordset[0].jwt;
 
-            dbApp.people_delete({ id_person: id_person, jwt: jwt }, function (err, result) {
-                assert.equal(err.message, "Protected account");
+            dbApp.people_delete({ id_person: id_person, jwt: jwt }, function (err2) {
+                assert.equal(err2.message, "Protected account");
                 done();
             });
         });
@@ -594,8 +595,8 @@ describe("PROCEDURES - APP", function () {
 
             var jwt = result.recordset[0].jwt;
 
-            dbApp.people_delete({ id_person: 200000, jwt: jwt }, function (err, result) {
-                assert.equal(err.message, "Account not found");
+            dbApp.people_delete({ id_person: 200000, jwt: jwt }, function (err2) {
+                assert.equal(err2.message, "Account not found");
                 done();
             });
         });
@@ -606,7 +607,7 @@ describe("PROCEDURES - APP", function () {
         testutil.getApiToken(function (jwt) { // create a token first
             if (!jwt) return done(new Error("jwt missing"));
 
-            dbApp.people_delete({ id_person: 5, jwt: "123123123123123123123123123123123123123123123123123" }, function (err, result) {
+            dbApp.people_delete({ id_person: 5, jwt: "123123123123123123123123123123123123123123123123123" }, function (err) {
                 assert.equal(err.message, "Invalid token");
                 done();
             });
@@ -618,7 +619,7 @@ describe("PROCEDURES - APP", function () {
         testutil.getApiToken(function (jwt) {
             if (!jwt) return done(new Error("jwt missing"));
 
-            dbApp.people_delete({ id_person: 5, jwt: jwt }, function (err, result) {
+            dbApp.people_delete({ id_person: 5, jwt: jwt }, function (err) {
                 assert.equal(err.message, "Store owners need to contact support to have their account deleted");
                 done();
             });
@@ -633,13 +634,13 @@ describe("PROCEDURES - APP", function () {
             var jwt = result.recordset[0].jwt;
             var email = result.recordset[0].email;
 
-            dbApp.people_delete({ id_person: id_person, jwt: jwt }, function (err, result) {
-                if (err) return done(new Error(JSON.stringify(err)));
+            dbApp.people_delete({ id_person: id_person, jwt: jwt }, function (err2) {
+                if (err2) return done(new Error(JSON.stringify(err2)));
 
-                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + id_person, function (err, result) {
-                    if (err) return done(new Error(JSON.stringify(err)));
+                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + id_person, function (err3, result2) {
+                    if (err3) return done(new Error(JSON.stringify(err3)));
 
-                    var person = result.recordset[0];
+                    var person = result2.recordset[0];
 
                     assert.equal(person.email, id_person);
                     assert.equal(person.is_deleted, 1);

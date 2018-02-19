@@ -37,7 +37,6 @@ app.controls.RatingControls = {
     // Adds click events to all the rating controls
     // bit easier to do it this way when there's not many reviews
     recreateRatingControlEvents: function () {
-        var self = this;
         $(".rating-control-star").off();
         $(".rating-control-star").unbind();
 
@@ -52,6 +51,7 @@ app.controls.RatingControls = {
                 isUnused = true;
             }
 
+            console.log(isUnused)
             $(this).removeClass("active");
             $(this).siblings().removeClass("active");
             $(this).addClass("active");
