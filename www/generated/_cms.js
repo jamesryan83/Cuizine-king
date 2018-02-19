@@ -362,7 +362,7 @@ app.cms.navbar = {
 
     init: function (routeData) {
         var navbar = new app.controls.Navbar(routeData);
-
+        var noClick = false;
 
         // set active page
         $(".navbar-links a").removeClass("active");
@@ -378,13 +378,19 @@ app.cms.navbar = {
 
 
         // link clicked
-        setTimeout(function () {
-            navbar.linkClicked = function (e, route) {
-                console.log(route)
+        navbar.linkClicked = function (e, route) {
+
+            // prevent clicking too much
+            if (noClick) return;
+            noClick = true;
+            setTimeout(function () {
                 app.routerBase.loadPageForRoute(route, "cms");
-                return false;
-            }
-        }, 200);
+                noClick = false;
+            }, 250);
+
+            return false;
+        }
+
 
     },
 
@@ -1495,10 +1501,10 @@ app.controls.CategoryScroller = function (categories) {
 
         // Item clicked event
         $item.on("click", function (e) {
-            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+            var el = $(".store-menu-list-item.heading:contains('" + e.target.innerText + "')");
 
             if (el[0]) {
-                $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
+                $("html").animate({ scrollTop: el[0].offsetTop + 100 }, 500);
             }
         });
 

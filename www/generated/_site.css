@@ -986,9 +986,9 @@ input, textarea {
     #store-content #store-menu-list .store-menu-list-item {
       position: relative;
       white-space: nowrap;
-      cursor: pointer;
       overflow: hidden; }
       #store-content #store-menu-list .store-menu-list-item:not(.heading) {
+        cursor: pointer;
         margin-bottom: 25px;
         background-color: #10112b;
         box-shadow: 1px 1px 1px 1px #000115;
@@ -1034,7 +1034,7 @@ input, textarea {
         transform: translateY(-50%);
         right: 30px;
         width: 150px; }
-      #store-content #store-menu-list .store-menu-list-item:active {
+      #store-content #store-menu-list .store-menu-list-item:not(.heading):active {
         -webkit-transform: scale(0.99, 0.99);
         transform: scale(0.99, 0.99); }
     #store-content #store-menu-list .store-menu-list-item-options {

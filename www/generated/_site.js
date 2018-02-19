@@ -1943,10 +1943,10 @@ app.controls.CategoryScroller = function (categories) {
 
         // Item clicked event
         $item.on("click", function (e) {
-            var el = $(".store-menu-list-item-group-heading:contains('" + e.target.innerText + "')");
+            var el = $(".store-menu-list-item.heading:contains('" + e.target.innerText + "')");
 
             if (el[0]) {
-                $("html").animate({ scrollTop: el[0].offsetTop - 30 }, 500);
+                $("html").animate({ scrollTop: el[0].offsetTop + 100 }, 500);
             }
         });
 

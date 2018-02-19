@@ -211,10 +211,10 @@
         .store-menu-list-item {
             position: relative;
             white-space: nowrap;
-            cursor: pointer;
             overflow: hidden;
 
             &:not(.heading) {
+                cursor: pointer;
                 margin-bottom: 25px;
                 background-color: $colorBlue7;
                 box-shadow: 1px 1px 1px 1px $colorBlue4;
@@ -278,7 +278,7 @@
                 width: 150px;
             }
 
-            &:active {
+            &:not(.heading):active {
                 transform: scale(0.99, 0.99);
             }
         }

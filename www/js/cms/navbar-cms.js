@@ -4,7 +4,7 @@ app.cms.navbar = {
 
     init: function (routeData) {
         var navbar = new app.controls.Navbar(routeData);
-
+        var noClick = false;
 
         // set active page
         $(".navbar-links a").removeClass("active");
@@ -20,13 +20,19 @@ app.cms.navbar = {
 
 
         // link clicked
-        setTimeout(function () {
-            navbar.linkClicked = function (e, route) {
-                console.log(route)
+        navbar.linkClicked = function (e, route) {
+
+            // prevent clicking too much
+            if (noClick) return;
+            noClick = true;
+            setTimeout(function () {
                 app.routerBase.loadPageForRoute(route, "cms");
-                return false;
-            }
-        }, 200);
+                noClick = false;
+            }, 250);
+
+            return false;
+        }
+
 
     },
 
