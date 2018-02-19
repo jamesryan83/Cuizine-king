@@ -93,7 +93,7 @@ app.site.location = {
                 this.storeData[i].stores[j].storeId = "store" + this.storeData[i].stores[j].id_store;
 
                 var item = $("<div></div>")
-                    .loadTemplate($("#template-store-list-item"), this.storeData[i].stores[j]);
+                    .loadTemplate($("#template-store-list-item"), this.storeData[i].stores[j], { isFile: false });
 
                 // highlight open now
                 if (this.storeData[i].stores[j].open == "Open Now") {

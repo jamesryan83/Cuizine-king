@@ -4,7 +4,7 @@ app.site.store = {
 
     init: function (routeData) {
 
-        app.storeContent.init(routeData);
+        app.storeContent.init();
 
 
         // Store id from url

@@ -291,6 +291,7 @@ app.routerBase = {
 
     firstLoad: true,
     lastLoadedSection: "",
+    isLoading: false,
 
 
     // Init
@@ -307,7 +308,11 @@ app.routerBase = {
     // Load page into #page-container.  This is called to change a page
     // section is site, cms or sysadmin
     loadPageForRoute: function (route, section, isAfterPopState) {
+        if (this.isLoading) return;
+        if (window.location.pathname === route) return; // same page
+
         var self = this;
+        this.isLoading = true;
         this.lastLoadedSection = section;
 
 
@@ -340,18 +345,18 @@ app.routerBase = {
 
 
         // run ui stuff when page is loaded
-        setTimeout(function () {
-            $("body").css("display", "block");
+        $("body").css("display", "block");
 
-            // push route into history, but not on back
-            if (!self.firstLoad && !isAfterPopState) {
-                if (routeData.route != window.location.pathname) {
-                    window.history.pushState(null, routeData.route, routeData.route);
-                }
+        // push route into history, but not on back
+        if (!self.firstLoad && !isAfterPopState) {
+            if (routeData.route != window.location.pathname) {
+                window.history.pushState(null, routeData.route, routeData.route);
             }
+        }
 
-            self.firstLoad = false;
-        }, 0);
+        self.firstLoad = false;
+        self.isLoading = false;
+
 
 
         document.title = routeData.title;
@@ -424,9 +429,7 @@ app.storeContent = {
     storeDataRequestNotAllowed: false,
     storeData: {},
 
-    init: function (routeData, dataLoaded) {
-
-        console.log(dataLoaded)
+    init: function () {
 
         this.$logo = $(".store-info-image");
         this.$description = $("#store-info-description");
@@ -545,7 +548,7 @@ app.storeContent = {
                 if (!item.delivery_available) item.class3 = "label-takeaway";
 
                 $item = $("<div></div>")
-                    .loadTemplate($("#template-store-menu-item"), item);
+                    .loadTemplate($("#template-store-menu-item"), item, { isFile: false });
 
                 $item = $item.children().first();
                 $item.attr("data-product-id", item.id_product);
@@ -573,7 +576,7 @@ app.storeContent = {
 
                 if (el) {
                     $item = $("<div></div>")
-                        .loadTemplate($("#template-store-menu-heading"), heading);
+                        .loadTemplate($("#template-store-menu-heading"), heading, { isFile: false });
 
                     $item = $item.children().first();
                     $item.attr("data-heading-id", heading.id_product_heading);

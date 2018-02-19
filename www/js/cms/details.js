@@ -3,10 +3,10 @@
 // Details page
 app.cms.details = {
 
-    init: function (routeData) {
+    init: function () {
         var self = this;
 
-        app.storeContent.init(routeData, true);
+        app.storeContent.init();
 
         this.$storeInfo = $("#store-info");
         this.$storeInfoEdit = $("#store-info-edit");
@@ -14,17 +14,17 @@ app.cms.details = {
         var lastScrollPosition = 0; // for scrolling back down after return to editing
 
 
-        // Get the store details data
-        app.storeContent.getStoreData(function (storeData) {
-            self.setupPage(storeData);
-        });
-
-
         // address suburb typeahead
         this.typeahead = new app.controls.Typeahead(function (data, url) {
             if (data && url) {
                 console.log(data);
             }
+        });
+
+
+        // Get the store details data
+        app.storeContent.getStoreData(function (storeData) {
+            self.setupPage(storeData);
         });
 
 
@@ -139,7 +139,6 @@ app.cms.details = {
     // Add data to page
     setupPage: function (storeData) {
         if (storeData) {
-            console.log(storeData)
 
             app.storeContent.addStoreDetailsDataToPage(storeData);
 

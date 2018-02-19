@@ -7,9 +7,7 @@ app.storeContent = {
     storeDataRequestNotAllowed: false,
     storeData: {},
 
-    init: function (routeData, dataLoaded) {
-
-        console.log(dataLoaded)
+    init: function () {
 
         this.$logo = $(".store-info-image");
         this.$description = $("#store-info-description");
@@ -128,7 +126,7 @@ app.storeContent = {
                 if (!item.delivery_available) item.class3 = "label-takeaway";
 
                 $item = $("<div></div>")
-                    .loadTemplate($("#template-store-menu-item"), item);
+                    .loadTemplate($("#template-store-menu-item"), item, { isFile: false });
 
                 $item = $item.children().first();
                 $item.attr("data-product-id", item.id_product);
@@ -156,7 +154,7 @@ app.storeContent = {
 
                 if (el) {
                     $item = $("<div></div>")
-                        .loadTemplate($("#template-store-menu-heading"), heading);
+                        .loadTemplate($("#template-store-menu-heading"), heading, { isFile: false });
 
                     $item = $item.children().first();
                     $item.attr("data-heading-id", heading.id_product_heading);

@@ -20,10 +20,13 @@ app.cms.navbar = {
 
 
         // link clicked
-        navbar.linkClicked = function (e, route) {
-            app.routerBase.loadPageForRoute(route, "cms");
-            return false;
-        }
+        setTimeout(function () {
+            navbar.linkClicked = function (e, route) {
+                console.log(route)
+                app.routerBase.loadPageForRoute(route, "cms");
+                return false;
+            }
+        }, 200);
 
     },
 

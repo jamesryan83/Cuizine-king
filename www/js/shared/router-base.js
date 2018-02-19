@@ -5,6 +5,7 @@ app.routerBase = {
 
     firstLoad: true,
     lastLoadedSection: "",
+    isLoading: false,
 
 
     // Init
@@ -21,7 +22,11 @@ app.routerBase = {
     // Load page into #page-container.  This is called to change a page
     // section is site, cms or sysadmin
     loadPageForRoute: function (route, section, isAfterPopState) {
+        if (this.isLoading) return;
+        if (window.location.pathname === route) return; // same page
+
         var self = this;
+        this.isLoading = true;
         this.lastLoadedSection = section;
 
 
@@ -54,18 +59,18 @@ app.routerBase = {
 
 
         // run ui stuff when page is loaded
-        setTimeout(function () {
-            $("body").css("display", "block");
+        $("body").css("display", "block");
 
-            // push route into history, but not on back
-            if (!self.firstLoad && !isAfterPopState) {
-                if (routeData.route != window.location.pathname) {
-                    window.history.pushState(null, routeData.route, routeData.route);
-                }
+        // push route into history, but not on back
+        if (!self.firstLoad && !isAfterPopState) {
+            if (routeData.route != window.location.pathname) {
+                window.history.pushState(null, routeData.route, routeData.route);
             }
+        }
 
-            self.firstLoad = false;
-        }, 0);
+        self.firstLoad = false;
+        self.isLoading = false;
+
 
 
         document.title = routeData.title;

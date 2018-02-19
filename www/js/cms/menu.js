@@ -3,14 +3,19 @@
 // Menu page
 app.cms.menu = {
 
-    init: function (routeData) {
+    init: function () {
         var self = this;
 
-        app.storeContent.init(routeData, true);
+        app.storeContent.init();
 
 
         // Get the store menu data
         app.storeContent.getStoreData(function (storeData) {
+            if (!storeData) {
+                console.log("no data")
+                return;
+            }
+
             self.setupPage(storeData);
         });
 
