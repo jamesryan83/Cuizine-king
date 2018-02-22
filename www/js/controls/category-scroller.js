@@ -12,6 +12,8 @@ app.controls.CategoryScroller = function (categories) {
 
     var i = 0;
     var headingPositions = [];
+    var verticalOffset1 = 100;
+    var verticalOffset2 = 100;
 
 
     // update the position of the headings from the top of the screen
@@ -22,11 +24,12 @@ app.controls.CategoryScroller = function (categories) {
         });
     }
 
+
     // Sets the active heading
     function setActiveHeading () {
         var st = $html.scrollTop();
         for (i = headingPositions.length - 1; i >= 0; i--) {
-            if (st > headingPositions[i] - 100) {
+            if (st > headingPositions[i] - 110) {
                 $categoryScrollerListItems.removeClass("active");
                 $($categoryScrollerListItems[i]).addClass("active");
                 break;
@@ -36,26 +39,35 @@ app.controls.CategoryScroller = function (categories) {
 
 
     // Add items to scroller
+    var $item = null;
     var frag = document.createDocumentFragment();
     for (i = 0; i < categories.length; i++) {
-        var $item = $("<li class='store-menu-nav-list-item'>" + categories[i].title + "</li>");
-
-        // Item clicked event
-        $item.on("click", function (e) {
-            var el = $(".store-menu-list-item.heading:contains('" + e.target.innerText + "')");
-
-            if (el[0]) {
-                $("html").animate({ scrollTop: el[0].offsetTop + 100 }, 500);
-            }
-        });
-
+        $item = $("<li class='store-menu-nav-list-item'>" + categories[i].title + "</li>");
         frag.append($item[0]);
     }
     $categoryScrollerList.append(frag);
 
 
     // make scrollable
-    new app.controls.HorizontalScroller(scrollerListEl, function () { });
+    new app.controls.HorizontalScroller(scrollerListEl, function (item) {
+
+        // scroll item clicked
+        var $el = $(".store-menu-list-item.heading:contains('" + item.innerText + "')");
+        var verticalOffset = screen.width < 670 ? verticalOffset2 : verticalOffset1;
+
+        if ($el[0]) {
+            $("html").animate({
+                scrollTop: $el[0].getBoundingClientRect().top + $html.scrollTop() - verticalOffset
+            }, 500);
+        }
+    });
+
+
+    // window resized
+    $(window).on("resize", function () {
+        updateHeadingPositions();
+        setActiveHeading();
+    });
 
 
     // Change to floating navbar
@@ -72,15 +84,7 @@ app.controls.CategoryScroller = function (categories) {
     });
 
 
-    // Resize window
-    $(window).on("resize", function () {
-        updateHeadingPositions();
-        setActiveHeading();
-    });
-
-
     // get scroller items for highlighting and update heading positions
     $categoryScrollerListItems = $(".store-menu-nav-list-item");
     updateHeadingPositions();
-
 }

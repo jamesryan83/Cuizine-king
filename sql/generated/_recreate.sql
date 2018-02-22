@@ -263,7 +263,7 @@ CREATE TABLE Product.product_extras
 (
 	id_product_extra INT NOT NULL CONSTRAINT DF_product_product_extras_id_product_extra DEFAULT (NEXT VALUE FOR Sequences.id_product_extra),
     id_store INT NOT NULL,
-	name NVARCHAR(128) NOT NULL,
+	name NVARCHAR(32) NOT NULL,
 	price SMALLMONEY NOT NULL DEFAULT 0,
     store_notes NVARCHAR(256),
     limit_per_product TINYINT NOT NULL DEFAULT 1,
@@ -286,7 +286,7 @@ CREATE TABLE Product.product_headings
 (
 	id_product_heading INT NOT NULL CONSTRAINT DF_product_product_headings_id_product_heading DEFAULT (NEXT VALUE FOR Sequences.id_product_heading),
     id_store INT NOT NULL,
-	title NVARCHAR(128) NOT NULL,
+	title NVARCHAR(32) NOT NULL,
     subtitle NVARCHAR(256),
     above_product_id INT,
     updated_by INT NOT NULL,
@@ -305,7 +305,7 @@ CREATE TABLE Product.product_options
 (
 	id_product_option INT NOT NULL CONSTRAINT DF_product_product_options_id_product_option DEFAULT (NEXT VALUE FOR Sequences.id_product_option),
     id_product INT NOT NULL,
-	name NVARCHAR(128) NOT NULL,
+	name NVARCHAR(32) NOT NULL,
 	store_notes NVARCHAR(256),
     price SMALLMONEY NOT NULL DEFAULT 0,
     limit_per_customer TINYINT NOT NULL DEFAULT 1,
@@ -345,7 +345,7 @@ CREATE TABLE Product.products
 (
 	id_product INT NOT NULL CONSTRAINT DF_product_products_id_product DEFAULT (NEXT VALUE FOR Sequences.id_product),
     id_store INT NOT NULL,
-	name NVARCHAR(128) NOT NULL,
+	name NVARCHAR(64) NOT NULL,
 	description NVARCHAR(256),
     store_notes NVARCHAR(256),
     delivery_available BIT NOT NULL DEFAULT 1,

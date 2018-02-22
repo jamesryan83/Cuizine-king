@@ -48,10 +48,15 @@
         text-align: center;
         white-space: nowrap;
         z-index: $zIndexFloatingButtons;
+        backface-visibility: hidden;
 
         .label-button, button {
             margin: 0 20px;
             width: 130px;
+        }
+
+        @media (max-width: $mediaMobileWidth1) {
+            text-align: center;
         }
     }
 
@@ -66,6 +71,7 @@
         border: 5px solid $colorBlue1;
         pointer-events: none;
         z-index: $zIndexToast;
+        backface-visibility: hidden;
 
         label {
             text-align: center;

@@ -2,8 +2,10 @@
 
 var fs = require("fs");
 var path = require("path");
-// var uglify = require("uglify-js"); // TODO : setup uglify
+var uglify = require("uglify-js");
 var recursiveReadSync = require("recursive-readdir-sync");
+
+var config = require("../server/config");
 
 var wwwFolder = path.join(__dirname, "../", "www");
 
@@ -39,6 +41,18 @@ exports = module.exports = {
         fs.writeFile(path.join(outputsPath, "_cms.js"), cmsJs, function (err){ if (err) console.log(err); });
         fs.writeFile(path.join(outputsPath, "_site.js"), siteJs, function (err){ if (err) console.log(err); });
         fs.writeFile(path.join(outputsPath, "_sysadmin.js"), sysadminJs, function (err){ if (err) console.log(err); });
+
+        // http://documentup.com/mishoo/UglifyJS2
+        if (config.minifyjs) {
+            var opts = { compress: { drop_console: true, passes: 1 }, mangle: { toplevel: true }};
+            cmsJs = uglify.minify(cmsJs, opts);
+            siteJs = uglify.minify(siteJs);
+            sysadminJs = uglify.minify(sysadminJs);
+
+            fs.writeFile(path.join(outputsPath, "_cms.min.js"), cmsJs.code, function (err){ if (err) console.log(err); });
+            fs.writeFile(path.join(outputsPath, "_site.min.js"), siteJs.code, function (err){ if (err) console.log(err); });
+            fs.writeFile(path.join(outputsPath, "_sysadmin.min.js"), sysadminJs.code, function (err){ if (err) console.log(err); });
+        }
     },
 
 

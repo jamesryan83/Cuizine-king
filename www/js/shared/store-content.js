@@ -107,25 +107,40 @@ app.storeContent = {
     addMenuDataToPage: function (data) {
         var self = this;
         var i = 0;
+        var j = 0;
         var $item = null;
 
         // products
         var item = null;
         var frag = document.createDocumentFragment();
-console.log(data)
+
         if (data.products) {
+
+//            data.products[0].name = "testest testest testest testestttestest testest testest testestt";
+//            data.product_headings[0].title = "testest testest testest testestt";
+//            data.products[0].options[0].name = "testest testest testest testestt";
 
 
             // create product items
             for (i = 0; i < data.products.length; i++) {
                 item = data.products[i];
 
-                if (i == 0) item.name = "a really long title a really long title a really long title a really long title"
+
+                // find lowest priced option and add the price to the heading
+                var lowestOptionPrice = item.options[0].price;
+                for (j = 0; j < item.options.length; j++) {
+                    if (item.options[j].price < lowestOptionPrice) {
+                        lowestOptionPrice = item.options[j].price;
+                    }
+                }
+                item.lowestOptionPrice = lowestOptionPrice;
+
 
                 // item template
                 if (item.gluten_free) item.class1 = "label-gluten-free";
                 if (item.vegetarian) item.class2 = "label-vegetarian";
                 if (!item.delivery_available) item.class3 = "label-takeaway";
+
 
                 $item = app.util.loadTemplate(
                     "#template-store-menu-item", item,
@@ -133,19 +148,23 @@ console.log(data)
 
 
                 // Panels
-                var $optionsPanel = $item.find(".store-menu-list-item-options > div").first();
+                var $optionsPanel = $item.find(".store-menu-list-item-options > .store-menu-list-item-content").last();
                 var $option = null;
                 var size = item.options.length;
 
+
                 // product options
-                for (var j = 0; j < item.options.length; j++) {
+                for (j = 0; j < item.options.length; j++) {
                     $option = app.util.loadTemplate(
                         "#template-store-menu-option", item.options[j],
                         item.options[j].id_product_option, "data-product-option-id");
 
-                    $option.css({ width: (100 / size) + "%" });
+                    // equal width if not mobile
+                    if (screen.width > 1000) {
+                        $option.css({ width: (100 / size) + "%" });
+                    }
 
-                    $optionsPanel.prepend($option[0]);
+                    $optionsPanel.append($option[0]);
                 }
 
                 frag.append($item[0]);
@@ -174,11 +193,12 @@ console.log(data)
 
             // click events
             $(".store-menu-list-item-details").on("click", function () {
-                $(this).next().addClass("active");
+                $(".store-menu-list-item").removeClass("options-active");
+                $(this).parent().addClass("options-active");
             });
 
             $(".store-menu-list-item-options-cancel").on("click", function () {
-                $(this).parent().removeClass("active");
+                $(this).parent().parent().removeClass("options-active");
             });
 
 

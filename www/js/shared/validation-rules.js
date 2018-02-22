@@ -69,11 +69,11 @@ app.validationRules = {
     _stores_bank_account_number:             { presence: true, length: { minimum: 2, maximum: 32 }},
     _stores_hours:                           { length: { maximum: 5 }},
 
-    _product_extras_name:                    { presence: true, length: { maximum: 128 }},
+    _product_extras_name:                    { presence: true, length: { maximum: 32 }},
 
-    _product_options_name:                   { presence: true, length: { maximum: 128 }},
+    _product_options_name:                   { presence: true, length: { maximum: 32 }},
 
-    _products_name:                          { presence: true, length: { maximum: 128 }},
+    _products_name:                          { presence: true, length: { maximum: 64 }},
     _products_description_optional:          { length: { maximum: 256 }},
 
     _order_products_customer_notes_optional: { length: { maximum: 256 }},

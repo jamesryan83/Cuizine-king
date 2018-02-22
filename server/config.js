@@ -8,6 +8,7 @@ var config = {
     "secret": "fallout3isprettygood",
     "jwtExpiryShort": 300000, // 5 minutes
     "jwtExpiryLong": "7d",  // 2s 2m 2h 2d
+    "minifyjs": false,
     "showLogPaths": true,
     "logSQLerrors": true,
     "logRequestRoute": true,

@@ -3,7 +3,7 @@ $categoryScrollerHeight1: 70px;
 
 // On store and cms menu pages
 .category-scroller-container {
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     height: 120px;
     text-align: center;
 
@@ -15,24 +15,26 @@ $categoryScrollerHeight1: 70px;
         position: relative;
         white-space: nowrap;
         height: 120px;
+        backface-visibility: hidden;
 
         h3 {
             font-size: 30px;
             color: $colorBlue2;
         }
 
+        // list
         ul {
             overflow-x: scroll;
             overflow-y: hidden;
             height: 90px;
-            padding: 0 40px;
 
+            // a single category
             li {
                 height: $categoryScrollerHeight1;
                 line-height: $categoryScrollerHeight1;
                 font-size: 20px;
                 display: inline-block;
-                padding-right: 35px;
+                padding: 0 16px;
                 color: $colorGray4;
                 font-weight: bold;
 
@@ -41,6 +43,7 @@ $categoryScrollerHeight1: 70px;
                     cursor: pointer;
                 }
 
+                // blue underline on active category
                 &.active {
                     &:after {
                         display: block;
@@ -78,8 +81,10 @@ $categoryScrollerHeight1: 70px;
 
             hr {
                 display: none;
+
             }
 
+            // list
             ul {
                 float: left;
                 width: calc(100% - 170px);
@@ -91,5 +96,76 @@ $categoryScrollerHeight1: 70px;
             }
         }
 
+        // Scroll blurs
+        .scroll-blur-left, .scroll-blur-right {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            height: 70px;
+            width: 20px;
+        }
+
+        .scroll-blur-left {
+            background: linear-gradient(to right, rgba(32, 88, 193, 0.55), rgba(0, 0, 0, 0));
+            left: 0;
+            margin-left: -12px;
+            border-radius: 0 100% 100% 0;
+        }
+
+        .scroll-blur-right {
+            background: linear-gradient(to left, rgba(32, 88, 193, 0.55), rgba(0, 0, 0, 0));
+            right: 0;
+            margin-right: -12px;
+            border-radius: 100% 0 0 100%;
+        }
     }
+
+
+    @media (max-width: $mediaWidth0) {
+        .category-scroller {
+            width: 95%;
+            height: 120px;
+
+            h3 {
+                font-size: 30px;
+                text-align: center;
+            }
+
+            // list
+            ul {
+
+                // a single category
+                li {
+                    font-size: 17px;
+                }
+            }
+
+
+            // When at top of screen
+            &.floating {
+                height: 110px;
+
+                h3 {
+                    margin-top: 20px;
+                    height: 20px;
+                    line-height: 20px;
+                    float: none;
+                    vertical-align: bottom;
+                    font-size: 20px;
+                }
+
+                // list
+                ul {
+                    float: none;
+                    width: 100%;
+                    padding-left: 25px;
+
+                    li {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+    }
+
 }

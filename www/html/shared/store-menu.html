@@ -1,3 +1,5 @@
+
+<!-- Store menu list -->
 <div id="store-menu-list"></div>
 
 
@@ -13,19 +15,26 @@
 <!-- Store menu item -->
 <script id="template-store-menu-item" type="text/html">
     <div class="store-menu-list-item noselect">
-        <div class="store-menu-list-item-details clearfix" role="button">
+
+        <!-- Details panel -->
+        <div class="store-menu-list-item-details">
+            <div class="store-menu-list-item-button"><label class="center">SELECT</label></div>
+
             <div class="store-menu-list-item-content">
                 <h4 data-content="name"></h4>
+                <label data-content="lowestOptionPrice" data-format="lowestOptionPriceFormatter"></label>
                 <p data-content="description"></p>
                 <label data-class="class1">GLUTEN FREE</label>
                 <label data-class="class2">VEGETARIAN</label>
                 <label data-class="class3">NO DELIVERY</label>
             </div>
-            <div class="store-menu-list-item-button"><label class="center">SELECT</label></div>
         </div>
-        <div class="store-menu-list-item-options clearfix">
-            <div class="store-menu-list-item-content clearfix"></div>
+
+        <!-- Options panel -->
+        <div class="store-menu-list-item-options">
             <div class="store-menu-list-item-button store-menu-list-item-options-cancel"><label class="center">CANCEL</label></div>
+
+            <div class="store-menu-list-item-content clearfix"></div>
         </div>
     </div>
 </script>
@@ -37,7 +46,6 @@
         <div class="center">
             <label data-content="name"></label>
             <label data-content="price" data-format="priceFormatter"></label>
-            <label>ADD TO BASKET</button>
         </div>
     </div>
 </script>

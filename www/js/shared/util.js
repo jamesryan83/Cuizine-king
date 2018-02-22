@@ -14,6 +14,9 @@ app.util = {
     // jquery-template formatters
     setupTemplateFormatters: function () {
         $.addTemplateFormatter({
+            lowestOptionPriceFormatter: function (value) {
+                return "From $" + value;
+            },
             priceFormatter: function (value) {
                 return "$" + value.toFixed(2);
             },

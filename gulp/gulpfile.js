@@ -39,7 +39,7 @@ gulp.task("html", function () {
 
 gulp.task("scss", function () {
     return gulp.src(scssInputsPath)
-        .pipe(sass().on("error", sass.logError))
+        .pipe(sass({ outputStyle: "expanded" }).on("error", sass.logError))
         .pipe(autoprefixer({
             browsers: ["> 5%"],
             cascade: false

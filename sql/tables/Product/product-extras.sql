@@ -2,7 +2,7 @@ CREATE TABLE Product.product_extras
 (
 	id_product_extra INT NOT NULL CONSTRAINT DF_product_product_extras_id_product_extra DEFAULT (NEXT VALUE FOR Sequences.id_product_extra),
     id_store INT NOT NULL,
-	name NVARCHAR(128) NOT NULL,
+	name NVARCHAR(32) NOT NULL,
 	price SMALLMONEY NOT NULL DEFAULT 0,
     store_notes NVARCHAR(256),
     limit_per_product TINYINT NOT NULL DEFAULT 1,

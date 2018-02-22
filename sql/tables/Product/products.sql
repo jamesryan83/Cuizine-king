@@ -2,7 +2,7 @@ CREATE TABLE Product.products
 (
 	id_product INT NOT NULL CONSTRAINT DF_product_products_id_product DEFAULT (NEXT VALUE FOR Sequences.id_product),
     id_store INT NOT NULL,
-	name NVARCHAR(128) NOT NULL,
+	name NVARCHAR(64) NOT NULL,
 	description NVARCHAR(256),
     store_notes NVARCHAR(256),
     delivery_available BIT NOT NULL DEFAULT 1,

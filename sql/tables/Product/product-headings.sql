@@ -2,7 +2,7 @@ CREATE TABLE Product.product_headings
 (
 	id_product_heading INT NOT NULL CONSTRAINT DF_product_product_headings_id_product_heading DEFAULT (NEXT VALUE FOR Sequences.id_product_heading),
     id_store INT NOT NULL,
-	title NVARCHAR(128) NOT NULL,
+	title NVARCHAR(32) NOT NULL,
     subtitle NVARCHAR(256),
     above_product_id INT,
     updated_by INT NOT NULL,

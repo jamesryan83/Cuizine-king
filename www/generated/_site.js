@@ -753,8 +753,26 @@ app.site.resetPassword = {
 app.site.store = {
 
     init: function (routeData) {
+        var self = this;
 
         app.storeContent.init();
+
+        this.checkoutHeaderHeight = 65;
+        this.$checkout = $("#store-checkout");
+        this.$checkoutContent = $("#store-checkout-content");
+        this.$checkoutHide = $("#store-checkout-header-hide");
+        this.$checkoutShow = $("#store-checkout-header-show");
+
+
+        // Get checkout height
+        var checkoutHeight = localStorage.getItem("cht");
+        if (!checkoutHeight) {
+            checkoutHeight = (screen.height / 2) - this.checkoutHeaderHeight;
+            localStorage.setItem("cht", checkoutHeight);
+        }
+
+
+        this.$checkoutContent.css("height", checkoutHeight);
 
 
         // Store id from url
@@ -764,6 +782,12 @@ app.site.store = {
         app.storeContent.id_store = id_store;
 
 
+
+        new app.controls.Resizer(
+            "vertical", "#store-checkout-resize",
+            "#store-checkout-content", this.checkoutHeaderHeight);
+
+
         // Get the store data
         app.storeContent.getStoreData(function (storeData) {
             if (storeData) {
@@ -771,6 +795,20 @@ app.site.store = {
                 app.storeContent.addStoreDetailsDataToPage(storeData);
                 app.storeContent.addMenuDataToPage(storeData);
             }
+        });
+
+
+        $("#store-checkout-header-show").on("click", function () {
+            self.$checkoutContent.show();
+            self.$checkoutHide.show();
+            self.$checkoutShow.hide();
+        });
+
+
+        $("#store-checkout-header-hide").on("click", function () {
+            self.$checkoutContent.hide();
+            self.$checkoutHide.hide();
+            self.$checkoutShow.show();
         });
     },
 
@@ -1263,25 +1301,40 @@ app.storeContent = {
     addMenuDataToPage: function (data) {
         var self = this;
         var i = 0;
+        var j = 0;
         var $item = null;
 
         // products
         var item = null;
         var frag = document.createDocumentFragment();
-console.log(data)
+
         if (data.products) {
+
+//            data.products[0].name = "testest testest testest testestttestest testest testest testestt";
+//            data.product_headings[0].title = "testest testest testest testestt";
+//            data.products[0].options[0].name = "testest testest testest testestt";
 
 
             // create product items
             for (i = 0; i < data.products.length; i++) {
                 item = data.products[i];
 
-                if (i == 0) item.name = "a really long title a really long title a really long title a really long title"
+
+                // find lowest priced option and add the price to the heading
+                var lowestOptionPrice = item.options[0].price;
+                for (j = 0; j < item.options.length; j++) {
+                    if (item.options[j].price < lowestOptionPrice) {
+                        lowestOptionPrice = item.options[j].price;
+                    }
+                }
+                item.lowestOptionPrice = lowestOptionPrice;
+
 
                 // item template
                 if (item.gluten_free) item.class1 = "label-gluten-free";
                 if (item.vegetarian) item.class2 = "label-vegetarian";
                 if (!item.delivery_available) item.class3 = "label-takeaway";
+
 
                 $item = app.util.loadTemplate(
                     "#template-store-menu-item", item,
@@ -1289,19 +1342,23 @@ console.log(data)
 
 
                 // Panels
-                var $optionsPanel = $item.find(".store-menu-list-item-options > div").first();
+                var $optionsPanel = $item.find(".store-menu-list-item-options > .store-menu-list-item-content").last();
                 var $option = null;
                 var size = item.options.length;
 
+
                 // product options
-                for (var j = 0; j < item.options.length; j++) {
+                for (j = 0; j < item.options.length; j++) {
                     $option = app.util.loadTemplate(
                         "#template-store-menu-option", item.options[j],
                         item.options[j].id_product_option, "data-product-option-id");
 
-                    $option.css({ width: (100 / size) + "%" });
+                    // equal width if not mobile
+                    if (screen.width > 1000) {
+                        $option.css({ width: (100 / size) + "%" });
+                    }
 
-                    $optionsPanel.prepend($option[0]);
+                    $optionsPanel.append($option[0]);
                 }
 
                 frag.append($item[0]);
@@ -1330,11 +1387,12 @@ console.log(data)
 
             // click events
             $(".store-menu-list-item-details").on("click", function () {
-                $(this).next().addClass("active");
+                $(".store-menu-list-item").removeClass("options-active");
+                $(this).parent().addClass("options-active");
             });
 
             $(".store-menu-list-item-options-cancel").on("click", function () {
-                $(this).parent().removeClass("active");
+                $(this).parent().parent().removeClass("options-active");
             });
 
 
@@ -1398,6 +1456,9 @@ app.util = {
     // jquery-template formatters
     setupTemplateFormatters: function () {
         $.addTemplateFormatter({
+            lowestOptionPriceFormatter: function (value) {
+                return "From $" + value;
+            },
             priceFormatter: function (value) {
                 return "$" + value.toFixed(2);
             },
@@ -1769,11 +1830,11 @@ app.validationRules = {
     _stores_bank_account_number:             { presence: true, length: { minimum: 2, maximum: 32 }},
     _stores_hours:                           { length: { maximum: 5 }},
 
-    _product_extras_name:                    { presence: true, length: { maximum: 128 }},
+    _product_extras_name:                    { presence: true, length: { maximum: 32 }},
 
-    _product_options_name:                   { presence: true, length: { maximum: 128 }},
+    _product_options_name:                   { presence: true, length: { maximum: 32 }},
 
-    _products_name:                          { presence: true, length: { maximum: 128 }},
+    _products_name:                          { presence: true, length: { maximum: 64 }},
     _products_description_optional:          { length: { maximum: 256 }},
 
     _order_products_customer_notes_optional: { length: { maximum: 256 }},
@@ -1976,6 +2037,8 @@ app.controls.CategoryScroller = function (categories) {
 
     var i = 0;
     var headingPositions = [];
+    var verticalOffset1 = 100;
+    var verticalOffset2 = 100;
 
 
     // update the position of the headings from the top of the screen
@@ -1986,11 +2049,12 @@ app.controls.CategoryScroller = function (categories) {
         });
     }
 
+
     // Sets the active heading
     function setActiveHeading () {
         var st = $html.scrollTop();
         for (i = headingPositions.length - 1; i >= 0; i--) {
-            if (st > headingPositions[i] - 100) {
+            if (st > headingPositions[i] - 110) {
                 $categoryScrollerListItems.removeClass("active");
                 $($categoryScrollerListItems[i]).addClass("active");
                 break;
@@ -2000,26 +2064,35 @@ app.controls.CategoryScroller = function (categories) {
 
 
     // Add items to scroller
+    var $item = null;
     var frag = document.createDocumentFragment();
     for (i = 0; i < categories.length; i++) {
-        var $item = $("<li class='store-menu-nav-list-item'>" + categories[i].title + "</li>");
-
-        // Item clicked event
-        $item.on("click", function (e) {
-            var el = $(".store-menu-list-item.heading:contains('" + e.target.innerText + "')");
-
-            if (el[0]) {
-                $("html").animate({ scrollTop: el[0].offsetTop + 100 }, 500);
-            }
-        });
-
+        $item = $("<li class='store-menu-nav-list-item'>" + categories[i].title + "</li>");
         frag.append($item[0]);
     }
     $categoryScrollerList.append(frag);
 
 
     // make scrollable
-    new app.controls.HorizontalScroller(scrollerListEl, function () { });
+    new app.controls.HorizontalScroller(scrollerListEl, function (item) {
+
+        // scroll item clicked
+        var $el = $(".store-menu-list-item.heading:contains('" + item.innerText + "')");
+        var verticalOffset = screen.width < 670 ? verticalOffset2 : verticalOffset1;
+
+        if ($el[0]) {
+            $("html").animate({
+                scrollTop: $el[0].getBoundingClientRect().top + $html.scrollTop() - verticalOffset
+            }, 500);
+        }
+    });
+
+
+    // window resized
+    $(window).on("resize", function () {
+        updateHeadingPositions();
+        setActiveHeading();
+    });
 
 
     // Change to floating navbar
@@ -2036,18 +2109,11 @@ app.controls.CategoryScroller = function (categories) {
     });
 
 
-    // Resize window
-    $(window).on("resize", function () {
-        updateHeadingPositions();
-        setActiveHeading();
-    });
-
-
     // get scroller items for highlighting and update heading positions
     $categoryScrollerListItems = $(".store-menu-nav-list-item");
     updateHeadingPositions();
-
 }
+
 // Navbar
 
 app.controls.Navbar = function () {
@@ -2204,16 +2270,67 @@ app.controls.RatingControls = {
     },
 
 }
+// Creates a vertical or horizontal resizer
+app.controls.Resizer = function (direction, handle, container, offset) {
+
+    var $handle = $(handle);
+    var $container = $(container);
+
+    var startX = 0;
+    var startY = 0;
+    var mouseIsDown = false;
+
+    $handle.on("mousedown", function (e) {
+        mouseIsDown = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        console.log(startX, startY)
+    });
+
+    $(window).on("mousemove", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (mouseIsDown) {
+            var h = window.innerHeight - e.clientY - offset;
+            $container.height(h);
+        }
+    });
+
+    $(window).on("mouseup", function () {
+        mouseIsDown = false;
+    });
+
+
+//    if (direction === "vertical") {
+//
+//    } else if (direction === "horizontal") {
+//
+//    } else {
+//        throw new Error("Unknown Resizer direction: " + direction);
+//    }
+
+
+}
 
 // Horizontal scroller
-app.controls.HorizontalScroller = function (containerEl, clickCallback) {
+app.controls.HorizontalScroller = function (scrollerListEl, clickCallback) {
+    var self = this;
 
     var mouseIsDown = false;
     var startMouseX = 0;
     var startPosX = 0;
 
+    this.scrollBlurTolerance = 5;
+
+    this.$scrollerList = $(scrollerListEl);
+    this.$scrollBlurLeft = this.$scrollerList.prev();
+    this.$scrollBlurRight = this.$scrollerList.next();
+
+
     // start
-    $(containerEl).on("mousedown", function (e) {
+    this.$scrollerList.on("mousedown", function (e) {
         mouseIsDown = true;
         startMouseX = e.clientX;
         startPosX = $(this).scrollLeft();
@@ -2224,9 +2341,10 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
     $(window).on("mousemove", function (e) {
         if (mouseIsDown) {
             e.stopPropagation();
-            $(containerEl).scrollLeft(startPosX - (e.clientX - startMouseX));
+            self.$scrollerList.scrollLeft(startPosX - (e.clientX - startMouseX));
         }
     });
+
 
     // stop
     $(window).on("mouseup", function () {
@@ -2235,13 +2353,45 @@ app.controls.HorizontalScroller = function (containerEl, clickCallback) {
 
 
     // click callback if mouse doesn't move much
-    $(containerEl).on("mouseup", function (e) {
+    this.$scrollerList.on("mouseup", function (e) {
         var diff = e.clientX - startMouseX;
 
         if (diff >= -4 && diff <= 4) {
-            clickCallback(e.target);
+            return clickCallback(e.target);
         }
     });
+
+
+    // scroll event
+    this.$scrollerList.on("scroll", function () {
+        self.updateScrollBlurs();
+    });
+
+
+    // Window resize
+    $(window).on("resize", function () {
+        self.updateScrollBlurs();
+    });
+
+
+    this.updateScrollBlurs();
+}
+
+
+
+// turn blurs on or off
+app.controls.HorizontalScroller.prototype.updateScrollBlurs = function () {
+    if (this.$scrollerList[0].scrollLeft > this.scrollBlurTolerance) {
+        this.$scrollBlurLeft.show();
+    } else {
+        this.$scrollBlurLeft.hide();
+    }
+
+    if (this.$scrollerList[0].scrollLeft + this.$scrollerList[0].clientWidth < this.$scrollerList[0].scrollWidth - this.scrollBlurTolerance) {
+        this.$scrollBlurRight.show();
+    } else {
+        this.$scrollBlurRight.hide();
+    }
 }
 // Creates a suburb typeahead control
 app.controls.Typeahead = function (callback) {

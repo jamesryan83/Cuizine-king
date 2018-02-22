@@ -2,7 +2,7 @@ CREATE TABLE Product.product_options
 (
 	id_product_option INT NOT NULL CONSTRAINT DF_product_product_options_id_product_option DEFAULT (NEXT VALUE FOR Sequences.id_product_option),
     id_product INT NOT NULL,
-	name NVARCHAR(128) NOT NULL,
+	name NVARCHAR(32) NOT NULL,
 	store_notes NVARCHAR(256),
     price SMALLMONEY NOT NULL DEFAULT 0,
     limit_per_customer TINYINT NOT NULL DEFAULT 1,
