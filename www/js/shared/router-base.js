@@ -23,7 +23,7 @@ app.routerBase = {
     // section is site, cms or sysadmin
     loadPageForRoute: function (route, section, isAfterPopState) {
         if (this.isLoading) return;
-        if (window.location.pathname === route) return; // same page
+        if (window.location.pathname === route && !isAfterPopState) return; // same page
 
         var self = this;
         this.isLoading = true;
@@ -37,7 +37,7 @@ app.routerBase = {
 
         // for back button after pushstate
         window.onpopstate = function () {
-            console.log("on popstate " + window.location.pathname)
+            console.log("on popstate " + window.location.pathname);
             self.loadPageForRoute(window.location.pathname, self.lastLoadedSection, true);
         };
 
