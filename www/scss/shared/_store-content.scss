@@ -141,24 +141,24 @@
         }
 
 
-        #store-info-details-other {
-            display: inline-block;
+        // description
+        #store-info-description-container {
+            min-height: 120px;
 
-            // description
-            #store-info-description-container {
-                min-height: 120px;
-
-                #store-info-description {
-                    overflow: hidden;
-                    text-align: justify;
-                    max-height: 92px;
-                }
-
-                #store-info-button-description {
-                    margin-left: 5px;
-                }
+            #store-info-description {
+                overflow: hidden;
+                text-align: justify;
+                max-height: 92px;
             }
 
+            #store-info-button-description {
+                margin-left: 5px;
+            }
+        }
+
+
+        #store-info-details-other {
+            display: inline-block;
 
             // hours
             #store-info-hours-is-open {
@@ -221,7 +221,6 @@
         &:not(.heading) {
             cursor: pointer;
             margin-bottom: 15px;
-            background-color: $colorBlue7;
             box-shadow: 1px 1px 1px 1px $colorBlue4;
             border-radius: 2px;
         }
@@ -248,7 +247,7 @@
         > div {
             width: 100%;
             height: 100%;
-            background-color: $colorBlue7;
+            background-color: $colorBlue10;
 
             > div {
                 height: 100%;
@@ -278,7 +277,7 @@
             }
 
             &:hover {
-                background-color: $colorBlue8;
+                background-color: $colorBlue9;
             }
         }
 
@@ -298,7 +297,7 @@
             padding-left: 40px;
 
             &:hover {
-                background-color: $colorBlue8;
+                background-color: $colorBlue9;
             }
 
             h4 {
@@ -353,7 +352,7 @@
             position: relative;
 
             &:hover {
-                background-color: $colorBlue8;
+                background-color: $colorBlue9;
             }
 
             > div {
@@ -483,7 +482,6 @@
             // options panel visible
             &.options-active {
                 .store-menu-list-item-details {
-//                    visibility: hidden;
                     height: 0;
                 }
 
@@ -573,8 +571,6 @@
                 }
             }
         }
-
-
     }
 
 }

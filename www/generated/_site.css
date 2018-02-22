@@ -1393,22 +1393,22 @@ input:read-only, textarea:read-only {
   display: inline-block;
 }
 
-#store-content #store-info-details #store-info-details-other {
-  display: inline-block;
-}
-
-#store-content #store-info-details #store-info-details-other #store-info-description-container {
+#store-content #store-info-details #store-info-description-container {
   min-height: 120px;
 }
 
-#store-content #store-info-details #store-info-details-other #store-info-description-container #store-info-description {
+#store-content #store-info-details #store-info-description-container #store-info-description {
   overflow: hidden;
   text-align: justify;
   max-height: 92px;
 }
 
-#store-content #store-info-details #store-info-details-other #store-info-description-container #store-info-button-description {
+#store-content #store-info-details #store-info-description-container #store-info-button-description {
   margin-left: 5px;
+}
+
+#store-content #store-info-details #store-info-details-other {
+  display: inline-block;
 }
 
 #store-content #store-info-details #store-info-details-other #store-info-hours-is-open {
@@ -1460,7 +1460,6 @@ input:read-only, textarea:read-only {
 #store-content .store-menu-list-item:not(.heading) {
   cursor: pointer;
   margin-bottom: 15px;
-  background-color: #10112b;
   box-shadow: 1px 1px 1px 1px #000115;
   border-radius: 2px;
 }
@@ -1481,7 +1480,7 @@ input:read-only, textarea:read-only {
 #store-content .store-menu-list-item > div {
   width: 100%;
   height: 100%;
-  background-color: #10112b;
+  background-color: #131746;
 }
 
 #store-content .store-menu-list-item > div > div {
@@ -1508,7 +1507,7 @@ input:read-only, textarea:read-only {
 }
 
 #store-content .store-menu-list-item .store-menu-list-item-button:hover {
-  background-color: #131433;
+  background-color: #241d4d;
 }
 
 #store-content .store-menu-list-item:not(.heading):active {
@@ -1522,7 +1521,7 @@ input:read-only, textarea:read-only {
 }
 
 #store-content .store-menu-list-item-details .store-menu-list-item-content:hover {
-  background-color: #131433;
+  background-color: #241d4d;
 }
 
 #store-content .store-menu-list-item-details .store-menu-list-item-content h4 {
@@ -1577,7 +1576,7 @@ input:read-only, textarea:read-only {
 }
 
 #store-content .store-menu-list-item-options .store-menu-list-item-option:hover {
-  background-color: #131433;
+  background-color: #241d4d;
 }
 
 #store-content .store-menu-list-item-options .store-menu-list-item-option > div {
