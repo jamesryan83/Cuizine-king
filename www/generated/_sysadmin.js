@@ -345,7 +345,10 @@ app.routerBase = {
 
 
         // run ui stuff when page is loaded
-        $("body").css("display", "block");
+        setTimeout(function () {
+            $("body").css("visibility", "visible");
+        }, 100);
+
 
         // push route into history, but not on back
         if (!self.firstLoad && !isAfterPopState) {

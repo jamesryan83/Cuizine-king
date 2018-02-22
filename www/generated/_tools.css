@@ -27,6 +27,7 @@ body {
   overflow-x: hidden;
   overflow-y: scroll;
   background: #000115;
+  visibility: hidden;
 }
 
 p, label, h1, h2, h3, h4, h5, h6, li, span {

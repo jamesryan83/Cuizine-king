@@ -254,6 +254,12 @@ app.site.home = {
     // Init
     init: function () {
 
+        // suburb typeahead
+        new app.controls.Typeahead(function (data, url) {
+            if (data && url) {
+                app.routerBase.loadPageForRoute("/location/" + url, "site");
+            }
+        });
 
     },
 
@@ -1117,7 +1123,10 @@ app.routerBase = {
 
 
         // run ui stuff when page is loaded
-        $("body").css("display", "block");
+        setTimeout(function () {
+            $("body").css("visibility", "visible");
+        }, 100);
+
 
         // push route into history, but not on back
         if (!self.firstLoad && !isAfterPopState) {

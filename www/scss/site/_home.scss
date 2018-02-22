@@ -2,9 +2,139 @@
 // Home page
 #page-home.page {
 
+
     .page-content {
         text-align: center;
         padding-top: 50px;
+        position: relative;
+
+
+        // Heading paragraph
+        p {
+            font-size: 20px;
+            padding: 20px 0;
+        }
+
+
+        // Scooter picture
+        #scooter {
+            position: absolute;
+            background-image: url(/res/svg/scooter.svg);
+            background-repeat: no-repeat;
+            background-size: 100%;
+            left: -80px;
+            height: 80px;
+            width: 80px;
+            animation: scooteranim 1s linear forwards;
+            animation-delay: 0.5s;
+            backface-visibility: hidden;
+            z-index: 100;
+        }
+
+        // Home typeahead
+        .typeahead-2 {
+            display: block;
+            float: none;
+            position: relative;
+            top: auto;
+            right: auto;
+            text-align: center;
+            width: 100%;
+            opacity: 0;
+            animation: typeaheadanim 1s linear forwards;
+            animation-delay: 1s;
+
+            > div {
+                display: inline-block;
+                text-align: left;
+                width: 500px;
+            }
+        }
+
+
+        #download-app {
+            margin-top: 100px;
+
+            #download-app-logos {
+                > div {
+                    margin: 0 10px;
+                }
+
+                #download-app-android {
+                    @include svgicon(150px, 45px, 150px, 45px,
+                        url(/res/svg/logo-app-android.svg));
+                }
+
+                #download-app-apple {
+                    @include svgicon(150px, 45px, 150px, 45px,
+                        url(/res/svg/logo-app-apple.svg));
+                }
+            }
+        }
+
     }
 
+
+    @media (max-width: $mediaWidth2) {
+        .page-content {
+
+            // scooter higer up and start earlier
+            #scooter {
+                top: 120px;
+                animation-delay: 0.3s;
+            }
+
+            #download-app {
+                display: none;
+            }
+        }
+
+        #navbar-site {
+            height: 170px;
+        }
+    }
+
+
+    @media (max-width: $mediaWidth0) {
+        .page-content {
+            padding-top: 0;
+
+            .typeahead-2 {
+                > div {
+                    height: auto;
+                    width: 100%;
+
+                    > label {
+                        width: 100%;
+                        display: block;
+                    }
+
+                    > div {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
+
+@keyframes scooteranim {
+    0% {
+        left: -80px;
+    },
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes typeaheadanim {
+    0% {
+        opacity: 0;
+    },
+    100% {
+        opacity: 1;
+    }
 }

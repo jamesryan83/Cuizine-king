@@ -4,60 +4,19 @@
     text-align: center;
     position: relative;
 
-    @media (max-width: $mediaWidth1) {
-        padding-top: 0;
-    }
-
     br {
         height: 0;
     }
 
-
-    // TODO : clean up
-    // Header
+    // Location header
     #location-header {
         text-align: left;
-        white-space: nowrap;
-        width: 100%;
-        padding: 20px 100px 0 100px;
-        font-size: 26px;
+        padding: 20px 100px;
 
-        @media (max-width: $mediaWidth2) {
-            text-align: center;
-            padding: 20px 0;
-
-            #location-header-heading {
-                h2 {
-                    font-size: 26px;
-                }
-            }
-
-            #location-header-location {
-                display: block !important;
-                margin-left: 0 !important;
-                height: 30px;
-                line-height: 30px;
-            }
-        }
-
-        #location-header-heading {
+        h2 {
             display: inline-block;
-            overflow: hidden;
-
-            h2 {
-                display: inline-block;
-                font-weight: 400;
-                font-size: 35px;
-                height: 50px;
-                line-height: 50px;
-                vertical-align: top;
-
-                @media (max-width: $mediaWidth4) {
-                    font-size: 26px;
-                    height: 30px;
-                    line-height: 30px;
-                }
-            }
+            font-weight: 400;
+            font-size: 35px;
         }
 
         #location-header-location {
@@ -168,7 +127,6 @@
 
 
 
-
     // store list
     #location-store-list {
         max-width: 80%;
@@ -238,22 +196,50 @@
     }
 
 
-    // mobile
-    @media (max-width: $mediaMobileWidth1) {
-        #location-header {
-            #location-suburb-search {
-                float: none;
-                width: 290px;
-                margin-top: 0;
 
-                input {
-                    width: 210px;
-                }
+
+    @media (max-width: $mediaWidth4) {
+        // smaller heading
+        #location-header {
+            h2 {
+                font-size: 26px;
             }
         }
+    }
 
+
+
+    @media (max-width: $mediaWidth2) {
+        // suburb next line and centered
+        #location-header {
+            text-align: center;
+            padding: 20px 0;
+
+            h2 {
+                font-size: 26px;
+            }
+
+            #location-header-location {
+                display: block !important;
+                margin-left: 0 !important;
+                height: 30px;
+                line-height: 30px;
+            }
+        }
+    }
+
+
+
+    @media (max-width: $mediaWidth1) {
+        padding-top: 0;
+    }
+
+
+
+    @media (max-width: $mediaMobileWidth1) {
         #location-store-filter {
             padding: 0;
         }
     }
+
 }

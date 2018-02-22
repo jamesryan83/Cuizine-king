@@ -4,7 +4,6 @@
         "node_modules",
         ".brackets.json",
         ".gitignore",
-		"app",
 		"tools",
         "drawing.svg",
 		"IISNode.yml",

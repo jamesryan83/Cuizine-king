@@ -27,6 +27,7 @@ body {
   overflow-x: hidden;
   overflow-y: scroll;
   background: #000115;
+  visibility: hidden;
 }
 
 p, label, h1, h2, h3, h4, h5, h6, li, span {
@@ -1911,6 +1912,149 @@ input:read-only, textarea:read-only {
 #page-home.page .page-content {
   text-align: center;
   padding-top: 50px;
+  position: relative;
+}
+
+#page-home.page .page-content p {
+  font-size: 20px;
+  padding: 20px 0;
+}
+
+#page-home.page .page-content #scooter {
+  position: absolute;
+  background-image: url(/res/svg/scooter.svg);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  left: -80px;
+  height: 80px;
+  width: 80px;
+  -webkit-animation: scooteranim 1s linear forwards;
+  animation: scooteranim 1s linear forwards;
+  -webkit-animation-delay: 0.5s;
+  animation-delay: 0.5s;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  z-index: 100;
+}
+
+#page-home.page .page-content .typeahead-2 {
+  display: block;
+  float: none;
+  position: relative;
+  top: auto;
+  right: auto;
+  text-align: center;
+  width: 100%;
+  opacity: 0;
+  -webkit-animation: typeaheadanim 1s linear forwards;
+  animation: typeaheadanim 1s linear forwards;
+  -webkit-animation-delay: 1s;
+  animation-delay: 1s;
+}
+
+#page-home.page .page-content .typeahead-2 > div {
+  display: inline-block;
+  text-align: left;
+  width: 500px;
+}
+
+#page-home.page .page-content #download-app {
+  margin-top: 100px;
+}
+
+#page-home.page .page-content #download-app #download-app-logos > div {
+  margin: 0 10px;
+}
+
+#page-home.page .page-content #download-app #download-app-logos #download-app-android {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 150px 45px;
+  height: 45px;
+  width: 150px;
+  background-image: url(/res/svg/logo-app-android.svg);
+  display: inline-block;
+}
+
+#page-home.page .page-content #download-app #download-app-logos #download-app-apple {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 150px 45px;
+  height: 45px;
+  width: 150px;
+  background-image: url(/res/svg/logo-app-apple.svg);
+  display: inline-block;
+}
+
+@media (max-width: 900px) {
+  #page-home.page .page-content #scooter {
+    top: 120px;
+    -webkit-animation-delay: 0.3s;
+    animation-delay: 0.3s;
+  }
+  #page-home.page .page-content #download-app {
+    display: none;
+  }
+  #page-home.page #navbar-site {
+    height: 170px;
+  }
+}
+
+@media (max-width: 670px) {
+  #page-home.page .page-content {
+    padding-top: 0;
+  }
+  #page-home.page .page-content .typeahead-2 > div {
+    height: auto;
+    width: 100%;
+  }
+  #page-home.page .page-content .typeahead-2 > div > label {
+    width: 100%;
+    display: block;
+  }
+  #page-home.page .page-content .typeahead-2 > div > div {
+    width: 100%;
+  }
+}
+
+@-webkit-keyframes scooteranim {
+  0% {
+    left: -80px;
+  }
+  
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes scooteranim {
+  0% {
+    left: -80px;
+  }
+  
+  100% {
+    left: 100%;
+  }
+}
+
+@-webkit-keyframes typeaheadanim {
+  0% {
+    opacity: 0;
+  }
+  
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes typeaheadanim {
+  0% {
+    opacity: 0;
+  }
+  
+  100% {
+    opacity: 1;
+  }
 }
 
 .store-list-item {
@@ -2005,60 +2149,19 @@ input:read-only, textarea:read-only {
   position: relative;
 }
 
-@media (max-width: 770px) {
-  #page-location {
-    padding-top: 0;
-  }
-}
-
 #page-location br {
   height: 0;
 }
 
 #page-location #location-header {
   text-align: left;
-  white-space: nowrap;
-  width: 100%;
-  padding: 20px 100px 0 100px;
-  font-size: 26px;
+  padding: 20px 100px;
 }
 
-@media (max-width: 900px) {
-  #page-location #location-header {
-    text-align: center;
-    padding: 20px 0;
-  }
-  #page-location #location-header #location-header-heading h2 {
-    font-size: 26px;
-  }
-  #page-location #location-header #location-header-location {
-    display: block !important;
-    margin-left: 0 !important;
-    height: 30px;
-    line-height: 30px;
-  }
-}
-
-#page-location #location-header #location-header-heading {
-  display: inline-block;
-  overflow: hidden;
-}
-
-#page-location #location-header #location-header-heading h2 {
+#page-location #location-header h2 {
   display: inline-block;
   font-weight: 400;
   font-size: 35px;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: top;
-}
-
-@media (max-width: 1100px) {
-  #page-location #location-header #location-header-heading h2 {
-    font-size: 26px;
-    height: 30px;
-    line-height: 30px;
-  }
 }
 
 #page-location #location-header #location-header-location {
@@ -2208,15 +2311,35 @@ input:read-only, textarea:read-only {
   }
 }
 
+@media (max-width: 1100px) {
+  #page-location #location-header h2 {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 900px) {
+  #page-location #location-header {
+    text-align: center;
+    padding: 20px 0;
+  }
+  #page-location #location-header h2 {
+    font-size: 26px;
+  }
+  #page-location #location-header #location-header-location {
+    display: block !important;
+    margin-left: 0 !important;
+    height: 30px;
+    line-height: 30px;
+  }
+}
+
+@media (max-width: 770px) {
+  #page-location {
+    padding-top: 0;
+  }
+}
+
 @media (max-width: 490px) {
-  #page-location #location-header #location-suburb-search {
-    float: none;
-    width: 290px;
-    margin-top: 0;
-  }
-  #page-location #location-header #location-suburb-search input {
-    width: 210px;
-  }
   #page-location #location-store-filter {
     padding: 0;
   }
