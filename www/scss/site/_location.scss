@@ -141,8 +141,9 @@
                 font-weight: 400;
                 padding-left: 10px;
                 height: 26px;
-                font-size: 26px;
+                font-size: 28px;
                 line-height: 26px;
+                color: $colorBlue2;
             }
 
             .row-heading-label {
@@ -157,10 +158,7 @@
 
 
         hr {
-            border: none;
-            height: 2px;
-            background-color: $colorBlue3;
-            margin: 5px -15px 10px -15px;
+            margin-bottom: 10px;
         }
 
 

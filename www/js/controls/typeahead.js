@@ -52,7 +52,6 @@ app.controls.Typeahead = function (callback) {
         var data = self.getValue();
 
         if (data.suburb && data.postcode) {
-            console.log("1")
             self.setValue(data.postcode, data.suburb);
         } else {
             self.$typeaheadInput.attr("data-suburb", "");

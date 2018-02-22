@@ -2263,8 +2263,9 @@ input:read-only, textarea:read-only {
   font-weight: 400;
   padding-left: 10px;
   height: 26px;
-  font-size: 26px;
+  font-size: 28px;
   line-height: 26px;
+  color: #5595d8;
 }
 
 #page-location #location-store-list .row-heading-container .row-heading-label {
@@ -2277,10 +2278,7 @@ input:read-only, textarea:read-only {
 }
 
 #page-location #location-store-list hr {
-  border: none;
-  height: 2px;
-  background-color: #373748;
-  margin: 5px -15px 10px -15px;
+  margin-bottom: 10px;
 }
 
 #page-location #location-store-list .category-stores-row {

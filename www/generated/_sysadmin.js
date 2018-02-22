@@ -1550,8 +1550,10 @@ app.controls.HorizontalScroller = function (scrollerListEl, clickCallback) {
     var self = this;
 
     var mouseIsDown = false;
-    var startMouseX = 0;
+    this.startMouseX = 0;
     var startPosX = 0;
+    var scrollTriggered = false;
+    this.diff = 0;
 
     this.scrollBlurTolerance = 5;
 
@@ -1563,7 +1565,8 @@ app.controls.HorizontalScroller = function (scrollerListEl, clickCallback) {
     // start
     this.$scrollerList.on("mousedown", function (e) {
         mouseIsDown = true;
-        startMouseX = e.clientX;
+        scrollTriggered = false;
+        self.startMouseX = e.clientX;
         startPosX = $(this).scrollLeft();
     });
 
@@ -1572,7 +1575,11 @@ app.controls.HorizontalScroller = function (scrollerListEl, clickCallback) {
     $(window).on("mousemove", function (e) {
         if (mouseIsDown) {
             e.stopPropagation();
-            self.$scrollerList.scrollLeft(startPosX - (e.clientX - startMouseX));
+            self.$scrollerList.scrollLeft(startPosX - (e.clientX - self.startMouseX));
+
+            if (!self.isInsideTolerance(e.clientX)) {
+                scrollTriggered = true;
+            }
         }
     });
 
@@ -1585,11 +1592,11 @@ app.controls.HorizontalScroller = function (scrollerListEl, clickCallback) {
 
     // click callback if mouse doesn't move much
     this.$scrollerList.on("mouseup", function (e) {
-        var diff = e.clientX - startMouseX;
-
-        if (diff >= -4 && diff <= 4) {
+        if (!scrollTriggered) {
             return clickCallback(e.target);
         }
+
+        scrollTriggered = false;
     });
 
 
@@ -1623,6 +1630,13 @@ app.controls.HorizontalScroller.prototype.updateScrollBlurs = function () {
     } else {
         this.$scrollBlurRight.hide();
     }
+}
+
+
+// is outside tolerance
+app.controls.HorizontalScroller.prototype.isInsideTolerance = function (clientX) {
+    this.diff = clientX - this.startMouseX;
+    return (this.diff >= -this.scrollBlurTolerance && this.diff <= this.scrollBlurTolerance);
 }
 // Creates a suburb typeahead control
 app.controls.Typeahead = function (callback) {
@@ -1677,7 +1691,6 @@ app.controls.Typeahead = function (callback) {
         var data = self.getValue();
 
         if (data.suburb && data.postcode) {
-            console.log("1")
             self.setValue(data.postcode, data.suburb);
         } else {
             self.$typeaheadInput.attr("data-suburb", "");

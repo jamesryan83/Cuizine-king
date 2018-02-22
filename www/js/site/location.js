@@ -63,7 +63,7 @@ app.site.location = {
                     "<h3>" + this.storeData[i].category + "</h3>" +
                     "<label class='row-heading-label'>" + locationsText + "</label>" +
                 "</div>" +
-                "<hr />");
+                "<hr class='hr-2' />");
 
 
             // add stores for category
@@ -119,6 +119,9 @@ app.site.location = {
             new app.controls.HorizontalScroller(el, function (clickedEl) {
                 var storeEl = $(clickedEl).closest(".store-list-item");
                 var storeId = storeEl[0].id.replace("store", "");
+
+                // TODO : DEBUG : remove later
+                storeId = 1;
 
                 app.routerBase.loadPageForRoute("/store/" + storeId, "site");
             });
