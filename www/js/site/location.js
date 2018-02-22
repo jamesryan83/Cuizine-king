@@ -101,8 +101,11 @@ app.site.location = {
             // add stores to row
             var storeRow = $(
                 "<div class='category-stores-row'>" +
+                    "<div class='scroll-blur-left'></div>" +
                     "<div class='category-stores-row-inner'></div>" +
+                    "<div class='scroll-blur-right'></div>" +
                 "</div>");
+
 
             storeRow.find(".category-stores-row-inner").append(frag);
 

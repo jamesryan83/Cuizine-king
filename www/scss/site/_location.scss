@@ -4,9 +4,6 @@
     text-align: center;
     position: relative;
 
-    br {
-        height: 0;
-    }
 
     // Location header
     #location-header {
@@ -184,15 +181,27 @@
 
             // list items are in another file
         }
+    }
 
 
-        @media (max-width: $mediaWidth2) {
-            max-width: 90%;
-        }
 
-        @media (max-width: $mediaWidth1) {
-            max-width: 95%;
-        }
+    // Scroll blurs
+    .scroll-blur-left, .scroll-blur-right {
+        top: 0;
+        bottom: auto;
+        height: 300px;
+        width: 30px;
+        z-index: 100;
+    }
+
+    .scroll-blur-left {
+        background: linear-gradient(to right, rgba(32, 88, 193, 0.65), rgba(0, 0, 0, 0));
+        margin-left: -15px;
+    }
+
+    .scroll-blur-right {
+        background: linear-gradient(to left, rgba(32, 88, 193, 0.65), rgba(0, 0, 0, 0));
+        margin-right: -15px;
     }
 
 
@@ -226,12 +235,20 @@
                 line-height: 30px;
             }
         }
+
+        #location-store-list {
+            max-width: 90%;
+        }
     }
 
 
 
     @media (max-width: $mediaWidth1) {
         padding-top: 0;
+
+        #location-store-list {
+            max-width: 95%;
+        }
     }
 
 

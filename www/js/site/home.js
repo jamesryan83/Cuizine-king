@@ -13,6 +13,11 @@ app.site.home = {
             }
         });
 
+
+        $("#download-app-logos > div").on("click", function () {
+            app.util.showToast("Not working yet");
+        });
+
     },
 
 }

@@ -25,7 +25,7 @@
             left: -80px;
             height: 80px;
             width: 80px;
-            animation: scooteranim 1s linear forwards;
+            animation: scooteranim 0.8s linear forwards;
             animation-delay: 0.5s;
             backface-visibility: hidden;
             z-index: 100;
@@ -58,6 +58,7 @@
             #download-app-logos {
                 > div {
                     margin: 0 10px;
+                    cursor: pointer;
                 }
 
                 #download-app-android {

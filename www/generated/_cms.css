@@ -685,28 +685,6 @@ input:read-only, textarea:read-only {
   font-size: 18px;
 }
 
-.category-scroller-container .category-scroller .scroll-blur-left, .category-scroller-container .category-scroller .scroll-blur-right {
-  display: none;
-  position: absolute;
-  bottom: 0;
-  height: 70px;
-  width: 20px;
-}
-
-.category-scroller-container .category-scroller .scroll-blur-left {
-  background: linear-gradient(to right, rgba(32, 88, 193, 0.55), transparent);
-  left: 0;
-  margin-left: -12px;
-  border-radius: 0 100% 100% 0;
-}
-
-.category-scroller-container .category-scroller .scroll-blur-right {
-  background: linear-gradient(to left, rgba(32, 88, 193, 0.55), transparent);
-  right: 0;
-  margin-right: -12px;
-  border-radius: 100% 0 0 100%;
-}
-
 @media (max-width: 670px) {
   .category-scroller-container .category-scroller {
     width: 95%;
@@ -738,6 +716,28 @@ input:read-only, textarea:read-only {
   .category-scroller-container .category-scroller.floating ul li {
     font-size: 16px;
   }
+}
+
+.scroll-blur-left, .scroll-blur-right {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  height: 70px;
+  width: 20px;
+}
+
+.scroll-blur-left {
+  background: linear-gradient(to right, rgba(32, 88, 193, 0.55), transparent);
+  left: 0;
+  margin-left: -12px;
+  border-radius: 0 100% 100% 0;
+}
+
+.scroll-blur-right {
+  background: linear-gradient(to left, rgba(32, 88, 193, 0.55), transparent);
+  right: 0;
+  margin-right: -12px;
+  border-radius: 100% 0 0 100%;
 }
 
 .rating-control {

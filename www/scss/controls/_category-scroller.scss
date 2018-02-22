@@ -95,29 +95,6 @@ $categoryScrollerHeight1: 70px;
                 }
             }
         }
-
-        // Scroll blurs
-        .scroll-blur-left, .scroll-blur-right {
-            display: none;
-            position: absolute;
-            bottom: 0;
-            height: 70px;
-            width: 20px;
-        }
-
-        .scroll-blur-left {
-            background: linear-gradient(to right, rgba(32, 88, 193, 0.55), rgba(0, 0, 0, 0));
-            left: 0;
-            margin-left: -12px;
-            border-radius: 0 100% 100% 0;
-        }
-
-        .scroll-blur-right {
-            background: linear-gradient(to left, rgba(32, 88, 193, 0.55), rgba(0, 0, 0, 0));
-            right: 0;
-            margin-right: -12px;
-            border-radius: 100% 0 0 100%;
-        }
     }
 
 
@@ -167,5 +144,28 @@ $categoryScrollerHeight1: 70px;
             }
         }
     }
+}
 
+
+// Scroll blurs
+.scroll-blur-left, .scroll-blur-right {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    height: 70px;
+    width: 20px;
+}
+
+.scroll-blur-left {
+    background: linear-gradient(to right, rgba(32, 88, 193, 0.55), rgba(0, 0, 0, 0));
+    left: 0;
+    margin-left: -12px;
+    border-radius: 0 100% 100% 0;
+}
+
+.scroll-blur-right {
+    background: linear-gradient(to left, rgba(32, 88, 193, 0.55), rgba(0, 0, 0, 0));
+    right: 0;
+    margin-right: -12px;
+    border-radius: 100% 0 0 100%;
 }
