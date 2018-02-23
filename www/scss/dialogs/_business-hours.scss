@@ -32,6 +32,12 @@
         li {
             padding: 5px;
 
+            &.today {
+                span {
+                    color: $colorBlue2;
+                }
+            }
+
             span {
                 width: 40px;
                 font-weight: bold;

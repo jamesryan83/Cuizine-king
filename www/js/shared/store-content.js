@@ -87,6 +87,15 @@ app.storeContent = {
         $("#store-info-review-count").text("( " + data.review_count + " )");
 
 
+        // hours
+        var isOpen = app.data.isStoreOpen();
+        console.log(isOpen)
+
+
+        $("#store-info-hours-is-open").text();
+        $("#store-info-hours-opens-at").text();
+
+
         // rating control
         app.controls.RatingControls.setValue(
             "#store-info-rating-control", Math.round(data.rating));

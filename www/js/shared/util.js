@@ -57,6 +57,15 @@ app.util = {
     // ---------------------- Stuff ----------------------
 
 
+    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+
+
+    // Returns todays name (eg. WED)
+    getTodayName: function () {
+        return this.days[new Date().getDay()];
+    },
+
+
     // jquery-template formatters
     setupTemplateFormatters: function () {
         $.addTemplateFormatter({

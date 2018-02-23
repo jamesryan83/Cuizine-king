@@ -1161,6 +1161,10 @@ input:read-only, textarea:read-only {
   padding: 5px;
 }
 
+#dialog-store-hours.dialog #dialog-store-hours-left li.today span, #dialog-store-hours.dialog #dialog-store-hours-right li.today span {
+  color: #5595d8;
+}
+
 #dialog-store-hours.dialog #dialog-store-hours-left li span, #dialog-store-hours.dialog #dialog-store-hours-right li span {
   width: 40px;
   font-weight: bold;
@@ -1778,6 +1782,10 @@ input:read-only, textarea:read-only {
 
 #dialog-store-hours.dialog #dialog-store-hours-left li, #dialog-store-hours.dialog #dialog-store-hours-right li {
   padding: 5px;
+}
+
+#dialog-store-hours.dialog #dialog-store-hours-left li.today span, #dialog-store-hours.dialog #dialog-store-hours-right li.today span {
+  color: #5595d8;
 }
 
 #dialog-store-hours.dialog #dialog-store-hours-left li span, #dialog-store-hours.dialog #dialog-store-hours-right li span {

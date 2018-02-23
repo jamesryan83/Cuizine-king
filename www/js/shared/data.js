@@ -52,6 +52,30 @@ app.data = {
 
 
 
+    isStoreOpen: function () {
+        if (!this.storeData) return false;
+
+        var result = { dineinOpen: false, deliveryOpen: false };
+
+        var today = app.util.getTodayName().toLowerCase();
+
+        var dineinOpen = this.storeData.hours["hours_" + today + "_dinein_open"];
+        var dineinClose = this.storeData.hours["hours_" + today + "_dinein_close"];
+        var deliveryOpen = this.storeData.hours["hours_" + today + "_delivery_open"];
+        var deliveryClose = this.storeData.hours["hours_" + today + "_delivery_close"];
+
+        if (dineinOpen.toLowerCase() === "null") return false;
+
+
+    },
+
+
+    getWhenStoreOpens: function () {
+
+    },
+
+
+
 
 
     // ---------------------- Checkout Data ----------------------

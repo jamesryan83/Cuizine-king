@@ -471,6 +471,30 @@ app.data = {
 
 
 
+    isStoreOpen: function () {
+        if (!this.storeData) return false;
+
+        var result = { dineinOpen: false, deliveryOpen: false };
+
+        var today = app.util.getTodayName().toLowerCase();
+
+        var dineinOpen = this.storeData.hours["hours_" + today + "_dinein_open"];
+        var dineinClose = this.storeData.hours["hours_" + today + "_dinein_close"];
+        var deliveryOpen = this.storeData.hours["hours_" + today + "_delivery_open"];
+        var deliveryClose = this.storeData.hours["hours_" + today + "_delivery_close"];
+
+        if (dineinOpen.toLowerCase() === "null") return false;
+
+
+    },
+
+
+    getWhenStoreOpens: function () {
+
+    },
+
+
+
 
 
     // ---------------------- Checkout Data ----------------------
@@ -585,31 +609,35 @@ app.dialogs.businessHours = {
     update: function (hours) {
         if (!hours) return;
 
-        var days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+        var days = app.util.days;
+        var today = app.util.getTodayName();
+
 
         // add left hours
         var frag = document.createDocumentFragment();
         for (var i = 0; i < days.length; i++) {
-            frag.appendChild($(this.getHoursRow(hours, days[i], true))[0]);
+            frag.appendChild($(this.getHoursRow(hours, days[i], true, today === days[i]))[0]);
         }
         this.$hoursLeft.append(frag);
+
 
         // add right hours
         frag = document.createDocumentFragment();
         for (var i = 0; i < days.length; i++) {
-            frag.appendChild($(this.getHoursRow(hours, days[i], false))[0]);
+            frag.appendChild($(this.getHoursRow(hours, days[i], false, today === days[i]))[0]);
         }
         this.$hoursRight.append(frag);
     },
 
 
     // Returns a html row of hours for a single day
-    getHoursRow: function (hours, day, isDineIn) {
+    getHoursRow: function (hours, day, isDineIn, isToday) {
 
         // create left and right property names
         var el = "hours_" + day.toLowerCase() + "_" + (isDineIn ? "dinein" : "delivery");
         var openEl = el + "_open";
         var closeEl = el + "_close";
+
 
         // create text
         var text = hours[openEl];
@@ -619,7 +647,11 @@ app.dialogs.businessHours = {
             text = hours[openEl] + " to " + hours[closeEl];
         }
 
-        return "<li><span>" + day + "</span> " + text + "</li>";
+        // highlight today
+        var todayClass = "";
+        if (isToday) todayClass = "today";
+
+        return "<li class='" + todayClass + "'><span>" + day + "</span> " + text + "</li>";
     },
 
 
@@ -998,6 +1030,15 @@ app.storeContent = {
         $("#store-info-review-count").text("( " + data.review_count + " )");
 
 
+        // hours
+        var isOpen = app.data.isStoreOpen();
+        console.log(isOpen)
+
+
+        $("#store-info-hours-is-open").text();
+        $("#store-info-hours-opens-at").text();
+
+
         // rating control
         app.controls.RatingControls.setValue(
             "#store-info-rating-control", Math.round(data.rating));
@@ -1225,6 +1266,15 @@ app.util = {
 
 
     // ---------------------- Stuff ----------------------
+
+
+    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+
+
+    // Returns todays name (eg. WED)
+    getTodayName: function () {
+        return this.days[new Date().getDay()];
+    },
 
 
     // jquery-template formatters
