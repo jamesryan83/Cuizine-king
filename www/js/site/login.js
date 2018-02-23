@@ -22,8 +22,8 @@ app.site.login = {
             }, function (err, result) {
                 if (err) return false;
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
 
                 app.routerBase.loadPageForRoute("/account/" + result.data.id_person, "site");
             });
@@ -45,9 +45,9 @@ app.site.login = {
             }, function (err, result) {
                 if (err) return false;
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
-                app.util.addStoreIdToStorage(result.data.id_store);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
+                app.data.addStoreIdToStorage(result.data.id_store);
 
                 // store is in a different section which requires page refresh
                 window.location.href = "/store-admin/" + result.data.id_store  + "/dashboard";
@@ -75,8 +75,8 @@ app.site.login = {
             }, function (err, result) {
                 if (err) return;
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
 
                 $("#registration-success-email").text(data.email);
                 self.showForm("#registration-success");
@@ -130,7 +130,7 @@ app.site.login = {
 
         // Registration success, go to acount page
         $("#registration-success-account").on("click", function () {
-            var id_person = app.util.getPersonIdFromStorage();
+            var id_person = app.data.getPersonIdFromStorage();
 
             if (id_person) {
                 window.location.href = "/account/" + id_person;

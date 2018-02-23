@@ -8,10 +8,15 @@ app.cms.details = {
 
         app.storeContent.init();
 
-        this.$storeInfo = $("#store-info");
         this.$storeInfoEdit = $("#store-info-edit");
+        this.$previewBorder = $("#preview-mode-border");
+        this.$returnButton = $(".page-cms-details-return");
+        this.$previewButton = $(".page-cms-details-preview");
+        this.$detailsForm = $("#store-info-edit");
 
-        var lastScrollPosition = 0; // for scrolling back down after return to editing
+
+        // for scrolling back down after return to editing
+        var lastScrollPosition = 0;
 
 
         // address suburb typeahead
@@ -23,7 +28,7 @@ app.cms.details = {
 
 
         // Get the store details data
-        app.storeContent.getStoreData(function (storeData) {
+        app.data.getStoreData(function (storeData) {
             self.setupPage(storeData);
         });
 
@@ -33,10 +38,10 @@ app.cms.details = {
 
 
         // Show Edit mode
-        $(".page-cms-details-return").on("click", function () {
+        this.$returnButton.on("click", function () {
             $(this).hide();
-            $(".page-cms-details-preview").show();
-            $("#preview-mode-border").hide();
+            self.$previewButton.show();
+            self.$previewBorder.hide();
 
             self.$storeInfo.hide();
             self.$storeInfoEdit.show();
@@ -46,12 +51,12 @@ app.cms.details = {
 
 
         // Show Preview
-        $(".page-cms-details-preview").on("click", function () {
+        this.$previewButton.on("click", function () {
             lastScrollPosition = $("html").scrollTop();
 
             $(this).hide();
-            $(".page-cms-details-return").show();
-            $("#preview-mode-border").show();
+            self.$previewButton.show();
+            self.$previewBorder.show();
 
             self.$storeInfoEdit.hide();
             self.$storeInfo.show();
@@ -62,8 +67,8 @@ app.cms.details = {
         $(".fileupload").on("change", function (e) {
             if (e.target.files.length > 0) {
 
-                $(".store-info-image-empty").hide();
-                $(".store-info-image-loading").show();
+                app.storeContent.$logoEmpty.hide();
+                app.storeContent.$logoLoading.show();
 
                 // send image to server
                 app.util.uploadImage(e.target.files, function (err) {
@@ -79,13 +84,14 @@ app.cms.details = {
                         app.storeContent.$logo.each(function (index, el) {
                             el.src = reader.result;
                         });
-                        $(".store-info-image-empty").hide();
-                        $(".store-info-image-loading").hide();
+
+                        app.storeContent.$logoEmpty.hide();
+                        app.storeContent.$logoLoading.hide();
                     }, false);
 
                     reader.addEventListener("error", function () {
-                        $(".store-info-image-empty").hide();
-                        $(".store-info-image-loading").hide();
+                        app.storeContent.$logoEmpty.hide();
+                        app.storeContent.$logoLoading.hide();
                     }, false);
 
                     if (file) {
@@ -98,7 +104,7 @@ app.cms.details = {
 
         // Save store details form
         this.$storeInfoEdit.on("submit", function () {
-            var data = validate.collectFormValues($("#store-info-edit")[0], { trim: true })
+            var data = validate.collectFormValues(this.$detailsForm[0], { trim: true })
 
 
             // check hours

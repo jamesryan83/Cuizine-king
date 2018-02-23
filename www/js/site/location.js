@@ -6,6 +6,7 @@ app.site.location = {
     storeData: [],
     suburbTimeout: null,
 
+
     // for heading resizing
     pageWidth: 0,
     regularHeadingWidth: 0,
@@ -113,10 +114,11 @@ app.site.location = {
         }
 
 
-        // TODO : check events are cleaned up properly
         // add events to each category row
         $(".category-stores-row-inner").each(function (index, el) {
             new app.controls.HorizontalScroller(el, function (clickedEl) {
+                if (!clickedEl) return;
+
                 var storeEl = $(clickedEl).closest(".store-list-item");
                 var storeId = storeEl[0].id.replace("store", "");
 

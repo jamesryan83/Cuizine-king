@@ -30,7 +30,7 @@ app.site.resetPassword = {
             }, function (err) {
                 if (err) return;
 
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
             }, true);
 
             return false;

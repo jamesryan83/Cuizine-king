@@ -9,36 +9,64 @@ app.dialogs.businessHours = {
     init: function () {
         var self = this;
 
+        this.$hoursLeft = $("#dialog-store-hours-left");
+        this.$hoursRight = $("#dialog-store-hours-right");
+
         $("#dialog-store-hours-close").on("click", function () {
             self.hide();
         });
     },
 
 
-    update: function (hours, hoursEl) {
-        this.addHoursToList(hours.slice(0, 7), "#dialog-store-hours-left");
-        this.addHoursToList(hours.slice(7, 14), "#dialog-store-hours-right");
+    // update dialog content
+    update: function (hours) {
+        if (!hours) return;
 
-        var text = "";
+        var days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+        // add left hours
         var frag = document.createDocumentFragment();
-        for (var i = 0; i < 7; i++) {
-            if (hours[i].opens === "c") {
-                text = "closed";
-            } else {
-                text = hours[i].opens + " to " + hours[i].closes;
-            }
-
-            frag.append($("<li><span>" + this.days[i] + "</span> " + text + "</li>")[0]);
+        for (var i = 0; i < days.length; i++) {
+            frag.appendChild($(this.getHoursRow(hours, days[i], true))[0]);
         }
-        $(hoursEl).empty().append(frag);
+        this.$hoursLeft.append(frag);
+
+        // add right hours
+        frag = document.createDocumentFragment();
+        for (var i = 0; i < days.length; i++) {
+            frag.appendChild($(this.getHoursRow(hours, days[i], false))[0]);
+        }
+        this.$hoursRight.append(frag);
     },
 
 
+    // Returns a html row of hours for a single day
+    getHoursRow: function (hours, day, isDineIn) {
+
+        // create left and right property names
+        var el = "hours_" + day.toLowerCase() + "_" + (isDineIn ? "dinein" : "delivery");
+        var openEl = el + "_open";
+        var closeEl = el + "_close";
+
+        // create text
+        var text = hours[openEl];
+        if (text.toLowerCase() === "null") {
+            text = "closed";
+        } else {
+            text = hours[openEl] + " to " + hours[closeEl];
+        }
+
+        return "<li><span>" + day + "</span> " + text + "</li>";
+    },
+
+
+    // show dialog
     show: function () {
         app.dialogs.show("#dialog-store-hours");
     },
 
 
+    // hide dialog
     hide: function () {
         app.dialogs.hide();
     },

@@ -4,34 +4,34 @@
 // This is the details and menu sections used on the store page and edit store page
 app.storeContent = {
 
-    storeDataRequestNotAllowed: false,
-    storeData: {},
 
     init: function () {
 
+        this.$storeInfo = $("#store-info");
         this.$logo = $(".store-info-image");
         this.$description = $("#store-info-description");
         this.$logoEmpty = $(".store-info-image-empty");
         this.$logoLoading = $(".store-info-image-loading");
         this.$descriptionButton = $("#store-info-button-description");
+        this.$hoursButton = $("#store-info-button-hours");
+        this.$reviewsButton = $("#store-info-button-reviews");
         this.$menuList = $("#store-menu-list");
+
 
         this.$logoEmpty.hide();
         this.$logoLoading.show();
 
-        this.id_store = app.util.getStoreIdFromStorage();
-
 
         // Open dialog buttons
-        $("#store-info-button-description").on("click", function () {
+        this.$descriptionButton.on("click", function () {
             app.dialogs.description.show();
         });
 
-        $("#store-info-button-hours").on("click", function () {
+        this.$hoursButton.on("click", function () {
             app.dialogs.businessHours.show();
         });
 
-        $("#store-info-button-reviews").on("click", function () {
+        this.$reviewsButton.on("click", function () {
             app.dialogs.reviews.show();
         });
 
@@ -52,10 +52,13 @@ app.storeContent = {
     addStoreDetailsDataToPage: function (data) {
         var self = this;
 
+        var id_store = app.data.getStoreIdFromStorage();
+        if (!id_store) return;
+
 
         // logo
         var logo = new Image();
-        logo.src = "/res/storelogos/store" + this.id_store + ".jpg?" + Date.now();
+        logo.src = "/res/storelogos/store" + id_store + ".jpg?" + Date.now();
         logo.onload = function () {
             self.$logo.attr("src", logo.src);
 
@@ -85,13 +88,14 @@ app.storeContent = {
 
 
         // rating control
-        app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+        app.controls.RatingControls.setValue(
+            "#store-info-rating-control", Math.round(data.rating));
 
 
         // Setup dialogs
-        app.dialogs.description.init(data.name, data.description);
-        app.dialogs.businessHours.init(data.hours);
-        app.dialogs.reviews.init(data);
+        app.dialogs.description.update(data.name, data.description);
+        app.dialogs.businessHours.update(data.hours);
+        app.dialogs.reviews.update(data);
 
 
         // Events
@@ -212,37 +216,44 @@ app.storeContent = {
 
 
 
-    // Gets the store data and caches it for a little while
-    getStoreData: function (callback) {
-        var self = this;
 
-        // check if already running
-        if (this.storeDataRequestNotAllowed) {
-            return callback(this.storeData);
+
+
+    // Returns a product by its id from the cached store data
+    getProduct: function (id_product) {
+        if (!id_product)
+            return null;
+
+        for (var i = 0; i < this.storeData.products.length; i++) {
+            if (this.storeData.products[i].id_product == id_product) {
+                return this.storeData.products[i];
+            }
         }
 
-        if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
-            return false;
+        return null;
+    },
 
 
-        // set timeout
-        this.storeDataRequestNotAllowed = true;
-        setTimeout(function () {
-            self.storeDataRequestNotAllowed = false;
-        }, 2000);
+    // Returns a product option by its id from the cached store data
+    getProductOption: function (id_product_option) {
+        if (!id_product_option)
+            return null;
 
+        var options = null;
 
-        // get data from server
-        app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store?id_store=" + this.id_store, cache: true
-        }, function (err, result) {
-            if (err) return;
+        for (var i = 0; i < this.storeData.products.length; i++) {
+            options = this.storeData.products[i].options;
 
-            result.data.hours = result.data.hours[0];
-            self.storeData = result.data; // cache storeData
+            if (!options) continue;
 
-            return callback(self.storeData);
-        });
+            for (var j = 0; j < options.length; j++) {
+                if (options[j].id_product_option == id_product_option) {
+                    return options[j];
+                }
+            }
+        }
+
+        return null;
     },
 
 

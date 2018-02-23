@@ -8,6 +8,52 @@ app.util = {
 
 
 
+
+    // ---------------------- Validation ----------------------
+
+
+    // Validates an inputs object and shows toast if there's an error
+    validateInputs: function (inputs, validationRule) {
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
+        var errors = validate(inputs, validationRule, { format: "flat" });
+        if (errors && errors.length > 0) {
+            this.showToast(errors[0]);
+            return false;
+        }
+
+        return true;
+    },
+
+
+    checkIfObject: function (value) {
+        return (value && typeof value === 'object' && value.constructor === Object)
+    },
+
+
+    checkIfString: function (value) {
+        return (typeof value === "string" || value instanceof String)
+    },
+
+
+    checkIfPositiveInteger: function (value, includeZero) {
+        var intValue = parseInt(value);
+        if (intValue === NaN) return false;
+
+        intValue = Number(value);
+        if (!Number.isInteger(intValue)) return false;
+
+        return includeZero ? intValue >= 0 : intValue > 0;
+    },
+
+
+
+
+
+
     // ---------------------- Stuff ----------------------
 
 
@@ -36,27 +82,13 @@ app.util = {
     },
 
 
-    // Validates an inputs object and shows toast if there's an error
-    validateInputs: function (inputs, validationRule) {
-        if (!validationRule) {
-            console.log("validate rule undefined");
-            return false;
-        }
 
-        var errors = validate(inputs, validationRule, { format: "flat" });
-        if (errors && errors.length > 0) {
-            this.showToast(errors[0]);
-            return false;
-        }
-
-        return true;
-    },
-
-
+    // TODO : this being used ?
     // Returns true if running on cordova
     isCordova: function () {
         return $("#is-cordova").val() == "true";
     },
+
 
 
     // Show toast
@@ -128,61 +160,15 @@ app.util = {
 
 
 
-    // ---------------------- Credentials ----------------------
-
-    // Add token to storage
-    addJwtToStorage: function (token) {
-        localStorage.setItem("jwt", token);
-    },
-
-
-    // Returns token from storage
-    getJwtFromStorage: function () {
-        return localStorage.getItem("jwt");
-    },
-
-
-    // Add person id to storage
-    addPersonIdToStorage: function (id) {
-        localStorage.setItem("pid", id);
-    },
-
-
-    // Returns person id from storage
-    getPersonIdFromStorage: function () {
-        return Number(localStorage.getItem("pid"));
-    },
-
-
-    // Add store id to storage
-    addStoreIdToStorage: function (id) {
-        localStorage.setItem("sid", id);
-    },
-
-
-    // Returns store id from storage
-    getStoreIdFromStorage: function () {
-        return Number(localStorage.getItem("sid"));
-    },
-
-
-    // Replace current id and jwt with invalid ones
-    invalidateCredentialsAndGoToLogin: function () {
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("pid");
-        localStorage.removeItem("sid");
-        window.location.href = "/login";
-    },
-
 
 
     // ---------------------- Ajax ----------------------
 
-
+    // TODO : check what happens on length error
     // check if jwt from local storage is valid
     checkToken: function (callback) {
         var self = this;
-        var jwt = this.getJwtFromStorage();
+        var jwt = app.data.getJwtFromStorage();
 
         if (jwt && jwt.length > 30) { // TODO : add a regex check or something
 
@@ -195,16 +181,16 @@ app.util = {
                     return callback("invalid token");
                 }
 
-                self.addJwtToStorage(result.data.jwt);
-                self.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
                 if (result.data.id_store && result.data.id_store > 0) {
-                    self.addStoreIdToStorage(result.data.id_store);
+                    app.data.addStoreIdToStorage(result.data.id_store);
                 }
 
                 return callback(null);
             });
         } else {
-            this.invalidateCredentials();
+            app.data.invalidateTokensAndGoToLogin();
             return callback("invalid token");
         }
     },
@@ -239,7 +225,7 @@ app.util = {
 
             var formdata = new FormData();
             formdata.append("logo", files[0]);
-            formdata.append("id_store", this.getStoreIdFromStorage());
+            formdata.append("id_store", app.data.getStoreIdFromStorage());
 
             this.ajaxRequest({
                 method: "POST", url: "/api/v1/store-update-logo", auth: true,
@@ -268,7 +254,7 @@ app.util = {
     },
 
 
-
+    // TODO : check jwt before ajax
     // Generic ajax request
     // options are { method, url, data, auth, datatype, cache }, returns (err, data)
     ajaxRequest: function (options, callback) {
@@ -287,7 +273,7 @@ app.util = {
             contentType: contentType,
             beforeSend: function(request) {
                 if (options.auth) {
-                    request.setRequestHeader("authorization", "Bearer " + app.util.getJwtFromStorage());
+                    request.setRequestHeader("authorization", "Bearer " + app.data.getJwtFromStorage());
                 }
             },
             success: function (result) {

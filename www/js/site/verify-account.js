@@ -33,8 +33,8 @@ app.site.verifyAccount = {
 
                 if (!result.data.jwt) alert("jwt missing");
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
 
                 $("#form-verify-account").addClass("hidden");
                 $("#verify-account-success").removeClass("hidden");
@@ -45,12 +45,12 @@ app.site.verifyAccount = {
 
 
         $("#verify-account-success-account").on("click", function () {
-            var id_person = app.util.getPersonIdFromStorage();
+            var id_person = app.data.getPersonIdFromStorage();
 
             if (id_person) {
                 window.location.href = "/account/" + id_person;
             } else {
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
             }
         });
 

@@ -25,7 +25,7 @@ config.mssql.database = "menuthingTest";
 // General functions and stuff for testing
 exports = module.exports = {
 
-    regexValidHtml: /(\s*)<!DOCTYPE html>(\s*)<html>(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi,
+    regexValidHtml: /(\s*)<!DOCTYPE html>(\s*)<html lang="en">(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi,
 
     supertestUrl: "http://localhost:" + config.port,
 

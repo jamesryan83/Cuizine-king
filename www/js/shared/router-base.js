@@ -107,7 +107,7 @@ app.routerBase = {
         // unknown route
         } else {
             debugger;
-            app.util.invalidateCredentialsAndGoToLogin();
+            app.data.invalidateTokensAndGoToLogin();
             return;
         }
 
@@ -121,7 +121,7 @@ app.routerBase = {
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/logout", auth: true
         }, function () {
-            app.util.invalidateCredentialsAndGoToLogin();
+            app.data.invalidateTokensAndGoToLogin();
 
         });
     },
@@ -130,7 +130,7 @@ app.routerBase = {
 
     // Get if the user is logged in
     isUserLoggedIn: function () {
-        var jwt = app.util.getJwtFromStorage();
+        var jwt = app.data.getJwtFromStorage();
         return jwt && jwt.length > 30; // TODO : something better
     },
 

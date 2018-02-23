@@ -35,16 +35,29 @@
 
     <!-- Checkout popup -->
     <div id="store-checkout" style="display: none;">
-        <div id="store-checkout-resize"></div>
         <div id="store-checkout-header">
+            <div id="store-checkout-resize"></div>
             <h4>CHECKOUT</h4>
-            <label>Basket is Empty</label>
+            <label id="store-checkout-header-details"></label>
             <div>
                 <button id="store-checkout-header-hide" class="button-3" style="display: none;">HIDE</button>
                 <button id="store-checkout-header-show" class="button-3">SHOW</button>
             </div>
         </div>
+
+        <!-- checkout items list -->
         <div id="store-checkout-content">
+            <div id="store-checkout-content-header" class="clearfix">
+                <div><label>Name</label></div>
+                <div><label>Option</label></div>
+                <div><label>Price</label></div>
+                <div><label>Quantity</label></div>
+                <div><label>Extras</label></div>
+                <div><label>Total</label></div>
+            </div>
+            <div id="store-checkout-content-table">
+
+            </div>
         </div>
     </div>
 
@@ -66,4 +79,17 @@
     </div>
 
 </div>
+
+
+<!-- a single checkout row -->
+<script id="template-store-checkout-item" type="text/html">
+    <div class="store-checkout-item clearfix">
+        <div><label data-content="name"></label></div>
+        <div><label data-content="nameOption"></label></div>
+        <div><label data-content="price" data-format="priceFormatter"></label></div>
+        <div><label data-content="quantity"></label></div>
+        <div><label data-content="extras"></label></div>
+        <div><label data-content="total" data-format="priceFormatter"></label></div>
+    </div>
+</script>
 

@@ -11,7 +11,7 @@ app.site.account = {
             method: "GET", url: "/api/v1/account", auth: true
         }, function (err, result) {
             if (err) {
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
                 return;
             }
 
@@ -37,7 +37,7 @@ app.site.account = {
                 app.util.hideLoadingScreen();
                 if (err) return;
 
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
             });
         });
 

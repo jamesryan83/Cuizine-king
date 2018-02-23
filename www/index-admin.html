@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
     <head>
         <meta name="format-detection" content="telephone=no">
@@ -48,8 +48,8 @@
                     }, function (err, result) {
                         if (err) return false;
 
-                        app.util.addJwtToStorage(result.data.jwt);
-                        app.util.addPersonIdToStorage(result.data.id_person);
+                        app.data.addJwtToStorage(result.data.jwt);
+                        app.data.addPersonIdToStorage(result.data.id_person);
 
                         window.location.href = "/sysadmin/create-store";
                     });

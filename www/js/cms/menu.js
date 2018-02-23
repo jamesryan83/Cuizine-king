@@ -10,7 +10,7 @@ app.cms.menu = {
 
 
         // Get the store menu data
-        app.storeContent.getStoreData(function (storeData) {
+        app.data.getStoreData(function (storeData) {
             if (!storeData) {
                 console.log("no data")
                 return;

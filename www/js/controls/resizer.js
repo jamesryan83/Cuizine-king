@@ -1,6 +1,6 @@
 
 // Creates a vertical or horizontal resizer
-app.controls.Resizer = function (direction, handle, container, offset) {
+app.controls.Resizer = function (direction, handle, container, offset, resizeCallback) {
 
     var $handle = $(handle);
     var $container = $(container);
@@ -8,6 +8,8 @@ app.controls.Resizer = function (direction, handle, container, offset) {
     var startX = 0;
     var startY = 0;
     var mouseIsDown = false;
+    var currentHeight = 0;
+
 
     $handle.on("mousedown", function (e) {
         mouseIsDown = true;
@@ -17,15 +19,19 @@ app.controls.Resizer = function (direction, handle, container, offset) {
         console.log(startX, startY)
     });
 
+
     $(window).on("mousemove", function (e) {
         e.preventDefault();
-        e.stopPropagation();
 
         if (mouseIsDown) {
-            var h = window.innerHeight - e.clientY - offset;
-            $container.height(h);
+            $container.show();
+            currentHeight = window.innerHeight - e.clientY - offset;
+            $container.height(currentHeight);
+
+            if (resizeCallback) resizeCallback();
         }
     });
+
 
     $(window).on("mouseup", function () {
         mouseIsDown = false;

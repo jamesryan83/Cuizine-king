@@ -199,6 +199,17 @@ After that it just processes requests until it crashes.  Azure will restart the 
 
 ## How pages work on the website
 
+Local Storage
+
+sid - id_store
+pid - id_person
+jwt - json web token
+cht - checkout height
+cop - checkout open
+
+Session Storage
+
+cod - checkout data
 
 
 

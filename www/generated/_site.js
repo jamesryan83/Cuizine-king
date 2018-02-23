@@ -169,7 +169,7 @@ app.site.account = {
             method: "GET", url: "/api/v1/account", auth: true
         }, function (err, result) {
             if (err) {
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
                 return;
             }
 
@@ -195,7 +195,7 @@ app.site.account = {
                 app.util.hideLoadingScreen();
                 if (err) return;
 
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
             });
         });
 
@@ -220,25 +220,6 @@ app.dialogs.addToOrder = {
     show: function () {
         $("#dialog-container").show();
         $(this.dialogEl).show();
-    },
-
-    hide: function () {
-        $("#dialog-container").hide();
-        $("#dialog-container > div").hide();
-    },
-
-}
-
-// Checkout dialog
-app.dialogs.checkout = {
-
-    // Init
-    init: function () {
-
-    },
-
-    show: function () {
-        $("#dialog-container").show();
     },
 
     hide: function () {
@@ -275,6 +256,7 @@ app.site.location = {
     suburbs: [],
     storeData: [],
     suburbTimeout: null,
+
 
     // for heading resizing
     pageWidth: 0,
@@ -383,10 +365,11 @@ app.site.location = {
         }
 
 
-        // TODO : check events are cleaned up properly
         // add events to each category row
         $(".category-stores-row-inner").each(function (index, el) {
             new app.controls.HorizontalScroller(el, function (clickedEl) {
+                if (!clickedEl) return;
+
                 var storeEl = $(clickedEl).closest(".store-list-item");
                 var storeId = storeEl[0].id.replace("store", "");
 
@@ -422,8 +405,8 @@ app.site.login = {
             }, function (err, result) {
                 if (err) return false;
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
 
                 app.routerBase.loadPageForRoute("/account/" + result.data.id_person, "site");
             });
@@ -445,9 +428,9 @@ app.site.login = {
             }, function (err, result) {
                 if (err) return false;
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
-                app.util.addStoreIdToStorage(result.data.id_store);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
+                app.data.addStoreIdToStorage(result.data.id_store);
 
                 // store is in a different section which requires page refresh
                 window.location.href = "/store-admin/" + result.data.id_store  + "/dashboard";
@@ -475,8 +458,8 @@ app.site.login = {
             }, function (err, result) {
                 if (err) return;
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
 
                 $("#registration-success-email").text(data.email);
                 self.showForm("#registration-success");
@@ -530,7 +513,7 @@ app.site.login = {
 
         // Registration success, go to acount page
         $("#registration-success-account").on("click", function () {
-            var id_person = app.util.getPersonIdFromStorage();
+            var id_person = app.data.getPersonIdFromStorage();
 
             if (id_person) {
                 window.location.href = "/account/" + id_person;
@@ -683,7 +666,7 @@ app.site.navbar = {
             $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
 
-            if (app.util.getStoreIdFromStorage()) {
+            if (app.data.getStoreIdFromStorage()) {
                 $(".navbar-link-dashboard").show();
             }
         } else {
@@ -710,12 +693,12 @@ app.site.navbar = {
             }
 
             if (e.target.innerText.toLowerCase() == "account") {
-                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                app.routerBase.loadPageForRoute("/account/" + app.data.getPersonIdFromStorage(), "site");
                 return false;
             }
 
             if (e.target.innerText.toLowerCase() == "dashboard") {
-                var sid = app.util.getStoreIdFromStorage();
+                var sid = app.data.getStoreIdFromStorage();
                 window.location.href = "/store-admin/" + sid + "/dashboard";
                 return false;
             }
@@ -758,7 +741,7 @@ app.site.resetPassword = {
             }, function (err) {
                 if (err) return;
 
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
             }, true);
 
             return false;
@@ -774,20 +757,24 @@ app.site.store = {
 
         app.storeContent.init();
 
-        this.checkoutHeaderHeight = 65;
+        this.checkoutHeaderHeight = 60;
         this.$checkout = $("#store-checkout");
         this.$checkoutContent = $("#store-checkout-content");
+        this.$checkoutTable = $("#store-checkout-content-table");
         this.$checkoutHide = $("#store-checkout-header-hide");
         this.$checkoutShow = $("#store-checkout-header-show");
+        this.$checkoutDetails = $("#store-checkout-header-details");
 
 
         // Get checkout height
         var checkoutHeight = localStorage.getItem("cht");
+        var checkoutOpen = localStorage.getItem("cop");
         if (!checkoutHeight) {
             checkoutHeight = (screen.height / 2) - this.checkoutHeaderHeight;
             localStorage.setItem("cht", checkoutHeight);
         }
 
+        if (checkoutOpen) this.$checkoutContent.show();
 
         this.$checkoutContent.css("height", checkoutHeight);
 
@@ -799,34 +786,147 @@ app.site.store = {
         app.storeContent.id_store = id_store;
 
 
-
+        // checkout vertical resizer
         new app.controls.Resizer(
             "vertical", "#store-checkout-resize",
-            "#store-checkout-content", this.checkoutHeaderHeight);
+            "#store-checkout-content", this.checkoutHeaderHeight, function () {
+
+            });
 
 
         // Get the store data
-        app.storeContent.getStoreData(function (storeData) {
+        app.data.getStoreData(function (storeData) {
             if (storeData) {
                 storeData.id_store = app.storeContent.id_store;
                 app.storeContent.addStoreDetailsDataToPage(storeData);
                 app.storeContent.addMenuDataToPage(storeData);
+console.log(storeData)
+                self.afterStoreDataLoaded();
             }
         });
 
 
-        $("#store-checkout-header-show").on("click", function () {
-            self.$checkoutContent.show();
-            self.$checkoutHide.show();
-            self.$checkoutShow.hide();
+        // show checkout
+        this.$checkoutShow.on("click", function () {
+            self.showCheckout();
         });
 
 
-        $("#store-checkout-header-hide").on("click", function () {
-            self.$checkoutContent.hide();
-            self.$checkoutHide.hide();
-            self.$checkoutShow.show();
+        // hide checkout
+        this.$checkoutHide.on("click", function () {
+            self.hideCheckout();
         });
+    },
+
+
+
+    // After store data is loaded
+    afterStoreDataLoaded: function () {
+        var self = this;
+
+        this.updateCheckout();
+
+        // Product option clicked
+        $(".store-menu-list-item-option").on("click", function (e) {
+            self.addItemToCheckout(
+                e.currentTarget.dataset.productOptionId,
+                $(e.currentTarget).closest(".store-menu-list-item")[0].dataset.productId);
+        });
+    },
+
+
+
+    // Show the checkout
+    showCheckout: function () {
+        this.$checkoutContent.show();
+        this.$checkoutHide.show();
+        this.$checkoutShow.hide();
+    },
+
+
+    // Hide the checkout
+    hideCheckout: function () {
+        this.$checkoutContent.hide();
+        this.$checkoutHide.hide();
+        this.$checkoutShow.show();
+    },
+
+
+    // Adds an item to the checkout data
+    addItemToCheckout: function (productId, productOptionId) {
+        if (!productId || !productOptionId) {
+            console.log("productId or productOptionId missing");
+            return;
+        }
+
+        var data = app.data.getCheckoutData();
+        data.push({
+            id_product: productId,
+            id_product_option: productOptionId,
+            quantity: 1,
+            extras: []
+        });
+        app.data.setCheckoutData(data);
+
+        this.updateCheckout(data);
+    },
+
+
+    // Update the checkout with the current data
+    updateCheckout: function (data) {
+        if (!data) data = app.data.getCheckoutData();
+
+        this.$checkoutTable.empty();
+
+        // checkout data is empty
+        if (data.length === 0) {
+            this.$checkout.hide();
+            app.data.setCheckoutData([]);
+            this.$checkoutDetails.text("");
+            return;
+        }
+
+        if (!app.storeContent.storeData) return;
+
+        // add items to checkout
+        var product = null;
+        var option = null;
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < data.length; i++) {
+            product = app.storeContent.getProduct(data[i].id_product);
+            option = app.storeContent.getProductOption(data[i].id_product_option);
+
+            if (!product) {
+                console.log("unable to find product", product, data[i]);
+                continue;
+            }
+
+            if (!option) {
+                console.log("unable to find option", option, data[i]);
+                continue;
+            }
+
+            for (var j = 0; j < 20; j++) {
+            frag.append(app.util.loadTemplate("#template-store-checkout-item", {
+                name: product.name,
+                nameOption: option.name,
+                price: option.price,
+                quantity: data[i].quantity,
+                extras: data[i].extras,
+                total: "$25.92"
+            })[0]);
+            }
+        }
+        this.$checkoutTable.append(frag);
+
+
+
+        // checkout header text
+        var text = data.length + " Item" + (data.length === 1 ? "" : "s") + " in your Basket";
+        this.$checkoutDetails.text(text);
+
+        this.$checkout.show();
+
     },
 
 }
@@ -865,8 +965,8 @@ app.site.verifyAccount = {
 
                 if (!result.data.jwt) alert("jwt missing");
 
-                app.util.addJwtToStorage(result.data.jwt);
-                app.util.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
 
                 $("#form-verify-account").addClass("hidden");
                 $("#verify-account-success").removeClass("hidden");
@@ -877,12 +977,12 @@ app.site.verifyAccount = {
 
 
         $("#verify-account-success-account").on("click", function () {
-            var id_person = app.util.getPersonIdFromStorage();
+            var id_person = app.data.getPersonIdFromStorage();
 
             if (id_person) {
                 window.location.href = "/account/" + id_person;
             } else {
-                app.util.invalidateCredentialsAndGoToLogin();
+                app.data.invalidateTokensAndGoToLogin();
             }
         });
 
@@ -895,6 +995,148 @@ app.site.verifyAccount = {
 
 
 
+
+
+app.data = {
+
+
+    storeDataRequestNotAllowed: false,
+    storeData: {},  // store data cache
+
+
+
+    // ---------------------- Store Data ----------------------
+
+
+    // Gets the store data and caches it for a little while
+    getStoreData: function (callback) {
+        var self = this;
+
+        // check if already running
+        if (this.storeDataRequestNotAllowed) {
+            return callback(this.storeData);
+        }
+
+        var id_store = this.getStoreIdFromStorage();
+
+        if (!app.util.validateInputs({ id_store: id_store }, app.validationRules.getStore))
+            return false;
+
+
+        // set timeout
+        this.storeDataRequestNotAllowed = true;
+        setTimeout(function () {
+            self.storeDataRequestNotAllowed = false;
+        }, 2000);
+
+
+        // get data from server
+        app.util.ajaxRequest({
+            method: "GET", url: "/api/v1/store?id_store=" + id_store, cache: true
+        }, function (err, result) {
+            if (err) return;
+
+            result.data.hours = result.data.hours[0];
+            self.storeData = result.data; // cache storeData
+
+            return callback(self.storeData);
+        });
+    },
+
+
+
+
+
+    // ---------------------- Checkout Data ----------------------
+
+
+    // Returns checkout data or an empty checkout object
+    getCheckoutData: function () {
+        var data = window.sessionStorage.getItem("cod");
+
+        try { data = JSON.parse(data); } catch (e) { }
+
+        if (!data) data = [];
+
+        return data;
+    },
+
+
+    // Sets the checkout data
+    setCheckoutData: function (data) {
+        window.sessionStorage.setItem("cod", JSON.stringify(data));
+    },
+
+
+
+
+
+    // ---------------------- Tokens ----------------------
+
+    // Add token to storage
+    addJwtToStorage: function (token) {
+        localStorage.setItem("jwt", token);
+    },
+
+
+    // Returns token from storage
+    getJwtFromStorage: function () {
+        var item = localStorage.getItem("jwt");
+        if (app.util.checkIfString(item)) {
+            return item;
+        }
+
+        return null;
+    },
+
+
+    // Add person id to storage
+    addPersonIdToStorage: function (id) {
+        localStorage.setItem("pid", id);
+    },
+
+
+    // Returns person id from storage
+    getPersonIdFromStorage: function () {
+        var item = localStorage.getItem("pid");
+        if (app.util.checkIfPositiveInteger(item)) {
+            return Number(item);
+        }
+
+        return null;
+    },
+
+
+    // Add store id to storage
+    addStoreIdToStorage: function (id) {
+        localStorage.setItem("sid", id);
+    },
+
+
+    // Returns store id from storage
+    getStoreIdFromStorage: function () {
+        var item = localStorage.getItem("sid");
+        if (app.util.checkIfPositiveInteger(item)) {
+            return Number(item);
+        }
+
+        return null;
+    },
+
+
+    // Replace current id and jwt with invalid ones
+    invalidateTokensAndGoToLogin: function () {
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("pid");
+        localStorage.removeItem("sid");
+        window.location.href = "/login";
+    },
+
+}
+
+
+
+
 // Business hours dialog
 app.dialogs.businessHours = {
 
@@ -904,36 +1146,64 @@ app.dialogs.businessHours = {
     init: function () {
         var self = this;
 
+        this.$hoursLeft = $("#dialog-store-hours-left");
+        this.$hoursRight = $("#dialog-store-hours-right");
+
         $("#dialog-store-hours-close").on("click", function () {
             self.hide();
         });
     },
 
 
-    update: function (hours, hoursEl) {
-        this.addHoursToList(hours.slice(0, 7), "#dialog-store-hours-left");
-        this.addHoursToList(hours.slice(7, 14), "#dialog-store-hours-right");
+    // update dialog content
+    update: function (hours) {
+        if (!hours) return;
 
-        var text = "";
+        var days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+        // add left hours
         var frag = document.createDocumentFragment();
-        for (var i = 0; i < 7; i++) {
-            if (hours[i].opens === "c") {
-                text = "closed";
-            } else {
-                text = hours[i].opens + " to " + hours[i].closes;
-            }
-
-            frag.append($("<li><span>" + this.days[i] + "</span> " + text + "</li>")[0]);
+        for (var i = 0; i < days.length; i++) {
+            frag.appendChild($(this.getHoursRow(hours, days[i], true))[0]);
         }
-        $(hoursEl).empty().append(frag);
+        this.$hoursLeft.append(frag);
+
+        // add right hours
+        frag = document.createDocumentFragment();
+        for (var i = 0; i < days.length; i++) {
+            frag.appendChild($(this.getHoursRow(hours, days[i], false))[0]);
+        }
+        this.$hoursRight.append(frag);
     },
 
 
+    // Returns a html row of hours for a single day
+    getHoursRow: function (hours, day, isDineIn) {
+
+        // create left and right property names
+        var el = "hours_" + day.toLowerCase() + "_" + (isDineIn ? "dinein" : "delivery");
+        var openEl = el + "_open";
+        var closeEl = el + "_close";
+
+        // create text
+        var text = hours[openEl];
+        if (text.toLowerCase() === "null") {
+            text = "closed";
+        } else {
+            text = hours[openEl] + " to " + hours[closeEl];
+        }
+
+        return "<li><span>" + day + "</span> " + text + "</li>";
+    },
+
+
+    // show dialog
     show: function () {
         app.dialogs.show("#dialog-store-hours");
     },
 
 
+    // hide dialog
     hide: function () {
         app.dialogs.hide();
     },
@@ -1020,6 +1290,7 @@ app.dialogs.reviews = {
 
 
     update: function (data) {
+        return;
         $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
 
         app.controls.RatingControls.setValue("#dialog-store-reviews-rating-control",
@@ -1182,7 +1453,7 @@ app.routerBase = {
         // unknown route
         } else {
             debugger;
-            app.util.invalidateCredentialsAndGoToLogin();
+            app.data.invalidateTokensAndGoToLogin();
             return;
         }
 
@@ -1196,7 +1467,7 @@ app.routerBase = {
         app.util.ajaxRequest({
             method: "GET", url: "/api/v1/logout", auth: true
         }, function () {
-            app.util.invalidateCredentialsAndGoToLogin();
+            app.data.invalidateTokensAndGoToLogin();
 
         });
     },
@@ -1205,7 +1476,7 @@ app.routerBase = {
 
     // Get if the user is logged in
     isUserLoggedIn: function () {
-        var jwt = app.util.getJwtFromStorage();
+        var jwt = app.data.getJwtFromStorage();
         return jwt && jwt.length > 30; // TODO : something better
     },
 
@@ -1218,34 +1489,34 @@ app.routerBase = {
 // This is the details and menu sections used on the store page and edit store page
 app.storeContent = {
 
-    storeDataRequestNotAllowed: false,
-    storeData: {},
 
     init: function () {
 
+        this.$storeInfo = $("#store-info");
         this.$logo = $(".store-info-image");
         this.$description = $("#store-info-description");
         this.$logoEmpty = $(".store-info-image-empty");
         this.$logoLoading = $(".store-info-image-loading");
         this.$descriptionButton = $("#store-info-button-description");
+        this.$hoursButton = $("#store-info-button-hours");
+        this.$reviewsButton = $("#store-info-button-reviews");
         this.$menuList = $("#store-menu-list");
+
 
         this.$logoEmpty.hide();
         this.$logoLoading.show();
 
-        this.id_store = app.util.getStoreIdFromStorage();
-
 
         // Open dialog buttons
-        $("#store-info-button-description").on("click", function () {
+        this.$descriptionButton.on("click", function () {
             app.dialogs.description.show();
         });
 
-        $("#store-info-button-hours").on("click", function () {
+        this.$hoursButton.on("click", function () {
             app.dialogs.businessHours.show();
         });
 
-        $("#store-info-button-reviews").on("click", function () {
+        this.$reviewsButton.on("click", function () {
             app.dialogs.reviews.show();
         });
 
@@ -1266,10 +1537,13 @@ app.storeContent = {
     addStoreDetailsDataToPage: function (data) {
         var self = this;
 
+        var id_store = app.data.getStoreIdFromStorage();
+        if (!id_store) return;
+
 
         // logo
         var logo = new Image();
-        logo.src = "/res/storelogos/store" + this.id_store + ".jpg?" + Date.now();
+        logo.src = "/res/storelogos/store" + id_store + ".jpg?" + Date.now();
         logo.onload = function () {
             self.$logo.attr("src", logo.src);
 
@@ -1299,13 +1573,14 @@ app.storeContent = {
 
 
         // rating control
-        app.controls.RatingControls.setValue("#store-info-rating-control", Math.round(data.rating));
+        app.controls.RatingControls.setValue(
+            "#store-info-rating-control", Math.round(data.rating));
 
 
         // Setup dialogs
-        app.dialogs.description.init(data.name, data.description);
-        app.dialogs.businessHours.init(data.hours);
-        app.dialogs.reviews.init(data);
+        app.dialogs.description.update(data.name, data.description);
+        app.dialogs.businessHours.update(data.hours);
+        app.dialogs.reviews.update(data);
 
 
         // Events
@@ -1426,37 +1701,44 @@ app.storeContent = {
 
 
 
-    // Gets the store data and caches it for a little while
-    getStoreData: function (callback) {
-        var self = this;
 
-        // check if already running
-        if (this.storeDataRequestNotAllowed) {
-            return callback(this.storeData);
+
+
+    // Returns a product by its id from the cached store data
+    getProduct: function (id_product) {
+        if (!id_product)
+            return null;
+
+        for (var i = 0; i < this.storeData.products.length; i++) {
+            if (this.storeData.products[i].id_product == id_product) {
+                return this.storeData.products[i];
+            }
         }
 
-        if (!app.util.validateInputs({ id_store: this.id_store }, app.validationRules.getStore))
-            return false;
+        return null;
+    },
 
 
-        // set timeout
-        this.storeDataRequestNotAllowed = true;
-        setTimeout(function () {
-            self.storeDataRequestNotAllowed = false;
-        }, 2000);
+    // Returns a product option by its id from the cached store data
+    getProductOption: function (id_product_option) {
+        if (!id_product_option)
+            return null;
 
+        var options = null;
 
-        // get data from server
-        app.util.ajaxRequest({
-            method: "GET", url: "/api/v1/store?id_store=" + this.id_store, cache: true
-        }, function (err, result) {
-            if (err) return;
+        for (var i = 0; i < this.storeData.products.length; i++) {
+            options = this.storeData.products[i].options;
 
-            result.data.hours = result.data.hours[0];
-            self.storeData = result.data; // cache storeData
+            if (!options) continue;
 
-            return callback(self.storeData);
-        });
+            for (var j = 0; j < options.length; j++) {
+                if (options[j].id_product_option == id_product_option) {
+                    return options[j];
+                }
+            }
+        }
+
+        return null;
     },
 
 
@@ -1467,6 +1749,52 @@ app.storeContent = {
 
 
 app.util = {
+
+
+
+
+    // ---------------------- Validation ----------------------
+
+
+    // Validates an inputs object and shows toast if there's an error
+    validateInputs: function (inputs, validationRule) {
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
+        var errors = validate(inputs, validationRule, { format: "flat" });
+        if (errors && errors.length > 0) {
+            this.showToast(errors[0]);
+            return false;
+        }
+
+        return true;
+    },
+
+
+    checkIfObject: function (value) {
+        return (value && typeof value === 'object' && value.constructor === Object)
+    },
+
+
+    checkIfString: function (value) {
+        return (typeof value === "string" || value instanceof String)
+    },
+
+
+    checkIfPositiveInteger: function (value, includeZero) {
+        var intValue = parseInt(value);
+        if (intValue === NaN) return false;
+
+        intValue = Number(value);
+        if (!Number.isInteger(intValue)) return false;
+
+        return includeZero ? intValue >= 0 : intValue > 0;
+    },
+
+
+
 
 
 
@@ -1498,27 +1826,13 @@ app.util = {
     },
 
 
-    // Validates an inputs object and shows toast if there's an error
-    validateInputs: function (inputs, validationRule) {
-        if (!validationRule) {
-            console.log("validate rule undefined");
-            return false;
-        }
 
-        var errors = validate(inputs, validationRule, { format: "flat" });
-        if (errors && errors.length > 0) {
-            this.showToast(errors[0]);
-            return false;
-        }
-
-        return true;
-    },
-
-
+    // TODO : this being used ?
     // Returns true if running on cordova
     isCordova: function () {
         return $("#is-cordova").val() == "true";
     },
+
 
 
     // Show toast
@@ -1590,61 +1904,15 @@ app.util = {
 
 
 
-    // ---------------------- Credentials ----------------------
-
-    // Add token to storage
-    addJwtToStorage: function (token) {
-        localStorage.setItem("jwt", token);
-    },
-
-
-    // Returns token from storage
-    getJwtFromStorage: function () {
-        return localStorage.getItem("jwt");
-    },
-
-
-    // Add person id to storage
-    addPersonIdToStorage: function (id) {
-        localStorage.setItem("pid", id);
-    },
-
-
-    // Returns person id from storage
-    getPersonIdFromStorage: function () {
-        return Number(localStorage.getItem("pid"));
-    },
-
-
-    // Add store id to storage
-    addStoreIdToStorage: function (id) {
-        localStorage.setItem("sid", id);
-    },
-
-
-    // Returns store id from storage
-    getStoreIdFromStorage: function () {
-        return Number(localStorage.getItem("sid"));
-    },
-
-
-    // Replace current id and jwt with invalid ones
-    invalidateCredentialsAndGoToLogin: function () {
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("pid");
-        localStorage.removeItem("sid");
-        window.location.href = "/login";
-    },
-
 
 
     // ---------------------- Ajax ----------------------
 
-
+    // TODO : check what happens on length error
     // check if jwt from local storage is valid
     checkToken: function (callback) {
         var self = this;
-        var jwt = this.getJwtFromStorage();
+        var jwt = app.data.getJwtFromStorage();
 
         if (jwt && jwt.length > 30) { // TODO : add a regex check or something
 
@@ -1657,16 +1925,16 @@ app.util = {
                     return callback("invalid token");
                 }
 
-                self.addJwtToStorage(result.data.jwt);
-                self.addPersonIdToStorage(result.data.id_person);
+                app.data.addJwtToStorage(result.data.jwt);
+                app.data.addPersonIdToStorage(result.data.id_person);
                 if (result.data.id_store && result.data.id_store > 0) {
-                    self.addStoreIdToStorage(result.data.id_store);
+                    app.data.addStoreIdToStorage(result.data.id_store);
                 }
 
                 return callback(null);
             });
         } else {
-            this.invalidateCredentials();
+            app.data.invalidateTokensAndGoToLogin();
             return callback("invalid token");
         }
     },
@@ -1701,7 +1969,7 @@ app.util = {
 
             var formdata = new FormData();
             formdata.append("logo", files[0]);
-            formdata.append("id_store", this.getStoreIdFromStorage());
+            formdata.append("id_store", app.data.getStoreIdFromStorage());
 
             this.ajaxRequest({
                 method: "POST", url: "/api/v1/store-update-logo", auth: true,
@@ -1730,7 +1998,7 @@ app.util = {
     },
 
 
-
+    // TODO : check jwt before ajax
     // Generic ajax request
     // options are { method, url, data, auth, datatype, cache }, returns (err, data)
     ajaxRequest: function (options, callback) {
@@ -1749,7 +2017,7 @@ app.util = {
             contentType: contentType,
             beforeSend: function(request) {
                 if (options.auth) {
-                    request.setRequestHeader("authorization", "Bearer " + app.util.getJwtFromStorage());
+                    request.setRequestHeader("authorization", "Bearer " + app.data.getJwtFromStorage());
                 }
             },
             success: function (result) {
@@ -2291,7 +2559,7 @@ app.controls.RatingControls = {
 
 }
 // Creates a vertical or horizontal resizer
-app.controls.Resizer = function (direction, handle, container, offset) {
+app.controls.Resizer = function (direction, handle, container, offset, resizeCallback) {
 
     var $handle = $(handle);
     var $container = $(container);
@@ -2299,6 +2567,8 @@ app.controls.Resizer = function (direction, handle, container, offset) {
     var startX = 0;
     var startY = 0;
     var mouseIsDown = false;
+    var currentHeight = 0;
+
 
     $handle.on("mousedown", function (e) {
         mouseIsDown = true;
@@ -2308,15 +2578,19 @@ app.controls.Resizer = function (direction, handle, container, offset) {
         console.log(startX, startY)
     });
 
+
     $(window).on("mousemove", function (e) {
         e.preventDefault();
-        e.stopPropagation();
 
         if (mouseIsDown) {
-            var h = window.innerHeight - e.clientY - offset;
-            $container.height(h);
+            $container.show();
+            currentHeight = window.innerHeight - e.clientY - offset;
+            $container.height(currentHeight);
+
+            if (resizeCallback) resizeCallback();
         }
     });
+
 
     $(window).on("mouseup", function () {
         mouseIsDown = false;

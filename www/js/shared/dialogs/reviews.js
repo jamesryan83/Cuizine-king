@@ -18,6 +18,7 @@ app.dialogs.reviews = {
 
 
     update: function (data) {
+        return;
         $("#dialog-store-reviews-count").text("( " + data.review_count + " )");
 
         app.controls.RatingControls.setValue("#dialog-store-reviews-rating-control",

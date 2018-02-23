@@ -1786,15 +1786,6 @@ input:read-only, textarea:read-only {
   display: inline-block;
 }
 
-#dialog-store-checkout {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 40%;
-  background-color: #060606;
-}
-
 #dialog-store-description.dialog {
   height: auto;
 }
@@ -2813,19 +2804,25 @@ input:read-only, textarea:read-only {
 }
 
 #page-store #store-checkout #store-checkout-resize {
+  position: absolute;
   height: 15px;
-  background-color: darkcyan;
+  width: 100%;
   cursor: ns-resize;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  background-color: darkcyan;
 }
 
 #page-store #store-checkout #store-checkout-header {
-  height: 50px;
+  height: 60px;
   background-color: darkgreen;
+  position: relative;
 }
 
 #page-store #store-checkout #store-checkout-header h4 {
-  height: 50px;
-  line-height: 50px;
+  height: 60px;
+  line-height: 60px;
   display: inline-block;
   margin-left: 30px;
   color: #5595d8;
@@ -2833,8 +2830,8 @@ input:read-only, textarea:read-only {
 
 #page-store #store-checkout #store-checkout-header label {
   margin-left: 30px;
-  height: 50px;
-  line-height: 50px;
+  height: 60px;
+  line-height: 60px;
 }
 
 #page-store #store-checkout #store-checkout-header > div {
@@ -2843,13 +2840,75 @@ input:read-only, textarea:read-only {
 }
 
 #page-store #store-checkout #store-checkout-header > div button {
-  margin-top: 8px;
-  width: 100;
+  margin-top: 13px;
+  width: 100px;
 }
 
 #page-store #store-checkout #store-checkout-content {
   height: 400px;
   background-color: darkred;
+}
+
+#page-store #store-checkout #store-checkout-content #store-checkout-content-header {
+  height: 30px;
+  line-height: 30px;
+  background-color: darkgray;
+  overflow-y: scroll;
+}
+
+#page-store #store-checkout #store-checkout-content #store-checkout-content-table {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: calc(100% - 30px);
+  width: 100%;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item, #page-store #store-checkout #store-checkout-content #store-checkout-content-header {
+  width: 100%;
+  background-color: blue;
+  white-space: nowrap;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item > div, #page-store #store-checkout #store-checkout-content #store-checkout-content-header > div {
+  float: left;
+  white-space: normal;
+  background-color: lime;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item > label, #page-store #store-checkout #store-checkout-content #store-checkout-content-header > label {
+  font-size: 20px;
+  text-align: center;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item div:nth-child(1), #page-store #store-checkout #store-checkout-content #store-checkout-content-header div:nth-child(1) {
+  width: calc((100% - 300px) / 3);
+  background-color: yellow;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item div:nth-child(2), #page-store #store-checkout #store-checkout-content #store-checkout-content-header div:nth-child(2) {
+  width: calc((100% - 300px) / 3);
+  background-color: darkgreen;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item div:nth-child(3), #page-store #store-checkout #store-checkout-content #store-checkout-content-header div:nth-child(3) {
+  width: 100px;
+  background-color: chocolate;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item div:nth-child(4), #page-store #store-checkout #store-checkout-content #store-checkout-content-header div:nth-child(4) {
+  width: 100px;
+  background-color: blueviolet;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item div:nth-child(5), #page-store #store-checkout #store-checkout-content #store-checkout-content-header div:nth-child(5) {
+  width: calc((100% - 300px) / 3);
+  background-color: pink;
+}
+
+#page-store #store-checkout #store-checkout-content .store-checkout-item div:nth-child(6), #page-store #store-checkout #store-checkout-content #store-checkout-content-header div:nth-child(6) {
+  width: 100px;
+  background-color: cyan;
+  float: right;
 }
 
 #page-store #store-checkout.collapsed {

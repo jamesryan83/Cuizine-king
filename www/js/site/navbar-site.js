@@ -23,7 +23,7 @@ app.site.navbar = {
             $(".navbar-link-account").show();
             $(".navbar-link-login").hide();
 
-            if (app.util.getStoreIdFromStorage()) {
+            if (app.data.getStoreIdFromStorage()) {
                 $(".navbar-link-dashboard").show();
             }
         } else {
@@ -50,12 +50,12 @@ app.site.navbar = {
             }
 
             if (e.target.innerText.toLowerCase() == "account") {
-                app.routerBase.loadPageForRoute("/account/" + app.util.getPersonIdFromStorage(), "site");
+                app.routerBase.loadPageForRoute("/account/" + app.data.getPersonIdFromStorage(), "site");
                 return false;
             }
 
             if (e.target.innerText.toLowerCase() == "dashboard") {
-                var sid = app.util.getStoreIdFromStorage();
+                var sid = app.data.getStoreIdFromStorage();
                 window.location.href = "/store-admin/" + sid + "/dashboard";
                 return false;
             }
