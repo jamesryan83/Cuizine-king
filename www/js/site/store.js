@@ -33,8 +33,6 @@ app.site.store = {
         var id_store = routeData.route.split("/");
         id_store = id_store[id_store.length - 1];
 
-        app.storeContent.id_store = id_store;
-
 
         // checkout vertical resizer
         new app.controls.Resizer(
@@ -45,12 +43,14 @@ app.site.store = {
 
 
         // Get the store data
-        app.data.getStoreData(function (storeData) {
+        app.data.getStoreData(id_store, function (storeData) {
+
+            console.log(storeData)
             if (storeData) {
                 storeData.id_store = app.storeContent.id_store;
-                app.storeContent.addStoreDetailsDataToPage(storeData);
+                app.storeContent.addStoreDetailsDataToPage(id_store, storeData);
                 app.storeContent.addMenuDataToPage(storeData);
-console.log(storeData)
+
                 self.afterStoreDataLoaded();
             }
         });

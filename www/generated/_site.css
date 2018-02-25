@@ -1928,12 +1928,14 @@ input:read-only, textarea:read-only {
   left: -80px;
   height: 80px;
   width: 80px;
-  -webkit-animation: scooteranim 0.8s linear forwards;
-  animation: scooteranim 0.8s linear forwards;
-  -webkit-animation-delay: 0.5s;
-  animation-delay: 0.5s;
+  -webkit-animation: scooteranim 1.5s linear forwards;
+  animation: scooteranim 1.5s linear forwards;
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  -webkit-transform: translateZ(0) scale(1, 1);
+  transform: translateZ(0) scale(1, 1);
   z-index: 100;
 }
 
@@ -1948,8 +1950,8 @@ input:read-only, textarea:read-only {
   opacity: 0;
   -webkit-animation: typeaheadanim 1s linear forwards;
   animation: typeaheadanim 1s linear forwards;
-  -webkit-animation-delay: 1s;
-  animation-delay: 1s;
+  -webkit-animation-delay: 1.3s;
+  animation-delay: 1.3s;
 }
 
 #page-home.page .page-content .typeahead-2 > div {

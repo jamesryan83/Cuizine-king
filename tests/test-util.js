@@ -25,6 +25,16 @@ config.mssql.database = "menuthingTest";
 // General functions and stuff for testing
 exports = module.exports = {
 
+
+    date1: new Date("2018-02-19T08:00:00"), // monday
+    date2: new Date("2018-02-20T08:00:00"), // tuesday
+    date3: new Date("2018-02-21T08:00:00"), // wednesday
+    date4: new Date("2018-02-22T08:00:00"), // thursday
+    date5: new Date("2018-02-23T08:00:00"), // friday
+    date6: new Date("2018-02-24T08:00:00"), // saturday
+    date7: new Date("2018-02-25T08:00:00"), // sunday
+
+
     regexValidHtml: /(\s*)<!DOCTYPE html>(\s*)<html lang="en">(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi,
 
     supertestUrl: "http://localhost:" + config.port,

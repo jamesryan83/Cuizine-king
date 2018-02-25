@@ -120,7 +120,12 @@ app.data = {
 
 
     // Gets the store data and caches it for a little while
-    getStoreData: function (callback) {
+    getStoreData: function (id_store, callback) {
+        if (typeof id_store === "function") {
+            callback = id_store;
+            id_store = null;
+        }
+
         var self = this;
 
         // check if already running
@@ -128,7 +133,7 @@ app.data = {
             return callback(this.storeData);
         }
 
-        var id_store = this.getStoreIdFromStorage();
+        var id_store = id_store || this.getStoreIdFromStorage();
 
         if (!app.util.validateInputs({ id_store: id_store }, app.validationRules.getStore))
             return false;
@@ -155,26 +160,67 @@ app.data = {
     },
 
 
+    // Returns if dinein/delivery is open and text for next time open or closed
+    // the parameters are for testing
+    isStoreOpen: function (timeNow, dayNow, addDays) {
+        if (!this.storeData || Object.keys(this.storeData).length === 0) return null;
 
-    isStoreOpen: function () {
-        if (!this.storeData) return false;
+        var result = { isDineinOpen: false, isDeliveryOpen: false };
 
-        var result = { dineinOpen: false, deliveryOpen: false };
-
-        var today = app.util.getTodayName().toLowerCase();
-
-        var dineinOpen = this.storeData.hours["hours_" + today + "_dinein_open"];
-        var dineinClose = this.storeData.hours["hours_" + today + "_dinein_close"];
-        var deliveryOpen = this.storeData.hours["hours_" + today + "_delivery_open"];
-        var deliveryClose = this.storeData.hours["hours_" + today + "_delivery_close"];
-
-        if (dineinOpen.toLowerCase() === "null") return false;
+        var d = new Date();
+        var currentTime = timeNow || d.getHours() + ":" + d.getMinutes();
+        var mCurrentTime = moment(currentTime, "HH:mm").add(addDays || 0, "days");
 
 
+        // get business times
+        var today = dayNow || app.util.getTodayName();
+        var dineinOpenTime = this.storeData.hours["hours_" + today + "_dinein_open"];
+        var dineinCloseTime = this.storeData.hours["hours_" + today + "_dinein_close"];
+        var deliveryOpenTime = this.storeData.hours["hours_" + today + "_delivery_open"];
+        var deliveryCloseTime = this.storeData.hours["hours_" + today + "_delivery_close"];
+
+
+        // is dinein open
+        if (dineinOpenTime !== "NULL" && dineinCloseTime !== "NULL") {
+            var mDineInOpen = moment(dineinOpenTime, "HH:mm");
+            var mDineInClose = moment(dineinCloseTime, "HH:mm");
+            if (mDineInClose.isBefore(mDineInOpen)) mDineInClose.add(1, "days");
+
+            if (dineinOpenTime === currentTime || mCurrentTime.isBetween(mDineInOpen, mDineInClose)) {
+                result.isDineinOpen = true;
+            }
+        }
+
+
+        // is delivery open
+        if (deliveryOpenTime !== "NULL" && deliveryCloseTime !== "NULL") {
+            var mDeliveryOpen = moment(deliveryOpenTime, "HH:mm");
+            var mDeliveryClose = moment(deliveryCloseTime, "HH:mm");
+            if (mDeliveryClose.isBefore(mDeliveryOpen)) mDeliveryClose.add(1, "days");
+
+            if (deliveryOpenTime === currentTime || mCurrentTime.isBetween(mDeliveryOpen, mDeliveryClose)) {
+                result.isDeliveryOpen = true;
+            }
+        }
+
+        return result;
     },
 
 
-    getWhenStoreOpens: function () {
+
+    // TODO : finish
+    // Returns text saying when the store opens or closes next
+    getWhenStoreOpensOrClosesNext: function (timeNow, dayNow, addDays) {
+        if (!this.storeData || Object.keys(this.storeData).length === 0) return null;
+
+        var isOpen = this.isStoreOpen(timeNow, dayNow, addDays);
+
+        if (isOpen.isDineinOpen && isOpen) {
+
+        } else {
+
+        }
+
 
     },
 
@@ -233,9 +279,9 @@ app.data = {
 
     // Returns person id from storage
     getPersonIdFromStorage: function () {
-        var item = localStorage.getItem("pid");
+        var item = Number(localStorage.getItem("pid"));
         if (app.util.checkIfPositiveInteger(item)) {
-            return Number(item);
+            return item;
         }
 
         return null;
@@ -250,9 +296,9 @@ app.data = {
 
     // Returns store id from storage
     getStoreIdFromStorage: function () {
-        var item = localStorage.getItem("sid");
+        var item = Number(localStorage.getItem("sid"));
         if (app.util.checkIfPositiveInteger(item)) {
-            return Number(item);
+            return item;
         }
 
         return null;
@@ -677,10 +723,15 @@ app.storeContent = {
 
 
     // Add store details data
-    addStoreDetailsDataToPage: function (data) {
+    addStoreDetailsDataToPage: function (id_store, data) {
+        if (!data) {
+            data = id_store;
+            id_store = null;
+        }
+
         var self = this;
 
-        var id_store = app.data.getStoreIdFromStorage();
+        var id_store = id_store || app.data.getStoreIdFromStorage();
         if (!id_store) return;
 
 
@@ -716,8 +767,14 @@ app.storeContent = {
 
 
         // hours
-        var isOpen = app.data.isStoreOpen();
-        console.log(isOpen)
+//        var isOpen = app.data.isStoreOpen();
+//console.log(isOpen)
+//        if (isOpen.isDeliveryOpen || isOpen.isDineinOpen) {
+//
+//        } else {
+//
+//        }
+
 
 
         $("#store-info-hours-is-open").text();
@@ -908,36 +965,28 @@ app.util = {
     // ---------------------- Validation ----------------------
 
 
-    // Validates an inputs object and shows toast if there's an error
-    validateInputs: function (inputs, validationRule) {
-        if (!validationRule) {
-            console.log("validate rule undefined");
-            return false;
-        }
-
-        var errors = validate(inputs, validationRule, { format: "flat" });
-        if (errors && errors.length > 0) {
-            this.showToast(errors[0]);
-            return false;
-        }
-
-        return true;
-    },
-
-
     checkIfObject: function (value) {
-        return (value && typeof value === 'object' && value.constructor === Object)
+        if (!value) return false;
+
+        return (value && typeof value === 'object' && value.constructor === Object);
     },
 
 
     checkIfString: function (value) {
-        return (typeof value === "string" || value instanceof String)
+        return (typeof value === "string" || value instanceof String);
+    },
+
+
+    checkIfDate: function (value) {
+        if (!value) return false;
+
+        return (value instanceof Date && isFinite(value));
     },
 
 
     checkIfPositiveInteger: function (value, includeZero) {
         var intValue = parseInt(value);
-        if (intValue === NaN) return false;
+        if (isNaN(intValue)) return false;
 
         intValue = Number(value);
         if (!Number.isInteger(intValue)) return false;
@@ -946,20 +995,67 @@ app.util = {
     },
 
 
+    // Validates an inputs object and shows toast if there's an error
+    validateInputs: function (inputs, validationRule) {
+        if (!inputs || !this.checkIfObject(inputs) || Object.keys(inputs).length === 0) {
+            console.log("validation inputs missing");
+            return false;
+        }
 
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
+        var errors = validate(inputs, validationRule, { format: "flat" });
+        if (errors && errors.length > 0) {
+            this.showToast(errors[0]); // TODO : move out of this file, affects tests
+            return false;
+        }
+
+        return true;
+    },
 
 
 
     // ---------------------- Stuff ----------------------
 
 
-    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+    days: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+
+
+    // Returns the index number of today from 0 to 6 where 0 is Monday
+    getTodayIndex: function (date) {
+        var d = date ? date.getDay() : new Date().getDay();
+        d = d - 1;
+        if (d == -1) d = 6;
+        return d;
+    },
 
 
     // Returns todays name (eg. WED)
-    getTodayName: function () {
-        return this.days[new Date().getDay()];
+    getTodayName: function (date) {
+        return this.days[this.getTodayIndex(date)];
     },
+
+
+    // Returns tomorrows name (eg. WED)
+    getTomorrowName: function (date) {
+        var d = this.getTodayIndex(date) + 1;
+        if (d > 6) d = 0;
+
+        return this.days[d];
+    },
+
+
+    // First letter of each word in a string to uppercase
+    // https://stackoverflow.com/a/4878800
+    toTitleCase: function(str) {
+        if (!str) return "";
+
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    },
+
 
 
     // jquery-template formatters
@@ -1037,13 +1133,6 @@ app.util = {
     // Hide loading screen
     hideLoadingScreen: function () {
         $("#loading-screen").hide();
-    },
-
-
-    // First letter of each word in a string to uppercase
-    // https://stackoverflow.com/a/4878800
-    toTitleCase: function(str) {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     },
 
 

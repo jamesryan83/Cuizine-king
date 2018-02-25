@@ -16,7 +16,12 @@ app.data = {
 
 
     // Gets the store data and caches it for a little while
-    getStoreData: function (callback) {
+    getStoreData: function (id_store, callback) {
+        if (typeof id_store === "function") {
+            callback = id_store;
+            id_store = null;
+        }
+
         var self = this;
 
         // check if already running
@@ -24,7 +29,7 @@ app.data = {
             return callback(this.storeData);
         }
 
-        var id_store = this.getStoreIdFromStorage();
+        var id_store = id_store || this.getStoreIdFromStorage();
 
         if (!app.util.validateInputs({ id_store: id_store }, app.validationRules.getStore))
             return false;
@@ -51,26 +56,67 @@ app.data = {
     },
 
 
+    // Returns if dinein/delivery is open and text for next time open or closed
+    // the parameters are for testing
+    isStoreOpen: function (timeNow, dayNow, addDays) {
+        if (!this.storeData || Object.keys(this.storeData).length === 0) return null;
 
-    isStoreOpen: function () {
-        if (!this.storeData) return false;
+        var result = { isDineinOpen: false, isDeliveryOpen: false };
 
-        var result = { dineinOpen: false, deliveryOpen: false };
-
-        var today = app.util.getTodayName().toLowerCase();
-
-        var dineinOpen = this.storeData.hours["hours_" + today + "_dinein_open"];
-        var dineinClose = this.storeData.hours["hours_" + today + "_dinein_close"];
-        var deliveryOpen = this.storeData.hours["hours_" + today + "_delivery_open"];
-        var deliveryClose = this.storeData.hours["hours_" + today + "_delivery_close"];
-
-        if (dineinOpen.toLowerCase() === "null") return false;
+        var d = new Date();
+        var currentTime = timeNow || d.getHours() + ":" + d.getMinutes();
+        var mCurrentTime = moment(currentTime, "HH:mm").add(addDays || 0, "days");
 
 
+        // get business times
+        var today = dayNow || app.util.getTodayName();
+        var dineinOpenTime = this.storeData.hours["hours_" + today + "_dinein_open"];
+        var dineinCloseTime = this.storeData.hours["hours_" + today + "_dinein_close"];
+        var deliveryOpenTime = this.storeData.hours["hours_" + today + "_delivery_open"];
+        var deliveryCloseTime = this.storeData.hours["hours_" + today + "_delivery_close"];
+
+
+        // is dinein open
+        if (dineinOpenTime !== "NULL" && dineinCloseTime !== "NULL") {
+            var mDineInOpen = moment(dineinOpenTime, "HH:mm");
+            var mDineInClose = moment(dineinCloseTime, "HH:mm");
+            if (mDineInClose.isBefore(mDineInOpen)) mDineInClose.add(1, "days");
+
+            if (dineinOpenTime === currentTime || mCurrentTime.isBetween(mDineInOpen, mDineInClose)) {
+                result.isDineinOpen = true;
+            }
+        }
+
+
+        // is delivery open
+        if (deliveryOpenTime !== "NULL" && deliveryCloseTime !== "NULL") {
+            var mDeliveryOpen = moment(deliveryOpenTime, "HH:mm");
+            var mDeliveryClose = moment(deliveryCloseTime, "HH:mm");
+            if (mDeliveryClose.isBefore(mDeliveryOpen)) mDeliveryClose.add(1, "days");
+
+            if (deliveryOpenTime === currentTime || mCurrentTime.isBetween(mDeliveryOpen, mDeliveryClose)) {
+                result.isDeliveryOpen = true;
+            }
+        }
+
+        return result;
     },
 
 
-    getWhenStoreOpens: function () {
+
+    // TODO : finish
+    // Returns text saying when the store opens or closes next
+    getWhenStoreOpensOrClosesNext: function (timeNow, dayNow, addDays) {
+        if (!this.storeData || Object.keys(this.storeData).length === 0) return null;
+
+        var isOpen = this.isStoreOpen(timeNow, dayNow, addDays);
+
+        if (isOpen.isDineinOpen && isOpen) {
+
+        } else {
+
+        }
+
 
     },
 
@@ -129,9 +175,9 @@ app.data = {
 
     // Returns person id from storage
     getPersonIdFromStorage: function () {
-        var item = localStorage.getItem("pid");
+        var item = Number(localStorage.getItem("pid"));
         if (app.util.checkIfPositiveInteger(item)) {
-            return Number(item);
+            return item;
         }
 
         return null;
@@ -146,9 +192,9 @@ app.data = {
 
     // Returns store id from storage
     getStoreIdFromStorage: function () {
-        var item = localStorage.getItem("sid");
+        var item = Number(localStorage.getItem("sid"));
         if (app.util.checkIfPositiveInteger(item)) {
-            return Number(item);
+            return item;
         }
 
         return null;
@@ -167,5 +213,9 @@ app.data = {
 
 
 if (typeof module !== "undefined" && this.module !== module) {
+    var localStorage = { getItem: function () { return 1; } };
+    var moment = require("moment");
+    app.util = require("./util");
+    app.validationRules = require("./validation-rules");
     exports = module.exports = app.data;
 }

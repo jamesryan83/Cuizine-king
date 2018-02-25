@@ -12,36 +12,28 @@ app.util = {
     // ---------------------- Validation ----------------------
 
 
-    // Validates an inputs object and shows toast if there's an error
-    validateInputs: function (inputs, validationRule) {
-        if (!validationRule) {
-            console.log("validate rule undefined");
-            return false;
-        }
-
-        var errors = validate(inputs, validationRule, { format: "flat" });
-        if (errors && errors.length > 0) {
-            this.showToast(errors[0]);
-            return false;
-        }
-
-        return true;
-    },
-
-
     checkIfObject: function (value) {
-        return (value && typeof value === 'object' && value.constructor === Object)
+        if (!value) return false;
+
+        return (value && typeof value === 'object' && value.constructor === Object);
     },
 
 
     checkIfString: function (value) {
-        return (typeof value === "string" || value instanceof String)
+        return (typeof value === "string" || value instanceof String);
+    },
+
+
+    checkIfDate: function (value) {
+        if (!value) return false;
+
+        return (value instanceof Date && isFinite(value));
     },
 
 
     checkIfPositiveInteger: function (value, includeZero) {
         var intValue = parseInt(value);
-        if (intValue === NaN) return false;
+        if (isNaN(intValue)) return false;
 
         intValue = Number(value);
         if (!Number.isInteger(intValue)) return false;
@@ -50,20 +42,67 @@ app.util = {
     },
 
 
+    // Validates an inputs object and shows toast if there's an error
+    validateInputs: function (inputs, validationRule) {
+        if (!inputs || !this.checkIfObject(inputs) || Object.keys(inputs).length === 0) {
+            console.log("validation inputs missing");
+            return false;
+        }
 
+        if (!validationRule) {
+            console.log("validate rule undefined");
+            return false;
+        }
+
+        var errors = validate(inputs, validationRule, { format: "flat" });
+        if (errors && errors.length > 0) {
+            this.showToast(errors[0]); // TODO : move out of this file, affects tests
+            return false;
+        }
+
+        return true;
+    },
 
 
 
     // ---------------------- Stuff ----------------------
 
 
-    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+    days: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+
+
+    // Returns the index number of today from 0 to 6 where 0 is Monday
+    getTodayIndex: function (date) {
+        var d = date ? date.getDay() : new Date().getDay();
+        d = d - 1;
+        if (d == -1) d = 6;
+        return d;
+    },
 
 
     // Returns todays name (eg. WED)
-    getTodayName: function () {
-        return this.days[new Date().getDay()];
+    getTodayName: function (date) {
+        return this.days[this.getTodayIndex(date)];
     },
+
+
+    // Returns tomorrows name (eg. WED)
+    getTomorrowName: function (date) {
+        var d = this.getTodayIndex(date) + 1;
+        if (d > 6) d = 0;
+
+        return this.days[d];
+    },
+
+
+    // First letter of each word in a string to uppercase
+    // https://stackoverflow.com/a/4878800
+    toTitleCase: function(str) {
+        if (!str) return "";
+
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    },
+
 
 
     // jquery-template formatters
@@ -141,13 +180,6 @@ app.util = {
     // Hide loading screen
     hideLoadingScreen: function () {
         $("#loading-screen").hide();
-    },
-
-
-    // First letter of each word in a string to uppercase
-    // https://stackoverflow.com/a/4878800
-    toTitleCase: function(str) {
-        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     },
 
 
@@ -315,5 +347,7 @@ app.util = {
 
 
 if (typeof module !== "undefined" && this.module !== module) {
+    var $ = { };
+    var validate = require("validate.js");
     exports = module.exports = app.util;
 }

@@ -49,10 +49,15 @@ app.storeContent = {
 
 
     // Add store details data
-    addStoreDetailsDataToPage: function (data) {
+    addStoreDetailsDataToPage: function (id_store, data) {
+        if (!data) {
+            data = id_store;
+            id_store = null;
+        }
+
         var self = this;
 
-        var id_store = app.data.getStoreIdFromStorage();
+        var id_store = id_store || app.data.getStoreIdFromStorage();
         if (!id_store) return;
 
 
@@ -88,8 +93,14 @@ app.storeContent = {
 
 
         // hours
-        var isOpen = app.data.isStoreOpen();
-        console.log(isOpen)
+//        var isOpen = app.data.isStoreOpen();
+//console.log(isOpen)
+//        if (isOpen.isDeliveryOpen || isOpen.isDineinOpen) {
+//
+//        } else {
+//
+//        }
+
 
 
         $("#store-info-hours-is-open").text();
