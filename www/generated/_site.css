@@ -1925,17 +1925,11 @@ input:read-only, textarea:read-only {
   background-image: url(/res/svg/scooter.svg);
   background-repeat: no-repeat;
   background-size: 100%;
-  left: -80px;
   height: 80px;
   width: 80px;
-  -webkit-animation: scooteranim 1.5s linear forwards;
-  animation: scooteranim 1.5s linear forwards;
-  -webkit-animation-delay: 0.3s;
-  animation-delay: 0.3s;
+  left: -200px;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: translateZ(0) scale(1, 1);
-  transform: translateZ(0) scale(1, 1);
   z-index: 100;
 }
 
@@ -2017,26 +2011,6 @@ input:read-only, textarea:read-only {
   }
   #page-home.page .page-content .typeahead-2 > div > div {
     width: 100%;
-  }
-}
-
-@-webkit-keyframes scooteranim {
-  0% {
-    left: -80px;
-  }
-  
-  100% {
-    left: 100%;
-  }
-}
-
-@keyframes scooteranim {
-  0% {
-    left: -80px;
-  }
-  
-  100% {
-    left: 100%;
   }
 }
 
