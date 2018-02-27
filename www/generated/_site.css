@@ -1920,17 +1920,30 @@ input:read-only, textarea:read-only {
   padding: 20px 0;
 }
 
-#page-home.page .page-content #scooter {
+#page-home.page .page-content #scooter-container {
+  width: 100%;
   position: absolute;
+  z-index: 100;
+  left: 0;
+  -webkit-transform: translate3d(-200px, 0, 0);
+  transform: translate3d(-200px, 0, 0);
+  -webkit-animation: scooteranim 1.7s linear forwards;
+  animation: scooteranim 1.7s linear forwards;
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+#page-home.page .page-content #scooter-container #scooter {
   background-image: url(/res/svg/scooter.svg);
   background-repeat: no-repeat;
   background-size: 100%;
   height: 80px;
   width: 80px;
-  left: -200px;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  z-index: 100;
 }
 
 #page-home.page .page-content .typeahead-2 {
@@ -1984,10 +1997,12 @@ input:read-only, textarea:read-only {
 }
 
 @media (max-width: 900px) {
-  #page-home.page .page-content #scooter {
+  #page-home.page .page-content #scooter-container {
     top: 120px;
-    -webkit-animation-delay: 0.3s;
-    animation-delay: 0.3s;
+    -webkit-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+    -webkit-animation: scooteranim 1.5s linear forwards;
+    animation: scooteranim 1.5s linear forwards;
   }
   #page-home.page .page-content #download-app {
     display: none;
@@ -2011,6 +2026,30 @@ input:read-only, textarea:read-only {
   }
   #page-home.page .page-content .typeahead-2 > div > div {
     width: 100%;
+  }
+}
+
+@-webkit-keyframes scooteranim {
+  0% {
+    -webkit-transform: translate3d(-200px, 0, 0);
+    transform: translate3d(-200px, 0, 0);
+  }
+  
+  100% {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes scooteranim {
+  0% {
+    -webkit-transform: translate3d(-200px, 0, 0);
+    transform: translate3d(-200px, 0, 0);
+  }
+  
+  100% {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
   }
 }
 

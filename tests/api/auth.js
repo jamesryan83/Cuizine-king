@@ -31,6 +31,8 @@ describe("API - AUTH", function () {
 
 
     it("#websiteCreateUser creates a website user", function (done) {
+        this.timeout(3000);
+
         testutil.createUser("/api/v1/create-user", testutil.fakeUsers.website, 200, null, function (err, res) {
             if (err) return done(new Error(err));
 
