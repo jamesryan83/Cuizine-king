@@ -64,87 +64,85 @@ app.site = {
     // Site routes
     routes: {
         "/": {
-            title: "Home", // browser tab title
             file: "home", // filename
             initFunction: function (routeData) {
+                document.title = app.Strings.home;
                 app.site.home.init(routeData);
             },
         },
         "/account/:id": {
-            title: "Account",
             file: "account",
             initFunction: function (routeData) {
+                document.title = app.Strings.account;
                 app.site.account.init(routeData);
             },
         },
         "/about": {
-            title: "About",
             file: "about",
             initFunction: function () {
-
+                document.title = app.Strings.about;
             },
         },
         "/help": {
-            title: "Help",
             file: "help",
             initFunction: function () {
-
+                document.title = app.Strings.help;
             },
         },
         "/location/:suburb": {
-            title: "Location",
             file: "location",
             initFunction: function (routeData) {
+                document.title = app.Strings.location;
                 app.site.location.init(routeData);
             },
         },
         "/store/:id": {
-            title: "Store",
             file: "store",
             initFunction: function (routeData) {
+                document.title = app.Strings.store;
                 app.site.store.init(routeData);
             },
         },
 
         "/login": {
-            title: "Login",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.login;
                 app.site.login.init(routeData);
             },
         },
         "/store-login": {
-            title: "Store Login",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.storeLogin;
                 app.site.login.init(routeData);
             },
         },
         "/verify-account": {
-            title: "Verify Account",
             file: "verify-account",
             initFunction: function (routeData) {
+                document.title = app.Strings.verifyAccount;
                 app.site.verifyAccount.init(routeData);
             },
         },
         "/reset-password": {
-            title: "Reset Password",
             file: "reset-password",
             initFunction: function (routeData) {
+                document.title = app.Strings.resetPassword;
                 app.site.resetPassword.init(routeData);
             },
         },
         "/register": {
-            title: "Register",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.resetPassword;
                 app.site.login.init(routeData);
             },
         },
         "/store-application": {
-            title: "Store Application",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.storeApplication;
                 app.site.login.init(routeData);
             },
         },
@@ -153,8 +151,8 @@ app.site = {
 }
 
 
-// create arrays of filepaths for express router
 app.site.routesList = Object.keys(app.site.routes);
+
 
 
 // User account page
@@ -236,7 +234,7 @@ app.site.home = {
     init: function () {
 
         $("#download-app-logos > div").on("click", function () {
-            app.util.showToast("Not working yet");
+            app.util.showToast(app.Strings.notWorkingYet);
         });
 
 
@@ -300,8 +298,8 @@ app.site.location = {
         // for each category
         for (var i = 0; i < this.storeData.length; i++) {
             locationsLength = this.storeData[i].stores.length;
-            locationsText = locationsLength +
-                (locationsLength == 1 ? " Location" : " Locations");
+            locationsText = locationsLength + " " +
+                (locationsLength == 1 ? app.Strings.location : app.Strings.locations);
 
 
             // add category header
@@ -325,10 +323,11 @@ app.site.location = {
                     "#template-store-list-item", storeData,
                     storeData.id_store, "data-store-id");
 
-                // highlight open now
-                if (storeData.open == "Open Now") {
-                    $item.find(".store-list-item-text-open").addClass("active");
-                }
+
+//                // highlight open now
+//                if (storeData.open == "Open Now") {
+//                    $item.find(".store-list-item-text-open").addClass("active");
+//                }
 
                 // add store image
                 $item.find(".store-list-item-image")
@@ -390,6 +389,7 @@ app.site.login = {
 
         // Submit login form
         $("#form-login").on("submit", function () {
+
             var data = validate.collectFormValues($("#form-login")[0], { trim: true });
 
             if (!app.util.validateInputs(data, app.validationRules.login))
@@ -439,7 +439,7 @@ app.site.login = {
         // Submit register form
         $("#form-register").on("submit", function () {
             if (!$("#checkbox-tnc").is(":checked")) {
-                app.util.showToast("You need to agree to the terms and conditions");
+                app.util.showToast(app.Strings.agreeToTnC);
                 return false;
             }
 
@@ -500,7 +500,7 @@ app.site.login = {
 //            });
 
             // TODO : fix
-            app.util.showToast("not working just yet");
+            app.util.showToast(app.Strings.notWorkingYet);
 
             return false;
         });
@@ -513,7 +513,7 @@ app.site.login = {
             if (id_person) {
                 window.location.href = "/account/" + id_person;
             } else {
-                app.util.showToast("Error : Unable to go to account page");
+                app.util.showToast(app.Strings.unableToGoToAccountPage);
             }
         });
 
@@ -531,25 +531,25 @@ app.site.login = {
 
         // login goto register
         $("#login-goto-register").on("click", function () {
-            self.showForm("#form-register", true, true, "Register", "register");
+            self.showForm("#form-register", true, true, app.Strings.register, "register");
         });
 
 
         // login goto store login
         $("#login-goto-store-login").on("click", function () {
-            self.showForm("#form-store-login", true, false, "Store-login", "store-login");
+            self.showForm("#form-store-login", true, false, app.Strings.storeLogin, "store-login");
         });
 
 
         // store login goto login
         $("#store-login-goto-login").on("click", function () {
-            self.showForm("#form-login", true, true, "Login", "login");
+            self.showForm("#form-login", true, true, app.Strings.login, "login");
         });
 
 
         // login goto store application
         $("#login-goto-store-application").on("click", function () {
-            self.showForm("#form-store-application", true, true, "Store Application", "store-application");
+            self.showForm("#form-store-application", true, true, app.Strings.storeApplication, "store-application");
         });
 
 
@@ -562,20 +562,20 @@ app.site.login = {
         // register goto login
         $("#register-goto-login").on("click", function () {
             $("#checkbox-tnc").prop("checked", false);
-            self.showForm("#form-login", true, true, "Login", "login");
+            self.showForm("#form-login", true, true, app.Strings.login, "login");
         });
 
 
         // store application goto login
         $("#store-application-goto-login").on("click", function () {
             $("#checkbox-tnc-store").prop("checked", false);
-            self.showForm("#form-login", true, true, "Login", "login");
+            self.showForm("#form-login", true, true, app.Strings.login, "login");
         });
 
 
         // forgot password goto login
         $("#forgot-password-goto-login").on("click", function () {
-            self.showForm("#form-login", true, true, "Register", "register");
+            self.showForm("#form-login", true, true, app.Strings.register, "register");
         });
 
 
@@ -680,10 +680,11 @@ app.site.navbar = {
         });
 
 
+        // TODO : i18n
         // link clicked
         navbar.linkClicked = function (e, route) {
             if (e.target.innerText.toLowerCase() == "blog") {
-                app.util.showToast("Not working yet");
+                app.util.showToast(app.Strings.notWorkingYet);
                 return false;
             }
 
@@ -715,7 +716,7 @@ app.site.resetPassword = {
         // get reset password token
         this.resetPasswordToken = window.location.search;
         if (!this.resetPasswordToken || this.resetPasswordToken.length < 30) {
-            app.util.showToast("Invalid verification token", 4000);
+            app.util.showToast(app.Strings.invalidVerificationToken, 4000);
             return;
         }
 
@@ -793,7 +794,7 @@ app.site.store = {
             console.log(storeData)
             if (storeData) {
                 storeData.id_store = app.storeContent.id_store;
-                app.storeContent.addStoreDetailsDataToPage(id_store, storeData);
+                app.storeContent.addStoreDetailsDataToPage(id_store, storeData, "site");
                 app.storeContent.addMenuDataToPage(storeData);
 
                 self.afterStoreDataLoaded();
@@ -867,6 +868,7 @@ app.site.store = {
     },
 
 
+    // TODO : i18n
     // Update the checkout with the current data
     updateCheckout: function (data) {
         if (!data) data = app.data.getCheckoutData();
@@ -937,7 +939,7 @@ app.site.verifyAccount = {
         // Get verification token
         this.verificationToken = window.location.search;
         if (!this.verificationToken || this.verificationToken.length < 30) {
-            app.util.showToast("Invalid verification token", 4000);
+            app.util.showToast(app.Strings.invalidVerificationToken, 4000);
             return;
         }
 
@@ -957,8 +959,6 @@ app.site.verifyAccount = {
                 method: "POST", url: "/api/v1/verify-account", data: data
             }, function (err, result) {
                 if (err) return;
-
-                if (!result.data.jwt) alert("jwt missing");
 
                 app.data.addJwtToStorage(result.data.jwt);
                 app.data.addPersonIdToStorage(result.data.id_person);
@@ -1044,6 +1044,7 @@ app.data = {
     },
 
 
+    // TODO : i18n
     // Returns if dinein/delivery is open and text for next time open or closed
     // the parameters are for testing
     isStoreOpen: function (timeNow, dayNow, addDays) {
@@ -1205,9 +1206,6 @@ app.data = {
 // Business hours dialog
 app.dialogs.businessHours = {
 
-    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
-
-
     init: function () {
         var self = this;
 
@@ -1224,7 +1222,7 @@ app.dialogs.businessHours = {
     update: function (hours) {
         if (!hours) return;
 
-        var days = app.util.days;
+        var days = app.util.days();
         var today = app.util.getTodayName();
 
 
@@ -1247,6 +1245,7 @@ app.dialogs.businessHours = {
 
     // Returns a html row of hours for a single day
     getHoursRow: function (hours, day, isDineIn, isToday) {
+        // TODO : i18n
 
         // create left and right property names
         var el = "hours_" + day.toLowerCase() + "_" + (isDineIn ? "dinein" : "delivery");
@@ -1324,7 +1323,6 @@ app.dialogs.init = function () {
 
 
     this.$dialogContainer = $("#dialog-container");
-    this.$dialogs = this.$dialogContainer.children();
 
 
     this.$dialogContainer.on("click", function () {
@@ -1340,8 +1338,12 @@ app.dialogs.show = function (dialogEl) {
 
 
 app.dialogs.hide = function () {
-    this.$dialogs.hide();
+    this.$dialogContainer.children().hide();
     this.$dialogContainer.hide();
+}
+
+app.dialogs.addDialog = function (html) {
+    this.$dialogContainer.append($(html));
 }
 
 
@@ -1404,20 +1406,6 @@ app.dialogs.reviews = {
     },
 
 }
-
-
-app.i18n = {};
-
-// english
-app.i18n.en = {
-    storeIdMissing: "Store Id missing",
-    imageFileMissing: "Image file missing",
-    imageFileWrongType: "Incorrect image type.  Only Jpg is supported",
-    imageFileTooBig: "Image file size too big.  Must be < 250kB",
-}
-
-
-
 // Base client side router
 app.routerBase = {
 
@@ -1441,10 +1429,11 @@ app.routerBase = {
     // Load page into #page-container.  This is called to change a page
     // section is site, cms or sysadmin
     loadPageForRoute: function (route, section, isAfterPopState) {
+        var self = this;
+
         if (this.isLoading) return;
         if (window.location.pathname === route && !isAfterPopState) return; // same page
 
-        var self = this;
         this.isLoading = true;
         this.lastLoadedSection = section;
 
@@ -1462,52 +1451,8 @@ app.routerBase = {
 
 
         // get data for route
-        var routeData = this.getCurrentRouteData(route, section);
-
-
-        // load html into page
-        $("#page-container").empty();
-        $("#page-container").append(routeData.html);
-
-        $("html, body").animate({ "scrollTop": 0 }, 200);
-
-
-        // start js
-        app[section].routes[routeData.normalizedRoute].initFunction(routeData);
-        app[section].onPageChanged(routeData);
-
-
-        // run ui stuff when page is loaded
-        setTimeout(function () {
-            $("body").css("visibility", "visible");
-        }, 100);
-
-
-        // push route into history, but not on back
-        if (!self.firstLoad && !isAfterPopState) {
-            if (routeData.route != window.location.pathname) {
-                window.history.pushState(null, routeData.route, routeData.route);
-            }
-        }
-
-        self.firstLoad = false;
-        self.isLoading = false;
-
-
-
-        document.title = routeData.title;
-
-        return routeData;
-    },
-
-
-
-
-    // Returns the data for the current route
-    getCurrentRouteData: function (route, section) {
         var newRoute = route || window.location.pathname;
         var routeData = { route: newRoute };
-
         if (app.util.isCordova()) {
             // remove extra cordova stuff from route
             newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
@@ -1517,6 +1462,7 @@ app.routerBase = {
         // normalize route and add current section
         routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
         routeData.section = section;
+
 
         // Add html and other route data
         if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
@@ -1530,8 +1476,71 @@ app.routerBase = {
             return;
         }
 
+
+        // load html into page
+        $("#page-container").empty();
+        $("#dialog-container").empty();
+        $("#page-container").append(routeData.html);
+
+        $("html, body").animate({ "scrollTop": 0 }, 200);
+
+
+        // start js
+        app[section].routes[routeData.normalizedRoute].initFunction(routeData);
+        app[section].onPageChanged(routeData);
+
+
+        // run ui stuff when page is loaded
+//        setTimeout(function () {
+            $("body").css("visibility", "visible");
+//        }, 0);
+
+
+        // push route into history, but not on back
+        if (!this.firstLoad && !isAfterPopState) {
+            if (routeData.route != window.location.pathname) {
+                window.history.pushState(null, routeData.route, routeData.route);
+            }
+        }
+
+        this.firstLoad = false;
+        this.isLoading = false;
+
         return routeData;
     },
+
+
+
+
+//    // Returns the data for the current route
+//    getCurrentRouteData: function (route, section) {
+//        var newRoute = route || window.location.pathname;
+//        var routeData = { route: newRoute };
+//
+//        if (app.util.isCordova()) {
+//            // remove extra cordova stuff from route
+//            newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
+//            if (newRoute == "/index-cordova") newRoute = "/";
+//        }
+//
+//        // normalize route and add current section
+//        routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
+//        routeData.section = section;
+//
+//        // Add html and other route data
+//        if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
+//            routeData.html = app[section].htmlFiles[routeData.normalizedRoute];
+//            $.extend(routeData, app[section].routes[routeData.normalizedRoute]);
+//
+//        // unknown route
+//        } else {
+//            debugger;
+//            app.data.invalidateTokensAndGoToLogin();
+//            return;
+//        }
+//
+//        return routeData;
+//    },
 
 
 
@@ -1607,12 +1616,7 @@ app.storeContent = {
 
 
     // Add store details data
-    addStoreDetailsDataToPage: function (id_store, data) {
-        if (!data) {
-            data = id_store;
-            id_store = null;
-        }
-
+    addStoreDetailsDataToPage: function (id_store, data, section) {
         var self = this;
 
         var id_store = id_store || app.data.getStoreIdFromStorage();
@@ -1621,6 +1625,8 @@ app.storeContent = {
 
         // logo
         var logo = new Image();
+
+        // TODO : res/storelogos is in config too, do something about that
         logo.src = "/res/storelogos/store" + id_store + ".jpg?" + Date.now();
         logo.onload = function () {
             self.$logo.attr("src", logo.src);
@@ -1671,8 +1677,16 @@ app.storeContent = {
 
 
         // Setup dialogs
-        app.dialogs.description.update(data.name, data.description);
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_businessHours);
+        app.dialogs.businessHours.init();
         app.dialogs.businessHours.update(data.hours);
+
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_description);
+        app.dialogs.description.init();
+        app.dialogs.description.update(data.name, data.description);
+
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_reviews);
+        app.dialogs.reviews.init();
         app.dialogs.reviews.update(data);
 
 
@@ -1788,7 +1802,7 @@ app.storeContent = {
             new app.controls.CategoryScroller(data.product_headings);
 
         } else {
-            self.$menuList.append("No Products");
+            self.$menuList.append(app.Strings.noProducts);
         }
     },
 
@@ -1838,7 +1852,10 @@ app.storeContent = {
 }
 
 
-
+if (typeof app === "undefined") {
+    var app = {};
+    app.Strings = app.Strings = {};
+}
 
 
 app.util = {
@@ -1905,7 +1922,11 @@ app.util = {
     // ---------------------- Stuff ----------------------
 
 
-    days: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+    days: function () {
+        return [app.Strings.daysMon, app.Strings.daysTue, app.Strings.daysWed,
+          app.Strings.daysThu, app.Strings.daysFri, app.Strings.daysSat,
+          app.Strings.daysSun];
+    },
 
 
     // Returns the index number of today from 0 to 6 where 0 is Monday
@@ -1919,7 +1940,7 @@ app.util = {
 
     // Returns todays name (eg. WED)
     getTodayName: function (date) {
-        return this.days[this.getTodayIndex(date)];
+        return this.days()[this.getTodayIndex(date)];
     },
 
 
@@ -1928,10 +1949,11 @@ app.util = {
         var d = this.getTodayIndex(date) + 1;
         if (d > 6) d = 0;
 
-        return this.days[d];
+        return this.days()[d];
     },
 
 
+    // TODO : i18n
     // First letter of each word in a string to uppercase
     // https://stackoverflow.com/a/4878800
     toTitleCase: function(str) {
@@ -1942,26 +1964,27 @@ app.util = {
 
 
 
+
     // jquery-template formatters
     setupTemplateFormatters: function () {
         $.addTemplateFormatter({
             lowestOptionPriceFormatter: function (value) {
-                return "From $" + value;
+                return app.Strings.fromDollar + value;
             },
             priceFormatter: function (value) {
-                return "$" + value.toFixed(2);
+                return app.Strings.fromDollar + value.toFixed(2);
             },
             categoryArrayFormatter: function(value) {
                 return value.join(", ");
             },
             phoneNumberFormatter: function(value) {
-                return "Ph: " + value;
+                return app.Strings.phone + " " + value;
             },
             deliveryFormatter: function(value) {
-                return "Delivery " + value;
+                return app.Strings.delivery + " " + value;
             },
             minOrderFormatter: function(value) {
-                return "Min. Order " + value;
+                return app.Strings.minOrder + " " + value;
             },
         });
     },
@@ -2048,29 +2071,29 @@ app.util = {
         var self = this;
         var jwt = app.data.getJwtFromStorage();
 
-        if (jwt && jwt.length > 30) { // TODO : add a regex check or something
-
-            this.ajaxRequest({
-                method: "POST", url: "/api/v1/check-token", auth: true
-            }, function (err, result) {
-                if (err) {
-                    console.log(err);
-                    self.invalidateCredentials();
-                    return callback("invalid token");
-                }
-
-                app.data.addJwtToStorage(result.data.jwt);
-                app.data.addPersonIdToStorage(result.data.id_person);
-                if (result.data.id_store && result.data.id_store > 0) {
-                    app.data.addStoreIdToStorage(result.data.id_store);
-                }
-
-                return callback(null);
-            });
-        } else {
+//        if (jwt && jwt.length > 30) { // TODO : add a regex check or something
+        if (!app.util.validateInputs(jwt, app.validationRules._people_jwt)) {
             app.data.invalidateTokensAndGoToLogin();
-            return callback("invalid token");
+            return callback(app.Strings.invalidToken);
         }
+
+        this.ajaxRequest({
+            method: "POST", url: "/api/v1/check-token", auth: true
+        }, function (err, result) {
+            if (err) {
+                console.log(err);
+                self.invalidateCredentials();
+                return callback(app.Strings.invalidToken);
+            }
+
+            app.data.addJwtToStorage(result.data.jwt);
+            app.data.addPersonIdToStorage(result.data.id_person);
+            if (result.data.id_store && result.data.id_store > 0) {
+                app.data.addStoreIdToStorage(result.data.id_store);
+            }
+
+            return callback(null);
+        });
     },
 
 
@@ -2097,7 +2120,7 @@ app.util = {
         if (files && files.length > 0) {
             var file = files[0];
             if (file.size > 250000) {
-                this.showToast("Image file size too big.  Must be < 250kB");
+                this.showToast(app.Strings.imageFileTooBig);
                 return;
             }
 
@@ -2111,7 +2134,7 @@ app.util = {
             }, function (err, result) {
                 if (err || !result || !result.data || !result.data.url) {
                     console.log(err)
-                    return callback("Error uploading image");
+                    return callback(app.Strings.errorUploadingImage);
                 }
 
                 return callback(null, result.data.url);
@@ -2127,7 +2150,7 @@ app.util = {
 //            };
 //            reader.readAsDataURL(file);
         } else {
-            this.showToast("Invalid Image");
+            this.showToast(app.Strings.invalidImage);
         }
     },
 
@@ -2149,9 +2172,17 @@ app.util = {
             cache: options.cache || false,
             processData: !options.isImage,
             contentType: contentType,
-            beforeSend: function(request) {
+            beforeSend: function(xhr) {
                 if (options.auth) {
-                    request.setRequestHeader("authorization", "Bearer " + app.data.getJwtFromStorage());
+                    var jwt = app.data.getJwtFromStorage();
+
+                    if (!app.util.validateInputs({ jwt: jwt }, app.validationRules.jwt)) {
+                        xhr.abort();
+                        app.data.invalidateTokensAndGoToLogin();
+                        return callback(app.Strings.invalidToken);
+                    }
+
+                    xhr.setRequestHeader("authorization", "Bearer " + jwt);
                 }
             },
             success: function (result) {
@@ -2163,7 +2194,7 @@ app.util = {
                     if (err.responseJSON && err.responseJSON.err) {
                         self.showToast(err.responseJSON.err, 4000);
                     } else {
-                        self.showToast("Server Error", 4000);
+                        self.showToast(app.Strings.serverError, 4000);
                     }
                 }
 
@@ -2277,8 +2308,14 @@ app.validationRules = {
 
 // These validation objects below use the values from above
 
-// -------- Route validation --------
 
+// jwt
+app.validationRules.jwt = {
+	jwt: app.validationRules._people_jwt
+}
+
+
+// -------- Route validation --------
 
 // Site - login page
 app.validationRules.login = {
@@ -2387,6 +2424,7 @@ app.validationRules.getStore = {
 }
 
 
+// TODO : i18n
 // Validates a business hours object
 // checks time is HH:MM and gives if only one open/close time is null
 app.validationRules.validateHours = function (data) {
@@ -2986,7 +3024,7 @@ app.controls.Typeahead = function (callback) {
                 } else {
                     self.$typeaheadList.show();
                     self.$typeaheadList.append(
-                        "<li class='typeahead-item'>NO RESULTS</li>");
+                        "<li class='typeahead-item'>" + app.Strings.noResults + "</li>");
                 }
             });
         }, lookupTimeout);

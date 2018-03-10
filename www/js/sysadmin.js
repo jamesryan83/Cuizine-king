@@ -47,23 +47,23 @@ app.sysadmin = {
     // System admin routes
     routes: {
         "/sysadmin/create-store": {
-            title: "SysAdmin - Create Store",
             file: "create-store",
             initFunction: function (routeData) {
+                document.title = "SysAdmin - Create Store";
                 app.sysadmin.createStore.init(routeData);
             },
         },
         "/sysadmin/edit-store": {
-            title: "SysAdmin - Edit Store",
             file: "edit-store",
             initFunction: function (routeData) {
+                document.title = "SysAdmin - Edit Store";
                 app.sysadmin.editStore.init(routeData);
             },
         },
         "/sysadmin/database": {
-            title: "SysAdmin - Database",
             file: "database",
             initFunction: function (routeData) {
+                document.title = "SysAdmin - Database";
                 app.sysadmin.database.init(routeData);
             },
         },
@@ -72,8 +72,8 @@ app.sysadmin = {
 }
 
 
-// create arrays of filepaths for express router
 app.sysadmin.routesList = Object.keys(app.sysadmin.routes);
+
 
 if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.sysadmin;

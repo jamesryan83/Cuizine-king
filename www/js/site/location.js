@@ -54,8 +54,8 @@ app.site.location = {
         // for each category
         for (var i = 0; i < this.storeData.length; i++) {
             locationsLength = this.storeData[i].stores.length;
-            locationsText = locationsLength +
-                (locationsLength == 1 ? " Location" : " Locations");
+            locationsText = locationsLength + " " +
+                (locationsLength == 1 ? app.Strings.location : app.Strings.locations);
 
 
             // add category header
@@ -79,10 +79,11 @@ app.site.location = {
                     "#template-store-list-item", storeData,
                     storeData.id_store, "data-store-id");
 
-                // highlight open now
-                if (storeData.open == "Open Now") {
-                    $item.find(".store-list-item-text-open").addClass("active");
-                }
+
+//                // highlight open now
+//                if (storeData.open == "Open Now") {
+//                    $item.find(".store-list-item-text-open").addClass("active");
+//                }
 
                 // add store image
                 $item.find(".store-list-item-image")

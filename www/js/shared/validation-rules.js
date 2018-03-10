@@ -94,8 +94,14 @@ app.validationRules = {
 
 // These validation objects below use the values from above
 
-// -------- Route validation --------
 
+// jwt
+app.validationRules.jwt = {
+	jwt: app.validationRules._people_jwt
+}
+
+
+// -------- Route validation --------
 
 // Site - login page
 app.validationRules.login = {
@@ -204,6 +210,7 @@ app.validationRules.getStore = {
 }
 
 
+// TODO : i18n
 // Validates a business hours object
 // checks time is HH:MM and gives if only one open/close time is null
 app.validationRules.validateHours = function (data) {

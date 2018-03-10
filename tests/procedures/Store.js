@@ -18,7 +18,7 @@ function getFakeStore () {
 describe("PROCEDURES - STORE", function () {
 
     before(function (done) {
-        this.timeout(5000);
+        this.timeout(6000);
 
         testutil.startDatabase(function () {
             done();
@@ -56,10 +56,10 @@ describe("PROCEDURES - STORE", function () {
             id_user_doing_update: config.dbConstants.adminUsers.system
         };
 
-        storesDB.store_applications_create(testApplication, function (err, outputs) {
+        storesDB.store_applications_create(testApplication, function (err, result) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            assert.equal(outputs.newStoreApplicationId, 2); // TODO : make variable
+            assert.equal(result.output.newStoreApplicationId, 2); // TODO : make variable
             done();
         });
     });
@@ -77,7 +77,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_create(fakeStore, function (err) {
             assert.equal(err.status, 401);
-            assert.equal(err.message, "Not authorized");
+            assert.equal(err.message, "notAuthorized");
             done();
         });
     });
@@ -89,7 +89,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_create(fakeStore, function (err) {
             assert.equal(err.status, 401);
-            assert.equal(err.message, "Not authorized");
+            assert.equal(err.message, "notAuthorized");
             done();
         });
     });
@@ -101,7 +101,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_create(fakeStore, function (err) {
             assert.equal(err.status, 400);
-            assert.equal(err.message, "Invalid postcode or suburb");
+            assert.equal(err.message, "invalidPostcodeOrSuburb");
             done();
         });
     });
@@ -113,7 +113,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_create(fakeStore, function (err) {
             assert.equal(err.status, 400);
-            assert.equal(err.message, "Invalid postcode or suburb");
+            assert.equal(err.message, "invalidPostcodeOrSuburb");
             done();
         });
     });
@@ -122,11 +122,14 @@ describe("PROCEDURES - STORE", function () {
     it("#stores_create creates a store, address and user", function (done) {
         var fakeStore = getFakeStore();
 
-        storesDB.stores_create(fakeStore, function (err, outputs) {
+        storesDB.stores_create(fakeStore, function (err, result) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            assert.equal(outputs.newStoreId, fakeStore.id_store);
-            assert.ok(outputs.newPersonId > 3); // TODO : make variable
+            var newStoreId = result.output.newStoreId;
+            var newPersonId = result.output.newPersonId;
+
+            assert.equal(newStoreId, fakeStore.id_store);
+            assert.ok(newPersonId > 3); // TODO : make variable
 
             var query =
                 "SELECT * FROM App.people " +
@@ -134,8 +137,8 @@ describe("PROCEDURES - STORE", function () {
                 "SELECT * FROM Store.stores_people";
 
             // check data was inserted in other tables
-            database.executeQuery(query, function (err2, result) {
-                if (err2) return done(new Error(JSON.stringify(err2)));
+            database.executeQuery(query, function (err, result) {
+                if (err) return done(new Error(JSON.stringify(err)));
 
                 var people = result.recordsets[0];
                 var addresses = result.recordsets[1];
@@ -156,7 +159,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_create(fakeStore, function (err) {
             assert.equal(err.status, 409);
-            assert.equal(err.message, "Account already taken");
+            assert.equal(err.message, "accountAlreadyTaken");
             done();
         });
     });
@@ -171,15 +174,17 @@ describe("PROCEDURES - STORE", function () {
     it("#stores_get returns message when store not found", function (done) {
         storesDB.stores_get({ "id_store": 0 }, function (err) {
             assert.equal(err.status, 400);
-            assert.equal(err.message, "Store not found");
+            assert.equal(err.message, "storeNotFound");
             done();
         });
     });
 
 
     it("#stores_get returns store", function (done) {
-        storesDB.stores_get({ "id_store": 1 }, function (err, store) {
+        storesDB.stores_get({ "id_store": 1 }, function (err, result) {
             if (err) return done(new Error(JSON.stringify(err)));
+
+            var store = database.resultHandler.getData(result, null, null, true).data;
 
             assert.ok(store);
             assert.equal(store.id_store, 1);
@@ -213,7 +218,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_details_update(tempData, function (err) {
             assert.equal(err.status, 400);
-            assert.equal(err.message, "Store not found");
+            assert.equal(err.message, "storeNotFound");
             done();
         });
     });
@@ -224,9 +229,8 @@ describe("PROCEDURES - STORE", function () {
         tempData.id_user_doing_update = 4;
 
         storesDB.stores_details_update(tempData, function (err) {
-            console.log(err)
             assert.equal(err.status, 401);
-            assert.equal(err.message, "Not authorized");
+            assert.equal(err.message, "notAuthorized");
             done();
         });
     });
@@ -238,7 +242,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_details_update(tempData, function (err) {
             assert.equal(err.status, 401);
-            assert.equal(err.message, "Not authorized");
+            assert.equal(err.message, "notAuthorized");
             done();
         });
     });
@@ -250,7 +254,7 @@ describe("PROCEDURES - STORE", function () {
 
         storesDB.stores_details_update(tempData, function (err) {
             assert.equal(err.status, 400);
-            assert.equal(err.message, "Invalid postcode or suburb");
+            assert.equal(err.message, "invalidPostcodeOrSuburb");
             done();
         });
     });
@@ -263,15 +267,17 @@ describe("PROCEDURES - STORE", function () {
         storesDB.stores_details_update(testutil.fakeStoreUpdate, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            storesDB.stores_get({ "id_store": 1 }, function (err2, store) {
-                if (err2) return done(new Error(JSON.stringify(err2)));
+            storesDB.stores_get({ "id_store": 1 }, function (err, result) {
+                if (err) return done(new Error(JSON.stringify(err)));
+
+                var store = database.resultHandler.getData(result, null, null, true).data;
 
                 assert.equal(store.description, testutil.fakeStoreUpdate.description);
                 assert.equal(store.email, testutil.fakeStoreUpdate.email);
                 assert.equal(store.phone_number, testutil.fakeStoreUpdate.phone_number);
                 assert.ok(store.address.length > 0);
                 assert.ok(store.hours.length > 0);
-//                assert.equal(store.review_count, 0);
+                assert.equal(store.review_count, 3);
                 assert.equal(store.address[0].street_address, testutil.fakeStoreUpdate.street_address);
                 assert.equal(store.address[0].postcode, testutil.fakeStoreUpdate.postcode);
                 assert.equal(store.address[0].suburb, testutil.fakeStoreUpdate.suburb);
@@ -296,7 +302,7 @@ describe("PROCEDURES - STORE", function () {
     it("#stores_delete returns unauthorized when website user", function (done) {
         storesDB.stores_delete({ id_store: getFakeStore().id_store, id_user_doing_update: config.dbConstants.adminUsers.website }, function (err) {
             assert.equal(err.status, 401);
-            assert.equal(err.message, "Not authorized");
+            assert.equal(err.message, "notAuthorized");
             done();
         });
     });
@@ -305,7 +311,7 @@ describe("PROCEDURES - STORE", function () {
     it("#stores_delete returns unauthorized when store user", function (done) {
         storesDB.stores_delete({ id_store: getFakeStore().id_store, id_user_doing_update: config.dbConstants.adminUsers.store }, function (err) {
             assert.equal(err.status, 401);
-            assert.equal(err.message, "Not authorized");
+            assert.equal(err.message, "notAuthorized");
             done();
         });
     });
@@ -313,7 +319,7 @@ describe("PROCEDURES - STORE", function () {
 
     it("#stores_delete returns message for store not found", function (done) {
         storesDB.stores_delete({ id_store: 1002020, id_user_doing_update: config.dbConstants.adminUsers.system }, function (err) {
-            assert.equal(err.message, "Store not found");
+            assert.equal(err.message, "storeNotFound");
             done();
         });
     });
@@ -325,8 +331,8 @@ describe("PROCEDURES - STORE", function () {
         storesDB.stores_delete({ id_store: fakeStore.id_store, id_user_doing_update: config.dbConstants.adminUsers.system }, function (err) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            database.executeQuery("SELECT * FROM Store.stores WHERE id_store = " + fakeStore.id_store, function (err2, result) {
-                if (err2) return done(new Error(JSON.stringify(err2)));
+            database.executeQuery("SELECT * FROM Store.stores WHERE id_store = " + fakeStore.id_store, function (err, result) {
+                if (err) return done(new Error(JSON.stringify(err)));
 
                 var store = result.recordset[0];
 
@@ -348,7 +354,7 @@ describe("PROCEDURES - STORE", function () {
 
     it.skip("#stores_undelete returns message for store not found", function (done) {
         storesDB.stores_undelete({ "id_store": 1002020 }, function (err) {
-            assert.equal(err.message, "Store not found");
+            assert.equal(err.message, "storeNotFound");
             done();
         });
     });

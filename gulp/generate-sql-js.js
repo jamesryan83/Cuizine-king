@@ -42,8 +42,7 @@ exports = module.exports = {
                 "\"use strict\";\n\n" +
                 "var sql = require(\"mssql\");\n\n" +
                 "var config = require(\"../config\");\n" +
-                "var database = require(\"../database/database\");\n" +
-                "var resultHandler = require(\"../database/result-handler\");\n\n" +
+                "var database = require(\"../database/database\");\n\n" +
                 "// Calls stored procedures for " + key + "\n" +
                 "exports = module.exports = {\n\n";
 
@@ -90,9 +89,8 @@ exports = module.exports = {
                         procedureInputsOutput +=
                             "\t\t\t.output(\"" + match[2] + "\", sql." + sqlType + ")\n";
                     }
-
-
                 }
+
 
                 // create js function
                 var jsFunction =
@@ -101,7 +99,9 @@ exports = module.exports = {
                         "\t\tdatabase.pool.request()\n" +
                             procedureInputsOutput +
                             "\t\t\t.execute(config.mssql.database + \".dbo." + procedureName + "\", function (err, result) {\n" +
-                                "\t\t\t\treturn resultHandler.handle(\"" + procedureName + "\", err, result, callback, inputs);\n" +
+                                "\t\t\t\tvar sqlErr = database.resultHandler.getError(err);\n" +
+                                "\t\t\t\tif (sqlErr) return callback(sqlErr);\n\n" +
+                                "\t\t\t\treturn callback(null, result);\n" +
                             "\t\t});\n" +
                         "\t},\n\n\n";
 

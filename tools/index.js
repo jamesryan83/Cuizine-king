@@ -35,6 +35,9 @@ app.main = {
         this.fakeDataFolderPath = this.projectFolderPath + "fakedata/";
 
 
+        $("body").css("visibility", "visible");
+
+
         // suburb typeahead
         new app.controls.Typeahead(function (data, url) {
             if (data && url) {
@@ -170,6 +173,8 @@ app.main = {
 
             return false;
         });
+
+
 
     },
 

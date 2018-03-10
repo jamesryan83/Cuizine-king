@@ -22,10 +22,11 @@ app.routerBase = {
     // Load page into #page-container.  This is called to change a page
     // section is site, cms or sysadmin
     loadPageForRoute: function (route, section, isAfterPopState) {
+        var self = this;
+
         if (this.isLoading) return;
         if (window.location.pathname === route && !isAfterPopState) return; // same page
 
-        var self = this;
         this.isLoading = true;
         this.lastLoadedSection = section;
 
@@ -43,52 +44,8 @@ app.routerBase = {
 
 
         // get data for route
-        var routeData = this.getCurrentRouteData(route, section);
-
-
-        // load html into page
-        $("#page-container").empty();
-        $("#page-container").append(routeData.html);
-
-        $("html, body").animate({ "scrollTop": 0 }, 200);
-
-
-        // start js
-        app[section].routes[routeData.normalizedRoute].initFunction(routeData);
-        app[section].onPageChanged(routeData);
-
-
-        // run ui stuff when page is loaded
-        setTimeout(function () {
-            $("body").css("visibility", "visible");
-        }, 100);
-
-
-        // push route into history, but not on back
-        if (!self.firstLoad && !isAfterPopState) {
-            if (routeData.route != window.location.pathname) {
-                window.history.pushState(null, routeData.route, routeData.route);
-            }
-        }
-
-        self.firstLoad = false;
-        self.isLoading = false;
-
-
-
-        document.title = routeData.title;
-
-        return routeData;
-    },
-
-
-
-
-    // Returns the data for the current route
-    getCurrentRouteData: function (route, section) {
         var newRoute = route || window.location.pathname;
         var routeData = { route: newRoute };
-
         if (app.util.isCordova()) {
             // remove extra cordova stuff from route
             newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
@@ -98,6 +55,7 @@ app.routerBase = {
         // normalize route and add current section
         routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
         routeData.section = section;
+
 
         // Add html and other route data
         if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
@@ -111,8 +69,71 @@ app.routerBase = {
             return;
         }
 
+
+        // load html into page
+        $("#page-container").empty();
+        $("#dialog-container").empty();
+        $("#page-container").append(routeData.html);
+
+        $("html, body").animate({ "scrollTop": 0 }, 200);
+
+
+        // start js
+        app[section].routes[routeData.normalizedRoute].initFunction(routeData);
+        app[section].onPageChanged(routeData);
+
+
+        // run ui stuff when page is loaded
+//        setTimeout(function () {
+            $("body").css("visibility", "visible");
+//        }, 0);
+
+
+        // push route into history, but not on back
+        if (!this.firstLoad && !isAfterPopState) {
+            if (routeData.route != window.location.pathname) {
+                window.history.pushState(null, routeData.route, routeData.route);
+            }
+        }
+
+        this.firstLoad = false;
+        this.isLoading = false;
+
         return routeData;
     },
+
+
+
+
+//    // Returns the data for the current route
+//    getCurrentRouteData: function (route, section) {
+//        var newRoute = route || window.location.pathname;
+//        var routeData = { route: newRoute };
+//
+//        if (app.util.isCordova()) {
+//            // remove extra cordova stuff from route
+//            newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
+//            if (newRoute == "/index-cordova") newRoute = "/";
+//        }
+//
+//        // normalize route and add current section
+//        routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
+//        routeData.section = section;
+//
+//        // Add html and other route data
+//        if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
+//            routeData.html = app[section].htmlFiles[routeData.normalizedRoute];
+//            $.extend(routeData, app[section].routes[routeData.normalizedRoute]);
+//
+//        // unknown route
+//        } else {
+//            debugger;
+//            app.data.invalidateTokensAndGoToLogin();
+//            return;
+//        }
+//
+//        return routeData;
+//    },
 
 
 

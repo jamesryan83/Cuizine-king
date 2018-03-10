@@ -32,17 +32,18 @@ exports = module.exports = {
         var person = res.locals.person;
 
         if (!person) {
-            return this.router.sendJson(res, null, "Not Authorized", 401);
+            return this.router.sendJson(req, res, null, {
+                message: "notAuthorized", status: 401 });
         }
 
         var jwt = res.locals.person.jwt;
         var id_person = res.locals.person.id_person;
 
         // delete user
-        appDB.people_delete({ jwt: jwt, id_person: id_person }, function (err, result) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+        appDB.people_delete({ jwt: jwt, id_person: id_person }, function (err) {
+            if (err) return self.router.sendJson(req, res, null, err);
 
-            return self.router.sendJson(res, result);
+            return self.router.sendJson(req, res, result);
         });
     },
 

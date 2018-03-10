@@ -7,7 +7,7 @@ var path = require("path");
 
 var config = require("../config");
 var storeDB = require("../procedures/_Store");
-var strings = require("../../www/js/shared/i18n/en");
+var database = require("../database/database");
 
 
 exports = module.exports = {
@@ -31,9 +31,12 @@ exports = module.exports = {
             return;
 
         storeDB.stores_get({ id_store: b.id_store }, function (err, result) {
-			if (err) return self.router.sendJson(res, null, err.message, err.status);
+			if (err) return self.router.sendJson(req, res, null, err);
 
-            return self.router.sendJson(res, result);
+            result = database.resultHandler.getData(result, 400, "storeNotFound", true);
+            if (result.err) self.router.sendJson(req, res, null, result.err);
+
+            return self.router.sendJson(req, res, result.data);
         });
     },
 
@@ -47,9 +50,12 @@ exports = module.exports = {
             return;
 
         storeDB.stores_create(b, function (err, result) {
-			if (err) return self.router.sendJson(res, null, err.message, err.status);
+			if (err) return self.router.sendJson(req, res, null, err);
 
-            return self.router.sendJson(res, result);
+            result = database.resultHandler.getOutputs(["newStoreId", "newPersonId"], result);
+            if (result.err) self.router.sendJson(req, res, null, result.err);
+
+            return self.router.sendJson(req, res, result.outputs);
         });
     },
 
@@ -67,16 +73,19 @@ exports = module.exports = {
 
         // save store application to db
         storeDB.store_applications_create(b, function (err, result) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+            if (err) return self.router.sendJson(req, res, null, err);
+
+            result = database.resultHandler.getOutputs(["newStoreApplicationId"], result);
+            if (result.err) self.router.sendJson(req, res, null, result.err);
 
             // send user verification email
-            self.mail.sendStoreApplicationEmail(b.name, b.email, function (err2) {
-                if (err2) console.log(err2);
+            self.mail.sendStoreApplicationEmail(b.name, b.email, function (err) {
+                if (err) console.log(err);
             });
 
             // TODO : send internal email for new application
 
-            return self.router.sendJson(res, result);
+            return self.router.sendJson(req, res, result.outputs);
         });
     },
 
@@ -91,16 +100,16 @@ exports = module.exports = {
 
         // validate hours
         var errMsg = global.validationRules.validateHours(b);
-        if (errMsg) return self.router.sendJson(res, null, errMsg, 400);
+        if (errMsg) return self.router.sendJson(req, res, null, { message: errMsg, status: 400 });
 
         // validate other stuff
         if (this.router.validateInputs(req, res, b, global.validationRules.updateStoreDetails))
             return;
 
-        storeDB.stores_details_update(b, function (err, result) {
-			if (err) return self.router.sendJson(res, null, err.message, err.status);
+        storeDB.stores_details_update(b, function (err) {
+			if (err) return self.router.sendJson(req, res, null, err);
 
-            return self.router.sendJson(res, result);
+            return self.router.sendJson(req, res);
         });
 	},
 
@@ -114,15 +123,10 @@ exports = module.exports = {
             return;
 
         // delete store from db
-        storeDB.stores_delete(b, function (err, result) {
-			if (err) return self.router.sendJson(res, null, err.message, err.status);
+        storeDB.stores_delete(b, function (err) {
+			if (err) return self.router.sendJson(req, res, null, err);
 
-            // delete azure container
-            self.blobService.deleteContainerIfExists("store" + b.id_store, function (err2) {
-                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
-
-                return self.router.sendJson(res, result);
-            });
+            return self.router.sendJson(req, res, result);
         });
 	},
 
@@ -131,30 +135,33 @@ exports = module.exports = {
     updateLogo: function (req, res) {
         var self = this;
         var b = req.body;
-        var imageFile = req.file
+        var errMsg = null;
+        var imageFile = req.file;
 
         if (this.router.validateInputs(req, res, b, global.validationRules.updateLogo))
             return;
 
         // check image properties
         if (!imageFile) {
-            return this.router.sendJson(res, null, strings.imageFileMissing, 400);
+            errMsg = "imageFileMissing";
         } else if (imageFile.mimetype !== "image/jpeg") {
-            return this.router.sendJson(res, null, strings.imageFileWrongType, 400);
+            errMsg = "imageFileWrongType";
         } else if (imageFile.size > 250000) {
-            return this.router.sendJson(res, null, strings.imageFileTooBig, 400);
+            errMsg = "imageFileTooBig";
+        } else if (!req.file.buffer) {
+            errMsg = "imageDataMissing";
         }
 
-        if (!req.file.buffer) {
-            return this.router.sendJson(res, null, "Image missing", 400);
+        if (errMsg) {
+            return this.router.sendJson(req, res, null, { message: errMsg, status: 400 });
         }
 
-        var imgPath = "/res/storelogos/store" + b.id_store + ".jpg";
+        var imgPath = path.join(config.storeLogos, "store" + b.id_store + ".jpg");
 
         fs.writeFile(path.join(__dirname, "../", "../", "www", imgPath), req.file.buffer, function (err) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+            if (err) return self.router.sendJson(req, res, null, err);
 
-            self.router.sendJson(res, { url: imgPath });
+            return self.router.sendJson(req, res, { url: imgPath });
         });
     },
 

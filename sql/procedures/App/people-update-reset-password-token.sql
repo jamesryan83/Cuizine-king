@@ -16,10 +16,9 @@ CREATE OR ALTER PROCEDURE people_update_reset_password_token
         FROM App.people
         WHERE email = @email AND is_deleted = 0
 
-        -- IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
-        IF @id_person IS NULL THROW 50400, 'Account not found', 1
+        IF @id_person IS NULL THROW 50400, 'accountNotFound', 1
 
-        IF @is_verified = 0 THROW 50400, 'Please verify your account', 1
+        IF @is_verified = 0 THROW 50400, 'pleaseVerifyAccount', 1
 
 
         -- update token

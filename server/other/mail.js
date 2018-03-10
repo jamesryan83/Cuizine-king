@@ -8,6 +8,9 @@
 // https://sendgrid.com/docs/Classroom/Troubleshooting/Delivery_Issues/safely_test_your_sending_speed.html
 
 
+// TODO : i18n
+
+
 // Emails
 var sendgrid = require("@sendgrid/mail");
 

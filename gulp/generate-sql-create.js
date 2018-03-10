@@ -19,9 +19,6 @@ exports = module.exports = {
         var table = "";
         var temp = "";
         var match = false;
-        var placeholder = "";
-        var value = "";
-        var re = "";
 
 
         // arrays of sql statements that make up the various outputs
@@ -47,10 +44,13 @@ exports = module.exports = {
         var sqlTableFilePaths = recursiveReadSync(path.join(sqlFolderPath, "tables"));
         var sequencesFile = fs.readFileSync(path.join(sqlFolderPath, "other", "sequences.sql"), "utf-8");
         var schemasFile = fs.readFileSync(path.join(sqlFolderPath, "other", "schemas.sql"), "utf-8");
-        var constantsFile = JSON.parse(fs.readFileSync(path.join(sqlFolderPath, "other", "constants.js"), "utf-8"));
         var procedureFilePaths = recursiveReadSync(path.join(sqlFolderPath, "procedures"));
         var functionFilePaths = recursiveReadSync(path.join(sqlFolderPath, "functions"));
 
+        var constantsFile = JSON.parse(fs.readFileSync(path.join(sqlFolderPath, "other", "constants.json"), "utf-8"));
+//        var stringsFile = fs.readFileSync(path.join("../", "server", "other", "i18n", "s_en.js"), "utf-8");
+//
+//        stringsFile = stringsFile.sql;
 
 
 
@@ -239,12 +239,7 @@ exports = module.exports = {
 
 
         // replace placeholders with constants
-        for (i = 0; i < Object.keys(constantsFile).length; i++) {
-            placeholder = Object.keys(constantsFile)[i];
-            value = constantsFile[placeholder];
-            re = new RegExp(placeholder, "gi");
-            outputSql = outputSql.replace(re, value);
-        }
+        outputSql = this.replacePlaceholders(constantsFile, outputSql);
 
 
         // save
@@ -319,13 +314,7 @@ exports = module.exports = {
         outputSql += "\n\n\n -- Create Stored Procedures\n\n";
         outputSql += storedProcedures.join("\n\n\n");
 
-        // replace placeholders with constants
-        for (i = 0; i < Object.keys(constantsFile).length; i++) {
-            placeholder = Object.keys(constantsFile)[i];
-            value = constantsFile[placeholder];
-            re = new RegExp(placeholder, "gi");
-            outputSql = outputSql.replace(re, value);
-        }
+        outputSql = this.replacePlaceholders(constantsFile, outputSql);
 
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_recreate-procedures.sql"), outputSql);
 
@@ -353,6 +342,19 @@ exports = module.exports = {
         // save
         fs.writeFileSync(path.join(sqlOutputFolderPath, "_get-sequences.sql"), outputSql);
 
+    },
+
+
+    // This replaces the placeholders with their values from sql/other/contants.json
+    replacePlaceholders: function (constantsFile, outputSql) {
+        for (var i = 0; i < Object.keys(constantsFile).length; i++) {
+            var placeholder = Object.keys(constantsFile)[i];
+            var value = constantsFile[placeholder];
+            var re = new RegExp(placeholder, "gi");
+            outputSql = outputSql.replace(re, value);
+        }
+
+        return outputSql;
     },
 
 }

@@ -7,6 +7,7 @@ var jwt = require("jsonwebtoken");
 
 var config = require("../config");
 var appDB = require("../procedures/_App");
+var database = require("../database/database");
 var passportAuth = require("../other/passport-auth");
 
 
@@ -22,25 +23,21 @@ exports = module.exports = {
     },
 
 
-    // Website login
+
+    // Website, store (CMS) and system login
     websiteLogin: function (req, res) {
         this._login("is_web_user", req, res);
     },
 
-
-    // Store (CMS) login
     storeLogin: function (req, res) {
         this._login("is_store_user", req, res);
     },
 
-
-    // System login
     systemLogin: function (req, res) {
         this._login("is_system_user", req, res);
     },
 
 
-    // Login
     _login: function (accessProperty, req, res) {
         var self = this;
         var b = req.body;
@@ -49,65 +46,62 @@ exports = module.exports = {
             return;
 
         // check password
-        passportAuth.checkUsersPassword(accessProperty, res, b.email, b.password, function (err) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+        passportAuth.checkUsersPassword(req, res, accessProperty, b.email, b.password, function (err) {
+            if (err) return self.router.sendJson(req, res, null, err);
 
             // system users aren"t tied to a store id and should update stores using backend stuff
             if (accessProperty == "is_store_user" && res.locals.person.is_system_user) {
-                return self.router.sendJson(res, null, "System users can't log into stores", 401);
+                return self.router.sendJson(req, res, null, {
+                    message: "System users can't log into stores", status: 400 });
             }
 
             // create a jwt and send to user
-            self.createJwt(res.locals.person.id_person, function (err2, result) {
-                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
+            self.createJwt(res.locals.person.id_person, function (err, result) {
+                if (err) return self.router.sendJson(req, res, null, err);
 
                 // add id_store to result if logging into cms
                 if (accessProperty == "is_store_user") {
                     result.id_store = res.locals.person.id_store;
                 }
 
-                return self.router.sendJson(res, result);
+                return self.router.sendJson(req, res, result);
             });
         });
     },
 
 
 
-    // Website create user
+    //  Create website, store and system users
     websiteCreateUser: function (req, res) {
         this._createUser("people_create_web_user", req, res);
     },
 
-
-    // Store create user
     storeCreateUser: function (req, res) {
         this._createUser("people_create_store_user", req, res);
     },
 
-
-    // System create user
     systemCreateUser: function (req, res) {
         this._createUser("people_create_system_user", req, res);
     },
 
 
-
-    // Create a user
-    _createUser: function (procedure, req, res) {
+    _createUser: function (storedProcedure, req, res) {
         var self = this;
         var b = req.body;
 
         if (this.router.validateInputs(req, res, b, global.validationRules.createUser))
             return;
 
-        // encrypt password
+        // encrypt password - 10 is salt length
         bcrypt.hash(b.password, 10, function (err, encryptedPassword) {
-            if (err) return self.router.sendJson(res, null, "Error creating token", 500);
+            if (err) return self.router.sendJson(req, res, null, {
+                message: "errorCreatingToken", status: 500 });
 
             // add verification token and password to inputs
             b.verification_token = self.makeid();
             b.password = encryptedPassword;
 
+            // Website users are created by system
             if (res.locals.person) {
                 b.id_user_doing_update = res.locals.person.id_person;
             } else {
@@ -115,21 +109,26 @@ exports = module.exports = {
             }
 
             // create person in db
-            appDB[procedure](b, function (err2, outputs) {
-                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
+            appDB[storedProcedure](b, function (err, result) {
+                if (err) return self.router.sendJson(req, res, null, err);
+
+                result = database.resultHandler.getOutputs(["newPersonId"], result);
+                if (result.err) return self.router.sendJson(req, res, null, result.err);
 
                 // create a jwt
-                self.createJwt(outputs.newPersonId, function (err3, result) {
-                    if (err3) return self.router.sendJson(res, null, err3.message, err3.status);
+                self.createJwt(result.outputs.newPersonId, function (err, result) {
+                    if (err) return self.router.sendJson(req, res, null, err);
 
                     // send user verification email
-                    if (procedure != "people_create_system_user") {
-                        self.mail.sendUserRegistrationEmail(b.first_name, b.email, b.verification_token, function (err4) {
-                            if (err4) console.log(err4);
+                    if (storedProcedure != "people_create_system_user") {
+                        self.mail.sendUserRegistrationEmail(
+                            b.first_name, b.email, b.verification_token, function (err) {
+                            if (err) console.log(err);
                         });
                     }
 
-                    return self.router.sendJson(res, result);
+                    // return jwt
+                    return self.router.sendJson(req, res, result);
                 });
             });
         });
@@ -147,25 +146,25 @@ exports = module.exports = {
             return;
 
         // check persons password
-        passportAuth.checkUsersPassword(null, res, b.email, b.password, function (err) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+        passportAuth.checkUsersPassword(req, res, null, b.email, b.password, function (err) {
+            if (err) return self.router.sendJson(req, res, null, err);
 
             delete b.password;
 
             // set persons email as validated
-            appDB.people_update_is_verified(b, function (err2) {
-                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
+            appDB.people_update_is_verified(b, function (err) {
+                if (err) return self.router.sendJson(req, res, null, err);
 
                 // send thanks for verifying email
-                self.mail.sendThanksForVerifyingEmail(b.email, function (err3) {
-                    if (err3) console.log(err3);
+                self.mail.sendThanksForVerifyingEmail(b.email, function (err) {
+                    if (err) console.log(err);
                 });
 
                 // create a jwt and send to user
-                self.createJwt(res.locals.person.id_person, function (err4, result) {
-                    if (err4) return self.router.sendJson(res, null, err4.message, err4.status);
+                self.createJwt(res.locals.person.id_person, function (err, result) {
+                    if (err) return self.router.sendJson(req, res, null, err);
 
-                    return self.router.sendJson(res, result);
+                    return self.router.sendJson(req, res, result);
                 });
             });
         });
@@ -184,9 +183,9 @@ exports = module.exports = {
 
         // TODO : security of inputs
         appDB.people_invalidate_jwt(inputs, function (err) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+            if (err) return self.router.sendJson(req, res, null, err);
 
-            return self.router.sendJson(res);
+            return self.router.sendJson(req, res);
         });
     },
 
@@ -208,14 +207,14 @@ exports = module.exports = {
             email: b.email,
             reset_password_token: reset_password_token
         }, function (err) {
-            if (err) return self.router.sendJson(res, null, err.message, err.status);
+            if (err) return self.router.sendJson(req, res, null, err);
 
             // send reset link
-            self.mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err2) {
-                if (err2) return self.router.sendJson(res, null, err2.message, err2.status);
+            self.mail.sendForgotPasswordEmail(b.email, reset_password_token, function (err) {
+                if (err) return self.router.sendJson(req, res, null, err);
 
-                return self.router.sendJson(res, {
-                    message: "You have been sent an email to reset your password"
+                return self.router.sendJson(req, res, {
+                    message: "sentResetPasswordEmail"
                 });
             });
         });
@@ -234,17 +233,17 @@ exports = module.exports = {
 
         // encrypt password
         bcrypt.hash(b.password, 10, function (err, encryptedPassword) {
-            if (err) return self.router.sendJson(res, null, err.message);
+            if (err) return self.router.sendJson(req, res, null, err);
 
             // add password to database
             appDB.people_update_password({
                 email: b.email,
                 password: encryptedPassword,
                 reset_password_token: b.reset_password_token
-            }, function (err2) {
-                if (err2) return self.router.sendJson(res, null, err2.message);
+            }, function (err) {
+                if (err) return self.router.sendJson(req, res, null, err);
 
-                return self.router.sendJson(res);
+                return self.router.sendJson(req, res);
             });
         });
     },
@@ -261,10 +260,10 @@ exports = module.exports = {
                 result.id_store = person.id_store;
             }
 
-            return this.router.sendJson(res, result);
+            return this.router.sendJson(req, res, result);
         }
 
-        return this.router.sendJson(res, null, "Not Authorized", 401);
+        return this.router.sendJson(req, res, null, { message: "notAuthorized", status: 401 });
     },
 
 
@@ -285,12 +284,13 @@ exports = module.exports = {
             if (err) return callback(err);
 
             // update jwt in db
-            appDB.people_update_jwt({ id_person: id_person, jwt: jwToken }, function (err2, person) {
-                if (err2) return callback(err2);
+            appDB.people_update_jwt({ id_person: id_person, jwt: jwToken }, function (err, result) {
+                if (err) return callback(err);
 
-                var result = { jwt: jwToken, id_person: person.id_person };
+                result = database.resultHandler.getData(result, 400, "accountNotFound");
+                if (result.err) return callback(result.err);
 
-                return callback(null, result);
+                return callback(null, { jwt: jwToken, id_person: result.data.id_person });
             });
         });
     },

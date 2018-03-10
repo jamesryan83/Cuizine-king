@@ -6,5 +6,5 @@ CREATE OR ALTER PROCEDURE people_invalidate_jwt
     UPDATE App.people SET jwt = '' WHERE jwt = @jwt
 
     -- error if no rows were changed
-    IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
+    IF @@ROWCOUNT = 0 THROW 50400, 'accountNotFound', 1
 GO

@@ -3,7 +3,6 @@
 // Locations api
 
 
-
 exports = module.exports = {
 
     router: null,
@@ -25,7 +24,8 @@ exports = module.exports = {
     // Get location
     getLocation: function (req, res) {
         if (!req.query || !req.query.q) {
-            return this.router.sendJson(res, null, "Search term missing", 400);
+            return this.router.sendJson(req, res, null, {
+                message: "searchTermMissing", status: 400 });
         }
 
         var location = req.query.q.toLowerCase();
@@ -45,7 +45,7 @@ exports = module.exports = {
             }
         }
 
-        this.router.sendJson(res, outputList);
+        this.router.sendJson(req, res, outputList);
     },
 
 }

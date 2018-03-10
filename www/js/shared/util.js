@@ -1,6 +1,7 @@
 
 if (typeof app === "undefined") {
     var app = {};
+    app.Strings = app.Strings = {};
 }
 
 
@@ -68,7 +69,11 @@ app.util = {
     // ---------------------- Stuff ----------------------
 
 
-    days: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+    days: function () {
+        return [app.Strings.daysMon, app.Strings.daysTue, app.Strings.daysWed,
+          app.Strings.daysThu, app.Strings.daysFri, app.Strings.daysSat,
+          app.Strings.daysSun];
+    },
 
 
     // Returns the index number of today from 0 to 6 where 0 is Monday
@@ -82,7 +87,7 @@ app.util = {
 
     // Returns todays name (eg. WED)
     getTodayName: function (date) {
-        return this.days[this.getTodayIndex(date)];
+        return this.days()[this.getTodayIndex(date)];
     },
 
 
@@ -91,10 +96,11 @@ app.util = {
         var d = this.getTodayIndex(date) + 1;
         if (d > 6) d = 0;
 
-        return this.days[d];
+        return this.days()[d];
     },
 
 
+    // TODO : i18n
     // First letter of each word in a string to uppercase
     // https://stackoverflow.com/a/4878800
     toTitleCase: function(str) {
@@ -105,26 +111,27 @@ app.util = {
 
 
 
+
     // jquery-template formatters
     setupTemplateFormatters: function () {
         $.addTemplateFormatter({
             lowestOptionPriceFormatter: function (value) {
-                return "From $" + value;
+                return app.Strings.fromDollar + value;
             },
             priceFormatter: function (value) {
-                return "$" + value.toFixed(2);
+                return app.Strings.fromDollar + value.toFixed(2);
             },
             categoryArrayFormatter: function(value) {
                 return value.join(", ");
             },
             phoneNumberFormatter: function(value) {
-                return "Ph: " + value;
+                return app.Strings.phone + " " + value;
             },
             deliveryFormatter: function(value) {
-                return "Delivery " + value;
+                return app.Strings.delivery + " " + value;
             },
             minOrderFormatter: function(value) {
-                return "Min. Order " + value;
+                return app.Strings.minOrder + " " + value;
             },
         });
     },
@@ -211,29 +218,29 @@ app.util = {
         var self = this;
         var jwt = app.data.getJwtFromStorage();
 
-        if (jwt && jwt.length > 30) { // TODO : add a regex check or something
-
-            this.ajaxRequest({
-                method: "POST", url: "/api/v1/check-token", auth: true
-            }, function (err, result) {
-                if (err) {
-                    console.log(err);
-                    self.invalidateCredentials();
-                    return callback("invalid token");
-                }
-
-                app.data.addJwtToStorage(result.data.jwt);
-                app.data.addPersonIdToStorage(result.data.id_person);
-                if (result.data.id_store && result.data.id_store > 0) {
-                    app.data.addStoreIdToStorage(result.data.id_store);
-                }
-
-                return callback(null);
-            });
-        } else {
+//        if (jwt && jwt.length > 30) { // TODO : add a regex check or something
+        if (!app.util.validateInputs(jwt, app.validationRules._people_jwt)) {
             app.data.invalidateTokensAndGoToLogin();
-            return callback("invalid token");
+            return callback(app.Strings.invalidToken);
         }
+
+        this.ajaxRequest({
+            method: "POST", url: "/api/v1/check-token", auth: true
+        }, function (err, result) {
+            if (err) {
+                console.log(err);
+                self.invalidateCredentials();
+                return callback(app.Strings.invalidToken);
+            }
+
+            app.data.addJwtToStorage(result.data.jwt);
+            app.data.addPersonIdToStorage(result.data.id_person);
+            if (result.data.id_store && result.data.id_store > 0) {
+                app.data.addStoreIdToStorage(result.data.id_store);
+            }
+
+            return callback(null);
+        });
     },
 
 
@@ -260,7 +267,7 @@ app.util = {
         if (files && files.length > 0) {
             var file = files[0];
             if (file.size > 250000) {
-                this.showToast("Image file size too big.  Must be < 250kB");
+                this.showToast(app.Strings.imageFileTooBig);
                 return;
             }
 
@@ -274,7 +281,7 @@ app.util = {
             }, function (err, result) {
                 if (err || !result || !result.data || !result.data.url) {
                     console.log(err)
-                    return callback("Error uploading image");
+                    return callback(app.Strings.errorUploadingImage);
                 }
 
                 return callback(null, result.data.url);
@@ -290,7 +297,7 @@ app.util = {
 //            };
 //            reader.readAsDataURL(file);
         } else {
-            this.showToast("Invalid Image");
+            this.showToast(app.Strings.invalidImage);
         }
     },
 
@@ -312,9 +319,17 @@ app.util = {
             cache: options.cache || false,
             processData: !options.isImage,
             contentType: contentType,
-            beforeSend: function(request) {
+            beforeSend: function(xhr) {
                 if (options.auth) {
-                    request.setRequestHeader("authorization", "Bearer " + app.data.getJwtFromStorage());
+                    var jwt = app.data.getJwtFromStorage();
+
+                    if (!app.util.validateInputs({ jwt: jwt }, app.validationRules.jwt)) {
+                        xhr.abort();
+                        app.data.invalidateTokensAndGoToLogin();
+                        return callback(app.Strings.invalidToken);
+                    }
+
+                    xhr.setRequestHeader("authorization", "Bearer " + jwt);
                 }
             },
             success: function (result) {
@@ -326,7 +341,7 @@ app.util = {
                     if (err.responseJSON && err.responseJSON.err) {
                         self.showToast(err.responseJSON.err, 4000);
                     } else {
-                        self.showToast("Server Error", 4000);
+                        self.showToast(app.Strings.serverError, 4000);
                     }
                 }
 
@@ -349,5 +364,6 @@ app.util = {
 if (typeof module !== "undefined" && this.module !== module) {
     var $ = { };
     var validate = require("validate.js");
+    app.Strings = require("../../../i18n/strings").getClientStrings();
     exports = module.exports = app.util;
 }

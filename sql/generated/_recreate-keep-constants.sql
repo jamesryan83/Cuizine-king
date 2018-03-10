@@ -572,7 +572,7 @@ CREATE OR ALTER PROCEDURE addresses_create_or_update
         SELECT TOP 1 @id_postcode = id_postcode FROM App.postcodes
         WHERE postcode = @postcode AND suburb = @suburb
 
-        IF @id_postcode IS NULL THROW 50400, 'Invalid postcode or suburb', 1
+        IF @id_postcode IS NULL THROW 50400, 'invalidPostcodeOrSuburb', 1
 
 
         -- Create address
@@ -630,25 +630,25 @@ CREATE OR ALTER PROCEDURE people_create_store_user
 
 
         -- not a store or system user
-        IF (@is_store_user = 0) THROW 50401, 'Not authorized', 1
+        IF (@is_store_user = 0) THROW 50401, 'notAuthorized', 1
 
 
         -- does the store exist
         IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store AND is_deleted = 0) IS NULL
-            THROW 50400, 'Store not found', 1
+            THROW 50400, 'storeNotFound', 1
 
 
         -- if a store_user, check if user doing update is member of the store
         IF (@is_system_user = 0)
         BEGIN
             IF (SELECT TOP 1 id_person FROM Store.stores_people WHERE id_store = @id_store AND id_person = @id_user_doing_update) IS NULL
-                THROW 50401, 'Not authorized', 1
+                THROW 50401, 'notAuthorized', 1
         END
 
 
         -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- create user
@@ -686,12 +686,12 @@ CREATE OR ALTER PROCEDURE people_create_system_user
         -- check if user doing update is a system user
         IF (SELECT TOP 1 id_person FROM App.people
             WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- create a user
@@ -726,7 +726,7 @@ CREATE OR ALTER PROCEDURE people_create_web_user
 
         -- check if user exists
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- create a user
@@ -761,7 +761,7 @@ CREATE OR ALTER PROCEDURE people_delete
 
 
         -- some test accounts can't be deleted
-        IF (@id_person <= 3) THROW 50400, 'Protected account', 1
+        IF (@id_person <= 3) THROW 50400, 'protectedAccount', 1
 
 
         -- get user type and jwt
@@ -771,19 +771,19 @@ CREATE OR ALTER PROCEDURE people_delete
 
 
         -- no user found
-        IF @email IS NULL THROW 50400, 'Account not found', 1
+        IF @email IS NULL THROW 50400, 'accountNotFound', 1
 
 
         -- check jwt
         -- If a jwt is null the user has never logged in, ok to delete account
-        IF @jwt_person IS NOT NULL AND @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
+        IF @jwt_person IS NOT NULL AND @jwt <> @jwt_person THROW 50401, 'invalidToken', 1
 
 
         IF (@is_store_user = 1)
             BEGIN
                 -- store owners have to be deleted using the admin program
                 IF (SELECT is_store_owner FROM Store.stores_people WHERE id_person = @id_person) = 1
-                    THROW 50401, 'Store owners need to contact support to have their account deleted', 1
+                    THROW 50401, 'storeOwnersContactSupport', 1
 
                 -- delete store users link to store
                 DELETE FROM Store.stores_people WHERE id_person = @id_person
@@ -816,7 +816,7 @@ CREATE OR ALTER PROCEDURE people_get_by_email
 
 
     -- no user found
-    IF (@id_person IS NULL) THROW 50400, 'Account not found', 1
+    IF (@id_person IS NULL) THROW 50400, 'accountNotFound', 1
 
 
     -- return user
@@ -845,14 +845,14 @@ CREATE OR ALTER PROCEDURE people_get_by_id
     SET NOCOUNT ON
 
 
-    -- get user type and jwt
+    -- get user type and email
     SELECT @email = email, @is_store_user = is_store_user, @is_system_user = is_system_user
     FROM App.people
     WHERE id_person = @id_person AND is_deleted = 0
 
 
     -- no user found
-    IF @email IS NULL THROW 50400, 'Account not found', 1
+    IF @email IS NULL THROW 50400, 'accountNotFound', 1
 
 
     -- return user
@@ -883,9 +883,9 @@ CREATE OR ALTER PROCEDURE people_get_by_jwt
 
     SET NOCOUNT ON
 
-
+    -- TODO : a better check
     -- check for bad token
-    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'Bad token', 1
+    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'invalidToken', 1
 
 
     -- get user type and jwt
@@ -895,11 +895,11 @@ CREATE OR ALTER PROCEDURE people_get_by_jwt
 
 
     -- no user found
-    IF @email IS NULL THROW 50400, 'Account not found', 1
+    IF @email IS NULL THROW 50400, 'accountNotFound', 1
 
 
     -- check jwt
-    IF @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
+    IF @jwt <> @jwt_person THROW 50401, 'invalidToken', 1
 
 
     -- return user
@@ -925,7 +925,7 @@ CREATE OR ALTER PROCEDURE people_invalidate_jwt
     UPDATE App.people SET jwt = '' WHERE jwt = @jwt
 
     -- error if no rows were changed
-    IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
+    IF @@ROWCOUNT = 0 THROW 50400, 'accountNotFound', 1
 GO
 
 
@@ -948,11 +948,11 @@ CREATE OR ALTER PROCEDURE people_update_is_verified
         FROM App.people
         WHERE email = @email AND is_deleted = 0
 
-        IF @id_person IS NULL THROW 50400, 'Account not found', 1
+        IF @id_person IS NULL THROW 50400, 'accountNotFound', 1
 
-        IF @is_verified = 1 THROW 50400, 'Account already verified', 1
+        IF @is_verified = 1 THROW 50400, 'accountAlreadyVerified', 1
 
-        IF @verification_token <> @token THROW 50401, 'Invalid token', 1
+        IF @verification_token <> @token THROW 50401, 'invalidToken', 1
 
         SET NOCOUNT OFF
 
@@ -975,7 +975,7 @@ CREATE OR ALTER PROCEDURE people_update_jwt
     -- error if account not found
     IF (SELECT TOP 1 id_person FROM App.people
        WHERE id_person = @id_person AND is_deleted = 0) IS NULL
-       THROW 50400, 'Account not found', 1
+       THROW 50400, 'accountNotFound', 1
 
 
     -- update person jwt
@@ -998,7 +998,7 @@ CREATE OR ALTER PROCEDURE people_update_password
 
 
     -- check for bad token
-    IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'Bad token', 1
+    IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'invalidToken', 1
 
 
     -- check person data
@@ -1008,9 +1008,9 @@ CREATE OR ALTER PROCEDURE people_update_password
     SELECT @id_person = id_person, @person_reset_password_token = reset_password_token
         FROM App.people WHERE email = @email AND is_deleted = 0
 
-    IF @id_person IS NULL THROW 50400, 'Account not found', 1
+    IF @id_person IS NULL THROW 50400, 'accountNotFound', 1
 
-    IF @person_reset_password_token <> @reset_password_token THROW 50401, 'Invalid token', 1
+    IF @person_reset_password_token <> @reset_password_token THROW 50401, 'invalidToken', 1
 
 
     -- update person
@@ -1037,10 +1037,9 @@ CREATE OR ALTER PROCEDURE people_update_reset_password_token
         FROM App.people
         WHERE email = @email AND is_deleted = 0
 
-        -- IF @@ROWCOUNT = 0 THROW 50400, 'Account not found', 1
-        IF @id_person IS NULL THROW 50400, 'Account not found', 1
+        IF @id_person IS NULL THROW 50400, 'accountNotFound', 1
 
-        IF @is_verified = 0 THROW 50400, 'Please verify your account', 1
+        IF @is_verified = 0 THROW 50400, 'pleaseVerifyAccount', 1
 
 
         -- update token
@@ -1125,12 +1124,12 @@ CREATE OR ALTER PROCEDURE stores_create
 
         -- only system users can create stores
         IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- stores need an initial user account, check if email already exists
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email_user AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- Create address
@@ -1184,12 +1183,12 @@ CREATE OR ALTER PROCEDURE stores_delete
 
         -- only system users can delete stores
         IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
         -- Get store email
         SELECT @email = email FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
 
-        IF @email IS NULL THROW 50400, 'Store not found', 1
+        IF @email IS NULL THROW 50400, 'storeNotFound', 1
 
         -- Set store deleted
         UPDATE Store.stores SET is_deleted = 1, is_deleted_email = @email, email = @id_store, updated_by = @id_user_doing_update
@@ -1256,18 +1255,18 @@ CREATE OR ALTER PROCEDURE stores_details_update
         SELECT TOP 1 @id_store_temp = id_store, @id_address = id_address
         FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
 
-        IF @id_store_temp IS NULL THROW 50400, 'Store not found', 1
+        IF @id_store_temp IS NULL THROW 50400, 'storeNotFound', 1
 
 
         -- Check if a member of the store
         IF (SELECT TOP 1 id_person FROM Store.stores_people
             WHERE id_store = @id_store AND id_person = @id_user_doing_update) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- only store and system users can update stores
         IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_store_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- Create address
@@ -1322,7 +1321,7 @@ CREATE OR ALTER PROCEDURE stores_get
 
     -- Check if store exists
     IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store and is_deleted = 0) IS NULL
-        THROW 50400, 'Store not found', 1
+        THROW 50400, 'storeNotFound', 1
 
 
     SELECT id_store, name, description, phone_number, email,
@@ -1387,7 +1386,7 @@ CREATE OR ALTER PROCEDURE stores_undelete
 
         -- Check if store exists
         IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store and is_deleted = 0) IS NULL
-            THROW 50400, 'Store not found', 1
+            THROW 50400, 'storeNotFound', 1
 
 
         -- Set store deleted

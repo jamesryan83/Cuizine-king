@@ -64,87 +64,85 @@ app.site = {
     // Site routes
     routes: {
         "/": {
-            title: "Home", // browser tab title
             file: "home", // filename
             initFunction: function (routeData) {
+                document.title = app.Strings.home;
                 app.site.home.init(routeData);
             },
         },
         "/account/:id": {
-            title: "Account",
             file: "account",
             initFunction: function (routeData) {
+                document.title = app.Strings.account;
                 app.site.account.init(routeData);
             },
         },
         "/about": {
-            title: "About",
             file: "about",
             initFunction: function () {
-
+                document.title = app.Strings.about;
             },
         },
         "/help": {
-            title: "Help",
             file: "help",
             initFunction: function () {
-
+                document.title = app.Strings.help;
             },
         },
         "/location/:suburb": {
-            title: "Location",
             file: "location",
             initFunction: function (routeData) {
+                document.title = app.Strings.location;
                 app.site.location.init(routeData);
             },
         },
         "/store/:id": {
-            title: "Store",
             file: "store",
             initFunction: function (routeData) {
+                document.title = app.Strings.store;
                 app.site.store.init(routeData);
             },
         },
 
         "/login": {
-            title: "Login",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.login;
                 app.site.login.init(routeData);
             },
         },
         "/store-login": {
-            title: "Store Login",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.storeLogin;
                 app.site.login.init(routeData);
             },
         },
         "/verify-account": {
-            title: "Verify Account",
             file: "verify-account",
             initFunction: function (routeData) {
+                document.title = app.Strings.verifyAccount;
                 app.site.verifyAccount.init(routeData);
             },
         },
         "/reset-password": {
-            title: "Reset Password",
             file: "reset-password",
             initFunction: function (routeData) {
+                document.title = app.Strings.resetPassword;
                 app.site.resetPassword.init(routeData);
             },
         },
         "/register": {
-            title: "Register",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.resetPassword;
                 app.site.login.init(routeData);
             },
         },
         "/store-application": {
-            title: "Store Application",
             file: "login",
             initFunction: function (routeData) {
+                document.title = app.Strings.storeApplication;
                 app.site.login.init(routeData);
             },
         },
@@ -153,8 +151,8 @@ app.site = {
 }
 
 
-// create arrays of filepaths for express router
 app.site.routesList = Object.keys(app.site.routes);
+
 
 if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.site;

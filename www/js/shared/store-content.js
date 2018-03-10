@@ -49,12 +49,7 @@ app.storeContent = {
 
 
     // Add store details data
-    addStoreDetailsDataToPage: function (id_store, data) {
-        if (!data) {
-            data = id_store;
-            id_store = null;
-        }
-
+    addStoreDetailsDataToPage: function (id_store, data, section) {
         var self = this;
 
         var id_store = id_store || app.data.getStoreIdFromStorage();
@@ -63,6 +58,8 @@ app.storeContent = {
 
         // logo
         var logo = new Image();
+
+        // TODO : res/storelogos is in config too, do something about that
         logo.src = "/res/storelogos/store" + id_store + ".jpg?" + Date.now();
         logo.onload = function () {
             self.$logo.attr("src", logo.src);
@@ -113,8 +110,16 @@ app.storeContent = {
 
 
         // Setup dialogs
-        app.dialogs.description.update(data.name, data.description);
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_businessHours);
+        app.dialogs.businessHours.init();
         app.dialogs.businessHours.update(data.hours);
+
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_description);
+        app.dialogs.description.init();
+        app.dialogs.description.update(data.name, data.description);
+
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_reviews);
+        app.dialogs.reviews.init();
         app.dialogs.reviews.update(data);
 
 
@@ -230,7 +235,7 @@ app.storeContent = {
             new app.controls.CategoryScroller(data.product_headings);
 
         } else {
-            self.$menuList.append("No Products");
+            self.$menuList.append(app.Strings.noProducts);
         }
     },
 

@@ -16,17 +16,22 @@ exports = module.exports = {
     },
 
 
+    // TODO : check this
     sendPage: function (req, res) {
         var self = this;
 
         if (res.locals.person) {
-            fs.readFile(path.join(__dirname, "../", "../", "www", "generated", "_sysadmin.js"), "utf-8", function (err, js) {
-                if (err) return self.router.sendJson(res, null, "Error loading page", 500);
+            var filename = path.join(__dirname, "../", "../", "www", "generated", "_sysadmin.js");
+
+            fs.readFile(filename, "utf-8", function (err, js) {
+                if (err) return self.router.sendJson(req, res, null, {
+                    message: "errorLoadingPage", status: 500 });
 
                 return res.send(js);
             });
         } else {
-            return this.router.sendJson(res, null, "Not Authorized", 401);
+            return this.router.sendJson(req, res, null, {
+                message: "notAuthorized", status: 401 });
         }
     },
 

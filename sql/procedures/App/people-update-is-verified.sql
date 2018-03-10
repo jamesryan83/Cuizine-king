@@ -17,11 +17,11 @@ CREATE OR ALTER PROCEDURE people_update_is_verified
         FROM App.people
         WHERE email = @email AND is_deleted = 0
 
-        IF @id_person IS NULL THROW 50400, 'Account not found', 1
+        IF @id_person IS NULL THROW 50400, 'accountNotFound', 1
 
-        IF @is_verified = 1 THROW 50400, 'Account already verified', 1
+        IF @is_verified = 1 THROW 50400, 'accountAlreadyVerified', 1
 
-        IF @verification_token <> @token THROW 50401, 'Invalid token', 1
+        IF @verification_token <> @token THROW 50401, 'invalidToken', 1
 
         SET NOCOUNT OFF
 

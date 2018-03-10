@@ -10,6 +10,7 @@ global.devMode = !(process.env.NODE_ENV == "production");
 var hpp = require("hpp");
 var path = require("path");
 var helmet = require("helmet");
+var locale = require("locale");
 var express = require("express");
 var passport = require("passport");
 var requestIp = require("request-ip");
@@ -20,6 +21,10 @@ var config = require("./config");
 global.logSQLerrors = config.logSQLerrors;
 global.validationRules = require("../www/js/shared/validation-rules.js");
 global.dbName = config.mssql.database + ".dbo.";
+
+
+// clear console
+if (config.clearConsoleOnRestart) console.clear();
 
 
 var router = require("./other/router");
@@ -70,6 +75,7 @@ database.once("connected", function () {
 
 
     // other express settings
+    server.use(locale(config.supportedLanguages));
     server.use(requestIp.mw()); // get client IP on every request
     server.use(bodyParser.urlencoded({ extended: true, limit: 5242880 })); // 5MB
     server.use(bodyParser.json({ limit: 5242880 })); // 5MB

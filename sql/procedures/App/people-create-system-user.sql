@@ -14,12 +14,12 @@ CREATE OR ALTER PROCEDURE people_create_system_user
         -- check if user doing update is a system user
         IF (SELECT TOP 1 id_person FROM App.people
             WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- create a user

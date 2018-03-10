@@ -91,7 +91,7 @@ General server stuff
 
 Database
 
-    azure-storage, mssql
+    mssql
 
 Auth
 

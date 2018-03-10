@@ -15,9 +15,13 @@ var ee = new EventEmitter();
 
 exports = module.exports = {
 
+    resultHandler: require("./result-handler"),
+
+
     mssql: mssql,
     isConnected: false,
     pool: null,
+
 
     // some event emitter events
     on: ee.on.bind(ee),

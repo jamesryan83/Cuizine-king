@@ -12,6 +12,7 @@ app.site.login = {
 
         // Submit login form
         $("#form-login").on("submit", function () {
+
             var data = validate.collectFormValues($("#form-login")[0], { trim: true });
 
             if (!app.util.validateInputs(data, app.validationRules.login))
@@ -61,7 +62,7 @@ app.site.login = {
         // Submit register form
         $("#form-register").on("submit", function () {
             if (!$("#checkbox-tnc").is(":checked")) {
-                app.util.showToast("You need to agree to the terms and conditions");
+                app.util.showToast(app.Strings.agreeToTnC);
                 return false;
             }
 
@@ -122,7 +123,7 @@ app.site.login = {
 //            });
 
             // TODO : fix
-            app.util.showToast("not working just yet");
+            app.util.showToast(app.Strings.notWorkingYet);
 
             return false;
         });
@@ -135,7 +136,7 @@ app.site.login = {
             if (id_person) {
                 window.location.href = "/account/" + id_person;
             } else {
-                app.util.showToast("Error : Unable to go to account page");
+                app.util.showToast(app.Strings.unableToGoToAccountPage);
             }
         });
 
@@ -153,25 +154,25 @@ app.site.login = {
 
         // login goto register
         $("#login-goto-register").on("click", function () {
-            self.showForm("#form-register", true, true, "Register", "register");
+            self.showForm("#form-register", true, true, app.Strings.register, "register");
         });
 
 
         // login goto store login
         $("#login-goto-store-login").on("click", function () {
-            self.showForm("#form-store-login", true, false, "Store-login", "store-login");
+            self.showForm("#form-store-login", true, false, app.Strings.storeLogin, "store-login");
         });
 
 
         // store login goto login
         $("#store-login-goto-login").on("click", function () {
-            self.showForm("#form-login", true, true, "Login", "login");
+            self.showForm("#form-login", true, true, app.Strings.login, "login");
         });
 
 
         // login goto store application
         $("#login-goto-store-application").on("click", function () {
-            self.showForm("#form-store-application", true, true, "Store Application", "store-application");
+            self.showForm("#form-store-application", true, true, app.Strings.storeApplication, "store-application");
         });
 
 
@@ -184,20 +185,20 @@ app.site.login = {
         // register goto login
         $("#register-goto-login").on("click", function () {
             $("#checkbox-tnc").prop("checked", false);
-            self.showForm("#form-login", true, true, "Login", "login");
+            self.showForm("#form-login", true, true, app.Strings.login, "login");
         });
 
 
         // store application goto login
         $("#store-application-goto-login").on("click", function () {
             $("#checkbox-tnc-store").prop("checked", false);
-            self.showForm("#form-login", true, true, "Login", "login");
+            self.showForm("#form-login", true, true, app.Strings.login, "login");
         });
 
 
         // forgot password goto login
         $("#forgot-password-goto-login").on("click", function () {
-            self.showForm("#form-login", true, true, "Register", "register");
+            self.showForm("#form-login", true, true, app.Strings.register, "register");
         });
 
 

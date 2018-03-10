@@ -10,7 +10,7 @@ app.site.verifyAccount = {
         // Get verification token
         this.verificationToken = window.location.search;
         if (!this.verificationToken || this.verificationToken.length < 30) {
-            app.util.showToast("Invalid verification token", 4000);
+            app.util.showToast(app.Strings.invalidVerificationToken, 4000);
             return;
         }
 
@@ -30,8 +30,6 @@ app.site.verifyAccount = {
                 method: "POST", url: "/api/v1/verify-account", data: data
             }, function (err, result) {
                 if (err) return;
-
-                if (!result.data.jwt) alert("jwt missing");
 
                 app.data.addJwtToStorage(result.data.jwt);
                 app.data.addPersonIdToStorage(result.data.id_person);

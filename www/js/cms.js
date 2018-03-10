@@ -57,51 +57,51 @@ app.cms = {
     // CMS routes
     routes: {
         "/store-admin/:id/business": {
-            title: "Business",
             file: "business",
             initFunction: function (routeData) {
+                document.title = app.Strings.business;
                 app.cms.business.init(routeData);
             },
         },
         "/store-admin/:id/dashboard": {
-            title: "Dashboard",
             file: "dashboard",
             initFunction: function (routeData) {
+                document.title = app.Strings.dashboard;
                 app.cms.dashboard.init(routeData);
             },
         },
         "/store-admin/:id/delivery-suburbs": {
-            title: "Delivery Suburbs",
             file: "delivery-suburbs",
             initFunction: function (routeData) {
+                document.title = app.Strings.deliverySuburbs;
                 app.cms.deliverySuburbs.init(routeData);
             },
         },
         "/store-admin/:id/menu": {
-            title: "Menu",
             file: "menu",
             initFunction: function (routeData) {
+                document.title = app.Strings.menu;
                 app.cms.menu.init(routeData);
             },
         },
         "/store-admin/:id/orders": {
-            title: "Orders",
             file: "orders",
             initFunction: function (routeData) {
+                document.title = app.Strings.orders;
                 app.cms.orders.init(routeData);
             },
         },
         "/store-admin/:id/details": {
-            title: "Details",
             file: "details",
             initFunction: function (routeData) {
+                document.title = app.Strings.details;
                 app.cms.details.init(routeData);
             },
         },
         "/store-admin/:id/transactions": {
-            title: "Transactions",
             file: "transactions",
             initFunction: function (routeData) {
+                document.title = app.Strings.transactions;
                 app.cms.transactions.init(routeData);
             },
         },
@@ -110,9 +110,8 @@ app.cms = {
 }
 
 
-
-// create arrays of filepaths for express router
 app.cms.routesList = Object.keys(app.cms.routes);
+
 
 if (typeof module !== "undefined" && this.module !== module) {
     exports = module.exports = app.cms;

@@ -18,7 +18,7 @@ CREATE OR ALTER PROCEDURE addresses_create_or_update
         SELECT TOP 1 @id_postcode = id_postcode FROM App.postcodes
         WHERE postcode = @postcode AND suburb = @suburb
 
-        IF @id_postcode IS NULL THROW 50400, 'Invalid postcode or suburb', 1
+        IF @id_postcode IS NULL THROW 50400, 'invalidPostcodeOrSuburb', 1
 
 
         -- Create address

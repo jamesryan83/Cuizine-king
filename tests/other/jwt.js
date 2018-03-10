@@ -145,6 +145,8 @@ describe("JWT", function () {
 
 
     it("#checkJwt returns error for incorrect valid jwt", function (done) {
+        this.timeout(5000);
+
         testutil.getApiToken(function (jwt) {
             // replace last char of jwt
             var jwtLastChar = jwt.charAt(jwt.length - 1);

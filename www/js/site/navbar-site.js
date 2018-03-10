@@ -42,10 +42,11 @@ app.site.navbar = {
         });
 
 
+        // TODO : i18n
         // link clicked
         navbar.linkClicked = function (e, route) {
             if (e.target.innerText.toLowerCase() == "blog") {
-                app.util.showToast("Not working yet");
+                app.util.showToast(app.Strings.notWorkingYet);
                 return false;
             }
 

@@ -2,75 +2,19 @@
 
 // handles the results from sql stored procedures
 
+
 exports = module.exports = {
 
-
-    // Handles results for specific stored procedures
-    handle: function (procedure, err, result, callback) {
-        if (err) return this.returnError(err, callback);
-
-        switch (procedure) {
-            case "addresses_create_or_update":
-                return this.returnOutput(["newAddressId"], result, callback);
-
-            case "people_create_web_user":
-            case "people_create_store_user":
-            case "people_create_system_user":
-                return this.returnOutput(["newPersonId"], result, callback);
-
-            case "people_get_by_id":
-            case "people_get_by_email":
-            case "people_get_by_jwt":
-            case "people_update_jwt":
-                return this.returnResult(result, 400, "Account not found", callback);
-
-            case "people_invalidate_jwt":
-                return callback(null, result.rowsAffected);
-
-            case "store_applications_create":
-                return this.returnOutput(["newStoreApplicationId"], result, callback);
-
-            case "stores_create":
-                return this.returnOutput(["newStoreId", "newPersonId"], result, callback);
-
-            case "stores_get":
-                return this.returnResult(result, 400, "Store not found", callback, true);
-
-
-            // These are for tests
-            case "test_result":
-                return this.returnResult(result, null, null, callback);
-            case "test_result_error":
-                return  this.returnResult(result, 123, "test message", callback);
-            case "test_null_err_result":
-                return callback(null);
-            case "test_output":
-                return this.returnOutput(["id_test"], result, callback);
-
-
-            // these procedures don't return anything
-            case "people_update_password":
-            case "people_update_is_verified":
-            case "people_update_reset_password_token":
-            case "people_delete":
-            case "reviews_get":
-            case "stores_details_update":
-            case "stores_delete":
-            case "stores_undelete":
-            default:
-                return callback(null);
-        }
-    },
-
-
-    // Returns the result
-    returnResult: function (result, errStatus, errMessage, callback, isJsonResult) {
+    // Returns data from a store procedure result
+    getData: function (result, errStatus, errMessage, isJsonResult) {
 
         // Data result
-        if (result.recordset && result.recordset.length > 0) {
+        if (result && result.recordset && result.recordset.length > 0) {
+
 
             // regular data result
             var data = result.recordset[0];
+
 
             // parse json result
             if (isJsonResult) {
@@ -78,63 +22,70 @@ exports = module.exports = {
                 data = result.recordset[0]["JSON_F52E2B61-18A1-11d1-B105-00805F49916B"];
 
                 if (data.length === 0) {
-                    return callback({ status: errStatus || 500, message: errMessage || "No Data" });
+                    return { err: { status: 200, message: "noData" }};
                 }
 
                 try {
                     data = JSON.parse(data);
                 } catch (e) {
                     console.log("Error parsing json result");
-                    return ({ status: 500, message: "Server error" });
+                    return { err: { status: 500, message: "serverError" }};
                 }
 
                 // Data is missing
                 if (Object.keys(data).length === 0) {
-                    return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
+                    return { err: { status: 200, message: "noData" }};
                 }
             }
 
             // return data
-            return callback(null, data);
+            return { data: data };
         }
 
         // Data is missing
-        return callback({ status: errStatus || 500, message: errMessage || "Server Error" });
+        return { err: { status: errStatus || 204, message: errMessage || "noData" }};
     },
 
 
 
     // Returns an output parameter
-    returnOutput: function (outputNames, result, callback) {
+    getOutputs: function (outputNames, result) {
+        if (!outputNames || outputNames.length === 0)
+            return { err: { status: 500, message: "outputNamesMissing" }};
+
         if (result.output) {
             var outputs = {};
             for (var i = 0; i < outputNames.length; i++) {
                 outputs[outputNames[i]] = result.output[outputNames[i]];
             }
 
-            return callback(null, outputs);
+            return { outputs: outputs };
         }
 
-        return callback({ status: 500, message: "Database output missing" });
+        return { err: { status: 500, message: "databaseOutputMissing" }};
     },
 
 
-
+    // This doesn't get localized
     // Returns the error message from an SQL THROW 50###, 'Some Message', 1
-    returnError: function (err, callback) {
-        if (err.originalError && err.originalError.info && err.originalError.info.message) {
+    getError: function (err) {
+        if (err) {
+            if (err.originalError && err.originalError.info && err.originalError.info.message) {
 
-            var msg = err.originalError.info.message;
-            var status = err.originalError.info.number.toString();
-            status = status.substr(2, status.length);
+                var msg = err.originalError.info.message;
+                var status = err.originalError.info.number.toString();
+                status = status.substr(2, status.length);
 
-            if (global.logSQLerrors) console.log(JSON.stringify(err.originalError.info));
+                if (global.logSQLerrors) console.log(JSON.stringify(err.originalError.info));
 
-            return callback({ status: status, message: msg })
+                return { status: status, message: msg };
+            }
+
+            return { status: 500, message: "Server Error" };
         }
 
-        return callback({ status: 500, message: "Server Error" });
-    }
+        return null;
+    },
 
 }
 

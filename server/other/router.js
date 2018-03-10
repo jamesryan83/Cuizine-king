@@ -21,8 +21,10 @@ var routerSysadmin = require("../../www/js/sysadmin");
 
 var config = require("../config");
 var passportAuth = require("./passport-auth");
+var Strings = require("../../i18n/strings");
 
 var wwwFolder = path.join(__dirname, "../", "../", "www");
+var jsExtension = global.devMode ? ".js" : ".min.js";
 
 
 exports = module.exports = {
@@ -100,7 +102,6 @@ exports = module.exports = {
         router.post("/api/sysadmin/create-system-user", authenticateSystem, authApi.systemCreateUser.bind(authApi));
 
 
-
         // catch all
         router.use(this.catchAll.bind(this));
 
@@ -136,10 +137,10 @@ exports = module.exports = {
 
         if (err && err.length > 0) {
             if (this.isRequestAjax(req)) {
-                return this.sendJson(res, null, err[0], 400);
+                return this.sendJson(req, res, null, { message: err[0], status: 400 });
             }
 
-            return this.renderErrorPage(req, res, err, 400);
+            return this.renderErrorPage(req, res, { message: err, status: 400 });
         }
 
         return null; // inputs ok
@@ -154,7 +155,11 @@ exports = module.exports = {
             this.reloadFilesSync();
         }
 
-        return res.send(this.files.indexMain);
+        return res.send(ejs.render(this.files.indexMain, {
+            locale: req.locale,
+            title: Strings.get("title", req.locale),
+            devMode: global.devMode
+        }));
     },
 
 
@@ -179,7 +184,8 @@ exports = module.exports = {
                 section: "site",
                 html: self.files.siteHtml,
                 css: "/generated/_site.css",
-                js: "/generated/_site.js"
+                js: "/generated/_site" + jsExtension,
+                strings: Strings.getClientStrings(req.locale),
             });
 
         // cms
@@ -189,7 +195,8 @@ exports = module.exports = {
                     section: "cms",
                     html: self.files.cmsHtml,
                     css: "/generated/_cms.css",
-                    js: "/generated/_cms.js",
+                    js: "/generated/_cms" + jsExtension,
+                    strings: Strings.getClientStrings(req.locale),
                     jwt: res.locals.person.jwt
                 });
             });
@@ -201,7 +208,8 @@ exports = module.exports = {
                     section: "sysadmin",
                     html: self.files.sysadminHtml,
                     css: "/generated/_sysadmin.css",
-                    js: "/generated/_sysadmin.js",
+                    js: "/generated/_sysadmin" + jsExtension,
+                    strings: Strings.getClientStrings(req.locale),
                     jwt: res.locals.person.jwt
                 });
             });
@@ -243,10 +251,13 @@ exports = module.exports = {
 
 
     // send Json response
-    sendJson: function (res, data, err, status) {
+    sendJson: function (req, res, data, err) {
         if (err) {
-            return res.status(status || 500)
-                .json({ data: data, err: err || "Server Error" });
+            // I18n
+            var message = Strings.get("serverError", req.locale);
+            if (err.message) message = Strings.get(err.message, req.locale);
+
+            return res.status(err.status || 500).json({ err: message });
         }
 
         return res.json({ data: data });
@@ -268,23 +279,23 @@ exports = module.exports = {
     // Catch all
     // Returns an error page or json
     catchAll: function (req, res) {
-        var errorMessage = "Unknown Route";
-        console.log(errorMessage + " " + req.url);
+        console.log("Unknown route: " + req.url);
+        var err = { message: Strings.get("unknownRoute", req.locale), status: 404 };
 
         if (this.isRequestAjax(req)) {
-            return this.sendJson(res, null, errorMessage, 404);
+            return this.sendJson(req, res, null, err);
         }
 
-        return this.renderErrorPage(req, res, errorMessage, 404);
+        return this.renderErrorPage(req, res, err);
     },
 
 
 
     // Render the error page
-    renderErrorPage: function (req, res, err, status) {
+    renderErrorPage: function (req, res, err) {
         var pageData = {
-            status: status || 500,
-            message: err || "There was an error :`(",
+            status: err.status || 500,
+            message: err.message || Strings.get("errorPageMessage", req.locale),
             route: req.url
         }
 
@@ -309,6 +320,5 @@ exports = module.exports = {
         this.files.cmsHtml = fs.readFileSync(path.join(genFolder, "_cms.json"), "utf8");
         this.files.sysadminHtml = fs.readFileSync(path.join(genFolder, "_sysadmin.json"), "utf8");
     },
-
 }
 

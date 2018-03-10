@@ -26,25 +26,25 @@ CREATE OR ALTER PROCEDURE people_create_store_user
 
 
         -- not a store or system user
-        IF (@is_store_user = 0) THROW 50401, 'Not authorized', 1
+        IF (@is_store_user = 0) THROW 50401, 'notAuthorized', 1
 
 
         -- does the store exist
         IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store AND is_deleted = 0) IS NULL
-            THROW 50400, 'Store not found', 1
+            THROW 50400, 'storeNotFound', 1
 
 
         -- if a store_user, check if user doing update is member of the store
         IF (@is_system_user = 0)
         BEGIN
             IF (SELECT TOP 1 id_person FROM Store.stores_people WHERE id_store = @id_store AND id_person = @id_user_doing_update) IS NULL
-                THROW 50401, 'Not authorized', 1
+                THROW 50401, 'notAuthorized', 1
         END
 
 
         -- check account isn't already taken
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- create user

@@ -31,12 +31,12 @@ CREATE OR ALTER PROCEDURE stores_create
 
         -- only system users can create stores
         IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_system_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- stores need an initial user account, check if email already exists
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email_user AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- Create address

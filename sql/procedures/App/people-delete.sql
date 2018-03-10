@@ -16,7 +16,7 @@ CREATE OR ALTER PROCEDURE people_delete
 
 
         -- some test accounts can't be deleted
-        IF (@id_person <= @const_number_of_protected_users) THROW 50400, 'Protected account', 1
+        IF (@id_person <= @const_number_of_protected_users) THROW 50400, 'protectedAccount', 1
 
 
         -- get user type and jwt
@@ -26,19 +26,19 @@ CREATE OR ALTER PROCEDURE people_delete
 
 
         -- no user found
-        IF @email IS NULL THROW 50400, 'Account not found', 1
+        IF @email IS NULL THROW 50400, 'accountNotFound', 1
 
 
         -- check jwt
         -- If a jwt is null the user has never logged in, ok to delete account
-        IF @jwt_person IS NOT NULL AND @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
+        IF @jwt_person IS NOT NULL AND @jwt <> @jwt_person THROW 50401, 'invalidToken', 1
 
 
         IF (@is_store_user = 1)
             BEGIN
                 -- store owners have to be deleted using the admin program
                 IF (SELECT is_store_owner FROM Store.stores_people WHERE id_person = @id_person) = 1
-                    THROW 50401, 'Store owners need to contact support to have their account deleted', 1
+                    THROW 50401, 'storeOwnersContactSupport', 1
 
                 -- delete store users link to store
                 DELETE FROM Store.stores_people WHERE id_person = @id_person

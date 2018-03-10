@@ -5,7 +5,7 @@ var supertest = require("supertest");
 
 var testutil = require("../test-util");
 var config = require("../../server/config");
-// var database = require("../../server/database/database");
+var database = require("../../server/database/database");
 var storesDB = require("../../server/procedures/_Store");
 
 
@@ -228,8 +228,10 @@ describe("API - Stores", function () {
             updateStore(testutil.fakeStoreUpdate, jwt, function (err) {
                 if (err) return done(new Error(err));
 
-                storesDB.stores_get({ "id_store": testutil.fakeStoreUpdate.id_store }, function (err2, result) {
-                    if (err2) return done(new Error(err2));
+                storesDB.stores_get({ "id_store": testutil.fakeStoreUpdate.id_store }, function (err, result) {
+                    if (err) return done(new Error(err));
+
+                    result = database.resultHandler.getData(result, null, null, true).data;
 
                     assert.equal(result.description, testutil.fakeStoreUpdate.description);
                     assert.equal(result.phone_number, testutil.fakeStoreUpdate.phone_number);

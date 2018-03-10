@@ -11,9 +11,9 @@ CREATE OR ALTER PROCEDURE people_get_by_jwt
 
     SET NOCOUNT ON
 
-
+    -- TODO : a better check
     -- check for bad token
-    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'Bad token', 1
+    IF @jwt IS NULL OR LEN(@jwt) < 30 THROW 50400, 'invalidToken', 1
 
 
     -- get user type and jwt
@@ -23,11 +23,11 @@ CREATE OR ALTER PROCEDURE people_get_by_jwt
 
 
     -- no user found
-    IF @email IS NULL THROW 50400, 'Account not found', 1
+    IF @email IS NULL THROW 50400, 'accountNotFound', 1
 
 
     -- check jwt
-    IF @jwt <> @jwt_person THROW 50401, 'Invalid token', 1
+    IF @jwt <> @jwt_person THROW 50401, 'invalidToken', 1
 
 
     -- return user

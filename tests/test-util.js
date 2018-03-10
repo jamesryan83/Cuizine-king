@@ -35,7 +35,7 @@ exports = module.exports = {
     date7: new Date("2018-02-25T08:00:00"), // sunday
 
 
-    regexValidHtml: /(\s*)<!DOCTYPE html>(\s*)<html lang="en">(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi,
+    regexValidHtml: /(\s*)<!DOCTYPE html>(\s*)<html lang="en_US">(\s*)<head>[\s\S]*<\/head>(\s*)<body(.*)>[\s\S]*<\/body>(\s*)<\/html>(\s*)/gmi,
 
     supertestUrl: "http://localhost:" + config.port,
 

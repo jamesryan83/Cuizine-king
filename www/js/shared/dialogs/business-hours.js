@@ -3,9 +3,6 @@
 // Business hours dialog
 app.dialogs.businessHours = {
 
-    days: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
-
-
     init: function () {
         var self = this;
 
@@ -22,7 +19,7 @@ app.dialogs.businessHours = {
     update: function (hours) {
         if (!hours) return;
 
-        var days = app.util.days;
+        var days = app.util.days();
         var today = app.util.getTodayName();
 
 
@@ -45,6 +42,7 @@ app.dialogs.businessHours = {
 
     // Returns a html row of hours for a single day
     getHoursRow: function (hours, day, isDineIn, isToday) {
+        // TODO : i18n
 
         // create left and right property names
         var el = "hours_" + day.toLowerCase() + "_" + (isDineIn ? "dinein" : "delivery");

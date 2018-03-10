@@ -56,6 +56,7 @@ app.data = {
     },
 
 
+    // TODO : i18n
     // Returns if dinein/delivery is open and text for next time open or closed
     // the parameters are for testing
     isStoreOpen: function (timeNow, dayNow, addDays) {

@@ -41,8 +41,8 @@ describe("API - AUTH", function () {
             assert.ok(res.body.data.id_person > 0);
 
             // get new person from db
-            database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.website.email + "'", function (err2, result) {
-                if (err2) return done(new Error(err2));
+            database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.website.email + "'", function (err, result) {
+                if (err) return done(new Error(err));
 
                 var person = result.recordset[0];
                 assert.equal(person.is_web_user, true);
@@ -105,48 +105,58 @@ describe("API - AUTH", function () {
         fakeStore.id_user_doing_update = config.dbConstants.adminUsers.system;
 
         // create a store first
-        dbStores.stores_create(fakeStore, function (err, outputs) {
+        dbStores.stores_create(fakeStore, function (err, result) {
             if (err) return done(new Error(JSON.stringify(err)));
 
-            assert.ok(outputs.newStoreId > 0);
-            assert.ok(outputs.newPersonId > 0);
+            var newStoreId = result.output.newStoreId;
+            var newPersonId = result.output.newPersonId;
 
-            var newUserJwt = testutil.createJwtSync(outputs.newPersonId);
+            assert.ok(newStoreId > 0);
+            assert.ok(newPersonId > 0);
 
-            var query = "UPDATE App.people SET jwt = '" + newUserJwt + "' WHERE id_person = " + outputs.newPersonId;
+            var newUserJwt = testutil.createJwtSync(newPersonId);
+
+            var query =
+                "UPDATE App.people SET jwt = '" + newUserJwt + "' WHERE id_person = " + newPersonId;
 
             // update users jwt
-            database.executeQuery(query, function (err2) {
-                if (err2) return done(new Error(err2));
+            database.executeQuery(query, function (err) {
+                if (err) return done(new Error(err));
 
                 // create a store user using the jwt of the user just added to the db
-                testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 200, newUserJwt, function (err3, res) {
-                    if (err3) return done(new Error(err3));
+                testutil.createUser("/api/v1/create-store-user", testutil.fakeUsers.store, 200, newUserJwt, function (err, res) {
+                    if (err) return done(new Error(err));
 
                     var newPersonId2 = res.body.data.id_person;
 
                     assert.ok(res.body.data.jwt.length > 100);
-                    assert.equal(newPersonId2, outputs.newPersonId + 1);
+                    assert.equal(newPersonId2, newPersonId + 1);
+
+                    query =
+                        "SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.store.email + "'";
 
                     // get person created from creating the store
-                    database.executeQuery("SELECT * FROM App.people WHERE email = '" + testutil.fakeUsers.store.email + "'", function (err4, result) {
-                        if (err4) return done(new Error(err4));
+                    database.executeQuery(query, function (err, result) {
+                        if (err) return done(new Error(err));
 
                         var person = result.recordset[0];
                         assert.equal(person.is_web_user, true);
                         assert.equal(person.is_store_user, true);
                         assert.equal(person.is_system_user, false);
 
-                        // Check stores_people was updated correctly
-                        database.executeQuery("SELECT * FROM Store.stores_people WHERE id_store = " + outputs.newStoreId, function (err5, result2) {
-                            if (err5) return done(new Error(err5));
+                        query =
+                            "SELECT * FROM Store.stores_people WHERE id_store = " + newStoreId;
 
-                            var person1 = result2.recordset[0];
-                            var person2 = result2.recordset[1];
+                        // Check stores_people was updated correctly
+                        database.executeQuery(query, function (err, result) {
+                            if (err) return done(new Error(err));
+
+                            var person1 = result.recordset[0];
+                            var person2 = result.recordset[1];
 
                             assert.equal(person1.updated_by, config.dbConstants.adminUsers.system);
-                            assert.equal(person2.updated_by, outputs.newPersonId);
-                            assert.equal(person1.id_person, outputs.newPersonId);
+                            assert.equal(person2.updated_by, newPersonId);
+                            assert.equal(person1.id_person, newPersonId);
                             assert.equal(person2.id_person, newPersonId2);
 
                             done();
@@ -218,10 +228,10 @@ describe("API - AUTH", function () {
                 assert.ok(res.body.data.id_person > 0);
 
                 // get new person from db
-                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + res.body.data.id_person, function (err2, result2) {
-                    if (err2) return done(new Error(err2));
+                database.executeQuery("SELECT * FROM App.people WHERE id_person = " + res.body.data.id_person, function (err, result) {
+                    if (err) return done(new Error(err));
 
-                    var person = result2.recordset[0];
+                    var person = result.recordset[0];
                     assert.equal(person.is_web_user, true);
                     assert.equal(person.is_store_user, true);
                     assert.equal(person.is_system_user, true);
@@ -400,8 +410,8 @@ describe("API - AUTH", function () {
                     verification_token: result.recordset[0].verification_token })
                 .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200)
-                .end(function (err2, res) {
-                    if (err2) return done(new Error(err2));
+                .end(function (err, res) {
+                    if (err) return done(new Error(err));
 
                     assert.ok(!res.body.err);
                     done();
@@ -494,22 +504,27 @@ describe("API - AUTH", function () {
     it("#resetPassword changes password in db", function (done) {
 
         // get reset password token from db
-        dbApp.people_get_by_email({ email: testutil.fakeUsers.website.email }, function (err, user) {
+        dbApp.people_get_by_email({ email: testutil.fakeUsers.website.email }, function (err, result) {
             if (err) return done(new Error(err));
+
+            result = database.resultHandler.getData(result, 400, "accountNotFound");
+            var user = result.data;
 
             supertest(testutil.supertestUrl)
                 .post("/api/v1/reset-password")
                 .send({ email: testutil.fakeUsers.website.email, password: "test2", confirmPassword: "test2", reset_password_token: user.reset_password_token })
                 .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200)
-                .end(function (err2) {
-                    if (err2) return done(new Error(err2));
+                .end(function (err) {
+                    if (err) return done(new Error(err));
 
                     // check password was changed
-                    dbApp.people_get_by_email({ email: testutil.fakeUsers.website.email }, function (err3, user2) {
-                        if (err3) return done(new Error(err3));
+                    dbApp.people_get_by_email({ email: testutil.fakeUsers.website.email }, function (err, result) {
+                        if (err) return done(new Error(err));
 
-                        assert.ok(user.password != user2.password);
+                        result = database.resultHandler.getData(result, 400, "accountNotFound");
+
+                        assert.ok(user.password != result.data.password);
 
                         done();
                     });

@@ -14,7 +14,7 @@ CREATE OR ALTER PROCEDURE people_create_web_user
 
         -- check if user exists
         IF (SELECT TOP 1 email FROM App.people WHERE email = @email AND is_deleted = 0) IS NOT NULL
-            THROW 50409, 'Account already taken', 1
+            THROW 50409, 'accountAlreadyTaken', 1
 
 
         -- create a user

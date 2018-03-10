@@ -150,7 +150,7 @@ app.controls.Typeahead = function (callback) {
                 } else {
                     self.$typeaheadList.show();
                     self.$typeaheadList.append(
-                        "<li class='typeahead-item'>NO RESULTS</li>");
+                        "<li class='typeahead-item'>" + app.Strings.noResults + "</li>");
                 }
             });
         }, lookupTimeout);

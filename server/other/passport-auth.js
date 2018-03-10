@@ -11,6 +11,7 @@ var ExtractJwt = require("passport-jwt").ExtractJwt;
 
 var config = require("../config");
 var appDB = require("../procedures/_App");
+var database = require("../database/database");
 
 
 exports = module.exports = {
@@ -30,7 +31,6 @@ exports = module.exports = {
             return done(null, jwTokenObject);
         }));
     },
-
 
 
     authenticate: function (req, res, next) {
@@ -54,12 +54,13 @@ exports = module.exports = {
         // Returns an error response if there's an error during authentication
         function sendErrorResponse(err) {
             if (self.router.isRequestAjax(req)) {
-                return self.router.sendJson(res, null, err.message, err.status);
+                return self.router.sendJson(req, res, null, err);
             }
             return res.redirect("/login");
         }
 
 
+        // TODO : this whole thing needs to be gooder
         // check jwt against secret
         passport.authenticate("jwt", { session: false }, function (err, jwTokenObject, errInfo) {
             if (err) return sendErrorResponse(err);
@@ -69,14 +70,16 @@ exports = module.exports = {
             // check if jwt has expired
             if (errInfo) {
                 if (errInfo.name == "TokenExpiredError") {
-                    return sendErrorResponse({ message: "Token has expired", status: 401 });
+                    return sendErrorResponse({ message: "tokenExpired", status: 401 });
                 } else {
                     if (errInfo.message == "jwt malformed") {
                         console.log("Error: Malformed jwt");
                     } else if (errInfo.message == "invalid token") {
                         console.log("Error: Invalid token");
+                    } else if (errInfo.message == "invalid signature") {
+                        console.log("Error: Invalid secret");
                     } else {
-                        console.log("Unknown jwt errInfo occured", errInfo);
+                        console.log(errInfo);
                     }
                     jwtObj = null;
                 }
@@ -84,10 +87,10 @@ exports = module.exports = {
 
 
             // invalid or missing jwt
-            if (!jwtObj) return sendErrorResponse({ message: "Not Authorized", status: 401 });
+            if (!jwtObj) return sendErrorResponse({ message: "notAuthorized", status: 401 });
 
             // check jwt short expiry
-//            console.log(jwTokenObject);
+
 //            var d = Date.now() / 1000;
 //            var shortExp = jwTokenObject.shortExp * 1000;
 //            console.log(d);
@@ -105,14 +108,20 @@ exports = module.exports = {
             var jwt = self.getJwtFromHeader(req, res);
 
             // get person from database by their jwt
-            appDB.people_get_by_jwt({ jwt: jwt, id_person: jwtObj.sub }, function (err2, person) {
+            appDB.people_get_by_jwt({ jwt: jwt, id_person: jwtObj.sub }, function (err, result) {
                 res.locals.person = null;
-                if (err2) return sendErrorResponse(err2);
+                if (err) return sendErrorResponse(err);
 
+                result = database.resultHandler.getData(result, 400, "accountNotFound");
+                if (result.err) return callback(result.err);
+
+                var person = result.data;
+
+                // TODO : make this great
                 if (!person.is_system_user && !person.is_store_user && section === "store") {
-                    return sendErrorResponse({ message: "Not Authorized", status: 401 });
+                    return sendErrorResponse({ message: "notAuthorized", status: 401 });
                 } else if (!person.is_system_user && section === "system") {
-                    return sendErrorResponse({ message: "Not Authorized", status: 401 });
+                    return sendErrorResponse({ message: "notAuthorized", status: 401 });
                 } else {
                     res.locals.person = person;
                     return next();
@@ -129,26 +138,31 @@ exports = module.exports = {
 
     // Check the users password
     // accessProperty = is_web_user, is_store_user or is_system_user
-    checkUsersPassword: function (accessProperty, res, email, password, callback) {
+    checkUsersPassword: function (req, res, accessProperty, email, password, callback) {
         var self = this;
 
         // get the current user
         appDB.people_get_by_email({
             email: email, alsoGetStoreInfo: (accessProperty === "is_store_user")
-        }, function (err, person) {
+        }, function (err, result) {
             if (err) return callback(err);
+
+            result = database.resultHandler.getData(result, 400, "accountNotFound");
+            if (result.err) return callback(result.err);
+
+            var person = result.data;
 
             // check access
             if (accessProperty) {
                 var hasAccess = person[accessProperty];
                 if (!hasAccess) {
-                    return callback({ message: "Not Authorized", status: 401 });
+                    return callback({ message: "notAuthorized", status: 401 });
                 }
             }
 
             // check password
-            self.comparePassword(password, person.password, function (err2) {
-                if (err2) return callback(err2);
+            self.comparePassword(req, password, person.password, function (err) {
+                if (err) return callback(err);
 
                 res.locals.person = person;
                 return callback(null);
@@ -165,16 +179,18 @@ exports = module.exports = {
         }
 
         // token missing
-        return this.router.sendJson(res, null, "Not Authorized", 401);
+        return this.router.sendJson(req, res, null, {
+            message: "notAuthorized", status: 401 });
     },
 
 
+    // TODO : why's this out here
     // check if the password is correct
-    comparePassword: function (password, hashedPassword, callback) {
+    comparePassword: function (req, password, hashedPassword, callback) {
         bcrypt.compare(password, hashedPassword, function (err, isValid) {
             if (err) console.log(err)
 
-            if (!isValid) return callback({ status: 401, message: "Invalid Credentials" });
+            if (!isValid) return callback({ status: 401, message: "invalidateCredentials" });
 
             return callback(null); // password ok
         });

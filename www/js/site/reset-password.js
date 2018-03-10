@@ -9,7 +9,7 @@ app.site.resetPassword = {
         // get reset password token
         this.resetPasswordToken = window.location.search;
         if (!this.resetPasswordToken || this.resetPasswordToken.length < 30) {
-            app.util.showToast("Invalid verification token", 4000);
+            app.util.showToast(app.Strings.invalidVerificationToken, 4000);
             return;
         }
 

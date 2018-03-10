@@ -50,18 +50,18 @@ CREATE OR ALTER PROCEDURE stores_details_update
         SELECT TOP 1 @id_store_temp = id_store, @id_address = id_address
         FROM Store.stores WHERE id_store = @id_store and is_deleted = 0
 
-        IF @id_store_temp IS NULL THROW 50400, 'Store not found', 1
+        IF @id_store_temp IS NULL THROW 50400, 'storeNotFound', 1
 
 
         -- Check if a member of the store
         IF (SELECT TOP 1 id_person FROM Store.stores_people
             WHERE id_store = @id_store AND id_person = @id_user_doing_update) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- only store and system users can update stores
         IF (SELECT TOP 1 id_person FROM App.people WHERE id_person = @id_user_doing_update AND is_store_user = 1 AND is_deleted = 0) IS NULL
-            THROW 50401, 'Not authorized', 1
+            THROW 50401, 'notAuthorized', 1
 
 
         -- Create address

@@ -6,7 +6,7 @@ CREATE OR ALTER PROCEDURE people_update_password
 
 
     -- check for bad token
-    IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'Bad token', 1
+    IF @reset_password_token IS NULL OR LEN(@reset_password_token) < 64 THROW 50400, 'invalidToken', 1
 
 
     -- check person data
@@ -16,9 +16,9 @@ CREATE OR ALTER PROCEDURE people_update_password
     SELECT @id_person = id_person, @person_reset_password_token = reset_password_token
         FROM App.people WHERE email = @email AND is_deleted = 0
 
-    IF @id_person IS NULL THROW 50400, 'Account not found', 1
+    IF @id_person IS NULL THROW 50400, 'accountNotFound', 1
 
-    IF @person_reset_password_token <> @reset_password_token THROW 50401, 'Invalid token', 1
+    IF @person_reset_password_token <> @reset_password_token THROW 50401, 'invalidToken', 1
 
 
     -- update person

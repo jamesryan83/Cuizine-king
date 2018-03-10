@@ -18,12 +18,12 @@ var scssInputsPath = path.join(__dirname, "../", "www", "scss", "**", "*.scss");
 
 // watch all
 gulp.task("default", function () {
-    gulp.watch(path.join(__dirname, "../", "www", "html", "**", "*.html"), ["html"]);
-    gulp.watch(scssInputsPath, ["scss"]);
-    gulp.watch(path.join(__dirname, "../", "www", "js", "**", "*.js"), ["js"]);
-    gulp.watch(path.join(__dirname, "../", "sql", "other", "**", "*.sql"), ["sql", "sqljs"]);
-    gulp.watch(path.join(__dirname, "../", "sql", "procedures", "**", "*.sql"), ["sql", "sqljs"]);
-    gulp.watch(path.join(__dirname, "../", "sql", "tables", "**", "*.sql"), ["sql", "sqljs"]);
+    gulp.watch(path.join(__dirname, "../", "www", "html", "**", "*.html"), { interval: 500 }, ["html"]);
+    gulp.watch(scssInputsPath, { interval: 500 }, ["scss"]);
+    gulp.watch(path.join(__dirname, "../", "www", "js", "**", "*.js"), { interval: 500 }, ["js"]);
+    gulp.watch(path.join(__dirname, "../", "sql", "other", "**", "*.sql"), { interval: 500 }, ["sql", "sqljs"]);
+    gulp.watch(path.join(__dirname, "../", "sql", "procedures", "**", "*.sql"), { interval: 500 }, ["sql", "sqljs"]);
+    gulp.watch(path.join(__dirname, "../", "sql", "tables", "**", "*.sql"), { interval: 500 }, ["sql", "sqljs"]);
 });
 
 

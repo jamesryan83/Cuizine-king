@@ -1,24 +1,32 @@
 
 // Base config settings
 var config = {
-    "isCordova": false,
-    "title": "menuthing",
+
+    // General stuff
     "host": "",
     "port": 1337,
-    "secret": "fallout3isprettygood",
+    "secret": "tfwyoucantthinkofasecret",
     "jwtExpiryShort": 300000, // 5 minutes
     "jwtExpiryLong": "7d",  // 2s 2m 2h 2d
+    "storeLogos": "/res/storelogos/",
+    "supportedLanguages": ["en", "zh"],
     "minifyjs": false,
+    "isCordova": false,
     "showLogPaths": true,
     "logSQLerrors": true,
     "logRequestRoute": true,
     "logRequestHeaders": false,
+    "clearConsoleOnRestart": true,
 
+
+    // EMail
     "mail": {
         "serverEmail": "jamesryan4171@gmail.com",
         "apikey": "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"
     },
 
+
+    // Database
     "mssql": {
         "user": "",
         "password": "",
@@ -38,11 +46,15 @@ var config = {
         }
     },
 
+
+    // Azure blob storage
     "blobStorage": {
         "host": "http://127.0.0.1:10000/devstoreaccount1",
         "hostDev": "http://127.0.0.1:10000/devstoreaccount1",
     },
 
+
+    // Database constants
     "dbConstants": {
         "orderTypes": {
             "delivery": 1,

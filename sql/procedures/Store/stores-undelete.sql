@@ -12,7 +12,7 @@ CREATE OR ALTER PROCEDURE stores_undelete
 
         -- Check if store exists
         IF (SELECT TOP 1 id_store FROM Store.stores WHERE id_store = @id_store and is_deleted = 0) IS NULL
-            THROW 50400, 'Store not found', 1
+            THROW 50400, 'storeNotFound', 1
 
 
         -- Set store deleted

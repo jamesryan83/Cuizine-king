@@ -1,7 +1,7 @@
 <!-- GENERATED -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%- locale %>">
 
     <head>
         <meta name="format-detection" content="telephone=no">
@@ -9,10 +9,18 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:">
 
-        <link rel="icon" href="/res/favicon.ico">
-        <link rel="stylesheet" href="/lib/normalize.css" />
+        <title><%- title %></title>
 
-        <title>Cuisine King</title>
+        <link rel="icon" type="image/x-icon" href="/res/favicon.ico">
+
+
+        <!-- stylesheets -->
+        <% if (devMode) { %>
+            <link rel="stylesheet" href="/lib/normalize.css" />
+        <% } else { %>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" />
+        <% } %>
+
 
         <style>
             *, *:before, *:after {
@@ -58,76 +66,12 @@
 
     <body>
 
-        <!-- Page container -->
         <div id="page-container"></div>
 
+        <div id="dialog-container" style="display: none;"></div>
 
-        <!-- Dialog container -->
-        <div id="dialog-container" style="display: none;">
-            <!-- hours popup -->
-<div id="dialog-store-hours" class="center dialog" style="display: none">
-    <div>
-        <h3>BUSINESS HOURS</h3>
-        <div id="dialog-store-hours-close" class="dialog-close-icon"></div>
-    </div>
-    <div>
-        <div>
-            <label>TAKEAWAY HOURS</label>
-            <label>DELIVERY HOURS</label>
-        </div>
-        <div id="dialog-store-hours-lists" class="clearfix">
-            <ul id="dialog-store-hours-left">
-
-            </ul>
-            <ul id="dialog-store-hours-right">
-
-            </ul>
-        </div>
-    </div>
-</div>
-            <!-- description popup -->
-<div id="dialog-store-description" class="dialog center" style="display: none;">
-    <div>
-        <h3>About</h3>
-        <h3 id="dialog-store-description-heading"></h3>
-        <div id="dialog-store-description-close" class="dialog-close-icon"></div>
-    </div>
-    <div>
-        <p id="dialog-store-description-text"></p>
-    </div>
-</div>
-            <!-- Store reviews dialog -->
-<div id="dialog-store-reviews" class="center dialog" style="display: none;">
-    <div id="dialog-store-reviews-header">
-        <div>
-            <h3>REVIEWS</h3>
-            <ul id="dialog-store-reviews-rating-control" class="rating-control inactive">
-                <li class="rating-control-star"></li>
-                <li class="rating-control-star"></li>
-                <li class="rating-control-star"></li>
-                <li class="rating-control-star"></li>
-                <li class="rating-control-star"></li>
-            </ul>
-            <label id="dialog-store-reviews-count"></label>
-        </div>
-        <div>
-            <label id="dialog-store-reviews-add-review" class="label-link">Add a Review</label>
-            <div id="dialog-store-reviews-close"></div>
-        </div>
-    </div>
-
-    <hr class="hr-1" />
-
-    <div id="dialog-store-reviews-list"></div>
-</div>
-        </div>
-
-
-        <!-- Toasts -->
         <div id="toasts" style="display: none;"></div>
 
-
-        <!-- Loading screen -->
         <div id="loading-screen" style="display: none;">
             <div id="loading-icon" class="center">
                 <label>Please Wait</label>
@@ -135,60 +79,84 @@
         </div>
 
 
-        <script src="/lib/jquery-3.0.js"></script>
-        <script src="/lib/validate.min.js"></script>
-        <script src="/lib/jquery.loadTemplate.min.js"></script>
-        <script src="/lib/moment.min.js"></script>
+        <!-- scripts -->
+        <% if (devMode) { %>
+            <script src="/lib/jquery-3.0.js"></script>
+            <script src="/lib/validate.min.js"></script>
+            <script src="/lib/jquery.loadTemplate.min.js"></script>
+            <script src="/lib/moment.min.js"></script>
+        <% } else { %>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.12.0/validate.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.loadtemplate/1.5.10/jquery.loadTemplate.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js"></script>
+        <% } %>
+
 
         <script>
             "use strict";
 
-            // load page resources
-            $(document).ready(function () {
-                var $pageContainer = $("#page-container");
+// this script is used in main.html as the startupScript
 
-                $.ajax({
-                    method: "POST",
-                    url: "/page-request",
-                    data: { encodedUrl: encodeURI(window.location.pathname) },
-                    beforeSend: function(request) {
-                        request.setRequestHeader("authorization", "Bearer " + localStorage.getItem("jwt"));
-                    },
-                    success: function (result) {
-                        if (!result.html || !result.css || !result.js || !result.section) {
-                            $pageContainer.append($("<p style='margin: 30px'>Error loading data.  Please refresh the page</p>")[0]);
-                            return;
-                        }
 
-                        // load css
-                        document.getElementsByTagName('head')[0]
-                            .appendChild($("<link rel='stylesheet' href='" + result.css + "' />")[0]);
+// load page resources
+$(document).ready(function () {
 
-                        // load js
-                        $.ajax({
-                            dataType: "script",
-                            cache: true,
-                            url: result.js,
-                            success: function () {
-                                // pass html to js
-                                app[result.section].init(JSON.parse(result.html));
-                            },
-                            error: function () {
-                                console.log(err)
-                                $pageContainer.append($("<p style='margin: 30px'>Error loading scripts.  Please refresh the page</p>")[0]);
-                            }
-                        });
-                    },
-                    error: function (err) {
-                        if (err) {
-                            console.log(err)
-                        }
+    var $pageContainer = $("#page-container");
 
-                        $pageContainer.append($("<h3 id='error-index-h' style='margin: 30px'>Error.  Please refresh the page</h3>")[0]);
-                        $pageContainer.append($("<a id='error-index-a' href='/'>Click here to go home</a>")[0]);
-                    }
-                });
-            });
+
+    // Initial ajax request
+    $.ajax({
+        method: "POST",
+        url: "/page-request",
+        data: { encodedUrl: encodeURI(window.location.pathname) },
+        beforeSend: function(request) {
+            request.setRequestHeader("authorization", "Bearer " + localStorage.getItem("jwt"));
+        },
+        success: function (result) {
+            if (!result.html || !result.css || !result.js || !result.section) {
+                $pageContainer.append($("<p style='margin: 30px'>Error loading data.  Please refresh the page</p>")[0]);
+                return;
+            }
+
+            afterInitialAjax(result);
+        },
+        error: function (err) {
+            if (err) console.log(err);
+
+            $pageContainer.append($("<h3 id='error-index-h' style='margin: 30px'>Error.  Please refresh the page</h3>")[0]);
+            $pageContainer.append($("<a id='error-index-a' href='/'>Click here to go home</a>")[0]);
+        }
+    });
+
+
+    // after initial ajax request
+    function afterInitialAjax(result) {
+        // load css
+        document.getElementsByTagName('head')[0]
+            .appendChild($("<link rel='stylesheet' href='" + result.css + "' />")[0]);
+
+        // load js file
+        $.ajax({
+            dataType: "script",
+            cache: true,
+            url: result.js,
+            success: function () {
+                // localized strings
+                app.Strings = result.strings;
+
+                // pass html to js
+                app[result.section].init(JSON.parse(result.html));
+            },
+            error: function () {
+                console.log(err);
+                $pageContainer.append($("<p style='margin: 30px'>Error loading scripts.  Please refresh the page</p>")[0]);
+            }
+        });
+    }
+
+
+});
         </script>
     </body>
 </html>

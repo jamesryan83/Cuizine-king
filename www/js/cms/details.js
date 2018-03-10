@@ -8,11 +8,12 @@ app.cms.details = {
 
         app.storeContent.init();
 
+        this.$storeInfo = $("#store-info");
+        this.$detailsForm = $("#store-info-edit");
         this.$storeInfoEdit = $("#store-info-edit");
         this.$previewBorder = $("#preview-mode-border");
         this.$returnButton = $(".page-cms-details-return");
         this.$previewButton = $(".page-cms-details-preview");
-        this.$detailsForm = $("#store-info-edit");
 
 
         // for scrolling back down after return to editing
@@ -42,6 +43,7 @@ app.cms.details = {
             $(this).hide();
             self.$previewButton.show();
             self.$previewBorder.hide();
+            self.$returnButton.hide();
 
             self.$storeInfo.hide();
             self.$storeInfoEdit.show();
@@ -55,7 +57,8 @@ app.cms.details = {
             lastScrollPosition = $("html").scrollTop();
 
             $(this).hide();
-            self.$previewButton.show();
+            self.$previewButton.hide();
+            self.$returnButton.show();
             self.$previewBorder.show();
 
             self.$storeInfoEdit.hide();
@@ -134,7 +137,7 @@ app.cms.details = {
                 if (err) return false;
 
                 console.log(result);
-                app.util.showToast("SAVED", null, "success");
+                app.util.showToast(app.Strings.saved, null, "success");
             });
 
             return false;
@@ -146,7 +149,7 @@ app.cms.details = {
     setupPage: function (storeData) {
         if (storeData) {
 
-            app.storeContent.addStoreDetailsDataToPage(storeData);
+            app.storeContent.addStoreDetailsDataToPage(null, storeData, "cms");
 
             var address = storeData.address[0];
 

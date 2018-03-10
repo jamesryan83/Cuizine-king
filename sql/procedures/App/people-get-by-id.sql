@@ -9,14 +9,14 @@ CREATE OR ALTER PROCEDURE people_get_by_id
     SET NOCOUNT ON
 
 
-    -- get user type and jwt
+    -- get user type and email
     SELECT @email = email, @is_store_user = is_store_user, @is_system_user = is_system_user
     FROM App.people
     WHERE id_person = @id_person AND is_deleted = 0
 
 
     -- no user found
-    IF @email IS NULL THROW 50400, 'Account not found', 1
+    IF @email IS NULL THROW 50400, 'accountNotFound', 1
 
 
     -- return user

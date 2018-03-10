@@ -11,7 +11,6 @@ app.dialogs.init = function () {
 
 
     this.$dialogContainer = $("#dialog-container");
-    this.$dialogs = this.$dialogContainer.children();
 
 
     this.$dialogContainer.on("click", function () {
@@ -27,6 +26,10 @@ app.dialogs.show = function (dialogEl) {
 
 
 app.dialogs.hide = function () {
-    this.$dialogs.hide();
+    this.$dialogContainer.children().hide();
     this.$dialogContainer.hide();
+}
+
+app.dialogs.addDialog = function (html) {
+    this.$dialogContainer.append($(html));
 }

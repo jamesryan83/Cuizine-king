@@ -6,7 +6,6 @@ var sql = require("mssql");
 
 var config = require("../config");
 var database = require("../database/database");
-var resultHandler = require("../database/result-handler");
 
 // Calls stored procedures for Store
 exports = module.exports = {
@@ -16,7 +15,10 @@ exports = module.exports = {
 		database.pool.request()
 			.input("id_store", sql.Int, inputs.id_store)
 			.execute(config.mssql.database + ".dbo.reviews_get", function (err, result) {
-				return resultHandler.handle("reviews_get", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 
@@ -30,7 +32,10 @@ exports = module.exports = {
 			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
 			.output("newStoreApplicationId", sql.Int)
 			.execute(config.mssql.database + ".dbo.store_applications_create", function (err, result) {
-				return resultHandler.handle("store_applications_create", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 
@@ -54,7 +59,10 @@ exports = module.exports = {
 			.output("newStoreId", sql.Int)
 			.output("newPersonId", sql.Int)
 			.execute(config.mssql.database + ".dbo.stores_create", function (err, result) {
-				return resultHandler.handle("stores_create", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 
@@ -65,7 +73,10 @@ exports = module.exports = {
 			.input("id_store", sql.Int, inputs.id_store)
 			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
 			.execute(config.mssql.database + ".dbo.stores_delete", function (err, result) {
-				return resultHandler.handle("stores_delete", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 
@@ -110,7 +121,10 @@ exports = module.exports = {
 			.input("hours_sun_delivery_close", sql.NVarChar, inputs.hours_sun_delivery_close)
 			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
 			.execute(config.mssql.database + ".dbo.stores_details_update", function (err, result) {
-				return resultHandler.handle("stores_details_update", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 
@@ -120,7 +134,10 @@ exports = module.exports = {
 		database.pool.request()
 			.input("id_store", sql.Int, inputs.id_store)
 			.execute(config.mssql.database + ".dbo.stores_get", function (err, result) {
-				return resultHandler.handle("stores_get", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 
@@ -131,7 +148,10 @@ exports = module.exports = {
 			.input("id_store", sql.Int, inputs.id_store)
 			.input("id_user_doing_update", sql.Int, inputs.id_user_doing_update)
 			.execute(config.mssql.database + ".dbo.stores_undelete", function (err, result) {
-				return resultHandler.handle("stores_undelete", err, result, callback, inputs);
+				var sqlErr = database.resultHandler.getError(err);
+				if (sqlErr) return callback(sqlErr);
+
+				return callback(null, result);
 		});
 	},
 

@@ -9,7 +9,7 @@ CREATE OR ALTER PROCEDURE people_update_jwt
     -- error if account not found
     IF (SELECT TOP 1 id_person FROM App.people
        WHERE id_person = @id_person AND is_deleted = 0) IS NULL
-       THROW 50400, 'Account not found', 1
+       THROW 50400, 'accountNotFound', 1
 
 
     -- update person jwt

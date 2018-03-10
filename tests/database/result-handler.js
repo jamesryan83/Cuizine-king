@@ -37,144 +37,71 @@ var mssqlTestError = {
 describe("DATABASE RESULT HANDLER", function () {
 
 
-    it("result-handler file contains all stored procedures", function (done) {
-        var proceduresApp = require("../../server/procedures/_App");
-        var proceduresStore = require("../../server/procedures/_Store");
+    it("#getData handles null err and result", function () {
+        var sqlResult = resultHandler.getData();
 
-        // get all procedure function names
-        var procedures =
-            Object.keys(proceduresApp)
-            .concat(Object.keys(proceduresStore));
-
-
-        // get all handled procedures
-        var handledProcedures = [];
-        var caseRegex = /^\s*case\s*(.*)\s*$/gmi;
-        var resultHandlerText = fs.readFileSync("../server/database/result-handler.js", "utf-8");
-        resultHandlerText.replace(caseRegex, function(match, captureGroup1) {
-            handledProcedures.push(captureGroup1.substr(1, captureGroup1.length - 3));
-        });
-
-
-        // remove handled test procedures
-        handledProcedures = handledProcedures.filter(function (x) { return x.indexOf("test") !== 0; });
-
-
-        // compare arrays, they should have the same elements, might be different order though
-        function compareArrays(ar1, ar2, errMessage) {
-            var match = false;
-            for (var i = 0; i < ar1.length; i++) {
-                match = false;
-                for (var j = 0; j < ar2.length; j++) {
-                    if (ar1[i] === ar2[j]) {
-                        match = true;
-                        break;
-                    }
-                }
-
-                if (!match) throw new Error(errMessage + ar1[i]);
-            }
-        }
-
-        compareArrays(procedures, handledProcedures, "Procedure missing from result-handler: ");
-        compareArrays(handledProcedures, procedures, "Extra procedure in result-handler: ");
-
-        // check arrays are the same length, just incase
-        if (procedures.length !== handledProcedures.length) {
-            return done(new Error("procedures.length !== handledProcedures.length"));
-        }
-
-        done();
+        assert.equal(sqlResult.err.status, 204);
+        assert.equal(sqlResult.err.message, "noData");
     });
 
 
 
-    it("#handle handles null err and result", function (done) {
-        resultHandler.handle("test_null_err_result", null, null, function (err) {
-            if (err) return done(new Error(err));
-            done();
-        });
-    });
-
-
-    it("#handle handles empty record set result", function (done) {
+    it("#getData handles empty record set result", function () {
         var result = { recordset: [] };
 
-        resultHandler.handle("test_result", null, result, function (err, output) {
-            assert.equal(err.status, 500);
-            assert.equal(err.message, "Server Error");
-            assert.ok(!output);
-            done();
-        });
+        var sqlResult = resultHandler.getData(result);
+        assert.equal(sqlResult.err.status, 204);
+        assert.equal(sqlResult.err.message, "noData");
     });
 
 
-    it("#handle handles empty record set result with error message", function (done) {
+    it("#getData handles empty record set result with error message", function () {
         var result = { recordset: [] };
 
-        resultHandler.handle("test_result_error", null, result, function (err, output) {
-            assert.equal(err.status, 123);
-            assert.equal(err.message, "test message");
-            assert.ok(!output);
-            done();
-        });
+        var sqlResult = resultHandler.getData(result, 123, "test message");
+        assert.equal(sqlResult.err.status, 123);
+        assert.equal(sqlResult.err.message, "test message");
     });
 
 
-    it("#handle handles record set result", function (done) {
+    it("#getData handles record set result", function () {
         var result = { recordset: [{ data: "test" }] };
 
-        resultHandler.handle("test_result", null, result, function (err, output) {
-            if (err) return done(new Error(err));
-
-            assert.equal(output.data, "test");
-            done();
-        });
+        var sqlResult = resultHandler.getData(result);
+        assert.equal(sqlResult.data.data, "test");
     });
 
 
-    it("#handle handles error withotut originalError", function (done) {
+    it("#getError handles error withotut originalError", function () {
         var error = {}
 
-        resultHandler.handle(null, error, null, function (err) {
-            assert.equal(err.message, "Server Error");
-            assert.equal(err.status, 500);
-            done();
-        });
+        var sqlErr = resultHandler.getError(error);
+        assert.equal(sqlErr.err, null);
     });
 
 
-    it("#handle handles error", function (done) {
+    it("#getError handles error", function () {
         var error = JSON.parse(JSON.stringify(mssqlTestError));
 
-        resultHandler.handle(null, error, null, function (err) {
-            assert.equal(err.message, "Test error");
-            done();
-        });
+        var sqlErr = resultHandler.getError(error);
+        assert.equal(sqlErr.message, "Test error");
     });
 
 
-    it("#handle handles output", function (done) {
+    it("#getOutputs handles output", function () {
         var result = { output: { id_test: "22" }};
 
-        resultHandler.handle("test_output", null, result, function (err, outputs) {
-            if (err) return done(new Error(err));
-
-            assert.equal(outputs.id_test, 22);
-            done();
-        });
+        var sqlResult = resultHandler.getOutputs(["id_test"], result);
+        assert.equal(sqlResult.outputs.id_test, 22);
     });
 
 
-    it("#handle handles missing output", function (done) {
+    it("#getOutputs handles missing output", function () {
         var result = { output: null };
 
-        resultHandler.handle("test_output", null, result, function (err, outputs) {
-            assert.equal(err.status, 500);
-            assert.equal(err.message, "Database output missing");
-            assert.ok(!outputs);
-            done();
-        });
+        var sqlResult = resultHandler.getOutputs([], result);
+        assert.equal(sqlResult.err.status, 500);
+        assert.equal(sqlResult.err.message, "outputNamesMissing");
     });
 
 

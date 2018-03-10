@@ -15,7 +15,7 @@ CREATE OR ALTER PROCEDURE people_get_by_email
 
 
     -- no user found
-    IF (@id_person IS NULL) THROW 50400, 'Account not found', 1
+    IF (@id_person IS NULL) THROW 50400, 'accountNotFound', 1
 
 
     -- return user

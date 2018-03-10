@@ -48,7 +48,7 @@ app.site.store = {
             console.log(storeData)
             if (storeData) {
                 storeData.id_store = app.storeContent.id_store;
-                app.storeContent.addStoreDetailsDataToPage(id_store, storeData);
+                app.storeContent.addStoreDetailsDataToPage(id_store, storeData, "site");
                 app.storeContent.addMenuDataToPage(storeData);
 
                 self.afterStoreDataLoaded();
@@ -122,6 +122,7 @@ app.site.store = {
     },
 
 
+    // TODO : i18n
     // Update the checkout with the current data
     updateCheckout: function (data) {
         if (!data) data = app.data.getCheckoutData();
