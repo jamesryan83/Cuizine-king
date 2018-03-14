@@ -129,15 +129,21 @@ app.cms.menu = {
             }
 
 
-            // add headings to fragment
+            // add headings to fragment before products
             for (var i = 0; i < storeData.product_headings.length; i++) {
                 var heading = storeData.product_headings[i];
+
+                heading.title = heading.title || "Enter a heading...";
 
                 var $el = app.util.loadTemplate(
                     "#template-edit-menu-item-heading", heading);
 
                 $el.attr("data-id", heading.id_product_heading);
-                frag.append($el[0]);
+
+                $(frag).find(
+                    ".edit-menu-item-product[data-id='" +
+                    heading.above_product_id + "']")
+                    .before($el);
             }
 
 
