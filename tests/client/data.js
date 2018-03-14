@@ -124,10 +124,57 @@ describe("CLIENT - DATA", function () {
 
         // add storeData
         data.storeData = clientData.storeData;
+    });
 
 
 
+    it("#getMenuPositions returns valid result", function () {
+        // test 1
+        var fakeMenuItems = [
+            { dataset: { productId: "1" }},
+            { dataset: { productId: "2" }},
+            { dataset: { productId: "3" }},
+            { dataset: { productId: "4" }}
+        ];
 
+        var positions = data.getMenuPositions(fakeMenuItems);
+        var expected = {
+            headings: [],
+            products: [
+                { productId: '1', position_id_previous: null, position_id_next: '2' },
+                { productId: '2', position_id_previous: '1', position_id_next: '3' },
+                { productId: '3', position_id_previous: '2', position_id_next: '4' },
+                { productId: '4', position_id_previous: '3', position_id_next: null }
+            ]
+        };
+
+        assert.deepEqual(positions, expected);
+
+        // test 2
+        fakeMenuItems = [
+            { dataset: { headingId: "1" }},
+            { dataset: { productId: "1" }},
+            { dataset: { productId: "2" }},
+            { dataset: { productId: "3" }},
+            { dataset: { headingId: "2" }},
+            { dataset: { productId: "4" }},
+            { dataset: { headingId: "3" }},
+        ];
+
+        positions = data.getMenuPositions(fakeMenuItems);
+//        expected = {
+//            headings: [],
+//            products: [
+//                { productId: '1', position_id_previous: null, position_id_next: '2' },
+//                { productId: '2', position_id_previous: '1', position_id_next: '3' },
+//                { productId: '3', position_id_previous: '2', position_id_next: '4' },
+//                { productId: '4', position_id_previous: '3', position_id_next: null }
+//            ]
+//        };
+//
+//        assert.deepEqual(positions, expected);
+
+        console.log(positions)
     });
 
 

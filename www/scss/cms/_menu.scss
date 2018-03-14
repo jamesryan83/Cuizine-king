@@ -11,16 +11,24 @@
 
     // Store content
     #store-content {
-
-
-        #store-menu-list {
-//            .store-menu-list-item {
-//                &:hover {
-//                    border: 1px solid red;
-//                }
-//            }
+        .category-scroller-container {
+            display: none;
         }
 
+        #store-menu-list {
+            display: none;
+        }
+
+        // Edit menu items
+        #edit-menu-items {
+            text-align: center;
+
+            #edit-menu-items-list {
+                display: inline-block;
+                text-align: left;
+                min-width: 360px;
+            }
+        }
     }
 
 
@@ -33,6 +41,38 @@
         }
     }
 
+
+    // Edit menu heading item
+    .edit-menu-item-heading {
+        height: 40px;
+        white-space: nowrap;
+        margin: 10px 0;
+        background-color: blue;
+
+        label {
+            height: 40px;
+            line-height: 40px;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 10px;
+        }
+
+        .edit-menu-item-label {
+
+        }
+
+        .edit-menu-item-input {
+            vertical-align: top;
+            margin-top: 5px;
+            width: 250px;
+        }
+
+        .edit-menu-item-delete {
+            @include svgicon(40px, 40px, 20px, 20px,
+                url(/res/svg/icon-close.svg),
+                url(/res/svg/icon-close-hover.svg));
+        }
+    }
 
 
 }

@@ -117,11 +117,41 @@ app.data = {
         } else {
 
         }
-
-
     },
 
 
+
+    // Returns the positions of the headings and menu items for the server
+    getMenuPositions: function (items) {
+        var idNext = null;
+        var idPrevious = null;
+        var last = items.length - 1;
+        var positions = { headings: [], products: [] };
+
+
+        for (var i = 0; i < items.length; i++) {
+            idPrevious = i === 0 ? null : (items[i - 1].dataset.headingId || items[i - 1].dataset.productId);
+            idNext = i === last ? null : (items[i + 1].dataset.headingId || items[i + 1].dataset.productId);
+
+            // item is product
+            if (items[i].dataset.productId) {
+                positions.products.push({
+                    productId: items[i].dataset.productId,
+                    position_id_previous: idPrevious,
+                    position_id_next: idNext
+                });
+
+            // item is heading
+            } else if (items[i].dataset.headingId) {
+                positions.headings.push({
+                    headingId: items[i].dataset.headingId,
+                    above_product_id: idNext
+                });
+            }
+        }
+
+        return positions;
+    },
 
 
 

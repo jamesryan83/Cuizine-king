@@ -16,7 +16,7 @@ app.site.store = {
         this.$checkoutDetails = $("#store-checkout-header-details");
 
 
-        // Get checkout height
+        // Get checkout height and show checkout
         var checkoutHeight = localStorage.getItem("cht");
         var checkoutOpen = localStorage.getItem("cop");
         if (!checkoutHeight) {
@@ -25,13 +25,12 @@ app.site.store = {
         }
 
         if (checkoutOpen) this.$checkoutContent.show();
-
         this.$checkoutContent.css("height", checkoutHeight);
 
 
-        // Store id from url
-        var id_store = routeData.route.split("/");
-        id_store = id_store[id_store.length - 1];
+        // Get store id from url
+        var urlParts = routeData.route.split("/");
+        var id_store = urlParts[urlParts.length - 1];
 
 
         // checkout vertical resizer
@@ -44,15 +43,8 @@ app.site.store = {
 
         // Get the store data
         app.data.getStoreData(id_store, function (storeData) {
-
             console.log(storeData)
-            if (storeData) {
-                storeData.id_store = app.storeContent.id_store;
-                app.storeContent.addStoreDetailsDataToPage(id_store, storeData, "site");
-                app.storeContent.addMenuDataToPage(storeData);
-
-                self.afterStoreDataLoaded();
-            }
+            self.afterStoreDataLoaded(storeData);
         });
 
 
@@ -71,8 +63,15 @@ app.site.store = {
 
 
     // After store data is loaded
-    afterStoreDataLoaded: function () {
+    afterStoreDataLoaded: function (storeData) {
         var self = this;
+
+        // add data to page
+        app.storeContent.addStoreDetailsDataToPage(storeData.id_store, storeData, "site");
+        app.storeContent.addMenuDataToPage(storeData);
+
+        // Category scroller
+        new app.controls.CategoryScroller(storeData.product_headings, 100, 100);
 
         this.updateCheckout();
 

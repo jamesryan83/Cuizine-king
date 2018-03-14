@@ -323,6 +323,20 @@ app.cms.menu = {
         app.storeContent.init();
 
 
+        this.$categoryScrollerContainer = $(".category-scroller-container");
+        this.$storeMenuList = $("#store-menu-list");
+        this.$editMenuItems = $("#edit-menu-items");
+        this.$previewBorder = $("#preview-mode-border");
+        this.$returnButton = $(".cms-menu-return");
+        this.$previewButton = $(".cms-menu-preview");
+        this.$addCategoryButton = $("#cms-menu-add-category");
+        this.$addMenuItemButton = $("#cms-menu-add-menu-item");
+        this.$saveButton = $("#page-cms-menu-save");
+        this.$editMenuItemsList = $("#edit-menu-items-list");
+
+        this.categoryScroller = null;
+
+
         // Get the store menu data
         app.data.getStoreData(function (storeData) {
             if (!storeData) {
@@ -335,33 +349,96 @@ app.cms.menu = {
 
 
         // Show Edit mode
-        $(".cms-menu-return").on("click", function () {
-            $("#store-info-inner").hide();
-            $("#store-info-edit").show();
+        this.$returnButton.on("click", function () {
+            self.$categoryScrollerContainer.hide();
+            self.$storeMenuList.hide();
+            self.$editMenuItems.show();
 
-            $("#preview-mode-border").hide();
-            $(".cms-menu-preview").show();
-            $(".cms-menu-return").hide();
+            self.$previewBorder.hide();
+            self.$previewButton.show();
+            self.$returnButton.hide();
+            self.$addCategoryButton.show();
+            self.$addMenuItemButton.show();
+            self.$saveButton.show();
         });
 
 
         // Show Preview
-        $(".cms-menu-preview").on("click", function () {
-            $("#store-info-edit").hide();
-            $("#store-info-inner").show();
+        this.$previewButton.on("click", function () {
+            self.$categoryScrollerContainer.show();
+            self.$storeMenuList.show();
+            self.$editMenuItems.hide();
 
-            $("#preview-mode-border").show();
-            $(".cms-menu-preview").hide();
-            $(".cms-menu-return").show();
+            self.$previewBorder.show();
+            self.$previewButton.hide();
+            self.$returnButton.show();
+            self.$addCategoryButton.hide();
+            self.$addMenuItemButton.hide();
+            self.$saveButton.hide();
+
+            self.categoryScroller.updateHeadingPositions();
         });
+
+
+        // Add category
+        this.$addCategoryButton.on("click", function () {
+            var catButton = app.util.loadTemplate(
+                "#template-edit-menu-item-heading");
+
+
+            self.$editMenuItemsList.append(catButton)
+        });
+
+
+
+        // Add menu item
+        this.$addMenuItemButton.on("click", function () {
+
+        });
+
+
 
     },
 
 
     // Add data to page
     setupPage: function (storeData) {
+        var self = this;
+
         if (storeData) {
             app.storeContent.addMenuDataToPage(storeData);
+
+            // menu drag/drop
+            var drake = dragula([$("#edit-menu-items-list")[0]]);
+
+            drake.on("drop", function (el, target, source, sibling) {
+//                app.data.getMenuPositions($(".store-menu-list-item"));
+            });
+
+
+            console.log(storeData)
+
+
+            // add products to list
+
+
+            // add headings to list
+            var frag = document.createDocumentFragment();
+            for (var i = 0; i < storeData.product_headings.length; i++) {
+                var heading = storeData.product_headings[i];
+
+                heading = app.util.loadTemplate(
+                    "#template-edit-menu-item-heading", heading);
+
+                frag.append(heading[0]);
+            }
+
+            this.$editMenuItemsList.append(frag);
+
+            // Category scroller
+            self.categoryScroller =
+                new app.controls.CategoryScroller(
+                storeData.product_headings, 100, 100);
         }
     },
 
@@ -538,11 +615,41 @@ app.data = {
         } else {
 
         }
-
-
     },
 
 
+
+    // Returns the positions of the headings and menu items for the server
+    getMenuPositions: function (items) {
+        var idNext = null;
+        var idPrevious = null;
+        var last = items.length - 1;
+        var positions = { headings: [], products: [] };
+
+
+        for (var i = 0; i < items.length; i++) {
+            idPrevious = i === 0 ? null : (items[i - 1].dataset.headingId || items[i - 1].dataset.productId);
+            idNext = i === last ? null : (items[i + 1].dataset.headingId || items[i + 1].dataset.productId);
+
+            // item is product
+            if (items[i].dataset.productId) {
+                positions.products.push({
+                    productId: items[i].dataset.productId,
+                    position_id_previous: idPrevious,
+                    position_id_next: idNext
+                });
+
+            // item is heading
+            } else if (items[i].dataset.headingId) {
+                positions.headings.push({
+                    headingId: items[i].dataset.headingId,
+                    above_product_id: idNext
+                });
+            }
+        }
+
+        return positions;
+    },
 
 
 
@@ -698,7 +805,7 @@ app.dialogs.businessHours = {
         var todayClass = "";
         if (isToday) todayClass = "today";
 
-        return "<li class='" + todayClass + "'><span>" + day + "</span> " + text + "</li>";
+        return "<li class='" + todayClass + "'><span>" + day.toUpperCase() + "</span> " + text + "</li>";
     },
 
 
@@ -1013,6 +1120,7 @@ app.storeContent = {
         this.$logoEmpty = $(".store-info-image-empty");
         this.$logoLoading = $(".store-info-image-loading");
         this.$descriptionButton = $("#store-info-button-description");
+        this.$descriptionContainer = $("#store-info-description-container");
         this.$hoursButton = $("#store-info-button-hours");
         this.$reviewsButton = $("#store-info-button-reviews");
         this.$menuList = $("#store-menu-list");
@@ -1088,6 +1196,7 @@ app.storeContent = {
         $("#store-disclaimer").text(data.disclaimer);
         $("#store-info-review-count").text("( " + data.review_count + " )");
 
+        // TODO : make the 'more' button for the description only show when required
 
         // hours
 //        var isOpen = app.data.isStoreOpen();
@@ -1229,10 +1338,6 @@ app.storeContent = {
             $(".store-menu-list-item-options-cancel").on("click", function () {
                 $(this).parent().parent().removeClass("options-active");
             });
-
-
-            // Category scroller
-            new app.controls.CategoryScroller(data.product_headings);
 
         } else {
             self.$menuList.append(app.Strings.noProducts);
@@ -1918,36 +2023,27 @@ app.validationRules.validateHours = function (data) {
 
 
 // Scroller on store and cms menu pages
-app.controls.CategoryScroller = function (categories) {
+app.controls.CategoryScroller = function (categories, v1, v2) {
+    var self = this;
 
-    var $html = $("html");
+    this.$html = $("html");
     var scrollerListEl = ".category-scroller-list";
     var $categoryScrollerContainer = $(".category-scroller-container");
     var $categoryScroller = $(".category-scroller");
     var $categoryScrollerList = $(scrollerListEl);
     var $categoryScrollerListItems = [];
-    var $headings = $(".store-menu-list-item.heading");
 
     var i = 0;
-    var headingPositions = [];
-    var verticalOffset1 = 100;
-    var verticalOffset2 = 100;
-
-
-    // update the position of the headings from the top of the screen
-    function updateHeadingPositions () {
-        headingPositions = [];
-        $headings.each(function () {
-            headingPositions.push(this.getBoundingClientRect().top + $html.scrollTop());
-        });
-    }
+    this.headingPositions = [];
+    var verticalOffset1 = v1;
+    var verticalOffset2 = v2;
 
 
     // Sets the active heading
     function setActiveHeading () {
-        var st = $html.scrollTop();
-        for (i = headingPositions.length - 1; i >= 0; i--) {
-            if (st > headingPositions[i] - 110) {
+        var st = self.$html.scrollTop();
+        for (i = self.headingPositions.length - 1; i >= 0; i--) {
+            if (st > self.headingPositions[i] - 110) {
                 $categoryScrollerListItems.removeClass("active");
                 $($categoryScrollerListItems[i]).addClass("active");
                 break;
@@ -1975,7 +2071,8 @@ app.controls.CategoryScroller = function (categories) {
 
         if ($el[0]) {
             $("html").animate({
-                scrollTop: $el[0].getBoundingClientRect().top + $html.scrollTop() - verticalOffset
+                scrollTop: $el[0].getBoundingClientRect().top +
+                    self.$html.scrollTop() - verticalOffset
             }, 500);
         }
     });
@@ -1983,7 +2080,7 @@ app.controls.CategoryScroller = function (categories) {
 
     // window resized
     $(window).on("resize", function () {
-        updateHeadingPositions();
+        self.updateHeadingPositions();
         setActiveHeading();
     });
 
@@ -2004,7 +2101,19 @@ app.controls.CategoryScroller = function (categories) {
 
     // get scroller items for highlighting and update heading positions
     $categoryScrollerListItems = $(".store-menu-nav-list-item");
-    updateHeadingPositions();
+    this.updateHeadingPositions();
+}
+
+// update the position of the headings from the top of the screen
+app.controls.CategoryScroller.prototype.updateHeadingPositions = function () {
+    var self = this;
+    self.headingPositions = [];
+
+    $(".store-menu-list-item.heading").each(function () {
+        self.headingPositions.push(
+            this.getBoundingClientRect().top + self.$html.scrollTop()
+        );
+    });
 }
 
 // Navbar

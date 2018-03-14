@@ -22,6 +22,14 @@
         <?- include("store-menu") ?>
 
 
+        <!-- Edit menu items -->
+        <div id="edit-menu-items">
+            <div id="edit-menu-items-list">
+
+            </div>
+        </div>
+
+
         <!-- Footer -->
         <div id="store-footer">
             <p id="store-disclaimer"></p>
@@ -33,11 +41,11 @@
     <!-- floating buttons -->
     <div class="page-cms-floating-buttons double-height">
         <div>
-            <button class="button-3">ADD CATEGORY</button>
-            <button class="button-3">ADD MENU ITEM</button>
+            <button id="cms-menu-add-category" class="button-3">ADD CATEGORY</button>
+            <button id="cms-menu-add-menu-item" class="button-3">ADD MENU ITEM</button>
         </div>
         <div>
-            <label class="label-button page-cms-menu-save">SAVE</label>
+            <label id="page-cms-menu-save" class="label-button">SAVE</label>
             <button class="cms-menu-preview button-3">PREVIEW</button>
             <button class="cms-menu-return button-3" style="display: none;">RETURN</button>
         </div>
@@ -51,6 +59,24 @@
 
 </div>
 
+
+<!-- A single edit menu heading item -->
+<script type="text/html" id="template-edit-menu-item-heading">
+    <div class="edit-menu-item-heading">
+        <label>HEADING</label>
+        <label class="edit-menu-item-label">Enter a heading...</label>
+        <input class="edit-menu-item-input" class="input-1" data-content="title" />
+        <div class="edit-menu-item-delete"></div>
+    </div>
+</script>
+
+
+<!-- A single edit menu product item -->
+<script type="text/html" id="template-edit-menu-item-product">
+    <div class="edit-menu-item-product">
+
+    </div>
+</script>
 
 
 <!--

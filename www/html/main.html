@@ -13,12 +13,9 @@
 
 
         <!-- stylesheets -->
-        <% if (devMode) { %>
-            <link rel="stylesheet" href="/lib/normalize.css" />
-        <% } else { %>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" />
-        <% } %>
-
+        <link rel="stylesheet" href="/lib/normalize.css" />
+        <?- include("site-styles") ?>
+        <?- include("cms-styles") ?>
 
         <style>
             *, *:before, *:after {
@@ -78,18 +75,12 @@
 
 
         <!-- scripts -->
-        <% if (devMode) { %>
-            <script src="/lib/jquery-3.0.js"></script>
-            <script src="/lib/validate.min.js"></script>
-            <script src="/lib/jquery.loadTemplate.min.js"></script>
-            <script src="/lib/moment.min.js"></script>
-        <% } else { %>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.12.0/validate.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.loadtemplate/1.5.10/jquery.loadTemplate.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js"></script>
-        <% } %>
-
+        <script src="/lib/jquery-3.0.js"></script>
+        <script src="/lib/validate.min.js"></script>
+        <script src="/lib/jquery.loadTemplate.min.js"></script>
+        <script src="/lib/moment.min.js"></script>
+        <?- include("site-scripts") ?>
+        <?- include("cms-scripts") ?>
 
         <script>
             <?- startupScript ?>

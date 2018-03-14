@@ -1,35 +1,26 @@
 
 // Scroller on store and cms menu pages
-app.controls.CategoryScroller = function (categories) {
+app.controls.CategoryScroller = function (categories, v1, v2) {
+    var self = this;
 
-    var $html = $("html");
+    this.$html = $("html");
     var scrollerListEl = ".category-scroller-list";
     var $categoryScrollerContainer = $(".category-scroller-container");
     var $categoryScroller = $(".category-scroller");
     var $categoryScrollerList = $(scrollerListEl);
     var $categoryScrollerListItems = [];
-    var $headings = $(".store-menu-list-item.heading");
 
     var i = 0;
-    var headingPositions = [];
-    var verticalOffset1 = 100;
-    var verticalOffset2 = 100;
-
-
-    // update the position of the headings from the top of the screen
-    function updateHeadingPositions () {
-        headingPositions = [];
-        $headings.each(function () {
-            headingPositions.push(this.getBoundingClientRect().top + $html.scrollTop());
-        });
-    }
+    this.headingPositions = [];
+    var verticalOffset1 = v1;
+    var verticalOffset2 = v2;
 
 
     // Sets the active heading
     function setActiveHeading () {
-        var st = $html.scrollTop();
-        for (i = headingPositions.length - 1; i >= 0; i--) {
-            if (st > headingPositions[i] - 110) {
+        var st = self.$html.scrollTop();
+        for (i = self.headingPositions.length - 1; i >= 0; i--) {
+            if (st > self.headingPositions[i] - 110) {
                 $categoryScrollerListItems.removeClass("active");
                 $($categoryScrollerListItems[i]).addClass("active");
                 break;
@@ -57,7 +48,8 @@ app.controls.CategoryScroller = function (categories) {
 
         if ($el[0]) {
             $("html").animate({
-                scrollTop: $el[0].getBoundingClientRect().top + $html.scrollTop() - verticalOffset
+                scrollTop: $el[0].getBoundingClientRect().top +
+                    self.$html.scrollTop() - verticalOffset
             }, 500);
         }
     });
@@ -65,7 +57,7 @@ app.controls.CategoryScroller = function (categories) {
 
     // window resized
     $(window).on("resize", function () {
-        updateHeadingPositions();
+        self.updateHeadingPositions();
         setActiveHeading();
     });
 
@@ -86,5 +78,17 @@ app.controls.CategoryScroller = function (categories) {
 
     // get scroller items for highlighting and update heading positions
     $categoryScrollerListItems = $(".store-menu-nav-list-item");
-    updateHeadingPositions();
+    this.updateHeadingPositions();
+}
+
+// update the position of the headings from the top of the screen
+app.controls.CategoryScroller.prototype.updateHeadingPositions = function () {
+    var self = this;
+    self.headingPositions = [];
+
+    $(".store-menu-list-item.heading").each(function () {
+        self.headingPositions.push(
+            this.getBoundingClientRect().top + self.$html.scrollTop()
+        );
+    });
 }

@@ -13,6 +13,7 @@ app.storeContent = {
         this.$logoEmpty = $(".store-info-image-empty");
         this.$logoLoading = $(".store-info-image-loading");
         this.$descriptionButton = $("#store-info-button-description");
+        this.$descriptionContainer = $("#store-info-description-container");
         this.$hoursButton = $("#store-info-button-hours");
         this.$reviewsButton = $("#store-info-button-reviews");
         this.$menuList = $("#store-menu-list");
@@ -88,6 +89,7 @@ app.storeContent = {
         $("#store-disclaimer").text(data.disclaimer);
         $("#store-info-review-count").text("( " + data.review_count + " )");
 
+        // TODO : make the 'more' button for the description only show when required
 
         // hours
 //        var isOpen = app.data.isStoreOpen();
@@ -229,10 +231,6 @@ app.storeContent = {
             $(".store-menu-list-item-options-cancel").on("click", function () {
                 $(this).parent().parent().removeClass("options-active");
             });
-
-
-            // Category scroller
-            new app.controls.CategoryScroller(data.product_headings);
 
         } else {
             self.$menuList.append(app.Strings.noProducts);

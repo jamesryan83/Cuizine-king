@@ -62,7 +62,7 @@ app.dialogs.businessHours = {
         var todayClass = "";
         if (isToday) todayClass = "today";
 
-        return "<li class='" + todayClass + "'><span>" + day + "</span> " + text + "</li>";
+        return "<li class='" + todayClass + "'><span>" + day.toUpperCase() + "</span> " + text + "</li>";
     },
 
 
