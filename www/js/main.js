@@ -49,7 +49,7 @@ $(document).ready(function () {
 
                 var intervalCount = 0;
                 var interval = setInterval(function () {
-                    if (!app) {
+                    if (typeof app !== "undefined") {
                         console.log("loading scripts...");
                         intervalCount++;
                         if (intervalCount > 10) {
