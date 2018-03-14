@@ -1118,9 +1118,6 @@ app.util = {
             priceFormatter: function (value) {
                 return app.Strings.dollar + value.toFixed(2);
             },
-            priceFromFormatter: function (value) {
-                return app.Strings.fromDollar + value.toFixed(2);
-            },
             categoryArrayFormatter: function(value) {
                 return value.join(", ");
             },
