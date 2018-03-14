@@ -1,7 +1,7 @@
 "use strict";
 
 // this script is used in main.html as the startupScript
-
+var app = app || app;
 
 // load page resources
 $(document).ready(function () {
@@ -47,20 +47,20 @@ $(document).ready(function () {
             url: result.js,
             success: function () {
 
-                var intervalCount = 0;
-                var interval = setInterval(function () {
-                    if (typeof app !== "undefined") {
-                        console.log("loading scripts...");
-                        intervalCount++;
-                        if (intervalCount > 100) {
-                            alert("Page error.  Please try refreshing");
-                            clearInterval(interval);
-                        }
-
-                        return;
-                    }
-
-                    clearInterval(interval);
+//                var intervalCount = 0;
+//                var interval = setInterval(function () {
+//                    if (typeof app !== "undefined") {
+//                        console.log("loading scripts...");
+//                        intervalCount++;
+//                        if (intervalCount > 100) {
+//                            alert("Page error.  Please try refreshing");
+//                            clearInterval(interval);
+//                        }
+//
+//                        return;
+//                    }
+//
+//                    clearInterval(interval);
 
                     // localized strings
                     app.Strings = result.strings;
@@ -69,7 +69,7 @@ $(document).ready(function () {
                     app[result.section].init(JSON.parse(result.html));
 
 
-                }, 200);
+//                }, 200);
 
 
             },
