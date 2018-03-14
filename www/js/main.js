@@ -45,12 +45,33 @@ $(document).ready(function () {
             dataType: "script",
             cache: true,
             url: result.js,
-            complete: function () {
-                // localized strings
-                app.Strings = result.strings;
+            success: function () {
 
-                // pass html to js
-                app[result.section].init(JSON.parse(result.html));
+                var intervalCount = 0;
+                var interval = setInterval(function () {
+                    if (!app) {
+                        console.log("loading scripts...");
+                        intervalCount++;
+                        if (intervalCount > 10) {
+                            alert("Page error.  Please try refreshing");
+                            clearInterval(interval);
+                        }
+
+                        return;
+                    }
+
+                    clearInterval(interval);
+
+                    // localized strings
+                    app.Strings = result.strings;
+
+                    // pass html to js
+                    app[result.section].init(JSON.parse(result.html));
+
+
+                }, 200);
+
+
             },
             error: function () {
                 console.log(err);
