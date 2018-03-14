@@ -457,9 +457,9 @@ app.cms.menu = {
 
 
             // delete heading
-            heading.find(".edit-menu-item-delete").on("click", function () {
-                $(this).closest(".edit-menu-item-heading").remove();
-            });
+//            heading.find(".edit-menu-item-delete").on("click", function () {
+//                $(this).closest(".edit-menu-item-heading").remove();
+//            });
 
 
 
