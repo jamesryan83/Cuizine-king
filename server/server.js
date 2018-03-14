@@ -24,7 +24,7 @@ global.dbName = config.mssql.database + ".dbo.";
 
 
 // clear console
-if (config.clearConsoleOnRestart) console.clear();
+if (config.clearConsoleOnRestart && global.devMode) console.clear();
 
 
 var router = require("./other/router");
