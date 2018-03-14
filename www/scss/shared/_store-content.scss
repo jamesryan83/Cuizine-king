@@ -409,12 +409,13 @@
     position: relative;
     white-space: nowrap;
     overflow: hidden;
+    border-radius: 2px;
 
 
     &:not(.heading) {
         cursor: pointer;
         margin-bottom: 15px;
-        box-shadow: 1px 1px 1px 1px $colorBlue4;
+        box-shadow: 1px 1px 1px 1px $colorBlue6;
         border-radius: 2px;
     }
 
@@ -489,6 +490,7 @@
     .store-menu-list-item-content {
         padding: 20px;
         padding-left: 40px;
+        width: 100%;
 
         &:hover {
             background-color: $colorBlue9;
@@ -496,10 +498,11 @@
 
         h4 {
             font-weight: bold;
-            font-size: 21px;
+            font-size: 22px;
             white-space: normal;
             max-width: calc(100% - 200px);
             display: inline;
+            color: $colorGray1;
         }
 
         label:first-of-type {

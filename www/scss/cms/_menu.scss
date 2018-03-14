@@ -40,39 +40,90 @@
             color: white;
         }
     }
+}
 
 
-    // Edit menu heading item
-    .edit-menu-item-heading {
+
+.edit-menu-item {
+    white-space: nowrap;
+    margin: 10px 0;
+    background-color: $colorBlue11;
+    cursor: default;
+    border-radius: 2px;
+    box-shadow: 1px 1px 1px 1px $colorBlue4;
+
+    .edit-menu-item-delete {
+        float: right;
+
+        @include svgicon(40px, 40px, 20px, 20px,
+            url(/res/svg/icon-close.svg),
+            url(/res/svg/icon-close-hover.svg));
+    }
+}
+
+
+// Edit menu heading item
+.edit-menu-item-heading {
+
+    label {
         height: 40px;
-        white-space: nowrap;
-        margin: 10px 0;
-        background-color: blue;
+        line-height: 40px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 10px;
+        user-select: none;
+    }
 
-        label {
-            height: 40px;
-            line-height: 40px;
-            display: inline-block;
-            vertical-align: top;
-            margin: 0 10px;
-        }
+    label:first-of-type {
+        color: gold;
+    }
 
-        .edit-menu-item-label {
+    .edit-menu-item-label {
+        cursor: pointer;
 
-        }
-
-        .edit-menu-item-input {
-            vertical-align: top;
-            margin-top: 5px;
-            width: 250px;
-        }
-
-        .edit-menu-item-delete {
-            @include svgicon(40px, 40px, 20px, 20px,
-                url(/res/svg/icon-close.svg),
-                url(/res/svg/icon-close-hover.svg));
+        &:hover {
+            color: $colorBlue2;
         }
     }
 
+    .edit-menu-item-input {
+        vertical-align: top;
+        margin-top: 5px;
+        width: 250px;
+        display: none;
+    }
+}
 
+
+
+// Edit menu heading item
+.edit-menu-item-product {
+
+    label {
+        height: 40px;
+        line-height: 40px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 10px;
+        user-select: none;
+    }
+
+    label:first-of-type {
+        color: forestgreen;
+    }
+
+    .edit-menu-item-label {
+        cursor: pointer;
+
+        &:hover {
+            color: $colorBlue2;
+        }
+    }
+
+    .edit-menu-item-input {
+        vertical-align: top;
+        margin-top: 5px;
+        width: 250px;
+        display: none;
+    }
 }

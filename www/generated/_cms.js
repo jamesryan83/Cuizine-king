@@ -422,18 +422,85 @@ app.cms.menu = {
             // add products to list
 
 
-            // add headings to list
+            $(window).on("keydown", function () {
+                debugger;
+            });
+
+
+
             var frag = document.createDocumentFragment();
+
+
+            // add products to fragment
+            for (var i = 0; i < storeData.products.length; i++) {
+                var product = storeData.products[i];
+
+                var $el = app.util.loadTemplate(
+                    "#template-edit-menu-item-product", product);
+
+                $el.attr("data-id", product.id_product);
+                frag.append($el[0]);
+            }
+
+
+            // add headings to fragment
             for (var i = 0; i < storeData.product_headings.length; i++) {
                 var heading = storeData.product_headings[i];
 
-                heading = app.util.loadTemplate(
+                var $el = app.util.loadTemplate(
                     "#template-edit-menu-item-heading", heading);
 
-                frag.append(heading[0]);
+                $el.attr("data-id", heading.id_product_heading);
+                frag.append($el[0]);
             }
 
+
+
+            // delete heading
+            heading.find(".edit-menu-item-delete").on("click", function () {
+                $(this).closest(".edit-menu-item-heading").remove();
+            });
+
+
+
+//            for (var i = 0; i < storeData.product_headings.length; i++) {
+//                var heading = storeData.product_headings[i];
+//console.log(heading)
+//                heading = app.util.loadTemplate(
+//                    "#template-edit-menu-item-heading", heading);
+//
+//
+//                // delete heading
+//                heading.find(".edit-menu-item-delete").on("click", function () {
+//                    $(this).closest(".edit-menu-item-heading").remove();
+//                });
+//
+//                // click label
+//                heading.find(".edit-menu-item-label").on("click", function () {
+//                    var $el = $(this);
+//
+//                    $(".edit-menu-item-label").show();
+//                    $el.hide();
+//                    $(".edit-menu-item-input").hide();
+//                    $el.next().show();
+//                    setTimeout(function () { $el.next().focus(); }, 100);
+//                });
+//
+//                // input lose focus
+//                heading.find(".edit-menu-item-input").on("blur", function () {
+//                    $(".edit-menu-item-input").hide();
+//                    $(this).prev().show();
+//                });
+//
+//                frag.append(heading[0]);
+//            }
+
             this.$editMenuItemsList.append(frag);
+
+
+
+
+
 
             // Category scroller
             self.categoryScroller =
@@ -1510,6 +1577,9 @@ app.util = {
                 return app.Strings.fromDollar + value;
             },
             priceFormatter: function (value) {
+                return app.Strings.dollar + value.toFixed(2);
+            },
+            priceFromFormatter: function (value) {
                 return app.Strings.fromDollar + value.toFixed(2);
             },
             categoryArrayFormatter: function(value) {

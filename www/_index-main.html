@@ -134,12 +134,13 @@ $(document).ready(function () {
             url: result.js,
             success: function () {
 
+                // ensure script is loaded before trying to run stuff
                 var intervalCount = 0;
                 var interval = setInterval(function () {
                     if (!app) {
                         console.log("loading scripts...");
                         intervalCount++;
-                        if (intervalCount > 100) {
+                        if (intervalCount > 25) {
                             alert("Page error.  Please try refreshing");
                             clearInterval(interval);
                         }
@@ -155,8 +156,6 @@ $(document).ready(function () {
                     // pass html to js
                     app[result.section].init(JSON.parse(result.html));
                 }, 200);
-
-
             },
             error: function () {
                 console.log(err);
