@@ -24,7 +24,8 @@ var passportAuth = require("./passport-auth");
 var Strings = require("../../i18n/strings");
 
 var wwwFolder = path.join(__dirname, "../", "../", "www");
-var jsExtension = global.devMode ? ".js" : ".min.js";
+//var jsExtension = global.devMode ? ".js" : ".min.js";
+var jsExtension = ".js";
 
 
 exports = module.exports = {
