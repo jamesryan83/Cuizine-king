@@ -139,7 +139,7 @@ $(document).ready(function () {
                     if (typeof app !== "undefined") {
                         console.log("loading scripts...");
                         intervalCount++;
-                        if (intervalCount > 10) {
+                        if (intervalCount > 100) {
                             alert("Page error.  Please try refreshing");
                             clearInterval(interval);
                         }
