@@ -1,7 +1,7 @@
 "use strict";
 
 // this script is used in main.html as the startupScript
-var app = app || app;
+var app = app || {};
 
 // load page resources
 $(document).ready(function () {
