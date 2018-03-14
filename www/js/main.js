@@ -45,7 +45,7 @@ $(document).ready(function () {
             dataType: "script",
             cache: true,
             url: result.js,
-            success: function () {
+            complete: function () {
                 // localized strings
                 app.Strings = result.strings;
 
