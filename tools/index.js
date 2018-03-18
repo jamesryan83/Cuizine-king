@@ -8,7 +8,7 @@ var execSync = require("child_process").execSync;
 var config = require("../server/config");
 
 var app = app || {};
-
+app.Strings = require("../i18n/strings");
 
 $(document).ready(function () {
     app.main.init();
@@ -48,14 +48,7 @@ app.main = {
 
         // delete files button
         $("#delete-generated-files").on("click", function () {
-            self.$loadingScreen.show();
-            setTimeout(function () {
-                self.deleteAllFilesInFolder(self.projectFolderPath + "server/procedures/");
-                self.deleteAllFilesInFolder(self.projectFolderPath + "sql/generated/");
-                self.deleteAllFilesInFolder(self.projectFolderPath + "sql/generated/seed/");
-                self.deleteAllFilesInFolder(self.projectFolderPath + "www/generated/");
-                self.$loadingScreen.fadeOut();
-            }, 500);
+
         });
 
 
@@ -129,6 +122,19 @@ app.main = {
 
 
 
+        // Get store form
+        $("#form-get-store").on("submit", function () {
+            app.util.ajaxFormRequest("GET", self.host + "api/v1/store", false, this,
+                function (err, result) {
+                    if (err) return;
+
+                    self.logMessage(JSON.stringify(result.data));
+                });
+
+            return false;
+        });
+
+
         // Create store form
         $("#form-create-store").on("submit", function () {
             var data = validate.collectFormValues(this, { trim: true });
@@ -137,19 +143,20 @@ app.main = {
             data.suburb = temp[1];
             data.postcode = temp[0];
 
-            data.jwt = jwt.sign({ sub: data.email, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong });
-            data.password = bcrypt.hashSync(data.password, 10);
+            //localStorage.setItem("jwt", jwt.sign({ sub: data.email, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong }));
+//            data.jwt = jwt.sign({ sub: data.email, shortExp: config.jwtExpiryShort }, config.secret, { expiresIn: config.jwtExpiryLong });
+//            data.password = bcrypt.hashSync(data.password, 10);
 
             if (!app.util.validateInputs(data, app.validationRules.createStore))
                 return false;
 
             app.util.ajaxRequest({
-                method: "POST", url: self.host + "api/sysadmin/create-store", auth: true, data : data },
+                method: "POST", url: self.host + "api/sysadmin/create-store", auth: true, data: data },
             function (err, result) {
                 if (err) return;
 
                 app.util.showToast("Store created.  id_store = " + result.data.id_store, 4000);
-            })
+            });
 
             return false;
         });
@@ -176,6 +183,18 @@ app.main = {
 
 
 
+    },
+
+
+    deleteGeneratedFiles: function () {
+        self.$loadingScreen.show();
+        setTimeout(function () {
+            self.deleteAllFilesInFolder(self.projectFolderPath + "server/procedures/");
+            self.deleteAllFilesInFolder(self.projectFolderPath + "sql/generated/");
+            self.deleteAllFilesInFolder(self.projectFolderPath + "sql/generated/seed/");
+            self.deleteAllFilesInFolder(self.projectFolderPath + "www/generated/");
+            self.$loadingScreen.fadeOut();
+        }, 500);
     },
 
 

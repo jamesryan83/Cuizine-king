@@ -148,7 +148,7 @@ app.cms.details = {
     init: function () {
         var self = this;
 
-        app.storeContent.init();
+        app.storeContent.init("cms");
 
         this.$storeInfo = $("#store-info");
         this.$detailsForm = $("#store-info-edit");
@@ -295,13 +295,14 @@ app.cms.details = {
 
             var address = storeData.address[0];
 
+            // details
             this.$storeInfoEdit[0][1].value = storeData.description;
             this.$storeInfoEdit[0][2].value = address.street_address;
             this.typeahead.setValue(address.postcode, address.suburb);
             this.$storeInfoEdit[0][4].value = storeData.phone_number;
             this.$storeInfoEdit[0][5].value = storeData.email;
 
-            // hours
+            // add hours to inputs
             Object.keys(storeData.hours).forEach(function (key) {
                 if (key.indexOf("hours_") === 0) {
                     $("[name='" + key + "']").val(
@@ -320,149 +321,134 @@ app.cms.menu = {
     init: function () {
         var self = this;
 
-        app.storeContent.init();
+        app.storeContent.init("cms");
 
-
-        this.$categoryScrollerContainer = $(".category-scroller-container");
-        this.$storeMenuList = $("#store-menu-list");
-        this.$editMenuItems = $("#edit-menu-items");
-        this.$previewBorder = $("#preview-mode-border");
         this.$returnButton = $(".cms-menu-return");
-        this.$previewButton = $(".cms-menu-preview");
-        this.$addCategoryButton = $("#cms-menu-add-category");
-        this.$addMenuItemButton = $("#cms-menu-add-menu-item");
+        this.$editMenuItems = $("#edit-menu-items");
         this.$saveButton = $("#page-cms-menu-save");
+        this.$previewButton = $(".cms-menu-preview");
+        this.$previewBorder = $("#preview-mode-border");
+        this.$addHeadingButton = $("#cms-menu-add-heading");
         this.$editMenuItemsList = $("#edit-menu-items-list");
+        this.$addMenuItemButton = $("#cms-menu-add-menu-item");
+        this.$categoryScrollerContainer = $(".category-scroller-container");
 
         this.categoryScroller = null;
 
 
         // Get the store menu data
         app.data.getStoreData(function (storeData) {
-            if (!storeData) {
-                console.log("no data")
-                return;
-            }
+            if (!storeData) return;
 
             self.setupPage(storeData);
         });
 
 
-        // Show Edit mode
+        // Bottom bar buttons
         this.$returnButton.on("click", function () {
-            self.$categoryScrollerContainer.hide();
-            self.$storeMenuList.hide();
-            self.$editMenuItems.show();
-
-            self.$previewBorder.hide();
-            self.$previewButton.show();
-            self.$returnButton.hide();
-            self.$addCategoryButton.show();
-            self.$addMenuItemButton.show();
-            self.$saveButton.show();
+            self.showPreview();
         });
 
-
-        // Show Preview
         this.$previewButton.on("click", function () {
-            self.$categoryScrollerContainer.show();
-            self.$storeMenuList.show();
-            self.$editMenuItems.hide();
-
-            self.$previewBorder.show();
-            self.$previewButton.hide();
-            self.$returnButton.show();
-            self.$addCategoryButton.hide();
-            self.$addMenuItemButton.hide();
-            self.$saveButton.hide();
-
-            self.categoryScroller.updateHeadingPositions();
+            self.hidePreview();
         });
 
-
-        // Add category
-        this.$addCategoryButton.on("click", function () {
+        this.$addHeadingButton.on("click", function () {
             var catButton = app.util.loadTemplate(
                 "#template-edit-menu-item-heading");
-
 
             self.$editMenuItemsList.append(catButton)
         });
 
-
-
-        // Add menu item
         this.$addMenuItemButton.on("click", function () {
 
         });
-
-
-
     },
+
+
+    // Show preview
+    showPreview: function () {
+        this.$returnButton.hide();
+        this.$previewBorder.hide();
+        app.storeContent.$storeMenuList.hide();
+        this.$categoryScrollerContainer.hide();
+
+        this.$saveButton.show();
+        this.$editMenuItems.show();
+        this.$previewButton.show();
+        this.$addHeadingButton.show();
+        this.$addMenuItemButton.show();
+    },
+
+
+    // Hide preview
+    hidePreview: function () {
+        this.$saveButton.hide();
+        this.$editMenuItems.hide();
+        this.$previewButton.hide();
+        this.$addHeadingButton.hide();
+        this.$addMenuItemButton.hide();
+
+        this.$returnButton.show();
+        this.$previewBorder.show();
+        app.storeContent.$storeMenuList.show();
+        this.$categoryScrollerContainer.show();
+
+        this.categoryScroller.updateHeadingPositions();
+    },
+
 
 
     // Add data to page
     setupPage: function (storeData) {
         var self = this;
 
-        if (storeData) {
-            app.storeContent.addMenuDataToPage(storeData);
+        app.storeContent.addMenuDataToPage(storeData);
 
-            // menu drag/drop
-            var drake = dragula([$("#edit-menu-items-list")[0]]);
+        if (!storeData) return;
 
-            drake.on("drop", function (el, target, source, sibling) {
+
+        // menu drag/drop
+        var drake = dragula([$("#edit-menu-items-list")[0]]);
+        drake.on("drop", function (el, target, source, sibling) {
 //                app.data.getMenuPositions($(".store-menu-list-item"));
-            });
-
-
-            console.log(storeData)
-
-
-            // add products to list
-
-
-            $(window).on("keydown", function () {
-                debugger;
-            });
+        });
 
 
 
-            var frag = document.createDocumentFragment();
+        // add products to list
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < storeData.products.length; i++) {
+            var product = storeData.products[i];
+
+            var $el = app.util.loadTemplate(
+                "#template-edit-menu-item-product", product);
+
+            $el.attr("data-id", product.id_product);
+            frag.append($el[0]);
+        }
 
 
-            // add products to fragment
-            for (var i = 0; i < storeData.products.length; i++) {
-                var product = storeData.products[i];
+        // add headings to fragment before products
+        for (var i = 0; i < storeData.product_headings.length; i++) {
+            var heading = storeData.product_headings[i];
 
-                var $el = app.util.loadTemplate(
-                    "#template-edit-menu-item-product", product);
+            heading.title = heading.title || "Enter a heading...";
 
-                $el.attr("data-id", product.id_product);
-                frag.append($el[0]);
-            }
+            var $el = app.util.loadTemplate(
+                "#template-edit-menu-item-heading", heading);
 
+            $el.attr("data-id", heading.id_product_heading);
 
-            // add headings to fragment before products
-            for (var i = 0; i < storeData.product_headings.length; i++) {
-                var heading = storeData.product_headings[i];
-
-                heading.title = heading.title || "Enter a heading...";
-
-                var $el = app.util.loadTemplate(
-                    "#template-edit-menu-item-heading", heading);
-
-                $el.attr("data-id", heading.id_product_heading);
-
-                $(frag).find(
-                    ".edit-menu-item-product[data-id='" +
-                    heading.above_product_id + "']")
-                    .before($el);
-            }
+            $(frag).find(
+                ".edit-menu-item-product[data-id='" +
+                heading.above_product_id + "']")
+                .before($el);
+        }
 
 
 
-            // delete heading
+        // delete heading
 //            heading.find(".edit-menu-item-delete").on("click", function () {
 //                $(this).closest(".edit-menu-item-heading").remove();
 //            });
@@ -501,18 +487,18 @@ app.cms.menu = {
 //                frag.append(heading[0]);
 //            }
 
-            this.$editMenuItemsList.append(frag);
+        this.$editMenuItemsList.append(frag);
 
 
 
 
 
 
-            // Category scroller
-            self.categoryScroller =
-                new app.controls.CategoryScroller(
-                storeData.product_headings, 100, 100);
-        }
+        // Category scroller
+        self.categoryScroller =
+            new app.controls.CategoryScroller(
+            storeData.product_headings, 100, 100);
+
     },
 
 }
@@ -600,7 +586,7 @@ app.data = {
             return callback(this.storeData);
         }
 
-        var id_store = id_store || this.getStoreIdFromStorage();
+        id_store = id_store || this.getStoreIdFromStorage();
 
         if (!app.util.validateInputs({ id_store: id_store }, app.validationRules.getStore))
             return false;
@@ -619,7 +605,6 @@ app.data = {
         }, function (err, result) {
             if (err) return;
 
-            result.data.hours = result.data.hours[0];
             self.storeData = result.data; // cache storeData
 
             return callback(self.storeData);
@@ -1124,39 +1109,6 @@ app.routerBase = {
 
 
 
-
-//    // Returns the data for the current route
-//    getCurrentRouteData: function (route, section) {
-//        var newRoute = route || window.location.pathname;
-//        var routeData = { route: newRoute };
-//
-//        if (app.util.isCordova()) {
-//            // remove extra cordova stuff from route
-//            newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
-//            if (newRoute == "/index-cordova") newRoute = "/";
-//        }
-//
-//        // normalize route and add current section
-//        routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
-//        routeData.section = section;
-//
-//        // Add html and other route data
-//        if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
-//            routeData.html = app[section].htmlFiles[routeData.normalizedRoute];
-//            $.extend(routeData, app[section].routes[routeData.normalizedRoute]);
-//
-//        // unknown route
-//        } else {
-//            debugger;
-//            app.data.invalidateTokensAndGoToLogin();
-//            return;
-//        }
-//
-//        return routeData;
-//    },
-
-
-
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
         app.util.ajaxRequest({
@@ -1184,20 +1136,18 @@ app.routerBase = {
 // This is the details and menu sections used on the store page and edit store page
 app.storeContent = {
 
-
-    init: function () {
+    init: function (section) {
 
         this.$storeInfo = $("#store-info");
         this.$logo = $(".store-info-image");
-        this.$description = $("#store-info-description");
+        this.$menuList = $("#store-menu-list");
         this.$logoEmpty = $(".store-info-image-empty");
+        this.$description = $("#store-info-description");
+        this.$hoursButton = $("#store-info-button-hours");
         this.$logoLoading = $(".store-info-image-loading");
+        this.$reviewsButton = $("#store-info-button-reviews");
         this.$descriptionButton = $("#store-info-button-description");
         this.$descriptionContainer = $("#store-info-description-container");
-        this.$hoursButton = $("#store-info-button-hours");
-        this.$reviewsButton = $("#store-info-button-reviews");
-        this.$menuList = $("#store-menu-list");
-
 
         this.$logoEmpty.hide();
         this.$logoLoading.show();
@@ -1216,6 +1166,14 @@ app.storeContent = {
             app.dialogs.reviews.show();
         });
 
+
+        // Setup dialogs
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_businessHours);
+        app.dialogs.businessHours.init();
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_description);
+        app.dialogs.description.init();
+        app.dialogs.addDialog(app[section].htmlFiles.dialog_reviews);
+        app.dialogs.reviews.init();
     },
 
 
@@ -1237,8 +1195,8 @@ app.storeContent = {
         if (!id_store) return;
 
 
-        // logo
         var logo = new Image();
+
 
         // TODO : res/storelogos is in config too, do something about that
         logo.src = "/res/storelogos/store" + id_store + ".jpg?" + Date.now();
@@ -1254,16 +1212,10 @@ app.storeContent = {
         }
 
 
-        // Format address to a single string
-        var address = data.address[0];
-        address = address.street_address + " " +
-            address.suburb + " " + address.postcode;
-
-
         // add store details
         $("#store-header-name").text(data.name);
         this.$description.text(data.description);
-        $("#store-info-address").text(address);
+        $("#store-info-address").text(data.addressString);
         $("#store-info-phone-number").text(data.phone_number);
         $("#store-info-email").text(data.email);
         $("#store-disclaimer").text(data.disclaimer);
@@ -1271,17 +1223,8 @@ app.storeContent = {
 
         // TODO : make the 'more' button for the description only show when required
 
+        // TODO : isOpen etc.
         // hours
-//        var isOpen = app.data.isStoreOpen();
-//console.log(isOpen)
-//        if (isOpen.isDeliveryOpen || isOpen.isDineinOpen) {
-//
-//        } else {
-//
-//        }
-
-
-
         $("#store-info-hours-is-open").text();
         $("#store-info-hours-opens-at").text();
 
@@ -1292,16 +1235,8 @@ app.storeContent = {
 
 
         // Setup dialogs
-        app.dialogs.addDialog(app[section].htmlFiles.dialog_businessHours);
-        app.dialogs.businessHours.init();
         app.dialogs.businessHours.update(data.hours);
-
-        app.dialogs.addDialog(app[section].htmlFiles.dialog_description);
-        app.dialogs.description.init();
         app.dialogs.description.update(data.name, data.description);
-
-        app.dialogs.addDialog(app[section].htmlFiles.dialog_reviews);
-        app.dialogs.reviews.init();
         app.dialogs.reviews.update(data);
 
 
@@ -1317,104 +1252,87 @@ app.storeContent = {
     // Add menu data
     addMenuDataToPage: function (data) {
         var self = this;
-        var i = 0;
-        var j = 0;
-        var $item = null;
 
-        // products
+        if (!data.products) {
+            this.$menuList.append(app.Strings.noProducts);
+            return;
+        }
+
+        var i = 0, j = 0;
+        var $item = null;
         var item = null;
         var frag = document.createDocumentFragment();
 
-        if (data.products) {
-
-//            data.products[0].name = "testest testest testest testestttestest testest testest testestt";
-//            data.product_headings[0].title = "testest testest testest testestt";
-//            data.products[0].options[0].name = "testest testest testest testestt";
+        // create product items
+        for (i = 0; i < data.products.length; i++) {
+            item = data.products[i];
 
 
-            // create product items
-            for (i = 0; i < data.products.length; i++) {
-                item = data.products[i];
+            // item template
+            if (item.gluten_free) item.class1 = "label-gluten-free";
+            if (item.vegetarian) item.class2 = "label-vegetarian";
+            if (!item.delivery_available) item.class3 = "label-takeaway";
 
 
-                // find lowest priced option and add the price to the heading
-                var lowestOptionPrice = item.options[0].price;
-                for (j = 0; j < item.options.length; j++) {
-                    if (item.options[j].price < lowestOptionPrice) {
-                        lowestOptionPrice = item.options[j].price;
-                    }
-                }
-                item.lowestOptionPrice = lowestOptionPrice;
+            $item = app.util.loadTemplate(
+                "#template-store-menu-item", item,
+                item.id_product, "data-product-id");
 
 
-                // item template
-                if (item.gluten_free) item.class1 = "label-gluten-free";
-                if (item.vegetarian) item.class2 = "label-vegetarian";
-                if (!item.delivery_available) item.class3 = "label-takeaway";
+            // Panels
+            var $optionsPanel = $item.find(".store-menu-list-item-options > .store-menu-list-item-content").last();
+            var $option = null;
+            var size = item.options.length;
 
 
-                $item = app.util.loadTemplate(
-                    "#template-store-menu-item", item,
-                    item.id_product, "data-product-id");
+            // product options
+            for (j = 0; j < item.options.length; j++) {
+                $option = app.util.loadTemplate(
+                    "#template-store-menu-option", item.options[j],
+                    item.options[j].id_product_option, "data-product-option-id");
 
-
-                // Panels
-                var $optionsPanel = $item.find(".store-menu-list-item-options > .store-menu-list-item-content").last();
-                var $option = null;
-                var size = item.options.length;
-
-
-                // product options
-                for (j = 0; j < item.options.length; j++) {
-                    $option = app.util.loadTemplate(
-                        "#template-store-menu-option", item.options[j],
-                        item.options[j].id_product_option, "data-product-option-id");
-
-                    // equal width if not mobile
-                    if (screen.width > 1000) {
-                        $option.css({ width: (100 / size) + "%" });
-                    }
-
-                    $optionsPanel.append($option[0]);
+                // equal width if not mobile
+                if (screen.width > 1000) {
+                    $option.css({ width: (100 / size) + "%" });
                 }
 
-                frag.append($item[0]);
+                $optionsPanel.append($option[0]);
             }
 
-
-            // create product heading items
-            for (i = 0; i < data.product_headings.length; i++) {
-                var heading = data.product_headings[i];
-
-                // find element to put heading above
-                var el = $(frag).find(".store-menu-list-item[data-product-id='" +
-                             heading.above_product_id + "']");
-
-                if (el) {
-                    $item = app.util.loadTemplate(
-                        "#template-store-menu-heading", heading,
-                        heading.id_product_heading, "data-heading-id");
-
-                    // add heading before element
-                    $item.insertBefore(el);
-                }
-            }
-            self.$menuList.append(frag);
-
-
-            // click events
-            $(".store-menu-list-item-details").on("click", function () {
-                $(".store-menu-list-item").removeClass("options-active");
-                $(this).parent().addClass("options-active");
-            });
-
-            $(".store-menu-list-item-options-cancel").on("click", function () {
-                $(this).parent().parent().removeClass("options-active");
-            });
-
-        } else {
-            self.$menuList.append(app.Strings.noProducts);
+            frag.append($item[0]);
         }
+
+
+        // create product heading items
+        for (i = 0; i < data.product_headings.length; i++) {
+            var heading = data.product_headings[i];
+
+            // find element to put heading above
+            var el = $(frag).find(".store-menu-list-item[data-product-id='" +
+                         heading.above_product_id + "']");
+
+            if (el) {
+                $item = app.util.loadTemplate(
+                    "#template-store-menu-heading", heading,
+                    heading.id_product_heading, "data-heading-id");
+
+                // add heading before element
+                $item.insertBefore(el);
+            }
+        }
+        self.$menuList.append(frag);
+
+
+        // click events
+        $(".store-menu-list-item-details").on("click", function () {
+            $(".store-menu-list-item").removeClass("options-active");
+            $(this).parent().addClass("options-active");
+        });
+
+        $(".store-menu-list-item-options-cancel").on("click", function () {
+            $(this).parent().parent().removeClass("options-active");
+        });
+
     },
 
 
@@ -1788,6 +1706,7 @@ app.util = {
                     var jwt = app.data.getJwtFromStorage();
 
                     if (!app.util.validateInputs({ jwt: jwt }, app.validationRules.jwt)) {
+                        console.log(app.Strings.invalidToken);
                         xhr.abort();
                         app.data.invalidateTokensAndGoToLogin();
                         return callback(app.Strings.invalidToken);
@@ -1821,6 +1740,23 @@ app.util = {
         // send request
         $.ajax(ajaxOptions);
     },
+
+
+//	// Generic form request using ajaxRequest
+//	// dataModifierFn is for modifying the form data before sending
+//	ajaxFormRequest: function (method, url, auth, formEl, dataModifierFn, callback) {
+//		if (!callback) {
+//			callback = dataModifierFn;
+//			dataModifierFn = null;
+//		}
+//
+//		var data = validate.collectFormValues(formEl, { trim: true });
+//		if (dataModifierFn) data = dataMofierFn(data);
+//
+//		this.ajaxRequest({
+//			method: method, url: url, auth: auth, data: data
+//		}, callback);
+//	},
 
 };
 
@@ -2489,7 +2425,7 @@ app.controls.HorizontalScroller.prototype.isInsideTolerance = function (clientX)
     return (this.diff >= -this.scrollBlurTolerance && this.diff <= this.scrollBlurTolerance);
 }
 // Creates a suburb typeahead control
-app.controls.Typeahead = function (callback) {
+app.controls.Typeahead = function (callback, url) {
     var self = this;
 
     this.$typeaheadInput = $("#typeahead-suburb-search");
@@ -2498,7 +2434,7 @@ app.controls.Typeahead = function (callback) {
     var lookupTimeout = 500;
     var typeaheadTimeout = null;
 
-    this.baseUrl = "/api/v1/location?q=";
+    this.baseUrl = url || "/api/v1/location?q=";
 
 
     // when a dropdown item is selected return data and url

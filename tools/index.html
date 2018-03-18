@@ -36,6 +36,20 @@
 
                     </div>
 
+
+                    <!-- Get store -->
+                    <h3 id="heading-get-store">Get a store</h3>
+                    <hr class="hr-1" />
+                    <form id="form-get-store">
+                        <div>
+                            <label class="input-label">Store Id</label>
+                            <input name="id_store" class="input-1" value="1" />
+
+                            <button type="submit" class="button-3">Get Store</button>
+                        </div>
+                    </form>
+
+
                     <!-- Create store -->
                     <h3 id="heading-create-store">Create a store</h3>
                     <hr class="hr-1" />
@@ -78,7 +92,13 @@
                             <input name="street_address" class="input-1" value="2C/18 Bilyana St Balmoral" />
                         </div>
 
-                        <?- include("typeahead") ?>
+                        <div id="typeahead-suburb" class="typeahead-inner">
+                            <label>SUBURB</label>
+                            <div>
+                                <input name="postcode" id="typeahead-suburb-search" class="input-1" autocomplete="nope" placeholder="enter a suburb..." value="4171 - Balmoral"    />
+                                <ul id="typeahead-suburb-list" class="typeahead-list" style="display: none;"></ul>
+                            </div>
+                        </div>
 
                         <button type="submit" class="button-3">Create Store</button>
                     </form>
@@ -145,6 +165,7 @@
         <script src="file:///C:/Code/projects/Menuthing/website/www/lib/jquery-3.0.js"></script>
         <script src="file:///C:/Code/projects/Menuthing/website/www/lib/validate.min.js"></script>
         <script src="file:///C:/Code/projects/Menuthing/website/www/js/shared/util.js"></script>
+        <script src="file:///C:/Code/projects/Menuthing/website/www/js/shared/data.js"></script>
         <script src="file:///C:/Code/projects/Menuthing/website/www/js/shared/validation-rules.js"></script>
         <script src="file:///C:/Code/projects/Menuthing/website/www/js/controls/typeahead.js"></script>
         <script src="index.js"></script>

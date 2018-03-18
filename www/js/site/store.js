@@ -5,7 +5,7 @@ app.site.store = {
     init: function (routeData) {
         var self = this;
 
-        app.storeContent.init();
+        app.storeContent.init("site");
 
         this.checkoutHeaderHeight = 60;
         this.$checkout = $("#store-checkout");

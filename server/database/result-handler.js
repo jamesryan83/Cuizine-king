@@ -56,6 +56,7 @@ exports = module.exports = {
         if (result.output) {
             var outputs = {};
             for (var i = 0; i < outputNames.length; i++) {
+                // TODO : check for invalid output name
                 outputs[outputNames[i]] = result.output[outputNames[i]];
             }
 
@@ -86,6 +87,7 @@ exports = module.exports = {
 
         return null;
     },
+
 
 }
 

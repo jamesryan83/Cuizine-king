@@ -2115,7 +2115,8 @@ input:read-only, textarea:read-only {
 #page-cms-menu.page #store-content #edit-menu-items #edit-menu-items-list {
   display: inline-block;
   text-align: left;
-  min-width: 360px;
+  width: 100%;
+  max-width: 500px;
 }
 
 #page-cms-menu.page .page-cms-floating-buttons .label-button {
@@ -2127,29 +2128,13 @@ input:read-only, textarea:read-only {
 .edit-menu-item {
   white-space: nowrap;
   margin: 10px 0;
-  background-color: #171450;
+  background-color: #241d4d;
   cursor: default;
   border-radius: 2px;
   box-shadow: 1px 1px 1px 1px #000115;
 }
 
-.edit-menu-item .edit-menu-item-delete {
-  float: right;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 20px 20px;
-  height: 40px;
-  width: 40px;
-  background-image: url(/res/svg/icon-close.svg);
-  display: inline-block;
-}
-
-.edit-menu-item .edit-menu-item-delete:hover {
-  cursor: pointer;
-  background-image: url(/res/svg/icon-close-hover.svg);
-}
-
-.edit-menu-item-heading label {
+.edit-menu-item label {
   height: 40px;
   line-height: 40px;
   display: inline-block;
@@ -2157,18 +2142,44 @@ input:read-only, textarea:read-only {
   margin: 0 10px;
   -webkit-user-select: none;
   user-select: none;
+  font-weight: bold;
 }
 
-.edit-menu-item-heading label:first-of-type {
-  color: gold;
+.edit-menu-item label:first-of-type {
+  cursor: -webkit-grab;
+  cursor: grab;
 }
 
-.edit-menu-item-heading .edit-menu-item-label {
+.edit-menu-item label:nth-child(2) {
   cursor: pointer;
 }
 
-.edit-menu-item-heading .edit-menu-item-label:hover {
+.edit-menu-item label:nth-child(2):hover {
   color: #5595d8;
+}
+
+.edit-menu-item .edit-menu-item-delete {
+  float: right;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 6px;
+  height: 40px;
+  width: 40px;
+  background-image: url(/res/svg/icon-dots.svg);
+  display: inline-block;
+}
+
+.edit-menu-item .edit-menu-item-delete:hover {
+  cursor: pointer;
+  background-image: url(/res/svg/icon-dots-hover.svg);
+}
+
+.edit-menu-item-heading {
+  background-color: #171450;
+}
+
+.edit-menu-item-heading label:first-of-type {
+  color: #ffbe00;
 }
 
 .edit-menu-item-heading .edit-menu-item-input {
@@ -2178,33 +2189,8 @@ input:read-only, textarea:read-only {
   display: none;
 }
 
-.edit-menu-item-product label {
-  height: 40px;
-  line-height: 40px;
-  display: inline-block;
-  vertical-align: top;
-  margin: 0 10px;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
 .edit-menu-item-product label:first-of-type {
-  color: forestgreen;
-}
-
-.edit-menu-item-product .edit-menu-item-label {
-  cursor: pointer;
-}
-
-.edit-menu-item-product .edit-menu-item-label:hover {
-  color: #5595d8;
-}
-
-.edit-menu-item-product .edit-menu-item-input {
-  vertical-align: top;
-  margin-top: 5px;
-  width: 250px;
-  display: none;
+  color: #2d982d;
 }
 
 #navbar-cms {

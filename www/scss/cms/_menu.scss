@@ -26,7 +26,8 @@
             #edit-menu-items-list {
                 display: inline-block;
                 text-align: left;
-                min-width: 360px;
+                width: 100%;
+                max-width: 500px;
             }
         }
     }
@@ -47,23 +48,10 @@
 .edit-menu-item {
     white-space: nowrap;
     margin: 10px 0;
-    background-color: $colorBlue11;
+    background-color: $colorBlue9;
     cursor: default;
     border-radius: 2px;
     box-shadow: 1px 1px 1px 1px $colorBlue4;
-
-    .edit-menu-item-delete {
-        float: right;
-
-        @include svgicon(40px, 40px, 20px, 20px,
-            url(/res/svg/icon-close.svg),
-            url(/res/svg/icon-close-hover.svg));
-    }
-}
-
-
-// Edit menu heading item
-.edit-menu-item-heading {
 
     label {
         height: 40px;
@@ -72,18 +60,37 @@
         vertical-align: top;
         margin: 0 10px;
         user-select: none;
+        font-weight: bold;
     }
 
     label:first-of-type {
-        color: gold;
+        cursor: grab;
     }
 
-    .edit-menu-item-label {
+    label:nth-child(2) {
         cursor: pointer;
 
         &:hover {
             color: $colorBlue2;
         }
+    }
+
+    .edit-menu-item-delete {
+        float: right;
+
+        @include svgicon(40px, 40px, 18px, 6px,
+            url(/res/svg/icon-dots.svg),
+            url(/res/svg/icon-dots-hover.svg));
+    }
+}
+
+
+// Edit menu heading item
+.edit-menu-item-heading {
+    background-color: $colorBlue11;
+
+    label:first-of-type {
+        color: $colorYellow1;
     }
 
     .edit-menu-item-input {
@@ -99,31 +106,7 @@
 // Edit menu heading item
 .edit-menu-item-product {
 
-    label {
-        height: 40px;
-        line-height: 40px;
-        display: inline-block;
-        vertical-align: top;
-        margin: 0 10px;
-        user-select: none;
-    }
-
     label:first-of-type {
-        color: forestgreen;
-    }
-
-    .edit-menu-item-label {
-        cursor: pointer;
-
-        &:hover {
-            color: $colorBlue2;
-        }
-    }
-
-    .edit-menu-item-input {
-        vertical-align: top;
-        margin-top: 5px;
-        width: 250px;
-        display: none;
+        color: $colorGreen2;
     }
 }

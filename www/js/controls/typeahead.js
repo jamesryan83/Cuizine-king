@@ -1,6 +1,6 @@
 
 // Creates a suburb typeahead control
-app.controls.Typeahead = function (callback) {
+app.controls.Typeahead = function (callback, url) {
     var self = this;
 
     this.$typeaheadInput = $("#typeahead-suburb-search");
@@ -9,7 +9,7 @@ app.controls.Typeahead = function (callback) {
     var lookupTimeout = 500;
     var typeaheadTimeout = null;
 
-    this.baseUrl = "/api/v1/location?q=";
+    this.baseUrl = url || "/api/v1/location?q=";
 
 
     // when a dropdown item is selected return data and url

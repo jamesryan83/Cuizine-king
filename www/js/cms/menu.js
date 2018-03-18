@@ -6,149 +6,134 @@ app.cms.menu = {
     init: function () {
         var self = this;
 
-        app.storeContent.init();
+        app.storeContent.init("cms");
 
-
-        this.$categoryScrollerContainer = $(".category-scroller-container");
-        this.$storeMenuList = $("#store-menu-list");
-        this.$editMenuItems = $("#edit-menu-items");
-        this.$previewBorder = $("#preview-mode-border");
         this.$returnButton = $(".cms-menu-return");
-        this.$previewButton = $(".cms-menu-preview");
-        this.$addCategoryButton = $("#cms-menu-add-category");
-        this.$addMenuItemButton = $("#cms-menu-add-menu-item");
+        this.$editMenuItems = $("#edit-menu-items");
         this.$saveButton = $("#page-cms-menu-save");
+        this.$previewButton = $(".cms-menu-preview");
+        this.$previewBorder = $("#preview-mode-border");
+        this.$addHeadingButton = $("#cms-menu-add-heading");
         this.$editMenuItemsList = $("#edit-menu-items-list");
+        this.$addMenuItemButton = $("#cms-menu-add-menu-item");
+        this.$categoryScrollerContainer = $(".category-scroller-container");
 
         this.categoryScroller = null;
 
 
         // Get the store menu data
         app.data.getStoreData(function (storeData) {
-            if (!storeData) {
-                console.log("no data")
-                return;
-            }
+            if (!storeData) return;
 
             self.setupPage(storeData);
         });
 
 
-        // Show Edit mode
+        // Bottom bar buttons
         this.$returnButton.on("click", function () {
-            self.$categoryScrollerContainer.hide();
-            self.$storeMenuList.hide();
-            self.$editMenuItems.show();
-
-            self.$previewBorder.hide();
-            self.$previewButton.show();
-            self.$returnButton.hide();
-            self.$addCategoryButton.show();
-            self.$addMenuItemButton.show();
-            self.$saveButton.show();
+            self.showPreview();
         });
 
-
-        // Show Preview
         this.$previewButton.on("click", function () {
-            self.$categoryScrollerContainer.show();
-            self.$storeMenuList.show();
-            self.$editMenuItems.hide();
-
-            self.$previewBorder.show();
-            self.$previewButton.hide();
-            self.$returnButton.show();
-            self.$addCategoryButton.hide();
-            self.$addMenuItemButton.hide();
-            self.$saveButton.hide();
-
-            self.categoryScroller.updateHeadingPositions();
+            self.hidePreview();
         });
 
-
-        // Add category
-        this.$addCategoryButton.on("click", function () {
+        this.$addHeadingButton.on("click", function () {
             var catButton = app.util.loadTemplate(
                 "#template-edit-menu-item-heading");
-
 
             self.$editMenuItemsList.append(catButton)
         });
 
-
-
-        // Add menu item
         this.$addMenuItemButton.on("click", function () {
 
         });
-
-
-
     },
+
+
+    // Show preview
+    showPreview: function () {
+        this.$returnButton.hide();
+        this.$previewBorder.hide();
+        app.storeContent.$storeMenuList.hide();
+        this.$categoryScrollerContainer.hide();
+
+        this.$saveButton.show();
+        this.$editMenuItems.show();
+        this.$previewButton.show();
+        this.$addHeadingButton.show();
+        this.$addMenuItemButton.show();
+    },
+
+
+    // Hide preview
+    hidePreview: function () {
+        this.$saveButton.hide();
+        this.$editMenuItems.hide();
+        this.$previewButton.hide();
+        this.$addHeadingButton.hide();
+        this.$addMenuItemButton.hide();
+
+        this.$returnButton.show();
+        this.$previewBorder.show();
+        app.storeContent.$storeMenuList.show();
+        this.$categoryScrollerContainer.show();
+
+        this.categoryScroller.updateHeadingPositions();
+    },
+
 
 
     // Add data to page
     setupPage: function (storeData) {
         var self = this;
 
-        if (storeData) {
-            app.storeContent.addMenuDataToPage(storeData);
+        app.storeContent.addMenuDataToPage(storeData);
 
-            // menu drag/drop
-            var drake = dragula([$("#edit-menu-items-list")[0]]);
+        if (!storeData) return;
 
-            drake.on("drop", function (el, target, source, sibling) {
+
+        // menu drag/drop
+        var drake = dragula([$("#edit-menu-items-list")[0]]);
+        drake.on("drop", function (el, target, source, sibling) {
 //                app.data.getMenuPositions($(".store-menu-list-item"));
-            });
-
-
-            console.log(storeData)
-
-
-            // add products to list
-
-
-            $(window).on("keydown", function () {
-                debugger;
-            });
+        });
 
 
 
-            var frag = document.createDocumentFragment();
+        // add products to list
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < storeData.products.length; i++) {
+            var product = storeData.products[i];
+
+            var $el = app.util.loadTemplate(
+                "#template-edit-menu-item-product", product);
+
+            $el.attr("data-id", product.id_product);
+            frag.append($el[0]);
+        }
 
 
-            // add products to fragment
-            for (var i = 0; i < storeData.products.length; i++) {
-                var product = storeData.products[i];
+        // add headings to fragment before products
+        for (var i = 0; i < storeData.product_headings.length; i++) {
+            var heading = storeData.product_headings[i];
 
-                var $el = app.util.loadTemplate(
-                    "#template-edit-menu-item-product", product);
+            heading.title = heading.title || "Enter a heading...";
 
-                $el.attr("data-id", product.id_product);
-                frag.append($el[0]);
-            }
+            var $el = app.util.loadTemplate(
+                "#template-edit-menu-item-heading", heading);
 
+            $el.attr("data-id", heading.id_product_heading);
 
-            // add headings to fragment before products
-            for (var i = 0; i < storeData.product_headings.length; i++) {
-                var heading = storeData.product_headings[i];
-
-                heading.title = heading.title || "Enter a heading...";
-
-                var $el = app.util.loadTemplate(
-                    "#template-edit-menu-item-heading", heading);
-
-                $el.attr("data-id", heading.id_product_heading);
-
-                $(frag).find(
-                    ".edit-menu-item-product[data-id='" +
-                    heading.above_product_id + "']")
-                    .before($el);
-            }
+            $(frag).find(
+                ".edit-menu-item-product[data-id='" +
+                heading.above_product_id + "']")
+                .before($el);
+        }
 
 
 
-            // delete heading
+        // delete heading
 //            heading.find(".edit-menu-item-delete").on("click", function () {
 //                $(this).closest(".edit-menu-item-heading").remove();
 //            });
@@ -187,18 +172,18 @@ app.cms.menu = {
 //                frag.append(heading[0]);
 //            }
 
-            this.$editMenuItemsList.append(frag);
+        this.$editMenuItemsList.append(frag);
 
 
 
 
 
 
-            // Category scroller
-            self.categoryScroller =
-                new app.controls.CategoryScroller(
-                storeData.product_headings, 100, 100);
-        }
+        // Category scroller
+        self.categoryScroller =
+            new app.controls.CategoryScroller(
+            storeData.product_headings, 100, 100);
+
     },
 
 }

@@ -324,6 +324,7 @@ app.util = {
                     var jwt = app.data.getJwtFromStorage();
 
                     if (!app.util.validateInputs({ jwt: jwt }, app.validationRules.jwt)) {
+                        console.log(app.Strings.invalidToken);
                         xhr.abort();
                         app.data.invalidateTokensAndGoToLogin();
                         return callback(app.Strings.invalidToken);
@@ -357,6 +358,23 @@ app.util = {
         // send request
         $.ajax(ajaxOptions);
     },
+
+
+//	// Generic form request using ajaxRequest
+//	// dataModifierFn is for modifying the form data before sending
+//	ajaxFormRequest: function (method, url, auth, formEl, dataModifierFn, callback) {
+//		if (!callback) {
+//			callback = dataModifierFn;
+//			dataModifierFn = null;
+//		}
+//
+//		var data = validate.collectFormValues(formEl, { trim: true });
+//		if (dataModifierFn) data = dataMofierFn(data);
+//
+//		this.ajaxRequest({
+//			method: method, url: url, auth: auth, data: data
+//		}, callback);
+//	},
 
 };
 

@@ -104,39 +104,6 @@ app.routerBase = {
 
 
 
-
-//    // Returns the data for the current route
-//    getCurrentRouteData: function (route, section) {
-//        var newRoute = route || window.location.pathname;
-//        var routeData = { route: newRoute };
-//
-//        if (app.util.isCordova()) {
-//            // remove extra cordova stuff from route
-//            newRoute = newRoute.substring(newRoute.lastIndexOf("/"), newRoute.length - 5);
-//            if (newRoute == "/index-cordova") newRoute = "/";
-//        }
-//
-//        // normalize route and add current section
-//        routeData.normalizedRoute = app[section].normalizeRoute(newRoute).route;
-//        routeData.section = section;
-//
-//        // Add html and other route data
-//        if (app[section].routesList.indexOf(routeData.normalizedRoute) !== -1) {
-//            routeData.html = app[section].htmlFiles[routeData.normalizedRoute];
-//            $.extend(routeData, app[section].routes[routeData.normalizedRoute]);
-//
-//        // unknown route
-//        } else {
-//            debugger;
-//            app.data.invalidateTokensAndGoToLogin();
-//            return;
-//        }
-//
-//        return routeData;
-//    },
-
-
-
     // Log a user out, invalide their jwt and redirect to /login
     logUserOut: function () {
         app.util.ajaxRequest({

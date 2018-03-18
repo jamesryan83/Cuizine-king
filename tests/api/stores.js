@@ -161,7 +161,8 @@ describe("API - Stores", function () {
                 assert.ok(data.email.length > 0);
                 assert.equal(data.address[0].id_address, 1);
                 assert.ok(data.address[0].street_address.length > 0);
-                assert.ok(data.hours.length > 0);
+                assert.ok(data.addressString);
+                assert.ok(data.hours);
                 assert.ok(data.review_count > 0);
                 assert.ok(data.products.length > 0);
                 assert.ok(data.product_extras.length > 0);

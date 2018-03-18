@@ -6,7 +6,7 @@ app.cms.details = {
     init: function () {
         var self = this;
 
-        app.storeContent.init();
+        app.storeContent.init("cms");
 
         this.$storeInfo = $("#store-info");
         this.$detailsForm = $("#store-info-edit");
@@ -153,13 +153,14 @@ app.cms.details = {
 
             var address = storeData.address[0];
 
+            // details
             this.$storeInfoEdit[0][1].value = storeData.description;
             this.$storeInfoEdit[0][2].value = address.street_address;
             this.typeahead.setValue(address.postcode, address.suburb);
             this.$storeInfoEdit[0][4].value = storeData.phone_number;
             this.$storeInfoEdit[0][5].value = storeData.email;
 
-            // hours
+            // add hours to inputs
             Object.keys(storeData.hours).forEach(function (key) {
                 if (key.indexOf("hours_") === 0) {
                     $("[name='" + key + "']").val(

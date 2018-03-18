@@ -8,6 +8,7 @@ var path = require("path");
 var config = require("../config");
 var storeDB = require("../procedures/_Store");
 var database = require("../database/database");
+var resultModifier = require("../database/result-modifier");
 
 
 exports = module.exports = {
@@ -36,7 +37,8 @@ exports = module.exports = {
             result = database.resultHandler.getData(result, 400, "storeNotFound", true);
             if (result.err) self.router.sendJson(req, res, null, result.err);
 
-            return self.router.sendJson(req, res, result.data);
+            return self.router.sendJson(
+                req, res, resultModifier.storesGetStore(result.data));
         });
     },
 

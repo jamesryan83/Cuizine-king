@@ -70,7 +70,8 @@ var config = {
             "website": 1,
             "store": 2,
             "system": 3
-        }
+        },
+        "adminStore": 1
     }
 }
 

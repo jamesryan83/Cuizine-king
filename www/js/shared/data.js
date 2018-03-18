@@ -29,7 +29,7 @@ app.data = {
             return callback(this.storeData);
         }
 
-        var id_store = id_store || this.getStoreIdFromStorage();
+        id_store = id_store || this.getStoreIdFromStorage();
 
         if (!app.util.validateInputs({ id_store: id_store }, app.validationRules.getStore))
             return false;
@@ -48,7 +48,6 @@ app.data = {
         }, function (err, result) {
             if (err) return;
 
-            result.data.hours = result.data.hours[0];
             self.storeData = result.data; // cache storeData
 
             return callback(self.storeData);
