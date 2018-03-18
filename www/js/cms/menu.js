@@ -55,7 +55,7 @@ app.cms.menu = {
     showPreview: function () {
         this.$returnButton.hide();
         this.$previewBorder.hide();
-        app.storeContent.$storeMenuList.hide();
+        app.storeContent.$menuList.hide();
         this.$categoryScrollerContainer.hide();
 
         this.$saveButton.show();
@@ -76,7 +76,7 @@ app.cms.menu = {
 
         this.$returnButton.show();
         this.$previewBorder.show();
-        app.storeContent.$storeMenuList.show();
+        app.storeContent.$menuList.show();
         this.$categoryScrollerContainer.show();
 
         this.categoryScroller.updateHeadingPositions();
