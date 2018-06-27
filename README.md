@@ -1,33 +1,4 @@
-
-## Various Accounts
-
-
-** Sendgrid (Email service) **
-    un: appmakin
-    pw: Summer2017
-    apikey (saas1): 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
-    some other username: azure_a9ba7dec061269d4c607af76306fc99b@azure.com
-
-my gmail account is currently the main test account.  There's a trick that lets you
-have multiple email addresses per single gmail account
-http://www.techverse.net/create-multiple-custom-email-address-one-gmail-account/
-
-
-** MSSQL Database **
-Local
-    host: http://localhost:port
-    un: sa
-    pw: your password
-
-Azure
-    host: http://menuthing.azurewebsites.net
-
-
-** Git **
-    un: Menuthing
-    pw: Menuthing
-
-
+Website: http://cuizineking.azurewebsites.net
 
 
 ## Project setup
@@ -64,7 +35,7 @@ Tests can be run by:
 
 
 
-## Updating the azure database
+## Updating the azure dev database
 
 1. In SSMS, right click the azure database and select New Query.  Then paste in
     the code from /sql/generated/_drop-all.sql and run it.
@@ -72,13 +43,9 @@ Tests can be run by:
 2. Run /sql/batchfiles/azure-db-recreate-empty.bat (takes a few minutes to run)
 
 
-
-
 ## Updating the azure website
 
 Push the code to git and the website is restarted and updated automatically
-
-
 
 
 ## Node packages
@@ -112,8 +79,6 @@ Testing
 
 
 
-
-
 ## Other Notes
 
 Azure handles the following things:
@@ -132,9 +97,6 @@ Azure handles the following things:
     https://tomasz.janczuk.org/2011/10/architecture-of-iisnode.html
 
 
-
-
-
 ## Cordova
 
 was having this issue here with latest android studio: https://stackoverflow.com/a/43049089
@@ -150,16 +112,6 @@ http://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html#sett
 creating hardlink to www folder.  this is required for cordova to compile
 
 mklink /J C:\Code\projects\appmakin\menuthing\app\www C:\Code\projects\appmakin\menuthing\www
-
-
-
-## Code style notes
-
-Don't use style="" in html if possible.  Except for style="display: none" on big things (loading screen etc.)
-    and things where it's important for them to be hidden if the css doesn't load
-
-Don't use semantic html elements.  Makes things a bit easier
-
 
 
 ## Design patterns
