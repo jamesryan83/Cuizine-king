@@ -1,5 +1,3 @@
-Website: http://cuizineking.azurewebsites.net
-
 
 ## Project setup
 
